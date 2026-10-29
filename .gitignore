@@ -1,0 +1,6 @@
+# 회의 녹취는 팀 저장소에 올리지 않음
+회의/
+*.textClipping
+
+# macOS
+.DS_Store

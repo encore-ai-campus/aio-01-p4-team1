@@ -1,6 +1,6 @@
-# 오케퐁 API 연결 계약 초안
+# 오케퐁 API 연결 계약 · 기존 기준과 v0 상세안
 
-> 상태: 개발용 초안. n8n 공통 웹훅의 필드·route는 강사 자료를 따른다. 아래 FastAPI API의 세부 JSON은 팀이 구현 전에 확정하고 실제 코드·설계서와 일치시킨다.
+> 상태: 개발용 초안. n8n 공통 웹훅의 필드·route는 강사 자료를 따른다. FastAPI·하위 연결 상세 기본안은 BASELINE-v0.md에서 팀장 검토·배포용으로 준비했고 실제 코드·설계서와 일치시킨다.
 
 ## 연결 원칙
 
@@ -41,8 +41,8 @@
 
 | API | 요청 핵심 값 | 응답 핵심 값 | 저장 |
 | --- | --- | --- | --- |
-| `POST /tickets` | `key`(=`request_id`), `title`, `requester`, `category`, `priority` | `ticket_id`, `priority`, `duplicate` | PostgreSQL 티켓 |
-| `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id` | `alert_id` | PostgreSQL 알림 |
+| `POST /tickets` | `key`(=`request_id`), `title`, `requester`, `category`, `priority` | `ticket_id`, `duplicate` | PostgreSQL 티켓 |
+| `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id` | `stored`, `count` | PostgreSQL 알림 |
 
 중복 `key`는 새 티켓을 만들지 않고 기존 티켓을 반환한다. n8n 내부 호출은 별도 인증을 적용한다. 수업 data-api의 직원·기존 티켓·규정 조회는 제공된 계약을 사용한다.
 
@@ -56,16 +56,16 @@
 | 없는 티켓 | HTTP 404 |
 | n8n 시간 초과·장애 | 화면에 정해진 안내, 서버에는 개인정보를 가린 오류 기록 |
 
-세션은 브라우저 스크립트가 읽지 못하는 쿠키로 관리한다. 실제 세션 만료 시간, 비밀번호 정책, 오류 JSON의 필드명은 구현 시작 전에 백엔드·화면 담당이 이 문서에 확정한다.
+세션은 브라우저 스크립트가 읽지 못하는 쿠키로 관리한다. 새 정책이 기준에 빠져 있으면 백엔드 담당이 기존 password-policy와 호환되는 안을 오현님에게 제안한다. 전체 구현 시작을 막는 반복 협의로 취급하지 않는다.
 
-## 5. 하위 워크플로우 계약 · 담당자 공동 작성
+## 5. 하위 연결 · 변경 책임
 
 | 연결 | 작성할 필드·상태 | 공동 작성자 | 상태 |
 | --- | --- | --- | --- |
-| support → search | query·직원 권한 등 검색 입력, evidence의 doc·section·text·score, 빈 목록과 장애 구분 | 문의·RAG | 필수/선택·오류 JSON·인증·timeout 작성 필요 |
-| support → handoff | request_id·requester·title·category·priority, ticket·duplicate·실패 사유 | 문의·안정성 | 정확한 JSON·실패 시 본체 응답 작성 필요 |
-| handoff → FastAPI | /tickets·/alerts와 내부 인증·중복·오류 상태 | 안정성·백엔드 | 위 3절을 실제 호환 형식으로 검토 필요 |
-| 화면 → 계정·알림 관리 | 비활성화·초기화·관리자 알림 조회 | 화면·백엔드 | TOPIC 범위와 일치하도록 API 표 보완 필요 |
+| support → search | query·직원 권한 등 검색 입력, evidence의 doc·section·text·score, 빈 목록과 장애 구분 | 문의·RAG | C03 기본안 적용, 변경 시 협의 |
+| support → handoff | request_id·requester·title·category·priority, ticket·duplicate·실패 사유 | 문의·안정성 | C04 기본안 적용, 변경 시 협의 |
+| handoff → FastAPI | /tickets·/alerts와 내부 인증·중복·오류 상태 | 안정성·백엔드 | C05 수업 호환안 적용 |
+| 화면 → 계정·알림 관리 | 비활성화·초기화·관리자 알림 조회 | 화면·백엔드 | C01 추가 경로 기본안 적용 |
 
 각 연결에 정상·빈 결과·권한·시간 초과·서버 오류 예시를 작성하고 합의한 날짜를 남긴다. 본체와 하위 워크플로우 호출에도 Header Auth와 시간 제한을 둔다. 공통 웹훅 필드는 교사 계약을 유지한다.
 
@@ -76,3 +76,9 @@ data-api의 fault/reset/ops가 적용되는 공통 시험 설정과 FastAPI로 �
 ## 계약 문서의 편집 담당
 
 이 공통 문서는 오현님만 편집한다. C01~C07 담당자는 자기 Doc/HANDOFF.md에서 정상·오류 예시를 제안하고 상대 확인 기록을 전달한다. 오현님이 기준을 반영한 뒤 각자 자기 SPEC·코드만 수정한다. 상세 연결 책임·절차는 [COORDINATION](COORDINATION.md)을 따른다. 아직 JSON 세부안이 미정인 연결은 합의 완료로 취급하지 않는다.
+
+## 팀장 기본안으로 시작하기
+
+초기 JSON·추가 API·서비스 기본값은 [BASELINE-v0](BASELINE-v0.md), 제공 데이터와 업무/벡터 테이블 제안은 [DATA-AND-DB](DATA-AND-DB.md)에 정리했다. 새 값은 팀장 검토·배포용이며 수업에서 이미 제공한 값과 구분한다. 배포 기준 그대로 구현하는 데 사전 재협의는 필요 없다. 변경할 때만 COORDINATION의 상대에게 요청한다.
+
+수업 호환 /tickets 응답은 ticket_id·duplicate이며 priority는 handoff가 입력에서 붙인다. /alerts는 확인한 78일차 서버 기준 HTTP200 stored·count다. 위 요약표의 priority·alert_id는 가정으로 의존하지 않고 실제 호환 계약을 따른다.

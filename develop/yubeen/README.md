@@ -13,7 +13,7 @@ workflows/oke-index.json과 workflows/oke-search.json을 만든다. 문서 청�
 1. [TODO](Doc/TODO.md)를 자기 말로 검토하고 필수·나중을 구분한다.
 2. [SPEC](Doc/SPEC.md)에 실제 입력·출력·오류·확인 기준을 쓴다.
 3. [IMP-PLAN](Doc/IMP-PLAN.md)에 생성 파일·작업 순서·확인 명령을 적는다.
-4. 연결 담당자와 계약을 맞춘 뒤 이 폴더에서 코딩 에이전트를 실행해 지정한 한 단계만 개발한다.
+4. 팀장 배포 기본안을 적용해 지정한 한 단계부터 개발한다. 변경이 필요할 때만 연결 담당자와 협의한다.
 
 현재는 기획·역할별 개발 문서가 준비된 상태다. 실행 코드·패키지 설정·n8n JSON은 앞으로 구현한다. 실행 명령과 의존성 설치법은 P0에서 실제 실행을 확인한 뒤 이 README에 추가한다.
 
@@ -37,9 +37,11 @@ workflows/oke-index.json과 workflows/oke-search.json을 만든다. 문서 청�
 
 ```text
 현재 위치는 yubeen 폴더야. 저장소 루트 AGENTS.md와 이 폴더 README, Doc/TODO.md·SPEC.md·IMP-PLAN.md,
-저장소 루트 docs/API-CONTRACT.md를 읽어. 먼저 정해야 할 계약과 누락된 요구를 알려줘.
+저장소 루트 docs/API-CONTRACT.md를 읽어. 팀장 배포 기본안을 적용하고, 변경이 꼭 필요한 부분만 알려줘.
 내가 지정한 단계만 이 폴더에서 구현하고 변경 파일·확인 결과·다음 확인 명령을 보고해.
 실행하지 않은 항목은 완료로 표시하지 마.
 ```
 
 소스의 기준은 개인 폴더다. 제출용 JSON·보고서 취합은 [오현님의 제출 안내](../ohyun/SUBMISSION.md)를 따른다.
+
+시작 기준: [연결 기본안](../../docs/BASELINE-v0.md) · [데이터·DB 기본안](../../docs/DATA-AND-DB.md). 기존 결정을 유지하고 새 초안은 팀장 배포 기준을 확인한다.

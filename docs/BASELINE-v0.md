@@ -1,6 +1,6 @@
 # 개발 연결 기본안 v0
 
-> 기존 결정과 교사 공통 계약을 기준으로 준비한 **팀장 검토·배포용 기본안**이다. 새 테이블·내부 JSON·포트 등은 우리 팀 설계안이며 강사 제공 완성품이 아니다. 아래 기본안 채택 후에는 반복 사전 협의 없이 구현하고, 바꿀 때만 지정 상대와 협의한다. 실제 구현/팀원 확인/시험 완료를 뜻하지 않는다.
+> 이 문서는 팀 공통 연결 기준 v0이다. 각 담당자는 아래 요청·응답·DB·실행 설정대로 구현한다. 변경할 때만 COORDINATION.md의 담당자와 검토 후 오현님에게 반영을 요청한다.
 
 ## C01 · 화면 ↔ FastAPI
 
@@ -12,7 +12,7 @@ user·dept·role은 화면 입력을 믿지 않고 세션에서 서버가 정한
 목록은 {"items":[]} 형식, 단건 생성/변경은 해당 객체로 반환한다.
 웹 오류 기본 형태는 {"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}다.
 교사 웹훅의 HTTP400 codes는 웹 오류 형태로 바꾸지 않고 그대로 유지한다.
-추가 경로 제안: PATCH /api/admin/users/{id}(is_active), POST /api/admin/users/{id}/reset-password(temporary_password), GET /api/admin/alerts.
+관리 API 경로: PATCH /api/admin/users/{id}(is_active), POST /api/admin/users/{id}/reset-password(temporary_password), GET /api/admin/alerts.
 실제 비밀번호는 응답/로그/캡처에 넣지 않는다.
 
 ## C02 · FastAPI ↔ support
@@ -61,7 +61,7 @@ fault/reset/ops와 실제 호출 대상이 맞는지 원민님이 확인한다.
 
 ## C06 · RAG ↔ PostgreSQL+pgvector
 
-[DATA-AND-DB](DATA-AND-DB.md)의 app/rag 테이블 기본안을 따른다.
+[DATA-AND-DB](DATA-AND-DB.md)의 app/rag 테이블 기준을 따른다.
 지혜님이 마이그레이션·확장·접속 설정을, 유빈님이 청킹·임베딩·색인·검색을 구현한다.
 vector 차원·모델·메타데이터를 새로 협의하느라 시작을 기다리지 않고 기본안을 적용한다.
 변경이 필요한 경우에만 C06으로 요청한다. 검색 신뢰도 임계값은 실측 후 기준에 반영한다.

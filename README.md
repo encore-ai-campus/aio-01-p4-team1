@@ -57,8 +57,8 @@ P0에서 담당자가 실행 뼈대를 만들고 설치·실행 명령을 자기
 
 ## 팀 공통 기준
 
-- [팀장 연결 기본안 v0](docs/BASELINE-v0.md): 검토·배포할 JSON·서비스 기본값
-- [제공 데이터와 DB 기본안](docs/DATA-AND-DB.md): 수업 원본과 팀 추가 테이블 구분
+- [팀장 연결 기본안 v0](docs/BASELINE-v0.md): 개발에 적용할 JSON·서비스 기본값
+- [제공 데이터와 DB 기본안](docs/DATA-AND-DB.md): 사용 데이터·PostgreSQL·pgvector 테이블 기준
 
 - [주제·기능 범위](docs/TOPIC.md)
 - [사람별 역할·파일 소유권](docs/ROLE-PLAN.md)

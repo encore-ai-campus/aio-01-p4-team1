@@ -1,6 +1,6 @@
 # 오케퐁 API 연결 계약 · 기존 기준과 v0 상세안
 
-> 상태: 개발용 초안. n8n 공통 웹훅의 필드·route는 강사 자료를 따른다. FastAPI·하위 연결 상세 기본안은 BASELINE-v0.md에서 팀장 검토·배포용으로 준비했고 실제 코드·설계서와 일치시킨다.
+> 상태: 개발용 초안. n8n 공통 웹훅의 필드·route는 강사 자료를 따른다. FastAPI·하위 연결은 BASELINE-v0.md의 공통 기준으로 구현한다.
 
 ## 연결 원칙
 
@@ -79,6 +79,6 @@ data-api의 fault/reset/ops가 적용되는 공통 시험 설정과 FastAPI로 �
 
 ## 팀장 기본안으로 시작하기
 
-초기 JSON·추가 API·서비스 기본값은 [BASELINE-v0](BASELINE-v0.md), 제공 데이터와 업무/벡터 테이블 제안은 [DATA-AND-DB](DATA-AND-DB.md)에 정리했다. 새 값은 팀장 검토·배포용이며 수업에서 이미 제공한 값과 구분한다. 배포 기준 그대로 구현하는 데 사전 재협의는 필요 없다. 변경할 때만 COORDINATION의 상대에게 요청한다.
+초기 JSON·추가 API·서비스 기본값은 [BASELINE-v0](BASELINE-v0.md), 데이터와 업무/벡터 테이블 기준은 [DATA-AND-DB](DATA-AND-DB.md)에 정리했다. 배포 기준 그대로 구현하는 데 사전 재협의는 필요 없다. 변경할 때만 COORDINATION의 상대에게 요청한다.
 
 수업 호환 /tickets 응답은 ticket_id·duplicate이며 priority는 handoff가 입력에서 붙인다. /alerts는 확인한 78일차 서버 기준 HTTP200 stored·count다. 위 요약표의 priority·alert_id는 가정으로 의존하지 않고 실제 호환 계약을 따른다.

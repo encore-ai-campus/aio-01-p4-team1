@@ -44,4 +44,4 @@ workflows/oke-handoff.json·oke-errors.json과 cases/·requests/·runs/를 관�
 
 소스의 기준은 개인 폴더다. 제출용 JSON·보고서 취합은 [오현님의 제출 안내](../ohyun/SUBMISSION.md)를 따른다.
 
-시작 기준: [연결 기본안](../../docs/BASELINE-v0.md) · [데이터·DB 기본안](../../docs/DATA-AND-DB.md). 기존 결정을 유지하고 새 초안은 팀장 배포 기준을 확인한다.
+시작 기준: [연결 기본안](../../docs/BASELINE-v0.md) · [데이터·DB 기본안](../../docs/DATA-AND-DB.md). 이 기준대로 구현하고 변경할 때만 지정 상대와 협의한다.

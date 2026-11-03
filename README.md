@@ -3,6 +3,7 @@
 직원 6명의 사내 IT 문의에 규정의 근거로 답하고, 근거가 없거나 긴급한 문의는 IT팀 티켓·알림으로 이관한다.
 웹 화면(Next.js) → FastAPI → n8n의 같은 문의 본체 → FastAPI·PostgreSQL 저장 구조다.
 규정·FAQ·직원·기존 티켓은 수업 data-api를 활용하고, 실제 로그인 계정은 관리자가 발급한다.
+업무 데이터는 PostgreSQL, RAG 문서 청크·임베딩은 같은 PostgreSQL의 pgvector에 저장하며 테이블을 분리한다. DB·검색 구현은 아직 준비 단계다.
 
 ## 각자 여기서 시작하기
 

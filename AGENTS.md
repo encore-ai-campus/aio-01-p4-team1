@@ -19,6 +19,7 @@
 - `wonmin/workflows/oke-handoff.json`은 안정성 담당이 소유하며 티켓·알림·DLQ를 처리한다. 백엔드의 저장 API와 계약을 맞춘다.
 - `wonmin/workflows/oke-errors.json`은 Error Trigger 기반 마지막 오류 경로다. 예상 가능한 오류는 본체에서도 처리한다.
 - 같은 워크플로우 JSON을 여러 사람이 동시에 수정하지 않는다.
+- RAG 저장은 PostgreSQL+pgvector를 사용한다. In-Memory로 대체하지 않는다. RAG 담당과 백엔드 담당이 확장·청크/벡터 테이블·권한·마이그레이션을 함께 맞춘다.
 
 ## 보안과 데이터
 

@@ -8,6 +8,8 @@
 
 `yubeen/workflows/oke-index.json`과 `yubeen/workflows/oke-search.json`. 본체 JSON의 검색 연결 변경은 문의 담당이 한다.
 
+저장소는 PostgreSQL+pgvector다. 색인 구현 전에 지혜님과 확장·테이블·차원·권한을 합의한다. 테이블 변경은 지혜님의 마이그레이션에서 관리한다.
+
 ## 1단계 · 문서·검색 계약
 
 - [ ] 할 일: 원본·권한 메타데이터와 search 입출력·오류 형식을 본체 담당과 정한다.

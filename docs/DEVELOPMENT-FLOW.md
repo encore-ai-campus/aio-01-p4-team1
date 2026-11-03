@@ -9,7 +9,7 @@
 | 화면 · 이수언 | [TODO](../sueon/Doc/TODO.md) | [SPEC](../sueon/Doc/SPEC.md) | [IMP-PLAN](../sueon/Doc/IMP-PLAN.md) |
 | 업무 API·DB·실행 환경 · 박지혜 | [TODO](../jihye/Doc/TODO.md) | [SPEC](../jihye/Doc/SPEC.md) | [IMP-PLAN](../jihye/Doc/IMP-PLAN.md) |
 | 문의 처리 · 임다혁 | [TODO](../dahyeok/Doc/TODO.md) | [SPEC](../dahyeok/Doc/SPEC.md) | [IMP-PLAN](../dahyeok/Doc/IMP-PLAN.md) |
-| RAG · 신유빈 | [TODO](../yubin/Doc/TODO.md) | [SPEC](../yubin/Doc/SPEC.md) | [IMP-PLAN](../yubin/Doc/IMP-PLAN.md) |
+| RAG · 신유빈 | [TODO](../yubeen/Doc/TODO.md) | [SPEC](../yubeen/Doc/SPEC.md) | [IMP-PLAN](../yubeen/Doc/IMP-PLAN.md) |
 | 안정성·시험 · 이원민 | [TODO](../wonmin/Doc/TODO.md) | [SPEC](../wonmin/Doc/SPEC.md) | [IMP-PLAN](../wonmin/Doc/IMP-PLAN.md) |
 
 각 담당자가 작성하고 이해할 문서다. 팀장이 모든 세부 설계를 대신 확정하지 않는다. 이번 TODO에는 지금까지의 합의 내용을 참고 초안으로 넣었으므로, 담당자가 자기 말로 고치고 빠진 요구·필수·나중을 표시한다.
@@ -63,7 +63,7 @@ FastAPI 저장·권한 시험을 공통 워크플로우 시험만으로 대체�
 | sueon/ | 화면 | 백엔드: 웹 API·오류·쿠키·화면 상태 |
 | jihye/ · jihye/deploy/ | 업무 API·DB | 화면·안정성: 계정·문의·티켓·알림, 리드: 실행·배포 |
 | dahyeok/workflows/oke-support.json | 문의 처리 | RAG: search, 안정성: handoff |
-| yubin/workflows/oke-index.json · oke-search.json | RAG | 문의 처리: 검색 요청·근거 목록·오류 |
+| yubeen/workflows/oke-index.json · oke-search.json | RAG | 문의 처리: 검색 요청·근거 목록·오류 |
 | wonmin/workflows/oke-handoff.json · oke-errors.json | 안정성·시험 | 백엔드: 티켓·알림, 문의 처리: 이관·실패 결과 |
 | wonmin/cases/ · wonmin/requests/ · wonmin/runs/ | 안정성·시험 | 전 역할: 실제 기대 결과·실행 근거 |
 | docs/ 공통 문서·기본 브랜치·VM 배포 | 리드 관리 | 각 역할은 자기 실제 설계·측정·실패 원인을 제공 |

@@ -4,7 +4,7 @@ workflows/oke-index.json과 workflows/oke-search.json을 만든다. 문서 청�
 
 ## 내려받은 뒤 시작하기
 
-저장소 전체를 clone한 뒤 터미널에서 `cd "yubin"`으로 이동한다. 폴더만 따로 다운로드하면 공통 계약과 상대 담당자 자료가 빠지므로 저장소 전체를 받는다.
+저장소 전체를 clone한 뒤 터미널에서 `cd "yubeen"`으로 이동한다. 폴더만 따로 다운로드하면 공통 계약과 상대 담당자 자료가 빠지므로 저장소 전체를 받는다.
 
 1. [TODO](Doc/TODO.md)를 자기 말로 검토하고 필수·나중을 구분한다.
 2. [SPEC](Doc/SPEC.md)에 실제 입력·출력·오류·확인 기준을 쓴다.
@@ -32,7 +32,7 @@ workflows/oke-index.json과 workflows/oke-search.json을 만든다. 문서 청�
 ## 첫 에이전트 요청 예시
 
 ```text
-현재 위치는 yubin 폴더야. 상위 AGENTS.md와 이 폴더 README, Doc/TODO.md·SPEC.md·IMP-PLAN.md,
+현재 위치는 yubeen 폴더야. 상위 AGENTS.md와 이 폴더 README, Doc/TODO.md·SPEC.md·IMP-PLAN.md,
 상위 docs/API-CONTRACT.md를 읽어. 먼저 정해야 할 계약과 누락된 요구를 알려줘.
 내가 지정한 단계만 이 폴더에서 구현하고 변경 파일·확인 결과·다음 확인 명령을 보고해.
 실행하지 않은 항목은 완료로 표시하지 마.

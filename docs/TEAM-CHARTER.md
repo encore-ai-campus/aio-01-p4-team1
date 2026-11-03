@@ -10,7 +10,7 @@
 | 이수언 | 프론트엔드 | sueon/ · sueon/Doc/ |
 | 박지혜 | 백엔드·DB | jihye/ · jihye/deploy/ · jihye/Doc/ |
 | 임다혁 | 문의 처리 자동화 | oke-support.json · dahyeok/Doc/ |
-| 신유빈 | RAG·지식 검색 | oke-index.json · oke-search.json · yubin/Doc/ |
+| 신유빈 | RAG·지식 검색 | oke-index.json · oke-search.json · yubeen/Doc/ |
 | 이원민 | 안정성·시험 | oke-handoff.json · oke-errors.json · wonmin/cases/ · wonmin/requests/ · wonmin/runs/ |
 
 ## 목표와 범위

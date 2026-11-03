@@ -13,7 +13,7 @@
 
 ## 담당 경로 · 저장소 루트 기준
 
-`yubin/workflows/oke-index.json`과 `yubin/workflows/oke-search.json`. 본체 JSON의 검색 연결 변경은 문의 담당이 한다.
+`yubeen/workflows/oke-index.json`과 `yubeen/workflows/oke-search.json`. 본체 JSON의 검색 연결 변경은 문의 담당이 한다.
 
 ## 담당자가 채울 것
 

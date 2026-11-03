@@ -3,8 +3,8 @@
 | 담당 | 개발 원본 파일 (구현 예정) | 역할 |
 | --- | --- | --- |
 | 임다혁 | dahyeok/workflows/oke-support.json | 입력·권한·분류·답변·검증·분기·루프 |
-| 신유빈 | yubin/workflows/oke-index.json | 원본 문서 청킹·임베딩·색인 |
-| 신유빈 | yubin/workflows/oke-search.json | 권한별 검색·근거 목록 반환 |
+| 신유빈 | yubeen/workflows/oke-index.json | 원본 문서 청킹·임베딩·색인 |
+| 신유빈 | yubeen/workflows/oke-search.json | 권한별 검색·근거 목록 반환 |
 | 이원민 | wonmin/workflows/oke-handoff.json | 티켓·알림·DLQ·재시도·중복 |
 | 이원민 | wonmin/workflows/oke-errors.json | Error Trigger 기반 예상 밖 오류 |
 

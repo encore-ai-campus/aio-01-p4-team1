@@ -14,7 +14,7 @@
 | 이수언 | 프론트엔드 | [sueon/README](sueon/README.md) |
 | 박지혜 | 백엔드·DB·공통 실행 설정 | [jihye/README](jihye/README.md) |
 | 임다혁 | 문의 처리 자동화 | [dahyeok/README](dahyeok/README.md) |
-| 신유빈 | RAG·지식 검색 | [yubin/README](yubin/README.md) |
+| 신유빈 | RAG·지식 검색 | [yubeen/README](yubeen/README.md) |
 | 이원민 | 안정성·이관·시험 | [wonmin/README](wonmin/README.md) |
 
 ```text
@@ -32,7 +32,7 @@ Aio-4pj-1team/
 ├── dahyeok/
 │   ├── Doc/
 │   └── workflows/            oke-support.json 구현 예정
-├── yubin/
+├── yubeen/
 │   ├── Doc/
 │   └── workflows/            oke-index.json · oke-search.json 구현 예정
 └── wonmin/

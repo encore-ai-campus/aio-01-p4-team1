@@ -8,7 +8,7 @@
 | 개발 원본 | 제출 사본 |
 | --- | --- |
 | dahyeok/workflows/oke-support.json | workflows/oke-support.json |
-| yubin/workflows/oke-index.json · oke-search.json | workflows/의 같은 파일명 |
+| yubeen/workflows/oke-index.json · oke-search.json | workflows/의 같은 파일명 |
 | wonmin/workflows/oke-handoff.json · oke-errors.json | workflows/의 같은 파일명 |
 | wonmin/cases/team.json | cases/team.json |
 | wonmin/requests/의 실제 시연 JSON | requests/의 같은 파일명 |

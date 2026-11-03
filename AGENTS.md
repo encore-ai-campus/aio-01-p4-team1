@@ -14,8 +14,8 @@
 - `sueon/`는 FastAPI만 호출한다. 브라우저에서 DB, n8n 내부 주소, API 키에 직접 접근하지 않는다.
 - `jihye/`는 로그인 세션으로 직원을 확인하고 Pydantic으로 입력·출력을 검증한다. 공개 회원가입을 만들지 않는다.
 - `dahyeok/workflows/oke-support.json`은 공통 웹훅의 요청·응답 필드와 route 값을 유지한다. 시험용 문의 처리 본체를 복제하지 않는다.
-- `yubin/workflows/oke-index.json`은 규정의 청킹·임베딩·색인과 재색인을 담당한다. 문서 권한은 검색 전에 적용한다.
-- `yubin/workflows/oke-search.json`은 RAG 담당이 소유한다. 본체 담당은 이 파일을 복제하지 않고 합의한 검색 계약으로 호출한다.
+- `yubeen/workflows/oke-index.json`은 규정의 청킹·임베딩·색인과 재색인을 담당한다. 문서 권한은 검색 전에 적용한다.
+- `yubeen/workflows/oke-search.json`은 RAG 담당이 소유한다. 본체 담당은 이 파일을 복제하지 않고 합의한 검색 계약으로 호출한다.
 - `wonmin/workflows/oke-handoff.json`은 안정성 담당이 소유하며 티켓·알림·DLQ를 처리한다. 백엔드의 저장 API와 계약을 맞춘다.
 - `wonmin/workflows/oke-errors.json`은 Error Trigger 기반 마지막 오류 경로다. 예상 가능한 오류는 본체에서도 처리한다.
 - 같은 워크플로우 JSON을 여러 사람이 동시에 수정하지 않는다.

@@ -6,11 +6,11 @@
 
 | 역할 | 자기 말로 요구 정리 | 확인 가능한 요구 | 단계·파일·확인 방법 |
 | --- | --- | --- | --- |
-| 화면 | [TODO](../frontend/Doc/TODO.md) | [SPEC](../frontend/Doc/SPEC.md) | [IMP-PLAN](../frontend/Doc/IMP-PLAN.md) |
-| 업무 API·DB·실행 환경 | [TODO](../backend/Doc/TODO.md) | [SPEC](../backend/Doc/SPEC.md) | [IMP-PLAN](../backend/Doc/IMP-PLAN.md) |
-| 문의 처리 | [TODO](../workflows/Doc/support/TODO.md) | [SPEC](../workflows/Doc/support/SPEC.md) | [IMP-PLAN](../workflows/Doc/support/IMP-PLAN.md) |
-| RAG | [TODO](../workflows/Doc/rag/TODO.md) | [SPEC](../workflows/Doc/rag/SPEC.md) | [IMP-PLAN](../workflows/Doc/rag/IMP-PLAN.md) |
-| 안정성·시험 | [TODO](../workflows/Doc/reliability/TODO.md) | [SPEC](../workflows/Doc/reliability/SPEC.md) | [IMP-PLAN](../workflows/Doc/reliability/IMP-PLAN.md) |
+| 화면 · 이수언 | [TODO](../frontend/Doc/TODO.md) | [SPEC](../frontend/Doc/SPEC.md) | [IMP-PLAN](../frontend/Doc/IMP-PLAN.md) |
+| 업무 API·DB·실행 환경 · 박지혜 | [TODO](../backend/Doc/TODO.md) | [SPEC](../backend/Doc/SPEC.md) | [IMP-PLAN](../backend/Doc/IMP-PLAN.md) |
+| 문의 처리 · 임다혁 | [TODO](../workflows/Doc/support/TODO.md) | [SPEC](../workflows/Doc/support/SPEC.md) | [IMP-PLAN](../workflows/Doc/support/IMP-PLAN.md) |
+| RAG · 신유빈 | [TODO](../workflows/Doc/rag/TODO.md) | [SPEC](../workflows/Doc/rag/SPEC.md) | [IMP-PLAN](../workflows/Doc/rag/IMP-PLAN.md) |
+| 안정성·시험 · 이원민 | [TODO](../workflows/Doc/reliability/TODO.md) | [SPEC](../workflows/Doc/reliability/SPEC.md) | [IMP-PLAN](../workflows/Doc/reliability/IMP-PLAN.md) |
 
 각 담당자가 작성하고 이해할 문서다. 팀장이 모든 세부 설계를 대신 확정하지 않는다. 이번 TODO에는 지금까지의 합의 내용을 참고 초안으로 넣었으므로, 담당자가 자기 말로 고치고 빠진 요구·필수·나중을 표시한다.
 
@@ -85,7 +85,7 @@ FastAPI 저장·권한 시험을 공통 워크플로우 시험만으로 대체�
 | 실행 환경 | 백엔드의 Compose·서비스명·포트·DB 초기화안 | 팀 VM 배포·실제 환경값 관리 |
 | RAG 품질 | 청킹·검색 비교 측정 후 임계값 제안 | 일정 대비 범위·품질 목표 조율 |
 
-작성·합의가 필요한 상태는 각 SPEC의 체크 목록에 남긴다. 사람별 역할과 첫 통합 시각은 [TEAM-CHARTER](TEAM-CHARTER.md)에 확정한다.
+작성·합의가 필요한 상태는 각 SPEC의 체크 목록에 남긴다. 사람별 주 역할은 [TEAM-CHARTER](TEAM-CHARTER.md)에 반영했다. 지원 담당과 첫 통합 시각은 추가 확정한다.
 
 ## 6. 개발 문서와 제출 문서
 

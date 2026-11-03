@@ -29,17 +29,19 @@ GitHub의 실제 파일 목록은 이름순으로 표시돼 `docs/`를 물리적
 
 현재는 기획·폴더 구조를 준비한 상태다. 구현·시험 결과는 아직 없다.
 
+팀장·통합: **오현**. 사람별 담당 범위는 [역할표](docs/ROLE-PLAN.md)를 따른다.
+
 ## 담당자가 작성할 개발 문서
 
 각 위치에 `TODO.md`(목적·할 일), `SPEC.md`(통과 기준), `IMP-PLAN.md`(단계·파일·확인 방법) 세 파일이 있다. 현재 내용은 참고 초안이며 담당자가 자기 말로 수정·구체화한다.
 
 | 역할 | 개발 문서 위치 | 구현 경로 |
 | --- | --- | --- |
-| 화면 | [frontend/Doc](frontend/Doc/TODO.md) | frontend/ |
-| 업무 API·DB | [backend/Doc](backend/Doc/TODO.md) | backend/ · deploy/ |
-| 문의 처리 | [workflows/Doc/support](workflows/Doc/support/TODO.md) | oke-support.json |
-| RAG | [workflows/Doc/rag](workflows/Doc/rag/TODO.md) | oke-index.json · oke-search.json |
-| 안정성·시험 | [workflows/Doc/reliability](workflows/Doc/reliability/TODO.md) | oke-handoff.json · oke-errors.json · cases/ · requests/ · runs/ |
+| 화면 · 이수언 | [frontend/Doc](frontend/Doc/TODO.md) | frontend/ |
+| 업무 API·DB · 박지혜 | [backend/Doc](backend/Doc/TODO.md) | backend/ · deploy/ |
+| 문의 처리 · 임다혁 | [workflows/Doc/support](workflows/Doc/support/TODO.md) | oke-support.json |
+| RAG · 신유빈 | [workflows/Doc/rag](workflows/Doc/rag/TODO.md) | oke-index.json · oke-search.json |
+| 안정성·시험 · 이원민 | [workflows/Doc/reliability](workflows/Doc/reliability/TODO.md) | oke-handoff.json · oke-errors.json · cases/ · requests/ · runs/ |
 
 워크플로우 JSON·실행 코드·시험 보고서는 담당자가 구현한 뒤 추가한다. 빈 JSON을 완성 파일처럼 넣지 않는다. 필수 제출 문서 3종은 강사 템플릿으로 준비했으며 실제 설계·측정·실행 결과로 채워야 한다.
 

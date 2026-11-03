@@ -14,6 +14,7 @@ Next.js 화면 → FastAPI → n8n으로 연결한다. 업무 데이터는 Postg
 | 내용 | 기준 문서 |
 | --- | --- |
 | 주제·문의 범위·사용자 기능 | [TOPIC](docs/TOPIC.md) |
+| 전체 연결 그림·네트워크 경계 | [ARCHITECTURE](docs/ARCHITECTURE.md) |
 | 담당자·소유 파일·팀 규칙 | [TEAM-CHARTER](docs/TEAM-CHARTER.md) |
 | API·하위 연결·서비스명·포트·환경변수 | [API-CONTRACT](docs/API-CONTRACT.md) |
 | 데이터·DB·pgvector 구조 | [DATA-AND-DB](docs/DATA-AND-DB.md) |
@@ -30,4 +31,5 @@ Next.js 화면 → FastAPI → n8n으로 연결한다. 업무 데이터는 Postg
 - [실행 결과서](docs/EXECUTION-RESULT.md)
 
 필수 3종은 작성 중인 문서이며 실제 구현·측정·시험 결과로 완성한다. 주제·헌장·데일리 3장·캡처·JSON·시나리오·시험 보고서도 제출한다.
+워크플로우·RAG 설계 초안에는 현재 계획을 반영했다. 80일차 준비·당일 체크는 [오현님 TODO](develop/ohyun/Doc/TODO.md)를 따른다.
 세부 문서 위치는 [docs/README](docs/README.md)를 따른다.

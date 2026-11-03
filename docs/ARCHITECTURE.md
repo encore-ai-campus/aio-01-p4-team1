@@ -1,5 +1,7 @@
 # 오케퐁(OKE-Pong) 전체 시스템 아키텍처
 
+> 상태: 구현 전 설계 기준. Compose·서비스·연결선의 실제 기동·게시·시험은 담당자 구현 후 확인한다.
+
 본 문서는 **프런트엔드(Next.js) · 백엔드(FastAPI) · 워크플로우(n8n 5종) · 저장소(PostgreSQL+pgvector & data-api)**의 전체 연결 구조와 네트워크·폴더 경계를 한눈에 보여주는 기준 구성도다. 세부 필드는 [API-CONTRACT.md](API-CONTRACT.md), 테이블 구조는 [DATA-AND-DB.md](DATA-AND-DB.md), 의사결정 배경은 [adr/ADR-001-project-decisions.md](adr/ADR-001-project-decisions.md)를 따른다.
 
 ---
@@ -31,7 +33,7 @@ flowchart TB
 
         subgraph Storage["데이터 · 저장소 계층"]
             PG[("postgres (PostgreSQL + pgvector :5432)\n- app 스키마: employees, users, sessions,\n  inquiries, tickets, alerts, dlq\n- rag 스키마: documents, chunks(vector 3072)")]
-            DataAPI["data-api (:8800)\n- 제공 직원 6명 (/employees)\n- 규정 8종 (/docs)\n- FAQ 6종 (/faq)\n- 기존 티켓 4건 (/tickets)"]
+            DataAPI["data-api (:8800)\n- 제공 직원 6명 (/employees)\n- 규정 8종 (/docs)\n- FAQ 6종 (/faq)\n- 기존 티켓 4건 (/tickets/{id})"]
         end
     end
 
@@ -48,8 +50,18 @@ flowchart TB
     Index -->|"청크·임베딩(3072) 저장"| PG
     Search -->|"access_level 선필터 + cosine 검색"| PG
 
-    Handoff -->|"app 모드: POST /tickets, /alerts, /dlq (X-Api-Key)\npractice 모드: data-api 호출"| FastAPI
-    Errors -->|"예상 밖 실행 오류 알림·DLQ 기록"| FastAPI
+    OpenAI["OpenAI API · Credential\nLLM / 임베딩"]
+    Support -->|"분류·작성·검증"| OpenAI
+    Index -->|"문서 임베딩"| OpenAI
+    Search -->|"질의 임베딩"| OpenAI
+    Support -.->|"부모 오류 설정"| Errors
+    Index -.-> Errors
+    Search -.-> Errors
+    Handoff -.-> Errors
+    Handoff -->|"app: /tickets, /alerts, /dlq · X-Api-Key"| FastAPI
+    Handoff -->|"practice: /tickets, /alerts, /dlq · X-Api-Key"| DataAPI
+    Errors -->|"app: 알림·DLQ"| FastAPI
+    Errors -->|"practice: 알림·DLQ"| DataAPI
 ```
 
 ---

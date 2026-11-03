@@ -33,3 +33,7 @@
 화면은 `sueon/Doc/`, 백엔드는 `jihye/Doc/`, 문의·RAG·안정성은 `dahyeok/Doc/`·`yubeen/Doc/`·`wonmin/Doc/`의 세 문서를 직접 검토·작성한다. [개발 순서](DEVELOPMENT-FLOW.md)의 문서 링크와 단계별 연결 기준을 따른다.
 
 `oke-search`와 `oke-handoff`를 추가로 분리해 한 JSON의 공동 수정을 줄인다. 구체적인 내부 코드 경로는 담당자가 IMP-PLAN에 적는다. 배포 설정 작성은 백엔드 담당, 실제 팀 VM 배포는 리드가 맡는다.
+
+## 파일 수정과 협의
+
+개발 담당자는 자기 폴더만 편집한다. 공통 문서에 들어갈 자료는 개인 Doc/SUBMISSION-NOTES.md로 제공하며 오현이 취합한다. 협의 상대·먼저 보낼 자료·선행 조건은 [COORDINATION](COORDINATION.md)과 각 개인 Doc/WORK-GUIDE.md를 따른다. 검토 결과는 각자 자기 HANDOFF에 기록한다.

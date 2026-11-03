@@ -1,5 +1,9 @@
 # 문서 안내
 
+공통 문서 편집은 오현 담당이다. 다른 담당자는 자기 HANDOFF·SUBMISSION-NOTES로 반영할 내용을 전달한다.
+
+- [협의·파일 소유권·연결 순서](COORDINATION.md)
+
 - [주제·범위](TOPIC.md): 우리 팀이 만들 서비스
 - [역할별 개발 순서](DEVELOPMENT-FLOW.md): 담당자가 TODO→SPEC→IMP-PLAN을 작성하고 개발하는 방법
 - [역할표](ROLE-PLAN.md): 소유 파일과 결과물

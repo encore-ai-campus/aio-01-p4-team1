@@ -1,17 +1,13 @@
-# 오케퐁 API 연결 계약 · 기존 기준과 v0 상세안
+# 오케퐁 공통 API·실행 계약 v0
 
-> 상태: 개발용 초안. n8n 공통 웹훅의 필드·route는 강사 자료를 따른다. FastAPI·하위 연결은 BASELINE-v0.md의 공통 기준으로 구현한다.
+각 담당자는 이 문서의 필드·응답·서비스 설정을 기준으로 구현한다. 기준대로 개발할 때는 별도 사전 협의가 필요 없다.
+계약을 변경할 때만 [변경 절차](COORDINATION.md)를 따르며 공통 문서 수정은 오현님이 맡는다.
+DB 구조는 [데이터·DB 기준](DATA-AND-DB.md), 역할·파일 소유권은 [팀 헌장](TEAM-CHARTER.md)을 따른다.
 
-## 연결 원칙
+화면은 FastAPI만 호출하고, FastAPI는 세션으로 신원을 확인해 같은 oke-support를 호출한다. n8n은 검색·답변·검증·이관을 처리한다.
+비밀값은 환경변수와 n8n Credential에만 둔다. 현재 구현·실행·시험은 진행 전이다.
 
-`Next.js → FastAPI → n8n(oke-support) → FastAPI(/tickets·/alerts) → PostgreSQL`
-
-- 브라우저는 DB와 n8n을 직접 호출하지 않는다.
-- 웹 문의의 직원 신원은 FastAPI 로그인 세션에서 얻는다. 질문 본문의 이름이나 권한 주장을 믿지 않는다.
-- 수업 공통 시험은 `POST /webhook/oke-support`를 직접 호출한다. 시험용 문의 처리 본체를 복제하지 않는다.
-- 비밀값은 환경변수·n8n Credential에 둔다. 요청·응답·로그에 비밀번호와 API 키를 넣지 않는다.
-
-## 1. n8n 공통 웹훅 · 강사 계약
+## 1. 공통 웹훅 · FastAPI ↔ support (C02)
 
 `POST /webhook/oke-support` 요청 필수: `request_id`, `user`, `question`. 선택: `channel`, `attempt`, `context`.
 
@@ -21,7 +17,12 @@
 
 응답은 `request_id`, `route`, `answer`, `sources`, `ticket`, `agents`, `security`를 포함한다. `route`는 `자동 답변`·`보완 질문`·`담당자 이관`·`권한 없음`·`차단` 중 하나다. 빈 질문·없는 직원·너무 긴 질문은 공통 계약의 HTTP 400과 `codes`를 따른다. 각 필드의 상세 형식은 강사 `04-REFERENCE-ARCHITECTURE.md` 3절을 기준으로 고정한다.
 
-## 2. 화면이 부르는 FastAPI
+X-Team-Key 인증을 사용하고 user는 제공 직원 name과 일치시킨다.
+공통 응답 필드·route는 교사 계약 그대로 유지한다. 웹과 공통 시험은 같은 support를 호출한다.
+request_id는 한 논리 요청의 재시도에 재사용하며 새 보완 답변 차례에는 새 ID와 증가한 attempt/context를 전달한다.
+웹 request_id 소유권은 FastAPI가 확인한다. 공통 직접 시험은 팀 웹훅 인증과 제공 직원 확인을 따른다.
+
+## 2. 화면 ↔ FastAPI (C01)
 
 | API | 요청 | 응답 | 권한 |
 | --- | --- | --- | --- |
@@ -29,15 +30,52 @@
 | `POST /api/auth/logout` | 세션 쿠키 | 로그아웃 확인 | 로그인 |
 | `GET /api/auth/me` | 세션 쿠키 | `id`, `name`, `dept`, `role` | 로그인 |
 | `POST /api/auth/change-password` | 현재·새 비밀번호 | 변경 확인 | 로그인 |
-| `POST /api/ask` | `question`, 선택 `request_id`, `attempt`, `context` | `request_id`, `route`, `answer`, `sources`, `ticket` | 로그인 |
+| `POST /api/ask` | `question`, 선택 `request_id`, `attempt`, `context` | 공통 웹훅 응답 전체 | 로그인 |
 | `GET /api/my-requests` | 세션 쿠키 | 본인의 문의·답변·티켓 상태 목록 | 로그인 |
 | `GET /api/admin/tickets` | 세션 쿠키 | 이관 티켓·긴급도·담당자·상태 목록 | IT팀 관리자 |
 | `PATCH /api/admin/tickets/{id}` | `status`, 선택 `assignee`, `reply` | 변경된 티켓 | IT팀 관리자 |
 | `POST /api/admin/users` | 제공 직원의 식별값, 로그인 ID, 임시 비밀번호 | 생성된 계정 요약 | IT팀 관리자 |
+| `PATCH /api/admin/users/{id}` | `is_active` | 변경된 계정 요약 | IT팀 관리자 |
+| `POST /api/admin/users/{id}/reset-password` | `temporary_password` | `ok`, 변경 필요 여부 | IT팀 관리자 |
+| `GET /api/admin/alerts` | 세션 쿠키 | 알림 목록 | IT팀 관리자 |
 
 `POST /api/ask`에서 `request_id`가 없으면 FastAPI가 생성하고 로그인한 `user`를 넣어 n8n에 보낸다. 동일 요청 재시도에는 앞서 받은 `request_id`를 다시 보낸다. 첫 관리자 계정은 환경변수로 최초 1회 생성하고, 관리자가 나머지 계정을 발급한다. 공개 회원가입은 없다.
 
-## 3. n8n이 부르는 FastAPI
+user·dept·role은 화면 입력을 믿지 않고 세션에서 서버가 정한다.
+로그인 성공은 user 요약(id,name,dept,role,must_change_password)과 HttpOnly 세션 쿠키, 로그아웃은 ok=true로 한다.
+웹 질문의 성공 응답은 교사 공통 응답 전체(request_id,route,answer,sources,ticket,agents,security 및 필요 시 reason/timings)를 보존한다.
+목록은 {"items":[]} 형식, 단건 생성/변경은 해당 객체로 반환한다.
+웹 오류 기본 형태는 {"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}다.
+교사 웹훅의 HTTP400 codes는 웹 오류 형태로 바꾸지 않고 그대로 유지한다.
+실제 비밀번호는 응답/로그/캡처에 넣지 않는다.
+
+## 3. support ↔ search (C03)
+
+POST /webhook/oke-search, X-Team-Key 인증.
+입력 예시:
+```json
+{"request_id":"req-001","query":"VPN 연결 오류","type":"network","access_levels":["all"],"top_k":3}
+```
+정상/검색 없음은 HTTP200, {"ok":true,"evidence":[{"doc":"remote-work-vpn","section":"접속 오류","text":"근거 청크 내용","score":0.82}],"reason":null}로 반환한다.
+검색 없음은 evidence=[]이고 reason=no_evidence다. 예시 score는 실행 측정값이 아니다.
+장애는 HTTP503, {"ok":false,"evidence":[],"reason":"search_unavailable"}로 반환하고 본체가 이관한다.
+access_levels는 본체가 직원 부서 조회로 검증해 만든 all 또는 all+it 목록이다. 질문 본문 주장을 사용하지 않는다.
+pgvector 저장·점수 정의는 [DATA-AND-DB](DATA-AND-DB.md)를 따른다.
+
+## 4. support ↔ handoff (C04)
+
+POST /webhook/oke-handoff, X-Team-Key 인증.
+입력: request_id, requester(제공 직원 이름), title, category, priority(normal/high), reason. 선택 evidence_summary.
+정상은 HTTP200:
+```json
+{"ok":true,"ticket":{"ticket_id":"T-2001","priority":"normal","duplicate":false},"reason":null,"alerted":true,"dlq":false}
+```
+티켓 장애는 처리 결과로 HTTP200, ok=false·ticket=null·reason=tickets_down·alerted/dlq는 실제 성공 여부를 적는다.
+알림만 실패했으면 생성된 ticket을 유지하고 reason=alerts_down으로 표시한다. 재시도로 티켓을 다시 생성하지 않는다.
+본체는 최종 route를 담당자 이관으로 유지하고 ticket/사유를 공통 응답에 매핑한다.
+Error Workflow는 예상 밖 실행 실패를 별도로 처리한다.
+
+## 5. handoff ↔ 저장 API (C05)
 
 | API | 요청 핵심 값 | 응답 핵심 값 | 저장 |
 | --- | --- | --- | --- |
@@ -46,7 +84,35 @@
 
 중복 `key`는 새 티켓을 만들지 않고 기존 티켓을 반환한다. n8n 내부 호출은 별도 인증을 적용한다. 수업 data-api의 직원·기존 티켓·규정 조회는 제공된 계약을 사용한다.
 
-## 4. 공통 오류 원칙
+신규는 HTTP201 {"ticket_id":"T-2001","duplicate":false}, 중복은 HTTP200에 같은 ticket_id와 duplicate=true.
+handoff가 원래 priority를 ticket 객체에 붙인다. /tickets 응답에 priority가 항상 있다는 가정을 하지 않는다.
+POST /alerts는 workflow,node,message,severity와 선택 ticket_id를 받고, 수업 호환 알림 저장 응답은 HTTP200 {"stored":1,"count":1}이며 count는 실제 누적 수다. 웹 관리자 목록은 C01의 /api/admin/alerts에서 제공한다.
+FastAPI 내부 API는 X-Api-Key 인증을 사용하며 웹 로그인 쿠키와 구별한다.
+운영 새 업무 기록은 PostgreSQL, 공통 고장 시험 모드는 data-api에 연결한다. 설정으로 선택하고 같은 티켓을 양쪽에 동시 생성하지 않는다.
+fault/reset/ops와 실제 호출 대상이 맞는지 원민님이 확인한다.
+
+## 6. RAG ↔ PostgreSQL+pgvector (C06)
+
+[DATA-AND-DB](DATA-AND-DB.md)의 app/rag 테이블 기준을 따른다.
+지혜님이 마이그레이션·확장·접속 설정을, 유빈님이 청킹·임베딩·색인·검색을 구현한다.
+vector 차원·모델·메타데이터를 새로 협의하느라 시작을 기다리지 않고 기본안을 적용한다.
+변경이 필요한 경우에만 C06으로 요청한다. 검색 신뢰도 임계값은 실측 후 기준에 반영한다.
+
+## 7. 실행 환경 (C07)
+
+Compose 파일 위치: develop/jihye/deploy/compose.yaml.
+기본 서비스명 frontend/backend/postgres/n8n/data-api, 내부 주소는 backend:8000·postgres:5432·n8n:5678·data-api:8800.
+브라우저는 frontend:3000이 아닌 localhost 또는 VM 공개 웹 주소를 사용하고 /api를 프론트 서버 프록시로 backend에 전달한다.
+브라우저 코드에 Docker 내부 호스트명을 쓰지 않는다.
+공개 웹 포트 기본 3000, 로컬 개발 backend 8000·n8n 5678·data-api 8800. postgres는 내부5432, 외부 공개를 기본으로 하지 않는다.
+PostgreSQL은 pgvector를 포함한 이미지, named volume과 healthcheck를 사용한다. 이미지 실제 버전·digest는 지혜님이 설치 검증 뒤 고정한다.
+Compose build context는 backend=.., frontend=../../sueon.
+공통 환경변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD다.
+SERVICE_MODE는 practice 또는 app이며 DB/관측 모드가 혼동되지 않게 README에 기록한다.
+실제 환경값은 Git에 넣지 않는다. 기존 수업 n8n/data-api를 재사용하면 동일 네트워크 연결과 충돌 포트를 지혜님이 조정해 기록한다.
+전체 배포·VM 환경 반영은 오현님 담당이다.
+
+## 8. 오류·인증·변경 원칙
 
 | 상황 | 처리 |
 | --- | --- |
@@ -58,27 +124,6 @@
 
 세션은 브라우저 스크립트가 읽지 못하는 쿠키로 관리한다. 새 정책이 기준에 빠져 있으면 백엔드 담당이 기존 password-policy와 호환되는 안을 오현님에게 제안한다. 전체 구현 시작을 막는 반복 협의로 취급하지 않는다.
 
-## 5. 하위 연결 · 변경 책임
-
-| 연결 | 작성할 필드·상태 | 공동 작성자 | 상태 |
-| --- | --- | --- | --- |
-| support → search | query·직원 권한 등 검색 입력, evidence의 doc·section·text·score, 빈 목록과 장애 구분 | 문의·RAG | C03 기본안 적용, 변경 시 협의 |
-| support → handoff | request_id·requester·title·category·priority, ticket·duplicate·실패 사유 | 문의·안정성 | C04 기본안 적용, 변경 시 협의 |
-| handoff → FastAPI | /tickets·/alerts와 내부 인증·중복·오류 상태 | 안정성·백엔드 | C05 수업 호환안 적용 |
-| 화면 → 계정·알림 관리 | 비활성화·초기화·관리자 알림 조회 | 화면·백엔드 | C01 추가 경로 기본안 적용 |
-
-각 연결에 정상·빈 결과·권한·시간 초과·서버 오류 예시를 작성하고 합의한 날짜를 남긴다. 본체와 하위 워크플로우 호출에도 Header Auth와 시간 제한을 둔다. 공통 웹훅 필드는 교사 계약을 유지한다.
-
-data-api의 fault/reset/ops가 적용되는 공통 시험 설정과 FastAPI로 티켓·알림을 저장하는 통합 설정을 구별한다. 같은 support를 사용하며, 호출 대상 전환과 관측 위치는 안정성·백엔드 담당이 함께 정한다. 공통 시험의 기대값을 바꿔 맞추지 않는다.
-
-변경 순서: 담당자 제안 → 연결 상대 검토 → 리드 승인 → 이 문서와 관련 역할 SPEC 갱신. 역할별 문서 위치와 공통 연결 단계는 [DEVELOPMENT-FLOW](DEVELOPMENT-FLOW.md)를 따른다.
-
-## 계약 문서의 편집 담당
-
-이 공통 문서는 오현님만 편집한다. C01~C07 담당자는 자기 Doc/HANDOFF.md에서 정상·오류 예시를 제안하고 상대 확인 기록을 전달한다. 오현님이 기준을 반영한 뒤 각자 자기 SPEC·코드만 수정한다. 상세 연결 책임·절차는 [COORDINATION](COORDINATION.md)을 따른다. 아직 JSON 세부안이 미정인 연결은 합의 완료로 취급하지 않는다.
-
-## 팀장 기본안으로 시작하기
-
-초기 JSON·추가 API·서비스 기본값은 [BASELINE-v0](BASELINE-v0.md), 데이터와 업무/벡터 테이블 기준은 [DATA-AND-DB](DATA-AND-DB.md)에 정리했다. 배포 기준 그대로 구현하는 데 사전 재협의는 필요 없다. 변경할 때만 COORDINATION의 상대에게 요청한다.
-
-수업 호환 /tickets 응답은 ticket_id·duplicate이며 priority는 handoff가 입력에서 붙인다. /alerts는 확인한 78일차 서버 기준 HTTP200 stored·count다. 위 요약표의 priority·alert_id는 가정으로 의존하지 않고 실제 호환 계약을 따른다.
+기준대로 구현하고 상대 서비스가 없으면 같은 계약의 Mock을 사용한다. 실제 연결은 제공자 준비 뒤 확인한다.
+변경이 필요하면 자기 HANDOFF에 변경안·이유·영향·기존/새 입출력을 적고 지정 상대 검토 후 오현님이 공통 기준을 갱신한다.
+실제 호출 대상과 fault/reset/ops 관측 대상의 일치를 원민님이 확인한다. 시험 모드와 FastAPI 저장 모드를 구별하고 양쪽에 같은 티켓을 동시 생성하지 않는다.

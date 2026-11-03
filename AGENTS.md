@@ -1,13 +1,13 @@
 # 오케퐁 프로젝트 작업 규칙
 
-이 파일은 팀의 CLI 코딩 에이전트 작업 규칙 초안이다. 팀이 역할과 API 계약을 확정하면 함께 갱신한다.
+이 파일은 모든 코딩 에이전트의 공통 규칙이다. 문서별 기준은 루트 README의 표를 따른다.
 
 ## 시작 전
 
-1. `README.md`, `docs/TOPIC.md`, `docs/API-CONTRACT.md`, `docs/ROLE-PLAN.md`, `docs/WORKSPACE-GUIDE.md`를 읽는다.
+1. `README.md`, `docs/TOPIC.md`, `docs/API-CONTRACT.md`, `docs/TEAM-CHARTER.md`, `develop/README.md`를 읽는다.
 2. 이번 요청의 담당 경로, 입력·출력, 완료 기준을 3~5줄로 정리한다.
 3. 일반 개발 담당자는 자기 이름 폴더 안에서만 파일을 수정·생성·삭제·이동한다. 다른 폴더와 공통 파일은 읽기만 한다. 변경이 필요하면 자기 Doc/HANDOFF.md에 제안·재현·영향을 적고 파일 소유자가 수정한다. 루트 공통 문서·계약은 오현님이 반영한다.
-4. `docs/COORDINATION.md`, 자기 `Doc/WORK-GUIDE.md`·`Doc/HANDOFF.md`, `docs/DEVELOPMENT-FLOW.md`와 해당 역할 폴더의 `TODO.md`, `SPEC.md`, `IMP-PLAN.md`를 읽는다. 담당자가 지정한 단계만 구현하고 확인 전 통과 체크를 하지 않는다.
+4. `docs/COORDINATION.md`, 자기 `README.md`와 `Doc/`의 TODO·SPEC·IMP-PLAN·HANDOFF를 읽는다. 담당자가 지정한 단계만 구현하고 확인 전 통과 체크를 하지 않는다.
 
 ## 구현 경계
 
@@ -46,4 +46,4 @@
 
 ## 기본안 우선
 
-팀장이 배포한 docs/BASELINE-v0.md·DATA-AND-DB.md 기준대로 구현하는 데 상대의 별도 사전 동의는 필요 없다. 기존 협의 목록은 변경할 때의 상대 표다. 계약·DB·포트를 바꾸려 할 때만 HANDOFF로 요청한다.
+팀장이 배포한 docs/API-CONTRACT.md와 docs/DATA-AND-DB.md 기준대로 구현하는 데 상대의 별도 사전 동의는 필요 없다. 기존 협의 목록은 변경할 때의 상대 표다. 계약·DB·포트를 바꾸려 할 때만 HANDOFF로 요청한다.

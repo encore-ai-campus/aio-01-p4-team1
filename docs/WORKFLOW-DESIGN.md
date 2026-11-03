@@ -25,8 +25,17 @@ flowchart TD
 
 워크플로우 파일:
 
-| 파일 | 웹훅 · 트리거 | 맡은 사람 | 노드 수 |
+| 개발 원본 파일 | 웹훅 · 트리거 | 맡은 사람 | 노드 수 |
 | --- | --- | --- | --- |
+| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support · 문의 본체 | 다혁님 | 구현 후 기록 |
+| develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index · 색인 | 유빈님 | 구현 후 기록 |
+| develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search · 권한별 검색 | 유빈님 | 구현 후 기록 |
+| develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff · 티켓·알림·DLQ | 원민님 | 구현 후 기록 |
+| develop/wonmin/workflows/oke-errors.json | Error Trigger · 예상 밖 오류 | 원민님 | 구현 후 기록 |
+
+위 표는 설계 계획이며 JSON 구현·게시·시험 완료를 뜻하지 않는다. 웹과 공통 시험은 같은 support를 호출한다.
+검색·이관의 계약은 [공통 API](API-CONTRACT.md)를 따른다. 비밀값은 Credential에만 저장하고 파일 위치 변경으로 웹훅 이름을 바꾸지 않는다.
+제출 직전 [취합 안내](../develop/ohyun/SUBMISSION.md)에 따라 루트 workflows/로 모은다.
 
 ## 4. 에이전트 역할 · 분기 · 병렬 · 루프
 

@@ -1,21 +1,18 @@
 # 문서 안내
 
-공통 문서 편집은 오현님 담당이다. 다른 담당자는 자기 HANDOFF·SUBMISSION-NOTES로 반영할 내용을 전달한다.
+공통 문서 편집은 오현님 담당이다. 다른 담당자는 자기 HANDOFF·SUBMISSION-NOTES로 변경 요청·반영 자료를 전달한다.
 
-- [협의·파일 소유권·연결 순서](COORDINATION.md)
+| 문서 | 관리하는 내용 |
+| --- | --- |
+| [TOPIC](TOPIC.md) | 주제·문의 범위·사용자 기능 |
+| [TEAM-CHARTER](TEAM-CHARTER.md) | 담당자·소유 파일·팀 규칙·문서 책임 |
+| [API-CONTRACT](API-CONTRACT.md) | 공통 웹훅·웹 API·검색/이관·실행 환경 |
+| [DATA-AND-DB](DATA-AND-DB.md) | 데이터·업무 테이블·pgvector 기준 |
+| [COORDINATION](COORDINATION.md) | 개발·변경 검토·PR·통합 순서 |
+| [WORKFLOW-DESIGN](WORKFLOW-DESIGN.md) | 필수 1: 실제 워크플로우 설계 |
+| [RAG-ARCHITECTURE](RAG-ARCHITECTURE.md) | 필수 2: 실제 RAG 설계·비교 측정 |
+| [EXECUTION-RESULT](EXECUTION-RESULT.md) | 필수 3: 실제 시험·실패·재시험 |
 
-- [주제·범위](TOPIC.md): 우리 팀이 만들 서비스
-- [역할별 개발 순서](DEVELOPMENT-FLOW.md): 담당자가 TODO→SPEC→IMP-PLAN을 작성하고 개발하는 방법
-- [역할표](ROLE-PLAN.md): 소유 파일과 결과물
-- [공통 API 계약](API-CONTRACT.md): 화면·서버·워크플로우가 공유하는 연결 기준
-- [폴더별 작업 안내](WORKSPACE-GUIDE.md): 작성 내용·규칙·수업자료
-- [팀 헌장](TEAM-CHARTER.md): 실제 사람 배정·일정·협업 규칙을 팀이 확정
-
-## 핵심 제출물 · 작성 틀, 미완성
-
-- [워크플로우 설계서](WORKFLOW-DESIGN.md)
-- [RAG 설계서](RAG-ARCHITECTURE.md)
-- [실행 결과서](EXECUTION-RESULT.md)
-
-역할별 개발 문서는 오현님·수언님·지혜님·다혁님·유빈님·원민님 이름 폴더의 Doc/에 있다.
-daily는 당일 기록, images는 실제 제출 캡처다. 결과 보관 폴더에는 개발 문서 세 개를 반복 생성하지 않는다.
+개인 개발·수업자료 안내는 [develop/README](../develop/README.md)를 따른다.
+[daily](daily/README.md)는 당일 기록 3장, [images](images/README.md)는 실제 제출 캡처다.
+필수 산출물은 구현·측정·실행 뒤 내용을 채운다. 개인 TODO·SPEC·IMP-PLAN은 개발용 기준이다.

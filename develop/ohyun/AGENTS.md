@@ -2,7 +2,7 @@
 
 저장소 루트 AGENTS.md를 함께 따른다. 주 역할: 팀장·통합.
 
-- 시작 시 README·Doc/WORK-GUIDE·TODO·SPEC·IMP-PLAN·HANDOFF를 읽는다. 공통 docs의 계약은 읽기 전용 기준이다.
+- 시작 시 README와 Doc/TODO·SPEC·IMP-PLAN·HANDOFF를 읽는다. 공통 docs의 계약은 읽기 전용 기준이다.
 - 리드는 develop/ohyun/과 루트 공통 문서·최종 제출 파일을 관리한다. 작업 요청에 편집할 공통 경로를 명시한다. 타인의 기능 코드는 소유자에게 수정 요청한다.
 - 상대 파일이 틀렸거나 계약 변경이 필요하면 내 Doc/HANDOFF.md에 재현·제안·영향·검토 상대를 적는다. 상대가 자기 폴더를, 오현님이 공통 파일을 수정한다.
 - 현재 폴더 안에서만 프로젝트·패키지·Mock·테스트를 생성한다. 상대의 프로젝트를 복사하거나 루트에 package.json/가상환경/빌드 파일을 만들지 않는다.

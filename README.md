@@ -10,32 +10,32 @@
 
 | 담당자 | 역할 | 시작 문서 |
 | --- | --- | --- |
-| 오현 | 팀장·통합·PR·배포·제출 | [오현/README](오현/README.md) |
-| 이수언 | 프론트엔드 | [이수언/README](이수언/README.md) |
-| 박지혜 | 백엔드·DB·공통 실행 설정 | [박지혜/README](박지혜/README.md) |
-| 임다혁 | 문의 처리 자동화 | [임다혁/README](임다혁/README.md) |
-| 신유빈 | RAG·지식 검색 | [신유빈/README](신유빈/README.md) |
-| 이원민 | 안정성·이관·시험 | [이원민/README](이원민/README.md) |
+| 오현 | 팀장·통합·PR·배포·제출 | [hyun/README](hyun/README.md) |
+| 이수언 | 프론트엔드 | [sueon/README](sueon/README.md) |
+| 박지혜 | 백엔드·DB·공통 실행 설정 | [jihye/README](jihye/README.md) |
+| 임다혁 | 문의 처리 자동화 | [dahyeok/README](dahyeok/README.md) |
+| 신유빈 | RAG·지식 검색 | [yubin/README](yubin/README.md) |
+| 이원민 | 안정성·이관·시험 | [wonmin/README](wonmin/README.md) |
 
 ```text
 Aio-4pj-1team/
 ├── README.md · AGENTS.md · .env.example
 ├── docs/                     공통 기획·API 계약·필수 제출 문서
-├── 오현/                     통합·마일스톤·배포·제출 취합
+├── hyun/                     통합·마일스톤·배포·제출 취합
 │   └── Doc/                  TODO · SPEC · IMP-PLAN
-├── 이수언/                   Next.js 프로젝트 루트 (코드 구현 예정)
+├── sueon/                   Next.js 프로젝트 루트 (코드 구현 예정)
 │   └── Doc/
-├── 박지혜/                   FastAPI 프로젝트 루트 (코드 구현 예정)
+├── jihye/                   FastAPI 프로젝트 루트 (코드 구현 예정)
 │   ├── Doc/
 │   ├── migrations/
 │   └── deploy/
-├── 임다혁/
+├── dahyeok/
 │   ├── Doc/
 │   └── workflows/            oke-support.json 구현 예정
-├── 신유빈/
+├── yubin/
 │   ├── Doc/
 │   └── workflows/            oke-index.json · oke-search.json 구현 예정
-└── 이원민/
+└── wonmin/
     ├── Doc/
     ├── workflows/            oke-handoff.json · oke-errors.json 구현 예정
     ├── cases/
@@ -43,7 +43,7 @@ Aio-4pj-1team/
     └── runs/
 ```
 
-각 이름 폴더에는 README와 역할별 AGENTS 규칙이 있다. 지금은 개발 문서·안내·제출 양식 단계이며 실행 코드·패키지·워크플로우·시험 보고서는 없다.
+폴더 이름은 성을 뺀 이름의 영문 표기다. 각 이름 폴더에는 README와 역할별 AGENTS 규칙이 있다. 지금은 개발 문서·안내·제출 양식 단계이며 실행 코드·패키지·워크플로우·시험 보고서는 없다.
 P0에서 담당자가 실행 뼈대를 만들고 설치·실행 명령을 자기 README에 적는다. 개발 문서 초안도 담당자가 검토·구체화한다.
 
 ## 팀 공통 기준
@@ -63,4 +63,4 @@ P0에서 담당자가 실행 뼈대를 만들고 설치·실행 명령을 자기
 
 [워크플로우 설계서](docs/WORKFLOW-DESIGN.md), [RAG 설계서](docs/RAG-ARCHITECTURE.md), [실행 결과서](docs/EXECUTION-RESULT.md)는 강사 양식에서 준비한 작성 틀이다.
 주제·헌장·데일리 3장·n8n JSON·팀 시나리오·실제 시험 보고서도 필요하다.
-개인 폴더의 개발 원본을 기준으로 삼고, 제출 직전 [오현/제출 안내](오현/SUBMISSION.md)에 따라 루트 workflows·cases·requests·runs로 취합한다.
+개인 폴더의 개발 원본을 기준으로 삼고, 제출 직전 [hyun/제출 안내](hyun/SUBMISSION.md)에 따라 루트 workflows·cases·requests·runs로 취합한다.

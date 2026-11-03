@@ -4,12 +4,12 @@
 
 | 역할 | 주 담당 | 담당 범위 | 주 소유 경로 | 완료 기준 |
 | --- | --- | --- | --- | --- |
-| 기획·통합 | 오현 | 범위·계약 관리, PR 병합, 팀 VM 배포, 발표·문서 취합 | `오현/`, `README.md`, `docs/TOPIC.md`, `docs/TEAM-CHARTER.md`, `docs/daily/` | 기본 브랜치와 VM이 일치하고 배포 후 공통 시나리오 결과를 기록 |
-| 직원·관리자 화면 | 이수언 | 로그인, 질문, 답·근거, 내 문의, 관리자 티켓·알림 화면과 API 연결 | `이수언/` | 직원과 관리자가 FastAPI만 호출해 주요 흐름을 끝까지 시연 |
-| 업무 API·DB | 박지혜 | Pydantic 계약, 로그인·세션·권한, 계정 생성, 문의·티켓·알림·상태 저장, 중복 방지, 공통 실행 설정 | `박지혜/`, `박지혜/migrations/`, `박지혜/deploy/` | 화면·n8n API와 인증 API가 계약대로 응답하고 재시작 뒤 기록이 유지 |
-| 문의 처리 자동화 | 임다혁 | 웹훅 입력 검사, 분류, 보완 질문, 답변·검증, 자동 답변·이관 분기 | `임다혁/workflows/oke-support.json` | 공통 요청·응답 형식을 지키고 정상·정보 부족·근거 없음 경로가 동작 |
-| 지식 검색(RAG) | 신유빈 | 문서 청킹·임베딩·색인, 권한별 검색, 출처·점수 측정 | `신유빈/workflows/oke-index.json`, `신유빈/workflows/oke-search.json` | 규정 8종의 색인·재색인과 권한별 근거 검색을 실제 결과로 확인 |
-| 안정성·시험 | 이원민 | 티켓 연동, Error Workflow, 재시도·DLQ·알림·중복·보안 시험, 팀 시나리오와 결과 기록 | `이원민/workflows/oke-handoff.json`, `이원민/workflows/oke-errors.json`, `이원민/cases/`, `이원민/requests/`, `이원민/runs/` | 공통 14유형·팀 5개 이상, LLM 3회 반복과 실패 후 재시험 기록 |
+| 기획·통합 | 오현 | 범위·계약 관리, PR 병합, 팀 VM 배포, 발표·문서 취합 | `hyun/`, `README.md`, `docs/TOPIC.md`, `docs/TEAM-CHARTER.md`, `docs/daily/` | 기본 브랜치와 VM이 일치하고 배포 후 공통 시나리오 결과를 기록 |
+| 직원·관리자 화면 | 이수언 | 로그인, 질문, 답·근거, 내 문의, 관리자 티켓·알림 화면과 API 연결 | `sueon/` | 직원과 관리자가 FastAPI만 호출해 주요 흐름을 끝까지 시연 |
+| 업무 API·DB | 박지혜 | Pydantic 계약, 로그인·세션·권한, 계정 생성, 문의·티켓·알림·상태 저장, 중복 방지, 공통 실행 설정 | `jihye/`, `jihye/migrations/`, `jihye/deploy/` | 화면·n8n API와 인증 API가 계약대로 응답하고 재시작 뒤 기록이 유지 |
+| 문의 처리 자동화 | 임다혁 | 웹훅 입력 검사, 분류, 보완 질문, 답변·검증, 자동 답변·이관 분기 | `dahyeok/workflows/oke-support.json` | 공통 요청·응답 형식을 지키고 정상·정보 부족·근거 없음 경로가 동작 |
+| 지식 검색(RAG) | 신유빈 | 문서 청킹·임베딩·색인, 권한별 검색, 출처·점수 측정 | `yubin/workflows/oke-index.json`, `yubin/workflows/oke-search.json` | 규정 8종의 색인·재색인과 권한별 근거 검색을 실제 결과로 확인 |
+| 안정성·시험 | 이원민 | 티켓 연동, Error Workflow, 재시도·DLQ·알림·중복·보안 시험, 팀 시나리오와 결과 기록 | `wonmin/workflows/oke-handoff.json`, `wonmin/workflows/oke-errors.json`, `wonmin/cases/`, `wonmin/requests/`, `wonmin/runs/` | 공통 14유형·팀 5개 이상, LLM 3회 반복과 실패 후 재시험 기록 |
 
 ## 역할 사이의 연결
 
@@ -30,6 +30,6 @@
 
 ## 역할별 개발 문서
 
-화면은 `이수언/Doc/`, 백엔드는 `박지혜/Doc/`, 문의·RAG·안정성은 `임다혁/Doc/`·`신유빈/Doc/`·`이원민/Doc/`의 세 문서를 직접 검토·작성한다. [개발 순서](DEVELOPMENT-FLOW.md)의 문서 링크와 단계별 연결 기준을 따른다.
+화면은 `sueon/Doc/`, 백엔드는 `jihye/Doc/`, 문의·RAG·안정성은 `dahyeok/Doc/`·`yubin/Doc/`·`wonmin/Doc/`의 세 문서를 직접 검토·작성한다. [개발 순서](DEVELOPMENT-FLOW.md)의 문서 링크와 단계별 연결 기준을 따른다.
 
 `oke-search`와 `oke-handoff`를 추가로 분리해 한 JSON의 공동 수정을 줄인다. 구체적인 내부 코드 경로는 담당자가 IMP-PLAN에 적는다. 배포 설정 작성은 백엔드 담당, 실제 팀 VM 배포는 리드가 맡는다.

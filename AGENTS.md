@@ -11,19 +11,19 @@
 
 ## 구현 경계
 
-- `이수언/`는 FastAPI만 호출한다. 브라우저에서 DB, n8n 내부 주소, API 키에 직접 접근하지 않는다.
-- `박지혜/`는 로그인 세션으로 직원을 확인하고 Pydantic으로 입력·출력을 검증한다. 공개 회원가입을 만들지 않는다.
-- `임다혁/workflows/oke-support.json`은 공통 웹훅의 요청·응답 필드와 route 값을 유지한다. 시험용 문의 처리 본체를 복제하지 않는다.
-- `신유빈/workflows/oke-index.json`은 규정의 청킹·임베딩·색인과 재색인을 담당한다. 문서 권한은 검색 전에 적용한다.
-- `신유빈/workflows/oke-search.json`은 RAG 담당이 소유한다. 본체 담당은 이 파일을 복제하지 않고 합의한 검색 계약으로 호출한다.
-- `이원민/workflows/oke-handoff.json`은 안정성 담당이 소유하며 티켓·알림·DLQ를 처리한다. 백엔드의 저장 API와 계약을 맞춘다.
-- `이원민/workflows/oke-errors.json`은 Error Trigger 기반 마지막 오류 경로다. 예상 가능한 오류는 본체에서도 처리한다.
+- `sueon/`는 FastAPI만 호출한다. 브라우저에서 DB, n8n 내부 주소, API 키에 직접 접근하지 않는다.
+- `jihye/`는 로그인 세션으로 직원을 확인하고 Pydantic으로 입력·출력을 검증한다. 공개 회원가입을 만들지 않는다.
+- `dahyeok/workflows/oke-support.json`은 공통 웹훅의 요청·응답 필드와 route 값을 유지한다. 시험용 문의 처리 본체를 복제하지 않는다.
+- `yubin/workflows/oke-index.json`은 규정의 청킹·임베딩·색인과 재색인을 담당한다. 문서 권한은 검색 전에 적용한다.
+- `yubin/workflows/oke-search.json`은 RAG 담당이 소유한다. 본체 담당은 이 파일을 복제하지 않고 합의한 검색 계약으로 호출한다.
+- `wonmin/workflows/oke-handoff.json`은 안정성 담당이 소유하며 티켓·알림·DLQ를 처리한다. 백엔드의 저장 API와 계약을 맞춘다.
+- `wonmin/workflows/oke-errors.json`은 Error Trigger 기반 마지막 오류 경로다. 예상 가능한 오류는 본체에서도 처리한다.
 - 같은 워크플로우 JSON을 여러 사람이 동시에 수정하지 않는다.
 
 ## 보안과 데이터
 
 - 키, 토큰, 비밀번호, 실제 연락처를 코드·JSON·문서·캡처·실행 보고서에 쓰지 않는다. `.env.example`에는 이름만 둔다.
-- 테스트를 통과시키려고 `이원민/cases/common.json`의 기대값을 바꾸지 않는다.
+- 테스트를 통과시키려고 `wonmin/cases/common.json`의 기대값을 바꾸지 않는다.
 - 같은 `request_id`의 티켓은 한 건만 생성한다. 직원은 자기 문의만, IT팀 관리자는 관리자 기능만 사용한다.
 - 제공된 직원 6명·규정 8종·FAQ 6종·기존 티켓 4건의 의미를 임의로 바꾸지 않는다.
 

@@ -37,8 +37,8 @@ FK 컬럼에는 필요한 조회 인덱스를 둔다. 아래 표는 논리 구�
 | app.sessions | id PK, user_id FK, token_hash, expires_at, revoked_at | token_hash UNIQUE. 쿠키 토큰 원문 DB 저장 금지 |
 | app.inquiries | id PK, request_id, requester_id FK→employees, question, attempt, context, result JSONB, status, created_at | request_id UNIQUE. 사용자별 소유권 검사 후 조회/재시도. attempt>=1, question 1~500자 |
 | app.tickets | id PK, ticket_id, request_key, inquiry_id FK nullable, requester_id FK, title, category, priority, status, assignee_id FK nullable, reply, created_at, updated_at | request_key UNIQUE·ticket_id UNIQUE. 일반 웹 요청은 inquiry 연결, 교사 직접 웹훅 시험은 inquiry 없이 생성 가능 |
-| app.alerts | id PK, ticket_id FK nullable, workflow, node, message, severity, created_at | 티켓 생성 실패도 기록 가능. 민감정보를 가린 message 저장 |
-| app.dlq | id PK, request_id, reason, safe_payload JSONB, status, created_at | 실패 재처리 대기. 비밀값·개인정보를 제거한 입력만 저장 |
+| app.alerts | id PK, ticket_id FK nullable, event_key nullable UNIQUE, workflow, node, message, severity, created_at | 티켓 생성 실패도 기록 가능. 선택 event_key로 중복 알림 억제. 민감정보를 가린 message 저장 |
+| app.dlq | id PK, request_id nullable, execution_ref nullable, workflow, node, reason, safe_payload JSONB, status, created_at | 실패 재처리 대기. 비밀값·개인정보를 제거한 입력만 저장 |
 
 웹 티켓의 내부 status는 open/in_progress/resolved, 화면 표시는 접수/처리 중/완료로 매핑한다.
 기존 data-api 티켓의 처리 완료·접수됨·반려 등 상태는 원본을 유지한다. 두 데이터의 상태 집합을 같다고 가정하지 않는다.
@@ -62,6 +62,7 @@ priority는 API에서 normal/high로 시작하고 화면 보통/긴급으로 표
 자동 답변 점수 기준은 측정 뒤 확정한다. 설정 파일에 값을 분리하고 측정 전에는 검증 실패·근거 없음에서 이관한다.
 
 유빈님은 문서→청크→임베딩→저장·검색을 구현하고 지혜님은 확장·스키마·마이그레이션·접속 권한을 구현한다.
+문서 권한(`access_level`)은 `/docs` 응답이 제공하는 권한 메타데이터를 우선 사용하며, 메타데이터가 없는 경우 일반 사내 규정 8종은 `all`, IT/관리자 전용 운영 문서는 `it`로 매핑하고 미확인 문서는 색인을 거절한다. 재색인은 문서 단위 트랜잭션으로 교체하며 권한 축소(`all`→`it`) 또는 삭제 문서는 이전 공개 청크를 남기지 않는다.
 이 표를 적용하는 데 사전 재협의는 필요 없다. 표를 바꾸려 할 때만 C06 상대와 변경 요청한다.
 확장 활성화·named volume·재색인·새 환경 생성·DB 재시작 유지의 실제 확인은 아직 수행하지 않았다.
 

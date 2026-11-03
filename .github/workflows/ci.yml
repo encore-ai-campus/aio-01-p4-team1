@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  baseline-and-json-check:
+    name: Baseline & JSON Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify required baseline files exist
+        run: |
+          for f in README.md AGENTS.md CLAUDE.md .env.example docs/API-CONTRACT.md docs/DATA-AND-DB.md; do
+            if [ ! -f "$f" ]; then
+              echo "Missing required file: $f"
+              exit 1
+            fi
+          done
+
+      - name: Ensure no .env file is tracked
+        run: |
+          if git ls-files --error-unmatch .env >/dev/null 2>&1; then
+            echo ".env must not be tracked in git!"
+            exit 1
+          fi
+
+      - name: Validate workflow and test JSON files (if present)
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          root = pathlib.Path("develop")
+          json_files = list(root.glob("*/workflows/*.json")) + list(root.glob("*/cases/*.json"))
+          for path in json_files:
+              try:
+                  with path.open("r", encoding="utf-8") as fh:
+                      json.load(fh)
+                  print(f"[OK] {path}")
+              except Exception as exc:
+                  print(f"[FAIL] {path}: {exc}", file=sys.stderr)
+                  sys.exit(1)
+          print(f"Validated {len(json_files)} JSON file(s).")
+          PY
+
+  backend-check:
+    name: Backend Check (FastAPI)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: hashFiles('develop/jihye/**/*.py') != ''
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile Python files
+        if: hashFiles('develop/jihye/**/*.py', 'develop/*/**/*.py') != ''
+        run: |
+          python3 -m compileall -q develop/
+
+  frontend-check:
+    name: Frontend Check (Next.js)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: hashFiles('develop/sueon/package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install and build frontend
+        if: hashFiles('develop/sueon/package.json') != ''
+        working-directory: develop/sueon
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+          npm run build --if-present

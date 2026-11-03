@@ -26,18 +26,20 @@ request_id는 한 논리 요청의 재시도에 재사용하며 새 보완 답�
 
 | API | 요청 | 응답 | 권한 |
 | --- | --- | --- | --- |
-| `POST /api/auth/login` | `login_id`, `password` | 계정 요약·첫 비밀번호 변경 필요 여부 + 세션 쿠키 | 공개 |
-| `POST /api/auth/logout` | 세션 쿠키 | 로그아웃 확인 | 로그인 |
-| `GET /api/auth/me` | 세션 쿠키 | `id`, `name`, `dept`, `role` | 로그인 |
-| `POST /api/auth/change-password` | 현재·새 비밀번호 | 변경 확인 | 로그인 |
+| `POST /api/auth/login` | `login_id`, `password` | `{user:{id,name,dept,role,must_change_password}}` + `oke_session` 쿠키 | 공개 |
+| `POST /api/auth/logout` | 세션 쿠키 | `{ok:true}` | 로그인 |
+| `GET /api/auth/me` | 세션 쿠키 | `{id,name,dept,role,must_change_password}` | 로그인 |
+| `POST /api/auth/change-password` | `current_password`, `new_password` | `{ok:true,must_change_password:false}` | 로그인 |
 | `POST /api/ask` | `question`, 선택 `request_id`, `attempt`, `context` | 공통 웹훅 응답 전체 | 로그인 |
-| `GET /api/my-requests` | 세션 쿠키 | 본인의 문의·답변·티켓 상태 목록 | 로그인 |
-| `GET /api/admin/tickets` | 세션 쿠키 | 이관 티켓·긴급도·담당자·상태 목록 | IT팀 관리자 |
-| `PATCH /api/admin/tickets/{id}` | `status`, 선택 `assignee`, `reply` | 변경된 티켓 | IT팀 관리자 |
-| `POST /api/admin/users` | 제공 직원의 식별값, 로그인 ID, 임시 비밀번호 | 생성된 계정 요약 | IT팀 관리자 |
-| `PATCH /api/admin/users/{id}` | `is_active` | 변경된 계정 요약 | IT팀 관리자 |
-| `POST /api/admin/users/{id}/reset-password` | `temporary_password` | `ok`, 변경 필요 여부 | IT팀 관리자 |
-| `GET /api/admin/alerts` | 세션 쿠키 | 알림 목록 | IT팀 관리자 |
+| `GET /api/my-requests` | 세션 쿠키 | `{items:[...]}` (본인의 문의·답변·티켓 상태 목록) | 로그인 |
+| `GET /api/admin/tickets` | 세션 쿠키 | `{items:[...]}` (이관 티켓·긴급도·담당자·상태 목록) | IT팀 관리자 |
+| `PATCH /api/admin/tickets/{id}` | `status`, 선택 `assignee`, `reply` | 변경된 티켓 객체 (`{id}`는 내부 PK, 화면 표시용은 `ticket_id`) | IT팀 관리자 |
+| `GET /api/admin/employees` | 세션 쿠키 | `{items:[{id,name,dept,user_id}]}` (제공 6명 및 발급 연결 상태) | IT팀 관리자 |
+| `GET /api/admin/users` | 세션 쿠키 | `{items:[{id,employee_id,login_id,name,dept,role,is_active,must_change_password}]}` | IT팀 관리자 |
+| `POST /api/admin/users` | `employee_id`, `login_id`, `temporary_password` | 생성된 계정 요약 (HTTP 201) | IT팀 관리자 |
+| `PATCH /api/admin/users/{id}` | `is_active` | 변경된 계정 요약 (본인·마지막 활성 관리자 비활성화 거절) | IT팀 관리자 |
+| `POST /api/admin/users/{id}/reset-password` | `temporary_password` | `{ok:true,must_change_password:true}` | IT팀 관리자 |
+| `GET /api/admin/alerts` | 세션 쿠키 | `{items:[{id,ticket_id,workflow,node,message,severity,created_at}]}` | IT팀 관리자 |
 
 `POST /api/ask`에서 `request_id`가 없으면 FastAPI가 생성하고 로그인한 `user`를 넣어 n8n에 보낸다. 동일 요청 재시도에는 앞서 받은 `request_id`를 다시 보낸다. 첫 관리자 계정은 환경변수로 최초 1회 생성하고, 관리자가 나머지 계정을 발급한다. 공개 회원가입은 없다.
 
@@ -80,7 +82,8 @@ Error Workflow는 예상 밖 실행 실패를 별도로 처리한다.
 | API | 요청 핵심 값 | 응답 핵심 값 | 저장 |
 | --- | --- | --- | --- |
 | `POST /tickets` | `key`(=`request_id`), `title`, `requester`, `category`, `priority` | `ticket_id`, `duplicate` | PostgreSQL 티켓 |
-| `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id` | `stored`, `count` | PostgreSQL 알림 |
+| `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id`, `event_key` | `stored`, `count` | PostgreSQL 알림 |
+| `POST /dlq` | `request_id`(nullable), `workflow`, `node`, `reason`, `safe_payload`, 선택 `execution_ref` | `stored`, `count` | PostgreSQL DLQ |
 
 중복 `key`는 새 티켓을 만들지 않고 기존 티켓을 반환한다. n8n 내부 호출은 별도 인증을 적용한다. 수업 data-api의 직원·기존 티켓·규정 조회는 제공된 계약을 사용한다.
 
@@ -107,8 +110,8 @@ Compose 파일 위치: develop/jihye/deploy/compose.yaml.
 공개 웹 포트 기본 3000, 로컬 개발 backend 8000·n8n 5678·data-api 8800. postgres는 내부5432, 외부 공개를 기본으로 하지 않는다.
 PostgreSQL은 pgvector를 포함한 이미지, named volume과 healthcheck를 사용한다. 이미지 실제 버전·digest는 지혜님이 설치 검증 뒤 고정한다.
 Compose build context는 backend=.., frontend=../../sueon.
-공통 환경변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD다.
-SERVICE_MODE는 practice 또는 app이며 DB/관측 모드가 혼동되지 않게 README에 기록한다.
+공통 환경변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD, BACKEND_ORIGIN이다.
+SERVICE_MODE는 practice 또는 app이며 DB/관측 모드가 혼동되지 않게 README에 기록한다. BACKEND_ORIGIN은 프런트 서버 프록시가 호출할 백엔드 주소(로컬 http://127.0.0.1:8000, Compose http://backend:8000)이며 브라우저 공개 변수로 노출하지 않는다.
 실제 환경값은 Git에 넣지 않는다. 기존 수업 n8n/data-api를 재사용하면 동일 네트워크 연결과 충돌 포트를 지혜님이 조정해 기록한다.
 전체 배포·VM 환경 반영은 오현님 담당이다.
 
@@ -118,11 +121,14 @@ SERVICE_MODE는 practice 또는 app이며 DB/관측 모드가 혼동되지 않�
 | --- | --- |
 | 잘못된 입력 | HTTP 400, 필드별 오류 코드 |
 | 로그인하지 않음·로그인 실패 | HTTP 401 |
-| 다른 직원의 문의·관리자 API 접근 | HTTP 403, 데이터 노출 없음 |
-| 없는 티켓 | HTTP 404 |
-| n8n 시간 초과·장애 | 화면에 정해진 안내, 서버에는 개인정보를 가린 오류 기록 |
+| 다른 직원의 문의·관리자 API 접근·첫 비밀번호 미변경(`password_change_required`) | HTTP 403, 데이터 노출 없음 |
+| 없는 티켓·계정 | HTTP 404 |
+| 중복 계정·동일 키 본문 충돌·마지막 관리자/본인 비활성화 거절 | HTTP 409 (또는 400 `error.code` 병행 안내) |
+| n8n 시간 초과(`504`)·연결 장애(`503`) | 화면에 정해진 안내, 서버에는 개인정보를 가린 오류 기록 |
 
-세션은 브라우저 스크립트가 읽지 못하는 쿠키로 관리한다. 새 정책이 기준에 빠져 있으면 백엔드 담당이 기존 password-policy와 호환되는 안을 오현님에게 제안한다. 전체 구현 시작을 막는 반복 협의로 취급하지 않는다.
+세션은 브라우저 스크립트가 읽지 못하는 `oke_session` 쿠키(`HttpOnly`, `SameSite=Lax`, `Path=/`, 기본 8시간)로 관리한다. `must_change_password=true`인 동안에는 `/api/auth/me`, `/api/auth/change-password`, `/api/auth/logout`만 허용하고 나머지 보호 API는 403 `password_change_required`를 반환한다. 비밀번호 변경·초기화·비활성화 시 기존 세션을 폐기한다.
+비밀번호 필수 검증 범위(P0/P1)는 서버 기준 최소 12자, 영문 대/소문자·숫자·특수문자 중 3종 이상 조합, 본인 이름/로그인 ID 포함 금지로 고정한다(이력 테이블·잠금·외부 OTP는 P2 선택 범위로 분리).
+초기 호출 시간 예산(실측 전 기본값)은 브라우저→FastAPI 35초(자동 재전송 금지), FastAPI→`oke-support` 연결 3초·전체 30초(자동 재시도 0회), `oke-support`→조회 2초·`oke-search` 4초·`oke-handoff` 5초(내부 티켓 저장 최대 2회·각 1초, 알림/DLQ 각 1회·0.6초)로 시작하고 실측 후 조정한다.
 
 기준대로 구현하고 상대 서비스가 없으면 같은 계약의 Mock을 사용한다. 실제 연결은 제공자 준비 뒤 확인한다.
 변경이 필요하면 자기 HANDOFF에 변경안·이유·영향·기존/새 입출력을 적고 지정 상대 검토 후 오현님이 공통 기준을 갱신한다.

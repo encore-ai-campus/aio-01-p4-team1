@@ -12,17 +12,17 @@
 | C08 | 원민님 및 해당 기능 담당 | 실패 재현·판정·재시험 근거 검토 |
 | C09 | 전원 | 역할별 PR·배포·제출 취합 |
 
-## 이번 문서 정비의 검토 순서
+## 이번 문서 정비의 검토 순서 및 공통 기준 반영 (2026-11-03)
 
-2026-11-03 기준, 개인 문서의 구현 계획과 제안을 정리하고 있다. 아래는 검토 순서이며 정책 채택·실행 완료 기록이 아니다.
+2026-11-03 기준, 각 역할의 HANDOFF 제안을 검토하여 P0/P1 구현 블로커가 없도록 루트 공통 문서(`docs/API-CONTRACT.md`, `docs/DATA-AND-DB.md`, `.env.example`, `CLAUDE.md`, `.github/`)에 아래와 같이 기본 결정을 반영했다. (실제 서비스 기동·연동 시험은 아직 미실행이다.)
 
-| 순서 | 검토할 내용 | 먼저 볼 개인 기록 | 다음 작업 |
+| 순서 | 검토할 내용 | 먼저 볼 개인 기록 | 공통 문서 반영 결과 |
 | --- | --- | --- | --- |
-| 1 | 관리자 직원/계정 조회·목록 필드·HTTP 오류 | [수언님](../../sueon/Doc/HANDOFF.md), [지혜님](../../jihye/Doc/HANDOFF.md) | C01 상세 계약에 누락된 경로·JSON을 일관되게 반영 |
-| 2 | 첫 로그인 변경·세션 폐기·관리자 보호 | 위 두 담당 | 규정 문서의 안내와 앱이 실제 강제할 기능을 구별해 명시 |
-| 3 | 티켓·알림·DLQ의 멱등성과 부분 실패 | [원민님](../../wonmin/Doc/HANDOFF.md), 지혜님·[다혁님](../../dahyeok/Doc/HANDOFF.md) | C04/C05 응답·저장 제약·관측 경로를 함께 검토 |
-| 4 | 부모/하위 워크플로우·웹 요청의 시간 예산 | 위 세 담당과 수언님 | 중첩 호출의 상한·재시도·결과 미확정 표시를 맞춤 |
-| 5 | 검색 권한·무근거·문서 변경/삭제·재색인 | [유빈님](../../yubeen/Doc/HANDOFF.md), 다혁님·지혜님 | C03/C06와 DB·RAG 문서가 같은 의미를 갖게 반영 |
+| 1 | 관리자 직원/계정 조회·목록 필드·HTTP 오류 | [수언님](../../sueon/Doc/HANDOFF.md), [지혜님](../../jihye/Doc/HANDOFF.md) | `API-CONTRACT.md` §2·§8에 `GET /api/admin/employees`, `GET /api/admin/users`, 요청/응답 키(`current_password`/`new_password`, `employee_id`/`login_id`/`temporary_password`, `must_change_password`), 400/403/404/409 상태 반영 |
+| 2 | 첫 로그인 변경·세션 폐기·관리자 보호 | 위 두 담당 | `API-CONTRACT.md` §8에 `oke_session` 쿠키(8시간), 미변경 시 403 `password_change_required`, 변경/초기화/비활성화 시 세션 폐기, 최소 12자·3종 조합 필수(이력/잠금/OTP는 P2 분리), 본인·최후 관리자 비활성화 차단 반영 |
+| 3 | 티켓·알림·DLQ의 멱등성과 부분 실패 | [원민님](../../wonmin/Doc/HANDOFF.md), 지혜님·[다혁님](../../dahyeok/Doc/HANDOFF.md) | `API-CONTRACT.md` §5 및 `DATA-AND-DB.md` §3에 `POST /dlq` 추가, `/alerts` 선택 `event_key` 중복 억제, 알림 단독 실패 시 `ok=true`·`reason=alerts_down`, 재시도 시 `duplicate=true` 유지 |
+| 4 | 부모/하위 워크플로우·웹 요청의 시간 예산 | 위 세 담당과 수언님 | `API-CONTRACT.md` §7·§8 및 `.env.example`에 `BACKEND_ORIGIN` 추가, 초기 시간 예산(웹 35s → FastAPI 30s → 조회 2s / `oke-search` 4s / `oke-handoff` 5s, 자동 재시도 중첩 금지) 반영 |
+| 5 | 검색 권한·무근거·문서 변경/삭제·재색인 | [유빈님](../../yubeen/Doc/HANDOFF.md), 다혁님·지혜님 | `DATA-AND-DB.md` §4에 `/docs` 권한 메타데이터 우선 및 기본 `all`/`it` 매핑, 문서 단위 트랜잭션 재색인·권한 축소 시 구버전 미노출 원칙 반영 |
 
 각 제안의 세부 JSON은 원본 HANDOFF에서 관리한다. 여기에는 채택/수정/보류의 이유와 실제 반영 위치만 적어 중복을 줄인다.
 위 검토 중에도 기존 기준의 Mock·정상 흐름·파일 골격 작업은 계속할 수 있다.

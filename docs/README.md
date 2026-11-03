@@ -13,5 +13,5 @@
 - [RAG 설계서](RAG-ARCHITECTURE.md)
 - [실행 결과서](EXECUTION-RESULT.md)
 
-역할별 개발 문서는 frontend/Doc, backend/Doc, workflows/Doc/support·rag·reliability에 있다.
+역할별 개발 문서는 오현·이수언·박지혜·임다혁·신유빈·이원민 이름 폴더의 Doc/에 있다.
 daily는 당일 기록, images는 실제 제출 캡처다. 결과 보관 폴더에는 개발 문서 세 개를 반복 생성하지 않는다.

@@ -6,11 +6,11 @@
 
 | 역할 | 자기 말로 요구 정리 | 확인 가능한 요구 | 단계·파일·확인 방법 |
 | --- | --- | --- | --- |
-| 화면 · 이수언 | [TODO](../frontend/Doc/TODO.md) | [SPEC](../frontend/Doc/SPEC.md) | [IMP-PLAN](../frontend/Doc/IMP-PLAN.md) |
-| 업무 API·DB·실행 환경 · 박지혜 | [TODO](../backend/Doc/TODO.md) | [SPEC](../backend/Doc/SPEC.md) | [IMP-PLAN](../backend/Doc/IMP-PLAN.md) |
-| 문의 처리 · 임다혁 | [TODO](../workflows/Doc/support/TODO.md) | [SPEC](../workflows/Doc/support/SPEC.md) | [IMP-PLAN](../workflows/Doc/support/IMP-PLAN.md) |
-| RAG · 신유빈 | [TODO](../workflows/Doc/rag/TODO.md) | [SPEC](../workflows/Doc/rag/SPEC.md) | [IMP-PLAN](../workflows/Doc/rag/IMP-PLAN.md) |
-| 안정성·시험 · 이원민 | [TODO](../workflows/Doc/reliability/TODO.md) | [SPEC](../workflows/Doc/reliability/SPEC.md) | [IMP-PLAN](../workflows/Doc/reliability/IMP-PLAN.md) |
+| 화면 · 이수언 | [TODO](../이수언/Doc/TODO.md) | [SPEC](../이수언/Doc/SPEC.md) | [IMP-PLAN](../이수언/Doc/IMP-PLAN.md) |
+| 업무 API·DB·실행 환경 · 박지혜 | [TODO](../박지혜/Doc/TODO.md) | [SPEC](../박지혜/Doc/SPEC.md) | [IMP-PLAN](../박지혜/Doc/IMP-PLAN.md) |
+| 문의 처리 · 임다혁 | [TODO](../임다혁/Doc/TODO.md) | [SPEC](../임다혁/Doc/SPEC.md) | [IMP-PLAN](../임다혁/Doc/IMP-PLAN.md) |
+| RAG · 신유빈 | [TODO](../신유빈/Doc/TODO.md) | [SPEC](../신유빈/Doc/SPEC.md) | [IMP-PLAN](../신유빈/Doc/IMP-PLAN.md) |
+| 안정성·시험 · 이원민 | [TODO](../이원민/Doc/TODO.md) | [SPEC](../이원민/Doc/SPEC.md) | [IMP-PLAN](../이원민/Doc/IMP-PLAN.md) |
 
 각 담당자가 작성하고 이해할 문서다. 팀장이 모든 세부 설계를 대신 확정하지 않는다. 이번 TODO에는 지금까지의 합의 내용을 참고 초안으로 넣었으므로, 담당자가 자기 말로 고치고 빠진 요구·필수·나중을 표시한다.
 
@@ -60,15 +60,15 @@ FastAPI 저장·권한 시험을 공통 워크플로우 시험만으로 대체�
 
 | 파일·경로 | 주 담당 역할 | 맞춰야 할 상대 |
 | --- | --- | --- |
-| frontend/ | 화면 | 백엔드: 웹 API·오류·쿠키·화면 상태 |
-| backend/ · deploy/ | 업무 API·DB | 화면·안정성: 계정·문의·티켓·알림, 리드: 실행·배포 |
-| workflows/oke-support.json | 문의 처리 | RAG: search, 안정성: handoff |
-| workflows/oke-index.json · oke-search.json | RAG | 문의 처리: 검색 요청·근거 목록·오류 |
-| workflows/oke-handoff.json · oke-errors.json | 안정성·시험 | 백엔드: 티켓·알림, 문의 처리: 이관·실패 결과 |
-| cases/ · requests/ · runs/ | 안정성·시험 | 전 역할: 실제 기대 결과·실행 근거 |
+| 이수언/ | 화면 | 백엔드: 웹 API·오류·쿠키·화면 상태 |
+| 박지혜/ · 박지혜/deploy/ | 업무 API·DB | 화면·안정성: 계정·문의·티켓·알림, 리드: 실행·배포 |
+| 임다혁/workflows/oke-support.json | 문의 처리 | RAG: search, 안정성: handoff |
+| 신유빈/workflows/oke-index.json · oke-search.json | RAG | 문의 처리: 검색 요청·근거 목록·오류 |
+| 이원민/workflows/oke-handoff.json · oke-errors.json | 안정성·시험 | 백엔드: 티켓·알림, 문의 처리: 이관·실패 결과 |
+| 이원민/cases/ · 이원민/requests/ · 이원민/runs/ | 안정성·시험 | 전 역할: 실제 기대 결과·실행 근거 |
 | docs/ 공통 문서·기본 브랜치·VM 배포 | 리드 관리 | 각 역할은 자기 실제 설계·측정·실패 원인을 제공 |
 
-워크플로우 JSON 다섯 개는 구현 후 생길 결과물이다. 현재는 안내 문서만 있다.
+워크플로우 JSON 다섯 개는 개인 이름 폴더/workflows/에서 구현 후 생길 결과물이다. 현재는 안내 문서만 있다.
 개별 코드 파일 경로는 각 담당자가 계획에 쓰고 겹치면 구현 전에 조정한다.
 
 공통 API는 [API-CONTRACT](API-CONTRACT.md) 한 곳에서 관리한다. 각 SPEC에는 해당 절과 요구 ID를 참조한다.

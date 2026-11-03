@@ -7,11 +7,11 @@
 | 이름 | 주 역할 | 담당 범위·소유 경로 |
 | --- | --- | --- |
 | 오현 | 팀장·통합 | 공통 계약·병합·팀 VM 준비·배포·발표 취합 |
-| 이수언 | 프론트엔드 | frontend/ · frontend/Doc/ |
-| 박지혜 | 백엔드·DB | backend/ · deploy/ · backend/Doc/ |
-| 임다혁 | 문의 처리 자동화 | oke-support.json · workflows/Doc/support/ |
-| 신유빈 | RAG·지식 검색 | oke-index.json · oke-search.json · workflows/Doc/rag/ |
-| 이원민 | 안정성·시험 | oke-handoff.json · oke-errors.json · cases/ · requests/ · runs/ |
+| 이수언 | 프론트엔드 | 이수언/ · 이수언/Doc/ |
+| 박지혜 | 백엔드·DB | 박지혜/ · 박지혜/deploy/ · 박지혜/Doc/ |
+| 임다혁 | 문의 처리 자동화 | oke-support.json · 임다혁/Doc/ |
+| 신유빈 | RAG·지식 검색 | oke-index.json · oke-search.json · 신유빈/Doc/ |
+| 이원민 | 안정성·시험 | oke-handoff.json · oke-errors.json · 이원민/cases/ · 이원민/requests/ · 이원민/runs/ |
 
 ## 목표와 범위
 
@@ -47,6 +47,6 @@
 | 2026-11-03 | 기존 대화와 강사 양식에 맞춰 초안 준비 | 팀 검토 전 |
 | 2026-11-03 | 팀장 지시로 6명 주 담당 배정 반영 | 주 담당 확정, 지원 담당 미정 |
 
-지원 담당은 아직 배정하지 않았다. 파일명은 workflows/ 아래 구현할 결과물을 뜻한다.
+지원 담당은 아직 배정하지 않았다. 워크플로우는 각자 이름 폴더/workflows/ 아래에 구현한다. 제출용 루트 경로는 오현/SUBMISSION.md에 따라 취합한다.
 
 원본: [팀 헌장 템플릿](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/templates/TEAM-CHARTER-TEMPLATE.md).

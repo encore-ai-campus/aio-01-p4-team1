@@ -1,32 +1,46 @@
-# 업무 API·DB·공통 실행 설정 · TODO
+# 지혜님 · TODO
 
-> 운영 기준: 팀장 배포 기본안으로 바로 구현한다. 이 문서의 기존 "합의·협의" 항목은 기준 적용 여부 확인이며, 기본안을 바꿀 때만 상대와 협의한다. 기준은 저장소 루트 docs/API-CONTRACT.md와 docs/DATA-AND-DB.md를 따른다.
-작업 기준: [내 작업·협의 안내](../README.md) · [내 협의 기록](HANDOFF.md). 공통 파일과 상대 폴더는 직접 고치지 않고 소유자에게 요청한다.
+[README](../README.md) → **TODO** → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md) 순서로 진행한다. 이 문서는 무엇을 왜 하는지 정한다. 구현·시험은 전부 미실행이며 체크는 실제 확인 후에만 한다.
 
-주 담당: **지혜님**. 지원 담당은 추가 배정.
+## 목적과 사용자
 
-> 상태: 팀 합의 내용을 옮긴 참고 초안. 담당자가 자기 말로 고치고 필수·나중을 구분한 뒤 SPEC을 작성한다. 체크는 구현 완료가 아니라 요구 이해·검토 완료 표시다.
+직원 6명은 관리자에게 계정을 받아 로그인하고 자기 문의·답변·티켓만 본다. IT팀 관리자 2명은 계정을 발급하고 티켓·알림을 처리한다. 브라우저가 보낸 이름·부서·역할을 신원으로 믿지 않는다. FastAPI가 세션을 확인하고 PostgreSQL에 새 기록을 저장하며 n8n이 판단한 공통 응답을 보존한다.
 
-## 먼저 이해할 일
+DB가 비어 있는 새 환경에서도 확장·스키마·직원·첫 관리자를 같은 순서로 준비할 수 있어야 한다. 서버·DB 재시작 뒤 업무 기록과 문서 벡터가 유지되어야 한다. 서비스 간 계약은 공통 기준을 적용하고, 상대가 준비되지 않은 동안에는 Mock으로 자기 기능을 개발한다.
 
-- [ ] 제공 직원 6명을 대상으로 관리자 발급 계정과 실제 로그인을 지원한다.
-- [ ] 세션으로 신원을 확인하고 본인·IT팀 권한을 서버에서 검사한다.
-- [ ] 질문을 공통 계약으로 변환해 n8n에 보내고 문의·티켓·알림을 PostgreSQL에 저장한다.
-- [ ] 새 환경의 DB 생성과 웹·서버·DB 실행을 재현할 수 있게 한다.
+## 필수 작업
 
-## 담당 경로 · 저장소 루트 기준
+| 우선 | 할 일과 이유 | SPEC | 계획 |
+| --- | --- | --- | --- |
+| P0 | FastAPI 파일 구조, 환경 검증, 입력/출력 모델·오류·OpenAPI로 소비자가 같은 모양을 사용하게 한다 | BE-02·05 | P0-1~2 |
+| P0 | PostgreSQL+pgvector·named volume·healthcheck와 Alembic 이력으로 새 DB 생성을 재현한다 | BE-05·06 | P0-3~5 |
+| P0 | 제공 직원 6명을 변경 없이 적재하고 환경변수로 첫 관리자만 1회 준비한다 | BE-01·05 | P0-6 |
+| P0 | backend 이미지·Compose와 모드/주소·프록시 인수 조건을 정리해 오현님이 배포할 수 있게 한다 | BE-05 | P0-7 |
+| P1 | 로그인·로그아웃·첫 변경·계정 발급/비활성화/초기화, 직원/관리자 권한을 서버에서 검사한다 | BE-01 | P1-1 |
+| P1 | 문의 선저장·소유권·재시도·동시 중복을 처리하고 동일 support에 연결한다 | BE-02·03 | P1-2 |
+| P1 | /tickets·/alerts 저장, 관리자 조회/수정, 티켓 한 건 보장과 실패 거래 경계를 확인한다 | BE-04 | P1-3 |
+| P1 | 실제 화면·handoff·RAG 연결 및 app/practice 분리, 재시작·재색인·VM 인계를 확인한다 | BE-03~07 | P1-4 |
 
-`develop/jihye/`, `develop/jihye/migrations/`, `develop/jihye/deploy/`의 실행 설정. 팀 VM의 실제 배포·환경값 등록은 리드가 관리한다.
+## 후순위
 
-## 담당자가 채울 것
+- 필수 동작·권한·시연이 끝난 뒤 목록 페이지 나누기, 운영 규모 백업 자동화, 성능 최적화를 검토한다.
+- 근사 벡터 검색은 초기 필수가 아니다. 3072차원 HNSW를 바로 추가하지 않고 타입/차원·검색 품질 변경을 C06으로 요청한다.
+- 텔레그램·SSO·외부 업무 서비스는 현재 필수 범위에 추가하지 않는다. 단, 기존 비밀번호 규정의 웹 적용 범위와 MFA는 임의 제외 확정하지 않고 JH-H02에서 검토를 요청한다.
 
-- 내가 이해한 목적·사용자: 작성 필요
-- 이번 일정에서 반드시 할 것 / 나중에 할 것: 작성 필요
-- 의문·필요한 자료·다른 역할의 도움이 필요한 것: 작성 필요
-- 요구 검토자·검토일: 미정
+## 작업 중 판단
 
-## 공통 자료
+DB/임베딩 모델/포트/기존 API는 선정할 일이 아니다. [공통 API](../../../docs/API-CONTRACT.md)와 [DB 기준](../../../docs/DATA-AND-DB.md)을 그대로 적용한다. 누락 정책은 [HANDOFF](HANDOFF.md)의 구체 제안으로 관리한다. 답변이 없다고 승인으로 보지 않으며, 미확정 정책에 의존하지 않는 골격·기본 스키마·모델·Mock 작업부터 계속한다.
 
-- [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [02-ENVIRONMENT-AND-SERVICES.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [04-REFERENCE-ARCHITECTURE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md)
+기존 문의 처리·색인·검색·이관 워크플로우를 이 폴더에 복제하지 않는다. 화면은 수언님, AI 흐름은 다혁님, RAG는 유빈님, 이관/공통 시험은 원민님, VM·공통 문서는 오현님 소유다. 본인 문서는 백엔드의 실제 확인 증거만 제공한다.
+
+## 완료 판단
+
+- [ ] SPEC의 정상·오류·권한·경계 사례를 실제 구현으로 확인했다.
+- [ ] 빈 DB→마이그레이션→직원→첫 관리자→로그인 순서를 재현했다.
+- [ ] 같은 키 동시 요청·다른 소유자 요청·재시작 후 기록 유지와 RAG 검색 전 권한 필터를 확인했다.
+- [ ] 실제 설치/실행 명령, 검증한 버전, 모드·대상 주소, Mock 여부와 실패/재시험 증거를 기록했다.
+- [ ] 정책 제안의 검토/공통 반영 상태와 남은 미실행을 구분해 오현님에게 전달했다.
+
+## 참고
+
+[주제](../../../docs/TOPIC.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md) · [환경 기준](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [공통 페이로드](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md).

@@ -1,6 +1,69 @@
-# PostgreSQL 스키마 변경
+# 지혜님 · 마이그레이션 작업 지시
 
-- **작성:** 계정·세션·문의·티켓·알림 테이블의 생성·변경 이력을 순서대로 기록한다.
-- **규칙:** 기본키·외래키·`request_id` 고유 제약을 DB에 둔다. 비밀번호 원문·실제 비밀값을 넣지 않는다. 스키마 변경은 API 모델과 함께 맞춘다.
-- **결과:** 새 환경에서 스키마 생성 후 API가 실행되고, 재시작 뒤 문의·티켓이 유지되어야 한다.
-- **참고:** [팀 API 계약](../../../docs/API-CONTRACT.md), [전체 아키텍처 수업자료](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/tree/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project).
+[IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 **구현 예정·미실행**이다. 실제 SQL/마이그레이션 파일은 이 문서 보완에서 생성하지 않는다.
+
+## 생성 순서
+
+| 순서 / 예정 파일 | 적용 작업 | 확인할 결과 |
+| --- | --- | --- |
+| 0: migrations/alembic.ini, env.py, script.py.mako; app/db/base.py·session.py·models/*.py | Alembic script_location을 migrations로 고정. models 메타데이터 import, include_schemas로 app/rag만 관리, URL은 DATABASE_URL에서 읽고 출력하지 않음 | 본인 폴더에서 history/heads가 단일 체인. 다른 스키마를 autogenerate 삭제 대상으로 포함하지 않음 |
+| 1: versions/0001_extensions_and_schemas.py | vector 확장, app/rag 스키마. 확장 권한은 마이그레이션 실행 계정으로만 수행 | pg_extension의 vector 버전, app/rag 존재, 빈 DB에서 시작 가능 |
+| 2: versions/0002_app_tables.py | employees→users→sessions, inquiries→tickets→alerts, dlq 순서 생성. 외부 ticket_id용 시퀀스를2001부터 별도 생성 | 표의 PK/FK·NULL·기본값·고유키/검사 제약을 카탈로그로 확인 |
+| 3: versions/0003_rag_tables.py | documents→chunks, vector(3072), source_hash/권한 메타데이터 | documents/chunks 분리, 차원3072, 3071차원 거절, 미정 access_level 거절 |
+| 4: versions/0004_indexes_and_grants.py | FK/조회 인덱스와 런타임 최소 권한 부여. UNIQUE/체크는 해당 테이블 생성 revision에 둠 | app 런타임·색인·검색 계정의 허용/거절을 실제 접속으로 검사. 근사 벡터 인덱스 없음 |
+| 5: app/services/bootstrap.py, app/cli.py | DDL과 별개로 직원6명 적재→첫 관리자1명 생성 | 재실행 무변경·원문 비밀번호/쿠키 DB 저장 없음 |
+
+revision 순서는 0001→0002→0003→0004 단일 head로 한다. autogenerate는 초안 생성 도구이며 extension·schema·vector 타입·시퀀스·grant·명명된 제약·서버 기본값을 수동 검토한다. 스키마 변경마다 새 revision을 만들고 이미 적용된 파일을 덮어쓰지 않는다. seed는 revision 안에서 data-api를 부르지 않는다.
+
+## 업무 테이블 적용표 · BE-01·03~05
+
+기본 PK는 모든 표에서 bigint identity, 시간은 timestamptz다. 아래는 공통 논리 구조를 DDL로 옮길 **물리 구현안**이다. 공통에 없는 외부 정책이나 비밀번호 이력 컬럼을 이 기본 revision에 섞지 않는다. FK는 별도 사유 없이 cascade 삭제하지 않고 보존한다. 사용자 비활성화는 삭제가 아니다.
+
+| 테이블 | NOT NULL / 기본값 | NULL 허용 | 관계·제약·인덱스 |
+| --- | --- | --- | --- |
+| app.employees | name text, dept text | 없음 | name UNIQUE. name/dept 원본을 유지 |
+| app.users | employee_id bigint, login_id text, password_hash text, role text, is_active bool=true, must_change_password bool=true, created_at=현재시각 | 없음 | employees FK, employee_id/login_id 각각 UNIQUE, role employee/admin CHECK. IT팀 검사는 서버에서 실시 |
+| app.sessions | user_id bigint, token_hash text, expires_at | revoked_at | users FK, token_hash UNIQUE, user_id·expires_at 인덱스. 토큰 원문 없음 |
+| app.inquiries | request_id text, requester_id bigint, question text, attempt integer=1, status text, created_at=현재시각 | context text, result JSONB | employees FK, request_id UNIQUE·길이1~64, question1~500·attempt>=1 CHECK, (requester_id,created_at) 인덱스. status의 초기/전이값은 H04 초안 |
+| app.tickets | ticket_id text, request_key text, requester_id bigint, title text, category text, priority text, status text=open, created_at/updated_at=현재시각 | inquiry_id bigint, assignee_id bigint, reply text | request_key/ticket_id 각각 UNIQUE, inquiry→inquiries·requester→employees·assignee→users FK. request_key1~64·priority normal/high·status open/in_progress/resolved CHECK. 관련FK·(status,created_at) 인덱스 |
+| app.alerts | workflow/node/message/severity text, created_at=현재시각 | ticket_id bigint | ticket_id→tickets.id FK. 외부 T-번호를 직접 bigint에 넣지 않음. FK·created_at 인덱스 |
+| app.dlq | request_id/reason/status text, safe_payload JSONB, created_at=현재시각 | 없음 | request_id 인덱스, 민감 입력 원문 없음. 반복 적재/재처리 API는 H06 검토 후 추가 revision 여부 결정 |
+
+공통 표에 nullable로 명시되지 않은 context/result/reply와 FK 대상 등의 물리 세부를 위처럼 계획한다. 외부 응답 id·assignee 의미는 H03 초안과 맞추며, 변경 검토로 달라지면 적용 전 매핑을 고친다. status 초안에 종속되지 않도록 inquiries.status·dlq.status에는 초기부터 미승인 enum을 CHECK로 고정하지 않는다.
+
+updated_at은 티켓 수정 거래에서 갱신한다. T-2001 번호는 별도 시퀀스와 UNIQUE로 보장하며 로우 수+2001 방식은 쓰지 않는다. 같은 request_key의 티켓 생성 경쟁은 제약 위반을 처리해 기존 소유자 확인 후 기존 티켓을 반환한다. 문의 없이 들어온 직접 웹훅은 inquiry_id=null로 저장할 수 있다.
+
+## RAG 적용표 · BE-06
+
+| 테이블 | NOT NULL / 기본값 | NULL 허용 | 제약·검증 |
+| --- | --- | --- | --- |
+| rag.documents | id bigint identity, doc_key/title/access_level/source_hash text, updated_at=현재시각 | source_url text | doc_key UNIQUE, access_level all/it CHECK. 권한값 누락·미정을 all로 바꾸지 않음 |
+| rag.chunks | id bigint identity, document_id bigint, chunk_no integer, section/content/content_hash text, embedding vector(3072), embedding_model text, metadata JSONB | 없음 | documents FK, (document_id,chunk_no) UNIQUE, FK 인덱스. 모델 text-embedding-3-large·차원 일치 검사 |
+
+metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/version 등을 보존한다. access_level의 권한 원본은 documents에서 join해 사용한다. content_hash/source_hash로 같은 원본 재색인을 식별한다. 유빈님은 한 문서의 새 청크 준비 후 거래로 교체하고 실패 시 기존 청크를 유지하도록 색인을 구현한다. 다른 모델 벡터와 섞지 않는다.
+
+처음에는 정확 cosine 조회와 score=1-distance, top_k=3을 사용한다. app에서 직원 조회 후 검증한 all 또는 all+it를 검색 대상 조건에 넣는다. 실제 SQL 쿼리는 유빈님 소유이며 여기서 복제하지 않는다. DB grants만으로 직원별 권한 필터가 완성되었다고 판단하지 않는다.
+
+## 접속 권한과 비밀값
+
+- 마이그레이션 계정은 확장/DDL·grant용이다. 웹 앱이나 n8n에 같은 권한을 주지 않는다.
+- 구현용 역할 이름은 `oke_app`(app 업무 DML·필요 시퀀스), `oke_rag_index`(rag 색인 DML), `oke_rag_search`(rag SELECT)로 계획한다. PUBLIC의 불필요한 쓰기/생성 권한을 회수하고 schema USAGE·향후 객체 기본 권한도 확인한다.
+- role 생성은 오현님이 제공하는 DB 관리 접속으로, 비밀번호는 비밀 입력으로 준비한다. 마이그레이션에는 비밀번호 리터럴을 쓰지 않는다. 역할이 없으면 grant 오류를 명확히 보고한다. 운영 URL은 각 프로세스의 DATABASE_URL 또는 n8n Credential에 넣고 문서/예제에는 이름만 둔다.
+- 검색 계정의 INSERT·DROP, 앱 계정의 rag DDL·확장 변경은 거절되어야 한다. 변경이 필요하면 C06 유빈님/C07 오현님에게 HANDOFF로 요청한다.
+
+## 구현 후 확인 순서 · 전부 미실행
+
+작업 디렉터리는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/jihye`다. DATABASE_URL은 **개별 빈 검증 DB**를 가리키게 하고 공유/운영 DB에 downgrade를 실행하지 않는다.
+
+1. `uv run alembic -c migrations/alembic.ini heads`와 `history`로 순서·단일 head를 확인한다.
+2. `uv run alembic -c migrations/alembic.ini upgrade head` 후 `current`로0004 head를 확인한다. 동일 upgrade 재실행에서 추가 DDL/데이터 변경이 없어야 한다.
+3. `uv run pytest tests/integration/test_migrations.py -q`로 카탈로그 타입·NULL·기본값·FK·UNIQUE·인덱스·vector 확장/차원·권한을 검사할 예정이다. 이 파일은 본인 DB 검사 전용으로 구현한다.
+4. `uv run pytest tests/integration/test_persistence.py tests/integration/test_pgvector.py -q`로 본인 문의/티켓·일반/IT 테스트 문서·차원 거절·정확 검색을 확인한다. 테스트용 가상 벡터 결과를 실제 임베딩 품질로 보고하지 않는다.
+5. named volume을 유지한 postgres 재시작 전후 revision/행 수/키/벡터 차원·조회 결과를 비교한다. DB 재시작과 재색인은 별도 확인이다. 기본 절차에 volume 삭제를 넣지 않는다.
+6. rollback 검증은 폐기 가능한 DB에서만 revision 한 단계씩 내렸다 올려 의존 순서를 확인한다. 공유 데이터가 있는 적용 후 rollback은 사전 백업·복원 또는 새 수정 revision으로 오현님이 판단한다. 다운그레이드가 데이터를 복구해 준다고 쓰지 않는다.
+
+## 전달 결과
+
+유빈님에게 head·테이블/열·모델/차원·role 권한·접속 방식(비밀값 제외)과 실제 검사 결과를 넘긴다. 원민님에게 중복 제약·티켓/알림 거래·DLQ 연결 미정 상태를, 오현님에게 새 환경 생성/재시작/백업·복구 확인 자료를 넘긴다. H02의 비밀번호 이력/잠금용 확장은 공통 반영 후 별도 revision으로 만든다.
+
+[팀 API](../../../docs/API-CONTRACT.md) · [아키텍처 참고](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/tree/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project).

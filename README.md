@@ -7,49 +7,51 @@
 
 ## 각자 여기서 시작하기
 
-저장소 전체를 clone하고 자기 이름 폴더로 이동한다. 각 README에서 TODO → SPEC → IMP-PLAN → 지정 단계 개발 → 직접 확인 → 커밋 순서로 진행한다.
+저장소 전체를 clone하고 develop/ 아래 자기 이름 폴더로 이동한다. [개발 폴더 안내](develop/README.md)를 따른다. 각 README에서 TODO → SPEC → IMP-PLAN → 지정 단계 개발 → 직접 확인 → 커밋 순서로 진행한다.
 
 | 담당자 | 역할 | 시작 문서 |
 | --- | --- | --- |
-| 오현 | 팀장·통합·PR·배포·제출 | [hyun/README](hyun/README.md) |
-| 이수언 | 프론트엔드 | [sueon/README](sueon/README.md) |
-| 박지혜 | 백엔드·DB·공통 실행 설정 | [jihye/README](jihye/README.md) |
-| 임다혁 | 문의 처리 자동화 | [dahyeok/README](dahyeok/README.md) |
-| 신유빈 | RAG·지식 검색 | [yubeen/README](yubeen/README.md) |
-| 이원민 | 안정성·이관·시험 | [wonmin/README](wonmin/README.md) |
+| 오현님 | 팀장·통합·PR·배포·제출 | [develop/ohyun/README](develop/ohyun/README.md) |
+| 수언님 | 프론트엔드 | [develop/sueon/README](develop/sueon/README.md) |
+| 지혜님 | 백엔드·DB·공통 실행 설정 | [develop/jihye/README](develop/jihye/README.md) |
+| 다혁님 | 문의 처리 자동화 | [develop/dahyeok/README](develop/dahyeok/README.md) |
+| 유빈님 | RAG·지식 검색 | [develop/yubeen/README](develop/yubeen/README.md) |
+| 원민님 | 안정성·이관·시험 | [develop/wonmin/README](develop/wonmin/README.md) |
 
 ```text
 Aio-4pj-1team/
 ├── README.md · AGENTS.md · .env.example
-├── docs/                     공통 기획·API 계약·필수 제출 문서
-├── hyun/                     통합·마일스톤·배포·제출 취합
-│   └── Doc/                  TODO · SPEC · IMP-PLAN
-├── sueon/                   Next.js 프로젝트 루트 (코드 구현 예정)
-│   └── Doc/
-├── jihye/                   FastAPI 프로젝트 루트 (코드 구현 예정)
-│   ├── Doc/
-│   ├── migrations/
-│   └── deploy/
-├── dahyeok/
-│   ├── Doc/
-│   └── workflows/            oke-support.json 구현 예정
-├── yubeen/
-│   ├── Doc/
-│   └── workflows/            oke-index.json · oke-search.json 구현 예정
-└── wonmin/
-    ├── Doc/
-    ├── workflows/            oke-handoff.json · oke-errors.json 구현 예정
-    ├── cases/
-    ├── requests/
-    └── runs/
+├── docs/                       공통 기획·계약·필수 제출 문서
+└── develop/
+    ├── README.md               담당자별 시작 안내
+    ├── ohyun/                  오현님 · 통합·배포·제출
+    │   └── Doc/
+    ├── sueon/                  수언님 · 프론트엔드
+    │   └── Doc/
+    ├── jihye/                  지혜님 · 백엔드·DB
+    │   ├── Doc/
+    │   ├── migrations/
+    │   └── deploy/
+    ├── dahyeok/                다혁님 · 문의 처리
+    │   ├── Doc/
+    │   └── workflows/
+    ├── yubeen/                 유빈님 · RAG
+    │   ├── Doc/
+    │   └── workflows/
+    └── wonmin/                 원민님 · 안정성·시험
+        ├── Doc/
+        ├── workflows/
+        ├── cases/
+        ├── requests/
+        └── runs/
 ```
 
-폴더 이름은 성을 뺀 이름의 영문 표기다. 각 이름 폴더에는 README와 역할별 AGENTS 규칙이 있다. 지금은 개발 문서·안내·제출 양식 단계이며 실행 코드·패키지·워크플로우·시험 보고서는 없다.
+영문 폴더명은 ohyun·sueon·jihye·dahyeok·yubeen·wonmin이다. 각 이름 폴더에는 README와 역할별 AGENTS 규칙이 있다. 지금은 개발 문서·안내·제출 양식 단계이며 실행 코드·패키지·워크플로우·시험 보고서는 없다.
 P0에서 담당자가 실행 뼈대를 만들고 설치·실행 명령을 자기 README에 적는다. 개발 문서 초안도 담당자가 검토·구체화한다.
 
 ## 협의·파일 수정 규칙
 
-각 담당자는 자기 이름 폴더만 수정한다. 상대 파일은 해당 소유자에게, 공통 계약·제출 문서는 오현에게 변경 요청한다. 자기 폴더의 Doc/WORK-GUIDE.md에 협의 상대·입출력·개발 순서가 있고 Doc/HANDOFF.md에 전달·검토 기록을 남긴다.
+각 담당자는 자기 이름 폴더만 수정한다. 상대 파일은 해당 소유자에게, 공통 계약·제출 문서는 오현님에게 변경 요청한다. 자기 폴더의 Doc/WORK-GUIDE.md에 협의 상대·입출력·개발 순서가 있고 Doc/HANDOFF.md에 전달·검토 기록을 남긴다.
 
 전체 연결 책임은 [COORDINATION](docs/COORDINATION.md)을 따른다. 아직 협의·코드 구현이 완료됐다는 뜻은 아니다.
 
@@ -70,4 +72,4 @@ P0에서 담당자가 실행 뼈대를 만들고 설치·실행 명령을 자기
 
 [워크플로우 설계서](docs/WORKFLOW-DESIGN.md), [RAG 설계서](docs/RAG-ARCHITECTURE.md), [실행 결과서](docs/EXECUTION-RESULT.md)는 강사 양식에서 준비한 작성 틀이다.
 주제·헌장·데일리 3장·n8n JSON·팀 시나리오·실제 시험 보고서도 필요하다.
-개인 폴더의 개발 원본을 기준으로 삼고, 제출 직전 [hyun/제출 안내](hyun/SUBMISSION.md)에 따라 루트 workflows·cases·requests·runs로 취합한다.
+개인 폴더의 개발 원본을 기준으로 삼고, 제출 직전 [develop/ohyun/제출 안내](develop/ohyun/SUBMISSION.md)에 따라 루트 workflows·cases·requests·runs로 취합한다.

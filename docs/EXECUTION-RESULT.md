@@ -1,13 +1,13 @@
 # 워크플로우 실행 결과서 · 오케퐁
 
 > 상태: 강사 템플릿에서 가져온 작성 틀. 구현·측정·시험 전이며 표의 예시는 실제 결과가 아니다. [원본 템플릿](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/templates/EXECUTION-RESULT-TEMPLATE.md)
-> 원본 요구 4절 산출물 3과 5 · 6절을 따릅니다. **숫자는 `wonmin/runs/` 보고서에서만** 옮기고, 칸마다 보고서 파일 이름을 적습니다. [07-TESTING-GUIDE](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md) 참고.
+> 원본 요구 4절 산출물 3과 5 · 6절을 따릅니다. **숫자는 `develop/wonmin/runs/` 보고서에서만** 옮기고, 칸마다 보고서 파일 이름을 적습니다. [07-TESTING-GUIDE](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md) 참고.
 
 ## 1. 시나리오별 시험 기록
 
 | 시나리오 | 입력 · 조건 | 기대 결과 | 실제 결과 | 실행 노드 · 에이전트 | 처리시간 | 판정 (3회) | 보고서 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WF-01 정상 문의 | | | | | | 미실행 | `wonmin/runs/…` |
+| WF-01 정상 문의 | | | | | | 미실행 | `develop/wonmin/runs/…` |
 | … (공통 14개) | | | | | | | |
 | T-01 (팀) | | | | | | | |
 

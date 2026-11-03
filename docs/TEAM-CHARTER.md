@@ -6,12 +6,12 @@
 
 | 이름 | 주 역할 | 담당 범위·소유 경로 |
 | --- | --- | --- |
-| 오현 | 팀장·통합 | 공통 계약·병합·팀 VM 준비·배포·발표 취합 |
-| 이수언 | 프론트엔드 | sueon/ · sueon/Doc/ |
-| 박지혜 | 백엔드·DB | jihye/ · jihye/deploy/ · jihye/Doc/ |
-| 임다혁 | 문의 처리 자동화 | oke-support.json · dahyeok/Doc/ |
-| 신유빈 | RAG·지식 검색 | oke-index.json · oke-search.json · yubeen/Doc/ |
-| 이원민 | 안정성·시험 | oke-handoff.json · oke-errors.json · wonmin/cases/ · wonmin/requests/ · wonmin/runs/ |
+| 오현님 | 팀장·통합 | 공통 계약·병합·팀 VM 준비·배포·발표 취합 |
+| 수언님 | 프론트엔드 | develop/sueon/ · develop/sueon/Doc/ |
+| 지혜님 | 백엔드·DB | develop/jihye/ · develop/jihye/deploy/ · develop/jihye/Doc/ |
+| 다혁님 | 문의 처리 자동화 | oke-support.json · develop/dahyeok/Doc/ |
+| 유빈님 | RAG·지식 검색 | oke-index.json · oke-search.json · develop/yubeen/Doc/ |
+| 원민님 | 안정성·시험 | oke-handoff.json · oke-errors.json · develop/wonmin/cases/ · develop/wonmin/requests/ · develop/wonmin/runs/ |
 
 ## 목표와 범위
 
@@ -22,7 +22,7 @@
 ## 협업 규칙
 
 - 각 담당자는 자기 TODO를 이해한 말로 고치고 SPEC·IMP-PLAN을 작성한다. 관련 담당자와 계약을 맞춘 뒤 한 단계씩 구현·확인·커밋한다.
-- 일반 개발 담당자는 자기 폴더만 수정한다. 상대/공통 파일 변경은 자기 HANDOFF로 요청하고 소유자가 수정한다. 공통 계약·제출 문서는 오현이 반영하고 각자는 자기 SPEC·코드를 갱신한다.
+- 일반 개발 담당자는 자기 폴더만 수정한다. 상대/공통 파일 변경은 자기 HANDOFF로 요청하고 소유자가 수정한다. 공통 계약·제출 문서는 오현님이 반영하고 각자는 자기 SPEC·코드를 갱신한다.
 - PR에는 변경·확인 결과·남은 문제를 적는다. 공통 기본 브랜치 병합과 팀 VM 배포는 리드가 관리한다.
 - VM 배포 후 공통 회귀 시험을 한다. 키·비밀번호·연락처를 문서·JSON·로그·캡처에 노출하지 않는다.
 - 81일차 8교시 기능 동결, 이후 시험·수정·문서·발표에 집중한다.
@@ -47,7 +47,7 @@
 | 2026-11-03 | 기존 대화와 강사 양식에 맞춰 초안 준비 | 팀 검토 전 |
 | 2026-11-03 | 팀장 지시로 6명 주 담당 배정 반영 | 주 담당 확정, 지원 담당 미정 |
 
-지원 담당은 아직 배정하지 않았다. 워크플로우는 각자 이름 폴더/workflows/ 아래에 구현한다. 제출용 루트 경로는 hyun/SUBMISSION.md에 따라 취합한다.
+지원 담당은 아직 배정하지 않았다. 워크플로우는 각자 이름 폴더/workflows/ 아래에 구현한다. 제출용 루트 경로는 develop/ohyun/SUBMISSION.md에 따라 취합한다.
 
 원본: [팀 헌장 템플릿](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/templates/TEAM-CHARTER-TEMPLATE.md).
 

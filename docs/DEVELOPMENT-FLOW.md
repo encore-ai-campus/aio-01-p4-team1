@@ -6,11 +6,11 @@
 
 | 역할 | 자기 말로 요구 정리 | 확인 가능한 요구 | 단계·파일·확인 방법 |
 | --- | --- | --- | --- |
-| 화면 · 이수언 | [TODO](../sueon/Doc/TODO.md) | [SPEC](../sueon/Doc/SPEC.md) | [IMP-PLAN](../sueon/Doc/IMP-PLAN.md) |
-| 업무 API·DB·실행 환경 · 박지혜 | [TODO](../jihye/Doc/TODO.md) | [SPEC](../jihye/Doc/SPEC.md) | [IMP-PLAN](../jihye/Doc/IMP-PLAN.md) |
-| 문의 처리 · 임다혁 | [TODO](../dahyeok/Doc/TODO.md) | [SPEC](../dahyeok/Doc/SPEC.md) | [IMP-PLAN](../dahyeok/Doc/IMP-PLAN.md) |
-| RAG · 신유빈 | [TODO](../yubeen/Doc/TODO.md) | [SPEC](../yubeen/Doc/SPEC.md) | [IMP-PLAN](../yubeen/Doc/IMP-PLAN.md) |
-| 안정성·시험 · 이원민 | [TODO](../wonmin/Doc/TODO.md) | [SPEC](../wonmin/Doc/SPEC.md) | [IMP-PLAN](../wonmin/Doc/IMP-PLAN.md) |
+| 화면 · 수언님 | [TODO](../develop/sueon/Doc/TODO.md) | [SPEC](../develop/sueon/Doc/SPEC.md) | [IMP-PLAN](../develop/sueon/Doc/IMP-PLAN.md) |
+| 업무 API·DB·실행 환경 · 지혜님 | [TODO](../develop/jihye/Doc/TODO.md) | [SPEC](../develop/jihye/Doc/SPEC.md) | [IMP-PLAN](../develop/jihye/Doc/IMP-PLAN.md) |
+| 문의 처리 · 다혁님 | [TODO](../develop/dahyeok/Doc/TODO.md) | [SPEC](../develop/dahyeok/Doc/SPEC.md) | [IMP-PLAN](../develop/dahyeok/Doc/IMP-PLAN.md) |
+| RAG · 유빈님 | [TODO](../develop/yubeen/Doc/TODO.md) | [SPEC](../develop/yubeen/Doc/SPEC.md) | [IMP-PLAN](../develop/yubeen/Doc/IMP-PLAN.md) |
+| 안정성·시험 · 원민님 | [TODO](../develop/wonmin/Doc/TODO.md) | [SPEC](../develop/wonmin/Doc/SPEC.md) | [IMP-PLAN](../develop/wonmin/Doc/IMP-PLAN.md) |
 
 각 담당자가 작성하고 이해할 문서다. 팀장이 모든 세부 설계를 대신 확정하지 않는다. 이번 TODO에는 지금까지의 합의 내용을 참고 초안으로 넣었으므로, 담당자가 자기 말로 고치고 빠진 요구·필수·나중을 표시한다.
 
@@ -60,19 +60,19 @@ FastAPI 저장·권한 시험을 공통 워크플로우 시험만으로 대체�
 
 | 파일·경로 | 주 담당 역할 | 맞춰야 할 상대 |
 | --- | --- | --- |
-| sueon/ | 화면 | 백엔드: 웹 API·오류·쿠키·화면 상태 |
-| jihye/ · jihye/deploy/ | 업무 API·DB | 화면·안정성: 계정·문의·티켓·알림, 리드: 실행·배포 |
-| dahyeok/workflows/oke-support.json | 문의 처리 | RAG: search, 안정성: handoff |
-| yubeen/workflows/oke-index.json · oke-search.json | RAG | 문의 처리: 검색 요청·근거 목록·오류 |
-| wonmin/workflows/oke-handoff.json · oke-errors.json | 안정성·시험 | 백엔드: 티켓·알림, 문의 처리: 이관·실패 결과 |
-| wonmin/cases/ · wonmin/requests/ · wonmin/runs/ | 안정성·시험 | 전 역할: 실제 기대 결과·실행 근거 |
+| develop/sueon/ | 화면 | 백엔드: 웹 API·오류·쿠키·화면 상태 |
+| develop/jihye/ · develop/jihye/deploy/ | 업무 API·DB | 화면·안정성: 계정·문의·티켓·알림, 리드: 실행·배포 |
+| develop/dahyeok/workflows/oke-support.json | 문의 처리 | RAG: search, 안정성: handoff |
+| develop/yubeen/workflows/oke-index.json · oke-search.json | RAG | 문의 처리: 검색 요청·근거 목록·오류 |
+| develop/wonmin/workflows/oke-handoff.json · oke-errors.json | 안정성·시험 | 백엔드: 티켓·알림, 문의 처리: 이관·실패 결과 |
+| develop/wonmin/cases/ · develop/wonmin/requests/ · develop/wonmin/runs/ | 안정성·시험 | 전 역할: 실제 기대 결과·실행 근거 |
 | docs/ 공통 문서·기본 브랜치·VM 배포 | 리드 관리 | 각 역할은 자기 실제 설계·측정·실패 원인을 제공 |
 
 워크플로우 JSON 다섯 개는 개인 이름 폴더/workflows/에서 구현 후 생길 결과물이다. 현재는 안내 문서만 있다.
 개별 코드 파일 경로는 각 담당자가 계획에 쓰고 겹치면 구현 전에 조정한다.
 
 공통 API는 [API-CONTRACT](API-CONTRACT.md) 한 곳에서 관리한다. 각 SPEC에는 해당 절과 요구 ID를 참조한다.
-변경은 **내 HANDOFF 제안 → 상대의 자기 HANDOFF 검토 → 오현의 공통 계약 반영 → 각자의 자기 SPEC·구현 갱신** 순서다.
+변경은 **내 HANDOFF 제안 → 상대의 자기 HANDOFF 검토 → 오현님의 공통 계약 반영 → 각자의 자기 SPEC·구현 갱신** 순서다.
 교사 공통 웹훅 필드·route·공통 시험 판정은 임의 변경하지 않는다.
 
 ## 5. 무엇을 누가 정하나
@@ -90,7 +90,7 @@ FastAPI 저장·권한 시험을 공통 워크플로우 시험만으로 대체�
 ## 6. 개발 문서와 제출 문서
 
 역할별 세 문서는 개발을 진행하는 기준이다. 핵심 제출물인 WORKFLOW-DESIGN·RAG-ARCHITECTURE·EXECUTION-RESULT를 대신하지 않는다.
-각 역할은 자기 Doc/SUBMISSION-NOTES.md에 반영 자료를 제공하고, 오현이 실제 파일·보고서와 맞춰 공통 문서를 편집·취합한다.
+각 역할은 자기 Doc/SUBMISSION-NOTES.md에 반영 자료를 제공하고, 오현님이 실제 파일·보고서와 맞춰 공통 문서를 편집·취합한다.
 설계서에는 실제 노드·연결선, RAG 설계서에는 실제 측정값, 결과서에는 실제 runs 보고서를 적는다.
 
 ## 협의 상세와 개인 작업 지침

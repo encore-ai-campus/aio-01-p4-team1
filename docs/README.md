@@ -5,6 +5,8 @@
 | 문서 | 관리하는 내용 |
 | --- | --- |
 | [TOPIC](TOPIC.md) | 주제·문의 범위·사용자 기능 |
+| [ARCHITECTURE](ARCHITECTURE.md) | 전체 시스템 아키텍처 구성도·네트워크·폴더 구조 |
+| [adr/ADR-001](adr/ADR-001-project-decisions.md) | 핵심 아키텍처·인증·DB·협업 의사결정 기록 (ADR) |
 | [TEAM-CHARTER](TEAM-CHARTER.md) | 담당자·소유 파일·팀 규칙·문서 책임 |
 | [API-CONTRACT](API-CONTRACT.md) | 공통 웹훅·웹 API·검색/이관·실행 환경 |
 | [DATA-AND-DB](DATA-AND-DB.md) | 데이터·업무 테이블·pgvector 기준 |

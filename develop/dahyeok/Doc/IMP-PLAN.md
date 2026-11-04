@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. 모든 단계는 **구현 예정·미실행**이다. 아래 JSON·요청·Mock·결과 파일도 아직 생성하지 않았다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1의 JSON·요청·Mock·로컬 기대값은 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 나머지 단계는 구현 예정이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -16,6 +16,14 @@
 넘길 결과: 원민님에게 입력/공격/정상 오탐 요청과 기대표, 지혜님에게 request_id/user/question/attempt/context 및 400 codes 예시를 제공한다. API 변경 요청 없이 공통 C02 형식을 사용한다.
 
 완료 기준: DH-T-13 세 입력은 각각 400·정확한 code·LLM 0, DH-T-08은 차단·LLM 0, DH-T-15는 단어만으로 차단되지 않음. check가 가능해진 뒤 노드 타입·버전·연결 오류가 없어야 한다. 실제 확인 전 체크하지 않는다.
+
+### P0-1 확인 기록 · 2026-11-04
+
+- 대상: `workflows/oke-support.json`, `requests/input-*.json`·`requests/injection.json`·`requests/normal-admin-contact.json`, `fixtures/employees.json`, `cases/support-input.json`. 직원 확인은 로컬 Mock, 정상 입력은 `not_implemented` 임시 응답이다.
+- 실행: `python3 -m json.tool`로 JSON 9개를 파싱하고, Python으로 요청 6개·직원 6명·긴 질문 501자·Mock/fixture 일치를 확인했다. 기존 `day65-n8n-n8n-1` 컨테이너의 Node v26.7.0에 본체 Code 노드와 요청을 표준 입력으로 보내 독립 실행했다. 이 컨테이너는 프로젝트 n8n 시험 대상이 아니다.
+- 실제 로컬 결과: DH-T-13 빈 질문 `400/question_required`, 501자 `400/too_long`, 미등록 직원 `400/unknown_user`; DH-T-08 `200/차단`, `agents=[]`, `ticket=null`; DH-T-15 `200/담당자 이관`, `reason=not_implemented`로 오탐 차단 없음; 정상 입력도 `200/담당자 이관`, `reason=not_implemented`, `ticket=null`. 여섯 입력 모두 로컬 Code 시뮬레이션 일치. 워크플로우에 LLM 노드가 없어 이 단계의 로컬 LLM 호출 경로는 0개다.
+- 미확인: 80일차 원본 `flow.py check`, 프로젝트 n8n의 Credential 연결·게시·Webhook HTTP 응답·실제 실행 노드 수와 LLM 호출 수. 로컬 Code 시뮬레이션을 n8n 기능 시험 통과나 공통 WF 통과로 표시하지 않는다. 사람이 프로젝트 환경에서 push·test한 뒤 실제 결과를 추가한다.
+- 추가 로컬 도구: `tools/flow.py`를 P0-1 전용으로 작성했다. `python3 tools/flow.py check`는 현재 6노드 JSON·연결·직원 Mock 일치를, `python3 tools/flow.py test-local --node-container day65-n8n-n8n-1`은 기존 실습 컨테이너의 Node 실행기로 Code 경로 6건을 검사한다. 2026-11-04 재실행 결과 6/6 PASS. 이 도구는 프로젝트 키트 원본이 아니며 n8n 게시·Webhook 호출·Credential 동작을 확인하지 않는다.
 
 ## 작은 단계별 생성 파일·확인·전달
 
@@ -47,6 +55,8 @@ python3 -m json.tool workflows/oke-support.json > /dev/null
 생성한 requests/cases/fixtures도 같은 방식으로 각 파일의 JSON 문법을 확인한다. 이 검사만으로 n8n 노드·실행이 통과했다고 하지 않는다.
 
 프로젝트 키트가 제공되고 `tools/flow.py`의 실제 위치·CLI를 확인한 뒤 다음 check를 수행한다. 현재 지정 자료 경로의 Last3Mon/80 키트는 없어 명령은 **예정 경로 템플릿**이다. 다른 실습 키트를 프로젝트 키트인 것처럼 복사/설치하지 않는다.
+
+현재 `develop/dahyeok/tools/flow.py`는 별도 **로컬 P0-1 검사기**다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
 uv run tools/flow.py check develop/dahyeok/workflows/oke-support.json

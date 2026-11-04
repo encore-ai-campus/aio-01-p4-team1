@@ -1,6 +1,6 @@
 # 지혜님 · TODO
 
-[README](../README.md) → **TODO** → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md) 순서로 진행한다. 이 문서는 무엇을 왜 하는지 정한다. 구현·시험은 전부 미실행이며 체크는 실제 확인 후에만 한다.
+[README](../README.md) → **TODO** → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md) 순서로 진행한다. 이 문서는 무엇을 왜 하는지 정한다. P0-1~2의 골격·계약 모델·Mock 시험을 완료했으며 실제 업무 기능·DB·외부 연결은 미실행이다. 전체 완료 체크는 해당 요구를 실제 확인한 후에만 한다.
 
 ## 목적과 사용자
 

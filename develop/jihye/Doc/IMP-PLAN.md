@@ -2,7 +2,7 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: P0-1 구현·설치·로컬 시험 완료. P0-2 이후·DB 적용·배포 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
+**전체 상태: P0-1~2 구현·로컬/Mock 시험 완료. P0-3 이후·DB 적용·배포 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
@@ -28,11 +28,25 @@
 
 ## P0-2 · 요청/응답 모델과 계약 Mock
 
-- [ ] 연결 SPEC: BE-01~04, C01/C02/C05.
+- [x] 연결 SPEC: BE-01~04, C01/C02/C05의 P0-2 모델·시그니처·Mock 범위만 확인. 실제 업무 기능 완료는 아님.
 - 생성 예정: `app/schemas/auth.py`, `users.py`, `support.py`, `inquiries.py`, `tickets.py`, `alerts.py`; `app/api/deps.py`; `app/api/routes/auth.py`, `users.py`, `ask.py`, `requests.py`, `tickets.py`, `alerts.py`; `tests/test_api_models.py`, `tests/test_support_contract.py`, `tests/conftest.py`.
 - 작업: SPEC 3~5절 모델과 라우터 시그니처를 연결한다. 응답에서 비밀 필드를 제외하고 support의 reason/timings와 추가 응답 필드를 보존한다. 미구현 라우터를 성공 응답으로 위장하지 않는다. Mock은 tests 안의 HTTP transport/fixture로 만들며 다른 역할의 워크플로우를 복제하지 않는다.
 - 확인 예정: `uv run pytest tests/test_api_models.py tests/test_support_contract.py -q`. 12개 웹 경로·2개 내부 경로의 모델을 검증하고 정상5 route·400 codes passthrough·요청ID 불일치/잘못된 응답 검출·원문 암호 미직렬화를 확인한다. OpenAPI는 `app.openapi()` 결과를 시험에서 검사하고 외부 호출을 하지 않는다.
 - 넘길 결과: 수언님에게 확정 계약 필드의 OpenAPI/예시, 다혁님에게 세션→user 변환 입력과 공통 응답 fixture, 원민님에게 /tickets·/alerts 예시. H03/04의 미확정 세부는 ‘제안’으로 함께 표시하며 실제 연결 확인으로 쓰지 않는다.
+
+### P0-2 실제 기록 · 2026-11-04
+
+- 작업 디렉터리: `develop/jihye`. BE-01~04 / C01·C02·C05의 계약 모델·Mock만 구현. 예제의 APIRouter/Depends/response_model 계층을 참고하고 우리 세션·공통 응답 전체 보존·내부 키 경계를 적용했다. DB·워크플로우·실제 서비스는 생성/호출하지 않았다.
+- 생성 파일: `app/schemas/{auth,users,support,inquiries,tickets,alerts}.py`, `app/api/deps.py`, `app/api/routes/{auth,users,ask,requests,tickets,alerts}.py`, `tests/conftest.py`, `tests/test_api_models.py`, `tests/test_support_contract.py`. 수정: `app/main.py`, `app/api/errors.py`, `app/schemas/common.py`, `tests/test_contract_basics.py` 및 본인 README·SPEC·TODO·IMP-PLAN·HANDOFF. 의존성 추가 없음.
+- 계획 본문의 웹12/내부2 표기는 최신 공통 API와 다르다. 실제 적용은 웹14개 operation(13개 경로)·내부3개(`/tickets`, `/alerts`, `/dlq`)이며 liveness 포함18개 operation이다. 공통 파일은 수정하지 않았다.
+- OpenAPI: 실제 `app.openapi()`의 경로·요청/응답 참조·쿠키/내부키 securitySchemes·계정 생성201·티켓 신규201/중복200·검증400(기본422 제거)을 시험했다. `/api/ask`의400은 웹 ErrorResponse와 공통 codes 본문 두 형식을 표시한다. 미구현501을 문서에 표시하고 실제 라우터도 성공으로 위장하지 않는다.
+- 첫 `uv run pytest tests/test_api_models.py tests/test_support_contract.py -q`: 종료0, **44 passed, 1 warning in 1.30s**. 이후 중복 티켓200 시험1개와 OpenAPI codes/첫 변경 코드 검증을 보강했다.
+- 최종 `uv run pytest -q`: 종료0, **75 passed, 1 warning in 2.59s**. 기존 P0-1 30개+P0-2 45개. warning은 기존 Starlette TestClient HTTPX 폐기 예정 경고1건이다. 최초 실행 실패나 숨긴 실패는 없다.
+- 검증: 웹14·내부3 시그니처의 성공 응답은 tests fixture 서비스로만 확인. 계정/비밀번호/해시 미직렬화, strict bool/정수·질문 경계, patch 생략/null 구분, 관리자 dependency·첫 변경403, 실제 dependency의 쿠키/키 누락401 및 임의 값501, 실제 로그인501·쿠키 미발급을 확인했다. 활성/만료/회수 검사는 실제 세션이 없어 미실행이다.
+- support Mock: HTTPX MockTransport로5 route·필수7필드·reason/timings 및 중첩/상위 추가 필드 보존, 미제공 선택 필드 미삽입, 세션 fixture 이름→user·channel=web, 입력 user/dept/role 무시, 공통400 codes 본문 보존, 요청ID 불일치·잘못된 JSON/타입/route·유한하지 않은 score 거절, 잘못된 웹 입력의 서비스/HTTP 호출0회를 확인했다. 실제 HTTP 클라이언트·문의 저장은 P1-2이며 이번 결과는 그 구현 완료 증거가 아니다.
+- 미확정: H03 목록 DTO·Security 세부 타입·patch 의미는 초안. 미지 입력 필드는 무시하며400 거절 정책은 채택하지 않았다. context2000자 제한·필드별 오류코드도 추가하지 않았다. 새 비밀번호12자·3종은 모델 검사, 본인 이름/로그인ID 포함 검사는 P1 서비스에서 연결해야 한다. support 응답 미유효를 성공으로 반환하지 않는 시험은 있으나 저장소 미구현이라 DB 저장 실패 검증은 아니다.
+- 다음: 수언님은 `/openapi.json`과 시험의 요청/응답 예시로 화면 Mock 개발 가능. 다혁님은 `SupportRequest/Response` 및 tests fixture의5 route/400 예시를 대조. 원민님은 `/tickets`·`/alerts`·`/dlq` 요청/응답 모델 확인 가능. 실제 저장·멱등·개인정보 마스킹·키 검증·외부 호출은 P1, DB 기반은 다음 P0-3~5다. 유빈님 data-api 응답/인증 및 C06 실저장은 이번에 확인하지 않았다. 상대 확인·메시지 전송·VM 배포·n8n push/test 없음.
+- 최종 검사: `git diff --check` 종료0. `git status --short`로 수정·미추적 경로가 모두 `develop/jihye/` 내부임을 확인했고 `git diff --cached --name-only`는 빈 결과였다. 커밋·push는 수행하지 않았다.
 
 ## P0-3 · DB 컨테이너와 마이그레이션 실행 기반
 

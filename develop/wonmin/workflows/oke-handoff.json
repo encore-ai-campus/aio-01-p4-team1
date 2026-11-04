@@ -1,0 +1,635 @@
+{
+  "name": "oke-handoff",
+  "active": false,
+  "nodes": [
+    {
+      "id": "H01-0",
+      "name": "H01 Handoff Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oke-handoff",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_X_TEAM_KEY"
+        }
+      }
+    },
+    {
+      "id": "H02-1",
+      "name": "H02 Validate and Map",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst employees = ['이준호', '박서연', '최유진', '한지훈', '김민지', '정우성'];\nconst text = v => typeof v === 'string' && v.trim().length > 0;\nconst valid = body && typeof body === 'object' && !Array.isArray(body)\n  && ['request_id', 'requester', 'title', 'category', 'priority', 'reason'].every(k => text(body[k]))\n  && [...body.request_id].length <= 64 && employees.includes(body.requester)\n  && ['normal', 'high'].includes(body.priority)\n  && (body.evidence_summary === undefined || typeof body.evidence_summary === 'string');\nif (!valid) return [{ json: { valid: false, http_status: 400,\n  response: { error: { message: '이관 입력을 확인해 주세요.' } } } }];\nconst mask = value => value\n  .replace(/\\bBearer\\s+[^\\s,;]+/gi, 'Bearer [REDACTED]')\n  .replace(/((?:password|passwd|token|api[_-]?key|비밀번호|암호)\\s*[:=]\\s*)[^\\s,;]+/gi, '$1[REDACTED]')\n  .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi, '[EMAIL]')\n  .replace(/(?:\\+82[\\s.-]?)?0?1[016789][\\s.-]?\\d{3,4}[\\s.-]?\\d{4}/g, '[PHONE]');\n// evidence_summary is not part of C05 and is intentionally discarded, as are headers and extra fields.\nreturn [{ json: { valid: true, request_id: body.request_id, priority: body.priority,\n  ticket_payload: { key: body.request_id, title: mask(body.title.trim()), requester: body.requester,\n    category: body.category.trim(), priority: body.priority } } }];"
+      }
+    },
+    {
+      "id": "H02a-2",
+      "name": "H02a Valid Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H02a",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "H03-3",
+      "name": "H03 Select Store",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        540,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst unavailable = () => [{ json: { ready: false, http_status: 503, response:\n  { ok: false, ticket: null, reason: 'tickets_down', alerted: false, dlq: false } } }];\ntry {\n  const mode = $env.SERVICE_MODE;\n  if (!['practice', 'app'].includes(mode)) return unavailable();\n  const value = mode === 'app' ? ($env.WONMIN_APP_STORE_URL || 'http://backend:8000')\n    : ($env.WONMIN_PRACTICE_STORE_URL || 'http://data-api:8800');\n  // Origin-only deployment setting, parsed without external modules or sandbox URL globals.\n  const match = typeof value === 'string' && /^(https?:\\/\\/[a-zA-Z0-9.-]+)(?::([0-9]{1,5}))?\\/?$/.exec(value);\n  if (!match || (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 65535))) return unavailable();\n  const base_url = match[1] + (match[2] ? ':' + match[2] : '');\n  return [{ json: { ...input, ready: true, mode, base_url } }];\n} catch { return unavailable(); }"
+      }
+    },
+    {
+      "id": "H03a-4",
+      "name": "H03a Store Ready",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H03a",
+              "leftValue": "={{ $json.ready }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "H03b-5",
+      "name": "H03b App Ticket Store",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H03b",
+              "leftValue": "={{ $json.mode === 'app' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "H04-6",
+      "name": "H04 Create Ticket Practice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/tickets' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.ticket_payload) }}",
+        "options": {
+          "timeout": 1000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_PRACTICE_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "H04-7",
+      "name": "H04 Create Ticket App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1260,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/tickets' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.ticket_payload) }}",
+        "options": {
+          "timeout": 1000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_APP_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "H06-8",
+      "name": "H06 Keep Ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const input = $('H03 Select Store').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst confirmed = b && typeof b.ticket_id === 'string' && /^T-\\d+$/.test(b.ticket_id)\n  && ((reply.statusCode === 201 && b.duplicate === false) || (reply.statusCode === 200 && b.duplicate === true));\nconst ticket = confirmed ? { ticket_id: b.ticket_id, priority: input.priority, duplicate: b.duplicate } : null;\nconst alert_payload = confirmed ? { workflow: 'oke-handoff', node: 'H06 Keep Ticket',\n  message: '담당자 이관 티켓이 접수되었습니다.', severity: input.priority === 'high' ? 'high' : 'normal',\n  ticket_id: b.ticket_id } : null;\nif (alert_payload && input.mode === 'app') alert_payload.event_key = input.request_id + ':ticket-created';\nreturn [{ json: { mode: input.mode, base_url: input.base_url, ticket, alert_payload } }];"
+      }
+    },
+    {
+      "id": "H06a-9",
+      "name": "H06a Ticket Confirmed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1620,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H06a",
+              "leftValue": "={{ $json.ticket !== null }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "H08a-10",
+      "name": "H08a App Alert Store",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1800,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H08a",
+              "leftValue": "={{ $json.mode === 'app' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "H08-11",
+      "name": "H08 Store Alert Practice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/alerts' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.alert_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_PRACTICE_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "H08-12",
+      "name": "H08 Store Alert App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/alerts' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.alert_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_APP_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "H10-13",
+      "name": "H10 Build Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const state = $('H06 Keep Ticket').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst stored = b && Number.isSafeInteger(b.count) && b.count >= 1\n  && (b.stored === 1 || (state.mode === 'app' && b.stored === 0 && b.duplicate === true));\nconst alerted = Boolean(state.ticket && reply.statusCode === 200 && stored);\n// P1-1 only: no retry or DLQ yet. Partial-failure ok is conservatively false pending WM-04.\nreturn [{ json: { http_status: 200, response: { ok: Boolean(state.ticket && alerted), ticket: state.ticket,\n  reason: !state.ticket ? 'tickets_down' : alerted ? null : 'alerts_down', alerted, dlq: false } } }];"
+      }
+    },
+    {
+      "id": "H11-14",
+      "name": "H11 Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2520,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": "={{ $json.http_status }}"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "H01 Handoff Webhook": {
+      "main": [
+        [
+          {
+            "node": "H02 Validate and Map",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H02 Validate and Map": {
+      "main": [
+        [
+          {
+            "node": "H02a Valid Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H02a Valid Input": {
+      "main": [
+        [
+          {
+            "node": "H03 Select Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H11 Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H03 Select Store": {
+      "main": [
+        [
+          {
+            "node": "H03a Store Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H03a Store Ready": {
+      "main": [
+        [
+          {
+            "node": "H03b App Ticket Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H11 Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H03b App Ticket Store": {
+      "main": [
+        [
+          {
+            "node": "H04 Create Ticket App",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H04 Create Ticket Practice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H04 Create Ticket App": {
+      "main": [
+        [
+          {
+            "node": "H06 Keep Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H04 Create Ticket Practice": {
+      "main": [
+        [
+          {
+            "node": "H06 Keep Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H06 Keep Ticket": {
+      "main": [
+        [
+          {
+            "node": "H06a Ticket Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H06a Ticket Confirmed": {
+      "main": [
+        [
+          {
+            "node": "H08a App Alert Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H10 Build Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H08a App Alert Store": {
+      "main": [
+        [
+          {
+            "node": "H08 Store Alert App",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H08 Store Alert Practice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H08 Store Alert App": {
+      "main": [
+        [
+          {
+            "node": "H10 Build Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H08 Store Alert Practice": {
+      "main": [
+        [
+          {
+            "node": "H10 Build Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H10 Build Result": {
+      "main": [
+        [
+          {
+            "node": "H11 Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": false
+  },
+  "pinData": {}
+}

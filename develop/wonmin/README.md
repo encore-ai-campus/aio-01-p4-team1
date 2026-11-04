@@ -72,3 +72,34 @@ python3 -m json.tool requests/bench-normal.json > /dev/null
 참고 예제의 key 기반 티켓 처리·HTTP 결과 분기, Error Trigger와 성공한 항목만 재처리 해제하는 구조를 검토했다. P1에서는 C04/C05, 모드 선택, ACK, 마스킹, 독립 알림/DLQ를 적용한다. 예제의 알림 전용 오류 처리와 전체 replay를 그대로 복사하지 않는다.
 
 다음 단계는 P1-1 `workflows/oke-handoff.json` 정상·중복 및 C05 Mock 구현이다. n8n 게시·시험은 팀 규칙대로 사람이 수행하고 실제 결과를 기록한다.
+
+## P1-1 로컬 구현 결과 · 2026-11-04
+
+`workflows/oke-handoff.json`의 정상·중복 경로와 `tools/mock-store.py`의 C05 HTTP Mock을 구현했다. 설정·Credential·남은 범위는 [워크플로우 안내](workflows/README.md), 실제 증거는 [runs/INDEX.md](runs/INDEX.md)를 따른다.
+
+로컬 검증(저장소 루트):
+
+```bash
+node --test
+python3 -B develop/wonmin/tools/mock-store.py --help
+```
+
+Node.js 22 이상(내장 test/fetch/VM), Python 3.10 이상(표준 라이브러리)으로 별도 의존성 설치 없이 실행한다. 실제 검증 환경은 Node v26.12.1·Python 3.15.1이다. 테스트는 임시 키를 메모리에서 만들고 127.0.0.1의 임의 포트에 독립 Mock 두 개를 기동·종료한다. 프로젝트 서버·DB·공유 데이터를 호출/초기화하지 않는다.
+
+수동 Mock 실행(저장소 루트, INTERNAL_API_KEY가 로컬 환경에 준비된 상태):
+
+```bash
+python3 -B develop/wonmin/tools/mock-store.py --port 18800
+```
+
+기본 바인딩은 127.0.0.1이다. Docker에서 호출하는 전용 시험은 실행자가 `--host 0.0.0.0`와 올바른 호스트 매핑을 명시한다. 키는 환경에만 두고 명령/보고서에 값이나 셸 추적을 출력하지 않는다. `/tickets`, `/alerts`, `GET /_mock/ops` 모두 X-Api-Key가 필요하다. `/_mock/ops`는 Mock 전용 관측이며 실제 app/data-api ops가 아니다. 서버 재시작 시 상태가 사라지고 삭제/reset API는 없다.
+
+로컬 검증은 40개 통과했다. 신규·긴급·순차 중복·동시 8건, 단일 저장소 선택, 입력 오류 쓰기 차단, 티켓/알림 응답 검증, 인증/충돌 경계와 제한된 마스킹을 확인했다. 테스트 어댑터는 저장된 JSON의 Code·표현식·분기를 실행하고 HTTP는 실제 Mock에 전송한다. n8n 자체의 Header Auth/노드 import/실행 연결을 재현한 도구가 아니므로 실제 n8n 통과는 미확인이다.
+
+재실행 증거가 필요하면 기존 결과를 덮어쓰지 않는 새 basename을 사용한다. 아래 환경변수는 키가 아니라 보고서 파일명이다.
+
+```bash
+WONMIN_TEST_REPORT_BASENAME=p1-1-local-new-run.json node --test
+```
+
+실제 n8n/백엔드/DB/VM 연결과 공식 flow.py 검사는 미실행이다. P1-1은 로컬 구현·Mock 검증 완료, 실제 연결 확인 대기이며 P1-2/P1-3은 미구현이다.

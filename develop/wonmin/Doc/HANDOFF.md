@@ -89,3 +89,15 @@
 - 오현님(C09): 80일차 flow.py/common.json 원본 반입·배포 버전·해시·실행 환경 매핑이 필요하다. 과거 키트로 대체하지 않았고 공통 판정은 생성/수정하지 않았다.
 - 문서 불일치 처리: 최신 공통 API §8에는 handoff 5초, tickets 최대 2회·각 1초, alerts/DLQ 각 1회·0.6초의 **초기 기본값**이 있다. 위 WM-01의 '공통에 없음'은 과거 제안 기록으로 읽는다. 현재 사례는 공통 초기값을 우선하며 backoff/Retry-After/내부 전체 기한의 제안은 계속 미판정이다. WM-02의 예시 dlq_id 응답도 확정 ACK로 사용하지 않는다.
 - 다음 연결 상대: 다혁님·지혜님(C04/C05), 유빈님·오현님(실제 원본·키트). 본 기록은 전달 자료 작성이며 상대 검토/동의/실제 연결 완료가 아니다.
+
+## P1-1 전달 자료 · 2026-11-04 (외부 전송·상대 확인 없음)
+
+- 변경 파일: workflows/oke-handoff.json(15노드), tools/mock-store.py, tests/handoff.test.mjs·workflow-runner.mjs, requests/handoff-normal·high·duplicate.json, README·워크플로우 안내·TODO·IMP-PLAN·runs 증거.
+- 확인 방법/실제 결과: 저장소 루트 `node --test` 40개 통과. 실제 HTTP Mock 두 인스턴스를 사용했고 원본 워크플로우의 Code·표현식·분기를 로컬 어댑터로 실행했다. 신규 201/중복 200, 순차 동일 ID, 동시 8건 중 신규 1/중복 7·저장 1건, high 유지와 알림 ACK, 설정 기반 단일 저장소 선택을 확인했다. 공식 check/n8n Header Auth·실행/실제 백엔드·DB/VM은 미실행이다.
+- 다혁님(C04): 요청은 handoff-normal/high/duplicate.json 참조. 정상 C04는 기존 6필드이며 티켓에 입력 priority를 복원한다. 캐시 없이 C05를 호출하므로 중복 응답은 duplicate=true다. H01은 X-Team-Key Credential 연결 필요. 단일 H11 응답 경로이며 n8n 게시·실제 호출은 사람이 확인해야 한다.
+- 지혜님(C05): request_id를 key로 보내고 신규 201+duplicate=false/중복 200+duplicate=true 및 ticket_id를 함께 확인한다. title은 제한된 개인정보/명시적 비밀값을 가리고 requester는 유지한다. Mock의 동일 key 본문/소유자 충돌은 409·티켓 미노출이다. 실제 UNIQUE·거래·소유권·동시성은 백엔드 구현 책임이며 현재 Mock 결과로 실제 DB를 보증하지 않는다.
+- app 알림은 event_key=request_id:ticket-created를 보낸다. 로컬 Mock은 stored=0/count 유지/duplicate=true로 중복 ACK를 반환한다. 실제 백엔드에서 이 조합을 지원하는지 미확인이고 duplicate가 없으면 alerted=true로 추정하지 않는다. 지혜님 최신 원격 4bbbf49의 DTO도 읽기 대조했으며 실제 인증·저장이 아직 미구현인 것으로 문서에 기재되어 있다. 상대 테스트를 대신 실행하거나 승인하지 않았다.
+- 미정 경계: C04 오류 필드 code는 추가하지 않았고 잘못된 입력은 400+일반 오류 메시지의 임시 외형이다. 알림만 실패하면 티켓 유지·alerts_down·alerted=false, ok=false를 보수적으로 반환하며 WM-04의 확정으로 간주하지 않는다. 설정 오류는 쓰기 없이 503. 이 응답의 세부 합의와 부분실패/DLQ는 후속 검증 대상이다.
+- 범위/다음 단계: 티켓 자동 재시도·실패 시 독립 알림/DLQ는 P1-2, Error Trigger/실제 app 연결은 P1-3이다. 현재 dlq=false이며 티켓 실패는 tickets_down으로 안전 반환만 한다. 공통 WF-04 전체 수습을 통과한 구현은 아니다. practice 중복 알림 건수 정책도 WM-03으로 구분한다.
+- 오현님(C07/C09): Credential placeholder 교체, SERVICE_MODE와 Mock/실제 주소 매핑, n8n의 모드/주소 $env 접근 확인, 공식 키트 반입과 사람이 check 후 게시/시험할 환경 준비가 필요하다. 원민 폴더 이외 및 루트/다른 팀원 코드는 수정하지 않았다.
+- 다음 연결 상대: 다혁님 C04, 지혜님 C05, 오현님 키트·배포. 실제 증거는 runs/INDEX.md 참조.

@@ -2,17 +2,29 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: 구현·설치·시험·DB 적용·배포 미실행.** 아래 생성 파일과 확인 명령은 모두 구현 예정이다. 코드 경로는 현재 존재하는 링크가 아니다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다. 이 문서 보완 작업에서는 코드·SQL·JSON·패키지를 생성하지 않는다.
+**전체 상태: P0-1 구현·설치·로컬 시험 완료. P0-2 이후·DB 적용·배포 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
 ## P0-1 · FastAPI 골격과 공통 검증 타입부터
 
-- [ ] 연결 SPEC: BE-02·05, C01/C07.
+- [x] 연결 SPEC: BE-02·05, C01/C07의 P0-1 범위만 확인. 전체 요구 완료를 뜻하지 않음.
 - 생성 예정: `pyproject.toml`, 설치 검증 후 `uv.lock`, `app/__init__.py`, `app/main.py`, `app/core/config.py`, `app/api/errors.py`, `app/api/routes/health.py`, `app/schemas/common.py`, `tests/test_contract_basics.py`.
 - 작업: FastAPI/Pydantic·uvicorn·SQLAlchemy·psycopg·Alembic·pgvector 타입·HTTPX·비밀번호 해시 라이브러리와 시험 도구를 본인 프로젝트에 선언한다. config는 공통 변수 이름을 읽고 잘못된 SERVICE_MODE를 거절한다. secret 필드를 출력하지 않는다. liveness와 400 웹 오류 외형, 질문/ID/attempt 공통 제약 타입을 만든다. DB·n8n 없이 작동하는 골격부터 만든다.
 - 확인 예정: `uv sync --dev` → `uv run pytest tests/test_contract_basics.py -q`. 공백 질문/501자/ID65자/attempt0·문자열/boolean 거절, 500자/64자/attempt1 수락, 검증 오류에 입력 비밀값이 없는지 확인한다. 요구가 정해지지 않은 세부 코드값은 H03 미확정으로 표시한다.
 - 넘길 결과: 다음 단계에 설치된 버전·잠금 파일·공통 타입과 기대 오류 예시. 설치 성공이나 시험 통과는 실제 실행 후 기록한다.
+
+### P0-1 실제 기록 · 2026-11-04
+
+- 작업 위치: `develop/jihye`. 생성: `pyproject.toml`, `uv.lock`, `app/__init__.py`, `app/main.py`, `app/core/config.py`, `app/api/errors.py`, `app/api/routes/health.py`, `app/schemas/common.py`, 하위 패키지 `__init__.py` 4개, `tests/test_contract_basics.py`. 갱신: 본인 README·본 문서·HANDOFF.
+- 예제 적용: FastAPI 라우터 등록·계층 분리를 참고했다. 예제의 startup create_all/자동 seed·JWT·InfluxDB는 가져오지 않았다. 후속 DB는 공통 app/rag·Alembic·명시적 bootstrap, 인증은 직원6명·관리자 발급·세션 기준을 따른다.
+- `uv sync --dev`: 종료0, Python 3.12.15, 38개 resolve·35개 설치. FastAPI 0.162.0, Pydantic 2.14.2, pydantic-settings 2.16.2, Uvicorn 0.54.0, SQLAlchemy 2.1.8, psycopg 3.3.7, Alembic 1.20.1, pgvector 0.5.1, HTTPX 0.28.1, argon2-cffi 25.1.0, pytest 9.2.0. 정확한 전이 버전은 uv.lock에 고정.
+- `uv run pytest tests/test_contract_basics.py -q`: 종료0, **30 passed, 1 warning in 3.20s**. 공백/501자·ID65자·attempt0/문자열/boolean/소수 거절, 500자·ID64자·attempt1 수락, 질문 trim, 잘못된 모드/URL 거절, 환경변수 이름, 비밀 설정 repr/직렬화 제외, malformed JSON/입력오류400·오류 입력 미노출, 401/403 등 오류 외형, liveness200·없는 readiness/가입404, 실제 OpenAPI 경로 범위를 확인했다.
+- 시험 방식: 프로세스 내부 TestClient, 시험용 probe/오류 경로만 fixture에 추가. 외부 DB/n8n/data-api와의 연결·호출 Mock은 없으며 직원/관리자 인증 기능의 권한 시험도 아직 아니다. 오류 핸들러의 401/403 외형만 확인했다.
+- 실제 기동: `uv run uvicorn app.main:app --host 127.0.0.1 --port 18000`의 startup 완료 확인. `curl --fail --silent --show-error --max-time 3 http://127.0.0.1:18000/health/live` 첫 실행은 샌드박스 소켓 차단으로 종료7(`Operation not permitted`), 같은 명령 권한 승인 후 종료0·`{"status":"ok"}` 확인. 검증 프로세스는 종료했다. 기본 실행 포트8000 계약은 유지한다.
+- 남은 문제: Starlette 1.10.0 TestClient의 HTTPX 사용 폐기 예정 경고1건. 현재 시험 실패는 없으며 후속 시험 도구 갱신 시 호환성을 확인한다. `invalid_input` 등 세부 코드값은 골격 내부 임시값이며 JH-H03의 필드별 코드 제안은 미확정이다. 현재 검증 오류 예시는 HTTP400 `{"error":{"code":"invalid_input","message":"입력값을 확인해 주세요."}}`; 입력 원문·detail은 포함하지 않는다.
+- 다음 연결: P0-2가 공통 Question/RequestId/Attempt·ErrorResponse와 앱 팩토리를 사용해 C01/C02/C05 모델·Mock을 연결한다. P0-3~5가 DB/pgvector를 준비한 뒤 유빈님·원민님에게 실제 연결 기반을 넘긴다. 수언님용 업무 OpenAPI는 아직 없고 상대 확인·VM 배포·n8n push/test도 미실행이다.
+- 최종 경로/잠금 확인: `git diff --check` 종료0. 변경·미추적 파일은 모두 `develop/jihye/` 안이며 staging 없음. `uv lock --check --offline` 첫 실행은 기본 uv 캐시 읽기 전용으로 종료2, 같은 명령 권한 승인 후 종료0(`Resolved 38 packages in 4ms`). 잠금 파일과 프로젝트 선언이 일치한다.
 
 ## P0-2 · 요청/응답 모델과 계약 Mock
 

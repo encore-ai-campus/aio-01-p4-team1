@@ -1,6 +1,6 @@
 # 지혜님 · 로그인·업무 API·DB·실행 환경
 
-**목표:** 화면·워크플로우가 같은 신원·저장 규칙과 실행 환경을 사용하게 한다. 작업 폴더는 develop/jihye. 현재 구현 전 설계다.
+**목표:** 화면·워크플로우가 같은 신원·저장 규칙과 실행 환경을 사용하게 한다. 작업 폴더는 develop/jihye. P0-1 골격만 구현·로컬 검증했으며 나머지는 설계 단계다.
 
 <img src="../../docs/images/planned/flow-backend.svg" width="680" alt="백엔드와 저장 연결 설계">
 
@@ -14,6 +14,22 @@
 ## 지금 첫 작업 · P0-1
 
 저장소 루트에서 cd develop/jihye 후 [IMP-PLAN P0-1](Doc/IMP-PLAN.md)의 pyproject.toml·app/main.py·config·health·공통 검증 타입을 만든다. DB/n8n 없이 골격·입력/오류 형식을 확인한다. 이어 P0-2 계약 모델, P0-3~5 DB 기반을 먼저 공유해 유빈님·원민님이 실제 연결을 시작하게 한다.
+
+### P0-1 실행·확인 (2026-11-04)
+
+작업 디렉터리는 저장소의 `develop/jihye`이며 Python 3.12 이상과 uv를 사용한다.
+
+```bash
+uv sync --dev --locked
+uv run pytest tests/test_contract_basics.py -q
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+별도 터미널에서 `curl --fail http://127.0.0.1:8000/health/live`로 프로세스 상태를 확인한다. 응답은 `{"status":"ok"}`다. 실제 소켓 검증은 포트 충돌을 피하려고 18000에서 수행했다. OpenAPI는 `/openapi.json`, 문서 UI는 `/docs`다. 현재 OpenAPI에는 `/health/live`만 등록되어 있다.
+
+공통 환경변수 이름은 `app/core/config.py`에서 읽는다. `SERVICE_MODE`는 기본 `app`이며 `app`/`practice`만 허용한다. P0-1에서는 DB·외부 키 없이 시작하며 모드에 따른 저장 동작은 아직 없다. `.env`는 자동으로 읽지 않으므로 실제 설정은 프로세스 환경으로 주입한다. DB URL·키·세션 비밀·bootstrap 암호는 repr와 직렬화에서 제외한다. 후속 서비스가 구현될 때 필요한 설정을 사용 경계에서 필수 검사해야 한다.
+
+검증 결과는 **30 passed, 경고 1건**이다. Starlette TestClient의 HTTPX 사용에 대한 폐기 예정 경고이며 HTTPX는 support 클라이언트용으로 유지한다. 설치 버전·오류 예시·소켓 제한과 재확인 내역은 [P0-1 실행 기록](Doc/IMP-PLAN.md#p0-1-실제-기록--2026-11-04)에 남겼다. 로그인·권한·업무 API·DB readiness·n8n 연결·VM 배포는 미실행이다.
 
 ## 정해진 것과 내가 정할 것
 

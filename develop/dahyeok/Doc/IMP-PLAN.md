@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1의 JSON·요청·Mock·로컬 기대값은 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 나머지 단계는 구현 예정이다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1과 P0-2의 JSON·요청·Mock·로컬 기대값은 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 P0-3 이후 단계는 구현 예정이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -40,6 +40,13 @@
 | P1-4 / SUP-08/09 | 본체 수정, fixtures/replay-results.json, requests/duplicate.json, cases/support-replay.json | N05/N22 결과 재사용 연결. DH-CHG-02/04 미반영이면 adapter Mock까지만; 확정된 티켓 key 중복은 실제 검증. DH-T-09 순차/동시/재시작 재전송에서 티켓 1개 | 지혜님 소유권/결과 저장 API 연결 자료, 원민님 중복 관측·표현 불일치 재현 |
 | P1-5 / SUP-10 | 본체 실제 주소/설정으로 교체, Doc/SUBMISSION-NOTES.md, Doc/VERIFICATION-RESULTS.md, 실제 생성된 runs/ 보고서 | 제공자 실제 호출, 공통 전체+팀 5개 이상+LLM 3회·bench·임계값 경계. DH-T-01은 측정 기준 반영 후 자동 답변. 실패 원인/수정/같은 조건 재시험 | 오현님 실제 노드/연결선·보고서·측정·미해결 요청, 원민님 최종 회귀 근거 |
 
+### P0-2 확인 기록 · 2026-11-04
+
+- 변경: 같은 `workflows/oke-support.json`에 N05 관문, N06 triage Agent/모델 연결 자리와 Mock·엄격 JSON 파서, N07 보완/이관 분기를 추가했다. `requests/clarify-*.json`, `fixtures/triage-results.json`, `cases/support-triage.json`을 작성하고 로컬 `tools/flow.py`를 새 구조에 맞게 갱신했다.
+- Mock 동작: 입력 오류·주입은 triage를 건너뛴다. 일반 문의는 triage Mock을 쓰므로 실제 LLM 호출은 없다. 정보 부족 attempt 1·2는 구체적인 보완 질문, attempt 3은 ticket=null인 미접수 이관 Mock이다. 충분한 context는 보완 질문을 끝내지만 검색·답변이 없어 `not_implemented` 임시 응답으로 끝난다.
+- 로컬 확인: `python3 tools/flow.py check`, `python3 tools/flow.py test-local cases/support-input.json --node-container day65-n8n-n8n-1`, `python3 tools/flow.py test-local cases/support-triage.json --node-container day65-n8n-n8n-1`. P0-1 회귀 입력 6/6, P0-2 입력 4/4, triage 파서 예시 5/5가 로컬 Code 시뮬레이션에서 일치했다.
+- 미확인: Agent 실호출·Credential, 공식 80일차 `flow.py check`, 프로젝트 n8n 게시·웹훅 실행, 실제 handoff 티켓 생성. 이 로컬 결과를 WF-02/02b 또는 P0-2 실제 기능 시험 통과로 표시하지 않는다.
+
 P2 선택 고도화는 필수 P1-5 완료 뒤 [TODO](TODO.md)의 후순위를 따른다.
 
 P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아니다. P1까지도 Mock 결과와 실제 서비스 결과를 별도 열로 기록한다. 새 정책 승인이 필요한 adapter를 제외한 Agent/검색/이관/출력 작업은 계속 진행한다.
@@ -56,7 +63,7 @@ python3 -m json.tool workflows/oke-support.json > /dev/null
 
 프로젝트 키트가 제공되고 `tools/flow.py`의 실제 위치·CLI를 확인한 뒤 다음 check를 수행한다. 현재 지정 자료 경로의 Last3Mon/80 키트는 없어 명령은 **예정 경로 템플릿**이다. 다른 실습 키트를 프로젝트 키트인 것처럼 복사/설치하지 않는다.
 
-현재 `develop/dahyeok/tools/flow.py`는 별도 **로컬 P0-1 검사기**다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
+현재 `develop/dahyeok/tools/flow.py`는 P0-2까지 지원하는 별도 **로컬 검사기**다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
 uv run tools/flow.py check develop/dahyeok/workflows/oke-support.json

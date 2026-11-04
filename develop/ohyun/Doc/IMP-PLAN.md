@@ -19,6 +19,14 @@
 - main 보호·필수 리뷰/검사 설정은 저장소에서 실제 지원·설정 여부를 확인하고 기록.
 - [ ] 실제 이슈/마일스톤·보호 설정·첫 통합 시각 기록
 
+## P0-3 · 80일차 평가 키트 및 실행 환경 반입 (키트 배포 직후)
+
+- 80일차 키트(`data-api`, `tools/flow.py`, `cases/common.json`)가 배포되면 아래 3가지를 수행해 팀원들이 즉시 정적 검사와 실제 연동을 돌릴 수 있게 한다.
+  1. `n8n`(`5678`)과 80일차 `data-api`(`8800`) 컨테이너를 기동하고 `flow.py doctor`가 `ready`인지 확인한다.
+  2. 키트의 `tools/flow.py`와 `cases/common.json` 원본을 `develop/wonmin/tools/flow.py`, `develop/wonmin/cases/common.json`에 복사하고 SHA-256 해시를 확인한다.
+  3. 루트 `.env.example`을 기반으로 로컬/VM `.env`를 생성(Git 커밋 제외)하고, n8n Credential 3종(`OpenAI`, `X-Team-Key`, `X-Api-Key`)을 등록한다.
+- [ ] 키트 반입·`flow.py doctor` ready·원민님 폴더 배치 확인 기록
+
 ## P1-1 · 독립 기능 검토 (LEAD-04)
 
 | 먼저 검토할 묶음 | 확인할 것 | 뒤에 연결할 담당 |

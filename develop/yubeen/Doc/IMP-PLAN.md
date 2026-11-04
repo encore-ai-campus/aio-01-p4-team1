@@ -4,7 +4,7 @@
 
 ## 작업 위치와 단계 운영
 
-모든 명령의 작업 디렉터리는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/yubeen`으로 지정한다. 아래 `python3 tools/...`와 설정 이름·옵션은 **구현 예정 인터페이스**다. 도구를 구현하고 도움말·입출력을 확인하기 전에는 실행 가능한 기존 명령으로 간주하지 않는다. 환경변수 이름은 공통 계약의 `DATA_API_URL`, `DATA_API_KEY`, `DATABASE_URL`, `N8N_WEBHOOK_URL`, `N8N_WEBHOOK_KEY`를 적용하고 실제 값은 기록하지 않는다. OpenAI 키는 n8n Credential로 관리한다.
+모든 명령의 작업 디렉터리는 저장소 루트 기준 `develop/yubeen`으로 지정한다. 아래 `python3 tools/...`와 설정 이름·옵션은 **구현 예정 인터페이스**다. 도구를 구현하고 도움말·입출력을 확인하기 전에는 실행 가능한 기존 명령으로 간주하지 않는다. 환경변수 이름은 공통 계약의 `DATA_API_URL`, `DATA_API_KEY`, `DATABASE_URL`, `N8N_WEBHOOK_URL`, `N8N_WEBHOOK_KEY`를 적용하고 실제 값은 기록하지 않는다. OpenAI 키는 n8n Credential로 관리한다.
 
 DB·원본·n8n이 준비되지 않은 단계는 같은 계약의 Mock으로 확인한다. Mock 결과와 실제 연결 결과를 따로 기록한다. 기존 마이그레이션이 없으면 지혜님 산출물이 준비될 때 DB 연결을 확인하며, 자기 폴더에 대체 마이그레이션을 만들지 않는다. 정책 제안 검토를 기다리는 동안 전처리·정답표·계약 Mock은 계속한다.
 
@@ -84,23 +84,22 @@ DB·원본·n8n이 준비되지 않은 단계는 같은 계약의 Mock으로 확
 
 ## n8n 확인·사람 수행의 구분
 
-구현 후 JSON 정적 확인은 수업 80일차 키트 `flow.py check`를 사용한다. 키트의 실제 위치·버전을 먼저 확인하고 기록한다. 아래는 **경로 치환이 필요한 예정 명령**이며 현재 실행하지 않았다. 작업 디렉터리는 이 문서 첫 절의 개인 폴더다.
+구현 후 JSON 정적 확인은 80일차 평가 키트 `flow.py check`를 사용한다. 키트의 실제 위치·버전을 먼저 확인하고 기록한다. 아래는 **경로 치환이 필요한 예정 명령**이며 현재 실행하지 않았다. 작업 디렉터리는 이 문서 첫 절의 개인 폴더다.
 
 ```text
-uv run <80일차_키트_절대경로>/tools/flow.py check /Users/k5h00/port-cli/Aio-4pj-1team/develop/yubeen/workflows/oke-index.json
-uv run <80일차_키트_절대경로>/tools/flow.py check /Users/k5h00/port-cli/Aio-4pj-1team/develop/yubeen/workflows/oke-search.json
+uv run <80일차_키트_경로>/tools/flow.py check workflows/oke-index.json
+uv run <80일차_키트_경로>/tools/flow.py check workflows/oke-search.json
 ```
 
-키트가 없으면 정적 검사도 미실행으로 적는다. 다른 날짜 키트로 확인한 결과를 80일차 검증 완료로 쓰지 않는다. **push·test·서비스 재시작·VM 배포는 사람이 관리하는 실제 실행 단계**로 구별하고, 이 문서 작성 작업에서는 수행하지 않는다.
+키트가 없으면 정적 검사도 미실행으로 적는다. 다른 날짜 키트로 확인한 결과를 80일차 검증 완료로 쓰지 않는다. **push·test·서비스 재시작·VM 배포는 사람이 관리하는 실제 실행 단계**로 구별한다.
 
 ## 실행 후 기록 양식
 
 각 결과 파일에 `단계 / SPEC ID / 날짜·실행 ID / 실제 생성·수정 파일 / 원본·설정·환경 버전 / 작업 디렉터리·명령 또는 사람의 실행 근거 / Mock·실제 / 입력 / 기대 / 실제 HTTP·출력·종료 코드 / 완료·실패·미실행 / 증거 경로 / 남은 문제 / 다음 담당자에게 넘길 결과`를 적는다.
 
-문서 정비 확인은 코드·설치·색인·시험 성공의 근거가 아니다. 이번 작업에서는 Git 변경 명령·외부 메시지 전송을 수행하지 않으며, 최종 검토·반영은 상위 담당자에게 넘긴다.
+문서 정비 확인은 코드·설치·색인·시험 성공의 근거가 아니다. 최종 검토·반영은 상위 담당자에게 넘긴다.
 
 ## 공통 자료
 
-- [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [05-RAG-DESIGN-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/05-RAG-DESIGN-GUIDE.md) · [04-REFERENCE-ARCHITECTURE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md) · [VIBE-Q-TDOC.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/71/VIBE-Q-TDOC.md)
+- [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
+- [협업 방식과 연결 규칙](../../../docs/COORDINATION.md) · [RAG 설계서](../../../docs/RAG-ARCHITECTURE.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md)

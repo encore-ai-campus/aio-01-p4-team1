@@ -8,11 +8,11 @@
 
 | 연결 | 검토 상대 | 상태 |
 | --- | --- | --- |
-| C01 | 수언님·오현님 | H01·02·03·05 제안, 미전달·미검토·공통 미반영 |
-| C02 | 다혁님·오현님 | H04 및 H03 support 세부 형식 제안, 미전달·미검토·공통 미반영 |
-| C05 | 원민님·오현님 | H03 내부 오류/필드·H06 DLQ 제안, 미전달·미검토·공통 미반영 |
+| C01 | 수언님·오현님 | H01·03·05 핵심(세션 쿠키·관리자 목록·assignee=employees.id·최후 관리자 보호) 공통 반영 완료, H02 세부 제안 유지·실연결 미실행 |
+| C02 | 다혁님·오현님 | H04 및 H03 support 세부 형식 제안, 실연결 미실행 |
+| C05 | 원민님·오현님 | H06(`POST /dlq`, `alerts.event_key`) 공통 반영 완료, H03 세부 오류 제안·실연결 미실행 |
 | C06 | 유빈님 | 기본 app/rag·모델3072·cosine/top_k3 적용, 변경 제안 없음·실연결 미확인 |
-| C07 | 오현님·영향받는 담당 | 기본 서비스명/포트/변수 적용, 실제 설치/기동 미실행 |
+| C07 | 오현님·영향받는 담당 | 기본 서비스명/포트/`BACKEND_ORIGIN` 공통 반영 완료, 실제 설치/기동 미실행 |
 
 아래 ‘H01’ 표기는 JH-H01의 축약이다. 제안과 무관한 P0 골격·기본 모델·공통 스키마·Mock 작업은 계속한다. 정책에 의존하는 외부 응답/추가 DB 변경은 공통 반영 전 확정 구현·배포로 취급하지 않는다.
 
@@ -39,9 +39,9 @@
 
 - 연결/요구: C01·C02·C05 / BE-01~04. 상태: **제안, 미채택**.
 - 기존: API 경로와 핵심 필드, 목록 items, 단건 객체, 웹 error 외형, 공통400 codes는 확정이다. current/new 암호의 정확한 키·직원 식별값·assignee 의미·목록 단건 필드·생성 성공 상태·중복/일부 오류코드는 미정이다.
-- 제안 요청: change-password 키 current_password/new_password, 관리자 발급 employee_id/login_id/temporary_password(임의 role 입력 없음). 경로 users/{id}·tickets/{id}는 내부 bigint PK, assignee는 IT팀 app.users.id 또는 null로 하고 외부 ticket_id(T-번호)와 구별한다. ticket patch는 status 필수, assignee/reply 생략 시 유지·명시 null 시 해제로 제안한다.
+- 제안 요청: change-password 키 current_password/new_password, 관리자 발급 employee_id/login_id/temporary_password(임의 role 입력 없음). 경로 users/{id}·tickets/{id}는 내부 bigint PK, assignee는 IT팀 `app.employees.id` 또는 null로 하고 외부 ticket_id(T-번호)와 구별한다(공통 `API-CONTRACT.md`·`DATA-AND-DB.md` 반영 완료). ticket patch는 status 필수, assignee/reply 생략 시 유지·명시 null 시 해제로 제안한다.
 - 제안 응답: SPEC 4절의 AccountView/InquiryView/TicketView/AlertView 필드 목록을 사용한다. 로그인은 user 객체, me는 직접 요약 객체. 웹 생성 계정201, 나머지 웹 성공200. 기존 확정 C05 티켓 신규201/중복200·알림200은 변경하지 않는다. 목록 정렬은 created_at 내림차순·동일 시 id 내림차순으로 제안한다.
-- 오류 제안: 웹400 `validation_error`와 필드별 codes(비밀번호 값 제외), 없는 계정404 `not_found`, 중복 employee/login_id409 `account_exists`, 없는 assignee/비IT400 `invalid_assignee`, 없는 외부 알림 ticket_id400 `unknown_ticket`. 추가 입력 필드는400으로 거절하고 context는 최대2000자로 제한하는 안이다. 교사 웹훅400 codes는 변환하지 않는다. 아직 이 세부400/409를 확정 계약으로 쓰지 않는다.
+- 오류 제안: 웹400 `validation_error`와 필드별 codes(비밀번호 값 제외), 없는 계정404 `not_found`, 중복 employee/login_id409 `account_exists`, 없는 assignee/비IT400 `invalid_assignee`, 없는 외부 알림 ticket_id400 `unknown_ticket`. 추가 입력 필드는400으로 거절하고 context는 최대2000자로 제한하는 안이다. 공통 웹훅400 codes는 변환하지 않는다. 아직 이 세부400/409를 확정 계약으로 쓰지 않는다.
 - support 세부 제안: security.blocked_by/reason은 문자열 또는 null, masked는 비음수 정수로 모델화한다. 기존 필드/route 및 추가 reason/timings는 그대로 유지한다. severity/category는 공통이 enum을 정하지 않았으므로 비어 있지 않은 문자열로 검증하고 임의 enum을 추가하지 않는다.
 - 영향: Pydantic/OpenAPI, 화면의 ID/담당자 선택·목록 렌더링, 내부 알림 T-번호→PK 매핑, 계약 시험 fixture. 숫자형 id7/8 등은 문서 예시이며 실제 직원 매핑이 아니다.
 - 검토 상대/반영 요청: 수언님(C01), 다혁님(C02 security), 원민님(C05), 오현님(API 반영). 기존/제안 차이는 SPEC 3~5절에 초안 표시. 상대 확인·반영·연결 모두 없음.
@@ -51,7 +51,7 @@
 - 연결/요구: C01·C02 / BE-02·03·07. 상태: **제안, 미채택**.
 - 기존: n8n 장애 때 정해진 안내/마스킹 로그, 같은 논리 요청은 같은 request_id, 타인 키403·입력400은 정해져 있다. 정확한 timeout·웹 장애 상태/코드·실행 중 재시도·같은 키의 본문 변경은 없다.
 - 제안: 연결3초·요청 전체30초 제한(읽기 timeout만으로 전체 상한이라 주장하지 않고 전체 deadline 적용), FastAPI의 support 자동 재시도0회로 시작한다. n8n 내부 재시도와 중첩되지 않게 한다. 전체 예산은 실제 지연/하위 최악시간 측정 후 다혁님과 재검토한다. 숫자는 응답시간 달성 결과가 아니다.
-- 제안 출력: 전체 시간 초과504 `support_timeout`, 연결/서비스 장애503 `support_unavailable`, 형식/ID 불일치502 `invalid_support_response`, 안내는 재시도/문의 확인을 요청한다. 성공200·담당자 이관으로 위장하거나 ticket을 꾸미지 않는다. 오류에도 생성 request_id를 error.request_id로 반환하도록 웹 외형의 선택 필드 추가를 제안한다. 교사 웹훅400 본문은 그대로 유지한다.
+- 제안 출력: 전체 시간 초과504 `support_timeout`, 연결/서비스 장애503 `support_unavailable`, 형식/ID 불일치502 `invalid_support_response`, 안내는 재시도/문의 확인을 요청한다. 성공200·담당자 이관으로 위장하거나 ticket을 꾸미지 않는다. 오류에도 생성 request_id를 error.request_id로 반환하도록 웹 외형의 선택 필드 추가를 제안한다. 공통 웹훅400 본문은 그대로 유지한다.
 - 키 처리 제안: 소유권을 먼저 확인한 뒤 같은 key의 question/attempt/context가 다르면409 `request_conflict`, 이미 처리 중이면409 `request_in_progress`, 완료면 저장된 공통 응답 반환. inquiries.status는 pending/processing/succeeded/failed로 시작하고 원자적 상태 변경으로 단일 호출을 보장한다. 실패 재시도는 동일 소유자/동일 입력만 허용하며 티켓은 C05 UNIQUE로 중복을 방지한다.
 - 복구 제안: 프로세스 중단으로 processing이 남으면 실제 n8n 결과·티켓 상태를 운영자가 확인한 뒤 재시도 가능 상태로 전환한다. 임의 시간 경과만으로 진행 중 호출을 다시 생성하지 않는다. 이 복구 동작/운영 인터페이스는 채택 전 확정 구현하지 않는다.
 - 영향: HTTPX deadline/취소·문의 상태 거래·웹 재시도/안내·오류 모델/동시성 시험. 기존401/403을 retry하지 않는다. 데이터가 없는 오류를 정상 결과로 저장하지 않는다.
@@ -66,14 +66,12 @@
 - 영향: bootstrap CLI·관리자 활성 변경 거래·화면 오류. 신규 테이블 필요 없음. 기존 데이터/비밀번호를 덮어쓰지 않는 기본 재실행 동작은 그대로 진행한다.
 - 검토 상대/반영 요청: 오현님(계정 운영·API), 수언님(버튼/오류), 원민님(동시 변경). 미검토·미반영·시험 미실행. 409 등은 제안 상태다.
 
-## JH-H06 · app 모드 DLQ 쓰기 계약 누락
+## JH-H06 · app 모드 DLQ 쓰기 계약 반영
 
-- 연결/요구: C05·C07 / BE-04·05. 상태: **제안, 미채택**.
-- 기존: app.dlq 테이블과 원민님 handoff/errors의 DLQ 처리는 정해져 있으나 공통 저장 API는 /tickets·/alerts만 명시한다. practice의 data-api DLQ와 달리 app.dlq에 넣는 HTTP 계약/대상은 없다.
-- 제안: app 모드에 X-Api-Key 인증 `POST /dlq`를 추가하고 최소 입력 request_id/reason/safe_payload, 응답200 stored/count로 정의한다. safe_payload는 허용 필드만 담고 개인정보·암호·키를 제거한다. 임시 status는 pending으로 제안한다. 인증 실패401/입력400은 기존 원칙을 사용한다. 재처리 API·반복 적재 멱등 키는 원민님이 사용하는 단위와 함께 별도 검토하며 아직 완료 범위로 주장하지 않는다.
-- 기존/제안 차이: 기존 data-api /dlq는 item/items·stored/size 등의 구조를 쓰므로 이 제안은 그 계약과 자동 호환되지 않는다. 원민님은 모드 어댑터가 필요한지 검토하고, 그 검토 없이 handoff/errors 호출을 변경하지 않는다. /tickets·/alerts의 기존 호환 계약은 유지한다.
-- 영향: 채택 시 backend 라우터/모델·저장 서비스와 원민님 워크플로우 호출부·관측/시험 변경. 자기 파일은 각 소유자만 수정한다. 동일 실패를 두 저장소에 동시에 쓰지 않는다.
-- 검토 상대/반영 요청: 원민님(입력/중복/재처리·실제 관측), 오현님(API C05/모드 반영). 실제 연결 미실행. 공통 dlq 테이블 생성은 진행하고 앱 DLQ 연결은 미완료로 남긴다.
+- 연결/요구: C05·C07 / BE-04·05. 상태: **공통 문서 반영 완료(실연결 미실행)**.
+- 반영 내용: `docs/API-CONTRACT.md` 5절과 `docs/DATA-AND-DB.md` 3절에 X-Api-Key 인증 `POST /dlq`(`request_id`, `workflow`, `node`, `reason`, `safe_payload`, `execution_ref`) 및 `POST /alerts` 선택 `event_key`가 반영되었다.
+- 영향: backend 라우터/모델·저장 서비스와 원민님 워크플로우 호출부·관측/시험에서 공통 스키마를 사용한다. 동일 실패를 두 저장소에 동시에 쓰지 않는다.
+- 검토 상대/반영 요청: 원민님(입력/중복/재처리·실제 관측), 오현님(API C05/모드 반영 완료). 실제 연결은 미실행 상태다.
 
 ## 후속 기록과 버그 전달
 

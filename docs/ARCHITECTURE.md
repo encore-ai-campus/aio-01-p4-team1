@@ -79,8 +79,8 @@ flowchart TB
    - `docker compose down -v`는 DB 및 n8n 볼륨 데이터를 모두 삭제하므로 일상 재시작 시 `-v` 옵션을 사용하지 않는다.
 
 3. **단일 공통 진입점과 모드 분리 (`SERVICE_MODE`)**
-   - 웹 요청(`FastAPI` → `oke-support`)과 강사 공통 시험 스크립트(`flow.py` → `oke-support`)는 모두 동일한 `POST /webhook/oke-support` 계약을 사용한다.
-   - `SERVICE_MODE=app`일 때는 FastAPI 내부 API(`/tickets`, `/alerts`, `/dlq`)를 통해 PostgreSQL(`app` 스키마)에 기록하고, `SERVICE_MODE=practice` 고장 주입 시험일 때는 수업 `data-api`를 사용한다.
+   - 웹 요청(`FastAPI` → `oke-support`)과 공통 시험 스크립트(`flow.py` → `oke-support`)는 모두 동일한 `POST /webhook/oke-support` 계약을 사용한다.
+   - `SERVICE_MODE=app`일 때는 FastAPI 내부 API(`/tickets`, `/alerts`, `/dlq`)를 통해 PostgreSQL(`app` 스키마)에 기록하고, `SERVICE_MODE=practice` 고장 주입 시험일 때는 제공 `data-api`를 사용한다.
 
 ---
 

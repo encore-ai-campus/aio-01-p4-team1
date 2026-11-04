@@ -157,6 +157,5 @@ Q14~16은 원문을 받기 전 구체 내용을 꾸미지 않는다. 누락 시 
 
 ## 공통 자료
 
-- [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [05-RAG-DESIGN-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/05-RAG-DESIGN-GUIDE.md) · [04-REFERENCE-ARCHITECTURE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md) · [VIBE-Q-TDOC.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/71/VIBE-Q-TDOC.md)
+- [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
+- [협업 방식과 연결 규칙](../../../docs/COORDINATION.md) · [RAG 설계서](../../../docs/RAG-ARCHITECTURE.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md)

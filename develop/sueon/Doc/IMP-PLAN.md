@@ -1,10 +1,10 @@
 # 수언님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 기준대로 바로 시작하고 변경 필요분만 [HANDOFF](HANDOFF.md)에 기록한다. 아래 파일·명령·확인 결과물은 전부 **구현 예정·미실행**이다. 이번 작업은 Markdown 정비만 하며 설치·코드 생성·시험을 실행하지 않는다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 기준대로 바로 시작하고 변경 필요분만 [HANDOFF](HANDOFF.md)에 기록한다. 아래 파일·명령·확인 결과물은 전부 **구현 예정·미실행**이다.
 
 ## 실행 위치와 확인 명령의 전제
 
-향후 모든 프론트 명령의 workdir는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/sueon`이다. 다른 폴더·공통 설정을 고치지 않는다. 현재 package.json·스크립트·테스트·lockfile이 없으므로 아래 명령은 지금 실행할 수 있는 명령이 아니다.
+향후 모든 프론트 명령의 workdir는 저장소 루트 기준 `develop/sueon`이다. 다른 폴더·공통 설정을 고치지 않는다. 현재 package.json·스크립트·테스트·lockfile이 없으므로 아래 명령은 지금 실행할 수 있는 명령이 아니다.
 
 P0-1에서 Node/npm 환경과 Next.js·React의 공식 호환 조건을 확인해 TypeScript/App Router 프로젝트를 이 폴더에 구성한다. create-next-app을 사용하면 기존 Markdown·AGENTS를 덮어쓰지 않도록 생성 목록을 먼저 확인한다. 자동 생성이 기존 파일 때문에 실패하면 자기 폴더 안의 필요한 설정 파일만 직접 구성하며 README/Doc를 이동·삭제하지 않는다. 버전은 설치 검증 후 package.json·lockfile과 README에 실제 값으로 기록한다. Next.js 버전별로 달라지는 설정 파일 확장자는 설치한 버전 기준으로 확인한다.
 
@@ -52,7 +52,7 @@ P0-1에서 Node/npm 환경과 Next.js·React의 공식 호환 조건을 확인�
 
 - [ ] 연결 SPEC: FE-04T, FE-05 / S12~13.
 - 생성 예정: `src/components/AdminGate.tsx`, `src/app/(protected)/admin/layout.tsx`, `src/lib/api/admin-tickets.ts`, `src/components/TicketEditor.tsx`, `src/app/(protected)/admin/tickets/page.tsx`, `tests/admin-tickets.test.ts`.
-- 작업: 관리자 메뉴·직접 URL 안내, 목록 행 편집·status/assignee/reply 저장. ticket_id와 경로 id를 분리하고 오류 때 편집값을 유지한다. 성공 객체와 재조회로 저장 상태를 확인한다. H02 담당자 타입 제안은 Mock으로 격리한다.
+- 작업: 관리자 메뉴·직접 URL 안내, 목록 행 편집·status/assignee/reply 저장. ticket_id와 경로 id를 분리하고 오류 때 편집값을 유지한다. 성공 객체와 재조회로 저장 상태를 확인한다. assignee는 IT팀 `app.employees.id` 정수 또는 `null`로 처리한다.
 - 확인 예정: `npm run test -- tests/admin-tickets.test.ts`, `npm run typecheck`, `npm run build`. Mock 접수→처리 중→완료, 담당자/답변, 400/403/404·저장 실패, 직원 관리자 URL을 확인한다. 메뉴 차단만으로 서버 권한 통과라고 쓰지 않는다.
 - 다음 담당자 지혜님·원민님에게 넘길 결과: PATCH 요청·표시 매핑·S12~13 권한/저장 확인 절차.
 - 현재 결과: 미구현·미실행.
@@ -61,7 +61,7 @@ P0-1에서 Node/npm 환경과 Next.js·React의 공식 호환 조건을 확인�
 
 - [ ] 연결 SPEC: FE-04U, FE-04A, FE-05 / S14~15.
 - 생성 예정: `src/lib/api/admin-users.ts`, `src/lib/api/admin-alerts.ts`, `src/components/UserEditor.tsx`, `src/components/AlertList.tsx`, `src/app/(protected)/admin/users/page.tsx`, `src/app/(protected)/admin/alerts/page.tsx`, `tests/admin-users.test.ts`, `tests/admin-alerts.test.ts`.
-- 작업: 기존 POST/PATCH/reset 경로와 알림 GET을 적용한다. 발급 성공 후 비밀번호 입력을 지운다. 비활성화/초기화 대상 확인과 실패 안내를 둔다. H01 목록만 Mock으로 진행하고 미승인 GET을 실제 호출하지 않는다. 알림 ticket_id=null도 유지하며 확인/삭제 API를 만들지 않는다.
+- 작업: `GET /api/admin/employees`, `GET /api/admin/users` 및 기존 POST/PATCH/reset 경로와 알림 GET을 적용한다. 발급 성공 후 비밀번호 입력을 지운다. 비활성화/초기화 대상 확인과 실패 안내를 둔다. 백엔드 미기동 시에는 계약 Mock으로 진행한다. 알림 ticket_id=null도 유지하며 확인/삭제 API를 만들지 않는다.
 - 확인 예정: `npm run test -- tests/admin-users.test.ts tests/admin-alerts.test.ts`, `npm run typecheck`, `npm run build`. 발급·중복 오류·비활성화·초기화·빈 알림·긴급 알림·티켓 없음·403을 확인한다. 비밀번호가 결과/로그에 남지 않는지 확인한다.
 - 다음 담당자 지혜님·오현님에게 넘길 결과: H01~03 반영 필요 목록, 기존 API로 가능한 범위와 Mock에 남은 부분, S14~15 기대.
 - 현재 결과: 미구현·미실행.
@@ -70,7 +70,7 @@ P0-1에서 Node/npm 환경과 Next.js·React의 공식 호환 조건을 확인�
 
 - [ ] 연결 SPEC: FE-01, FE-05, FE-06 / S01~03,S16.
 - 수정 예정: `next.config.ts`(설치 버전 기준), `src/lib/api/client.ts`, `src/lib/api/auth.ts`, `src/lib/session.tsx`, `README.md`. 생성 예정: `.env.example`(확정된 이름만, 값 없음). Dockerfile 필요 시 `Dockerfile`, `.dockerignore`를 자기 폴더에만 생성한다.
-- 작업: 공통 C07대로 브라우저 상대 /api를 프론트 서버에서 FastAPI로 프록시한다. 로컬 backend 8000, 컨테이너 backend:8000을 구별한다. 서버 전용 프록시 변수 추가는 H04 공통 반영 후 적용한다. 키나 backend 내부 주소를 NEXT_PUBLIC 변수로 노출하지 않는다. Compose 파일은 지혜님 소유로 읽기만 한다.
+- 작업: 공통 C07대로 브라우저 상대 /api를 프론트 서버에서 FastAPI로 프록시한다. 서버 전용 `BACKEND_ORIGIN`으로 로컬 backend(`http://127.0.0.1:8000`)와 컨테이너(`http://backend:8000`)를 구별한다. 키나 backend 내부 주소를 NEXT_PUBLIC 변수로 노출하지 않는다. Compose 파일은 지혜님 소유로 읽기만 한다.
 - 전제: 지혜님 실제 FastAPI 인증 API와 안전하게 발급된 시험 계정. H02/H03 반영분 또는 실제 OpenAPI 응답을 어댑터에 적용한다. 미반영 부분은 연결 미완료로 남긴다.
 - 확인 예정: P0 검사를 다시 실행한 뒤 향후 담당자가 `npm run dev`로 프론트만 실행해 localhost:3000 로그인·변경·로그아웃·새로고침·401/403을 확인한다. DevTools에서 요청 경로·쿠키 속성만 확인하고 비밀번호·쿠키 원문을 캡처하지 않는다. 실제 확인 명령·버전은 README에 갱신한다.
 - 다음 담당자 지혜님·오현님에게 넘길 결과: 프록시 설정 경로·검증된 실행 명령·Mock 잔여 목록. C07을 바꾸지 않는 부분은 사전 협의 없이 진행한다.
@@ -96,15 +96,8 @@ P0-1에서 Node/npm 환경과 Next.js·React의 공식 호환 조건을 확인�
 
 ## 기록 방법
 
-각 단계 완료 후 이 문서의 해당 단계에 실행일·실제 명령·종료 상태·시나리오별 기대/실제·Mock 여부·근거 파일·남은 문제를 적는다. 성공 근거가 있을 때만 체크한다. 설치·시험 실패를 완료로 바꾸거나 예시를 실제 응답으로 쓰지 않는다. 일반 PR은 자기 폴더만 포함하고 검토·최종 반영은 상위 담당자가 한다. 이번 문서 작업에서 Git 변경 명령을 실행하지 않는다.
+각 단계 완료 후 이 문서의 해당 단계에 실행일·실제 명령·종료 상태·시나리오별 기대/실제·Mock 여부·근거 파일·남은 문제를 적는다. 성공 근거가 있을 때만 체크한다. 설치·시험 실패를 완료로 바꾸거나 예시를 실제 응답으로 쓰지 않는다. 일반 PR은 자기 폴더만 포함하고 검토·최종 반영은 상위 담당자가 한다.
 
 ## 공통 자료
 
-[주제](../../../docs/TOPIC.md) · [공통 API](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md).
-
-- [요구→TODO→SPEC→IMP-PLAN](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/78/VIBE-Q-TCHECK.md)
-- [11-TOPIC-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/11-TOPIC-GUIDE.md)
-- [02-ENVIRONMENT-AND-SERVICES.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md)
-- [04-REFERENCE-ARCHITECTURE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md)
-- [06-RELIABILITY-AND-SECURITY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/06-RELIABILITY-AND-SECURITY.md)
-- [07-TESTING-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md)
+[주제](../../../docs/TOPIC.md) · [공통 API](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [아키텍처](../../../docs/ARCHITECTURE.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md).

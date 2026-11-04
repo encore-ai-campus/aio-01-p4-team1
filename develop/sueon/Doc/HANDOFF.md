@@ -10,10 +10,10 @@ C01의 로그인·질문·내 문의·관리자 API 경로, user 요약·쿠키�
 
 | 제안 | 연결 / SPEC | 검토 상대 | 현재 상태 |
 | --- | --- | --- | --- |
-| H01 관리자 대상 목록 조회 | C01 / FE-04U,04T | 지혜님, 공통 반영 오현님 | 문서 제안, 미전송·미검토 |
-| H02 웹 API 상세 필드·오류 | C01 / FE-01~05 | 지혜님, 시험 영향 원민님, 공통 반영 오현님 | 문서 제안, 미전송·미검토 |
-| H03 최초 변경·인증·관리 보호 | C01 / FE-01,04U | 지혜님·오현님, 시험 영향 원민님 | 문서 제안, 미전송·미검토 |
-| H04 시간 제한·보완·복구·프록시 설정 | C01/C07 / FE-02,05,06 | 지혜님·오현님, 처리시간 영향 다혁님·원민님 | 문서 제안, 미전송·미검토 |
+| H01 관리자 대상 목록 조회 | C01 / FE-04U,04T | 지혜님, 공통 반영 오현님 | `GET /api/admin/users`·`GET /api/admin/employees` 공통 반영 완료, 실연결 미실행 |
+| H02 웹 API 상세 필드·오류 | C01 / FE-01~05 | 지혜님, 시험 영향 원민님, 공통 반영 오현님 | 티켓 `assignee`(`app.employees.id`)·기본 입출력 공통 반영 완료, 세부 오류 제안 유지·실연결 미실행 |
+| H03 최초 변경·인증·관리 보호 | C01 / FE-01,04U | 지혜님·오현님, 시험 영향 원민님 | `/api/auth/me`의 `must_change_password`·세션 쿠키·최후 관리자 보호 공통 반영 완료, 실연결 미실행 |
+| H04 시간 제한·보완·복구·프록시 설정 | C01/C07 / FE-02,05,06 | 지혜님·오현님, 처리시간 영향 다혁님·원민님 | `BACKEND_ORIGIN` 공통 반영 완료, timeout/복구 세부 제안 유지·실연결 미실행 |
 
 ## H01 · 관리자 계정/직원 선택 목록
 
@@ -35,7 +35,7 @@ C01의 로그인·질문·내 문의·관리자 API 경로, user 요약·쿠키�
 | 내 문의 | 본인 문의·답변·티켓 상태 목록, items | 항목 `{request_id,question,attempt,context,result,created_at,ticket_status}`. result는 공통 응답 전체, ticket_status는 웹 status 또는 null. 기존 티켓 표시가 필요하면 원본 상태임을 구별하는 별도 필드 추가 검토 |
 | 티켓 | id·담당자·상태·답변의 정확한 타입 미명시 | 항목 `{id,ticket_id,title,category,priority,status,assignee,reply,requester_name,created_at,updated_at}`. 경로 id는 업무 티켓 정수 PK, ticket_id는 문자열. assignee는 IT팀 employee 정수 id 또는 null(해제), reply는 문자열 또는 null. PATCH에 없는 선택 필드는 기존 값 유지, 명시 null은 지움 |
 | 알림 | 알림 items만 정의 | 항목 `{id,ticket_id,workflow,node,message,severity,created_at}`. ticket_id는 표시용 문자열 또는 null, message는 서버 마스킹. 티켓 생성 실패도 반환 |
-| HTTP 오류 | 400/401/403/404, 웹 error·교사 codes | 400 invalid_input/password_policy/duplicate_user, 401 unauthorized, 403 forbidden, 404 not_found로 명시. 중복 발급은 신규 409를 도입하지 않고 기존 400 사용 제안. 교사 400 codes는 원형 유지 |
+| HTTP 오류 | 400/401/403/404, 웹 error·공통 웹훅 codes | 400 invalid_input/password_policy/duplicate_user, 401 unauthorized, 403 forbidden, 404 not_found로 명시. 중복 발급은 신규 409를 도입하지 않고 기존 400 사용 제안. 공통 웹훅 400 codes는 원형 유지 |
 
 - 입력/출력 예: PATCH `/api/admin/tickets/21`에 `{status:"in_progress",assignee:null,reply:"확인 중입니다."}`→선택 필드 규칙대로 변경된 객체. 화면에는 ticket_id를 따로 표시한다. 숫자 21은 Mock 식별자 예시이며 실제 데이터가 아니다.
 - 영향: 지혜님 Pydantic/OpenAPI·직렬화·NULL 처리·오류 매핑, 수언님 types/각 API 어댑터, 원민님 경계 시험에 영향. 오현님은 API-CONTRACT C01의 상세 예시로 반영한다. 새 업무 DB 테이블은 제안하지 않는다.

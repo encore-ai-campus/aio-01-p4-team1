@@ -4,7 +4,7 @@
 
 **전체 상태: 구현·설치·시험·DB 적용·배포 미실행.** 아래 생성 파일과 확인 명령은 모두 구현 예정이다. 코드 경로는 현재 존재하는 링크가 아니다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다. 이 문서 보완 작업에서는 코드·SQL·JSON·패키지를 생성하지 않는다.
 
-모든 아래 로컬 명령의 작업 디렉터리는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
+모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
 ## P0-1 · FastAPI 골격과 공통 검증 타입부터
 
@@ -101,4 +101,4 @@
 
 ## 참고
 
-[주제](../../../docs/TOPIC.md) · [공통 API](../../../docs/API-CONTRACT.md) · [DB](../../../docs/DATA-AND-DB.md) · [협업](../../../docs/COORDINATION.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [환경](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [공통 페이로드](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md) · [시험](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md).
+[주제](../../../docs/TOPIC.md) · [공통 API](../../../docs/API-CONTRACT.md) · [DB](../../../docs/DATA-AND-DB.md) · [협업](../../../docs/COORDINATION.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [전체 아키텍처](../../../docs/ARCHITECTURE.md) · [평가·시나리오 가이드](../../../docs/EVALUATION-GUIDE.md).

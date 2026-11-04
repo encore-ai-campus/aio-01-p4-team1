@@ -18,6 +18,7 @@ Next.js 화면 → FastAPI → n8n으로 연결한다. 업무 데이터는 Postg
 | 담당자·소유 파일·팀 규칙 | [TEAM-CHARTER](docs/TEAM-CHARTER.md) |
 | API·하위 연결·서비스명·포트·환경변수 | [API-CONTRACT](docs/API-CONTRACT.md) |
 | 데이터·DB·pgvector 구조 | [DATA-AND-DB](docs/DATA-AND-DB.md) |
+| 제공 데이터·공통 14종 시나리오·평가 기준 | [EVALUATION-GUIDE](docs/EVALUATION-GUIDE.md) |
 | 개발·변경 협의·PR·통합 | [COORDINATION](docs/COORDINATION.md) |
 | 코딩 에이전트 공통 규칙 | [AGENTS](AGENTS.md) |
 

@@ -31,9 +31,9 @@
 
 ## 적용할 기준과 변경 경계
 
-C04/C05 입력·응답, 티켓 `key=request_id`, 신규 201·중복 200, `normal/high`, X-Team-Key/X-Api-Key, practice/app 대상과 app 테이블은 이미 정해져 있다. 새 승인 없이 [SPEC 적용할 기준](SPEC.md#적용할-기준)으로 진행한다.
+C04/C05 입력·응답, 티켓 `key=request_id`, 신규 201·중복 200, `normal/high`, `POST /alerts` 선택 `event_key`, `POST /dlq`, X-Team-Key/X-Api-Key, practice/app 대상과 app 테이블은 이미 정해져 있다. 새 승인 없이 [SPEC 적용할 기준](SPEC.md#적용할-기준)으로 진행한다.
 
-공통에 빠진 retry 수치·부분실패 ok 의미·app DLQ API·알림 중복/재처리·관측 경계는 HANDOFF WM-01~WM-04의 제안이다. 확정 전에는 해당 경계를 Mock으로 시험하고 공통 기준 확정 또는 서비스 준비가 필요한 항목을 미판정으로 남긴다. 나머지 문서·정상/중복 경로 개발을 멈추지 않는다.
+공통에 빠진 retry 수치·부분실패 ok 의미·관측 조회 세부 경계는 HANDOFF WM-01~WM-04의 제안이다. 확정 전에는 해당 경계를 Mock으로 시험하고 공통 기준 확정 또는 서비스 준비가 필요한 항목을 미판정으로 남긴다. 나머지 문서·정상/중복 경로 개발을 멈추지 않는다.
 
 ## P2 선택 고도화
 
@@ -51,5 +51,4 @@ C04/C05 입력·응답, 티켓 `key=request_id`, 신규 201·중복 200, `normal
 ## 공통 자료
 
 - [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [06-RELIABILITY-AND-SECURITY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/06-RELIABILITY-AND-SECURITY.md) · [07-TESTING-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md) · [08-SUBMISSION.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/08-SUBMISSION.md) · [VIBE-Q-TRETRY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/76/VIBE-Q-TRETRY.md)
+- [협업 방식과 연결 규칙](../../../docs/COORDINATION.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md) · [아키텍처](../../../docs/ARCHITECTURE.md) · [제출 안내](../../ohyun/SUBMISSION.md)

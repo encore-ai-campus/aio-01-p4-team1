@@ -8,7 +8,8 @@
 | --- | --- | --- |
 | handoff 입구 C04 | POST /webhook/oke-handoff, X-Team-Key. 필수 request_id/requester/title/category/priority/reason, 선택 evidence_summary | API §4 |
 | 저장 C05 | POST /tickets: key=request_id, title/requester/category/priority. 신규 HTTP201, 중복 HTTP200, 같은 ticket_id·duplicate=true | API §5 |
-| 알림 C05 | POST /alerts: workflow/node/message/severity, 선택 ticket_id. HTTP200 {stored:1,count:실제 누적 수} | API §5 |
+| 알림 C05 | POST /alerts: workflow/node/message/severity, 선택 ticket_id/event_key. HTTP200 {stored:1,count:실제 누적 수} | API §5 |
+| DLQ C05 | POST /dlq: request_id/workflow/node/reason/safe_payload/execution_ref. 신규 HTTP201, 중복 HTTP200 | API §5 |
 | 인증 | support/handoff는 X-Team-Key, app 내부 저장은 X-Api-Key. 키는 Credential/환경변수에만 둠 | API §1·4·5·7 |
 | 티켓/상태 | normal/high, app 새 번호 T-2001부터. request_key UNIQUE, 소유자 불일치 시 타인 기록 반환 금지 | DATA §3 |
 | C04 실패 | 티켓 장애도 HTTP200, ok=false, ticket=null, reason=tickets_down. 알림만 실패하면 티켓 유지·reason=alerts_down | API §4 |
@@ -17,7 +18,7 @@
 | 저장 위치 | app.tickets/app.alerts/app.dlq, 마스킹한 DLQ 입력. DB 거래·멱등성은 지혜님, 시험은 원민님 | DATA §3 |
 | 시험 | 공통 14유형 원본 판정 유지, 팀 5개 이상, LLM 3회·VM 회귀. n8n check 후 push/test는 사람이 수행 | TEAM·COORDINATION |
 
-공통이 정한 항목을 담당자가 다시 설계하거나 사전 동의를 받을 필요는 없다. 미정은 retry·timeout 수치(WM-01), app DLQ API/관측(WM-02), 알림 중복/재처리(WM-03), 부분실패 ok와 입력 오류 세부 형식(WM-04)뿐이다. 제안 수치·필드는 공통 반영 전 확정 계약으로 쓰지 않는다.
+공통이 정한 항목을 담당자가 다시 설계하거나 사전 동의를 받을 필요는 없다. `POST /dlq`와 `POST /alerts` 선택 `event_key`는 공통 `API-CONTRACT.md`·`DATA-AND-DB.md`에 반영되어 있다. 미정은 retry·timeout 수치(WM-01), 내부 ops 조회 경로(WM-02), 알림 자동 재처리 세부(WM-03), 부분실패 ok와 입력 오류 세부 형식(WM-04)이다. 제안 수치·필드는 공통 반영 전 확정 계약으로 쓰지 않는다.
 
 ## 요구 ID와 통과 기준
 
@@ -86,7 +87,7 @@ C04 입력 예:
 {"ok":false,"ticket":null,"reason":"tickets_down","alerted":false,"dlq":false}
 ```
 
-전체실패라도 티켓 접수 완료라고 안내하지 않는다. support의 최종 route는 `담당자 이관`을 유지하되 ticket=null·reason과 실제 실패를 알리는 문구로 구성한다. C04의 alerted/dlq를 교사 공통 응답 필수 필드로 새로 추가하지 않고 내부 관측·보고서에서 확인한다. 검색 sources·agents·security는 support 소유이며 handoff가 덮어쓰지 않는다.
+전체실패라도 티켓 접수 완료라고 안내하지 않는다. support의 최종 route는 `담당자 이관`을 유지하되 ticket=null·reason과 실제 실패를 알리는 문구로 구성한다. C04의 alerted/dlq를 공통 응답 필수 필드로 새로 추가하지 않고 내부 관측·보고서에서 확인한다. 검색 sources·agents·security는 support 소유이며 handoff가 덮어쓰지 않는다.
 
 ## REL-02 · 실패 처리표
 
@@ -153,7 +154,7 @@ TM-01~08은 `cases/team.json`, TM-09~10과 신규/중복/401/403/429/timeout은 
 | 대상 | practice | app |
 | --- | --- | --- |
 | support 호출 | 같은 oke-support; C04→같은 oke-handoff | 같은 본체·하위, 설정으로 저장 대상만 전환 |
-| 새 업무 쓰기 | data-api /tickets·/alerts·/dlq | backend /tickets·/alerts, app DLQ API WM-02 |
+| 새 업무 쓰기 | data-api /tickets·/alerts·/dlq | backend /tickets·/alerts·/dlq |
 | 고장/초기화 | 같은 data-api /admin/fault, /tickets-reset·/dlq-clear·/alerts-clear | data-api 고장은 앱 저장에 영향 없음. app 장애는 전용 Mock/시험 설정으로 주입; 운영 DB reset 금지 |
 | 관측 | 같은 인스턴스 /tickets-created·/alerts·/dlq·/admin/fault, flow ops | 관리자 API·지혜님이 제공하는 마스킹 DB 확인 결과, n8n 실행 ID; app ops 경로 WM-02 |
 | 인증·권한 | 팀 웹훅 인증·제공 직원 확인 | 세션에서 user 결정, 내부 API X-Api-Key, 타인 키/관리자 API 거절 |
@@ -180,5 +181,4 @@ TM-01~08은 `cases/team.json`, TM-09~10과 신규/중복/401/403/429/timeout은 
 ## 공통 자료
 
 - [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [06-RELIABILITY-AND-SECURITY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/06-RELIABILITY-AND-SECURITY.md) · [07-TESTING-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md) · [08-SUBMISSION.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/08-SUBMISSION.md) · [VIBE-Q-TRETRY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/76/VIBE-Q-TRETRY.md)
+- [협업 방식과 연결 규칙](../../../docs/COORDINATION.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md) · [아키텍처](../../../docs/ARCHITECTURE.md) · [제출 안내](../../ohyun/SUBMISSION.md)

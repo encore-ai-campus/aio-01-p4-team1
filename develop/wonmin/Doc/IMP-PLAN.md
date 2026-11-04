@@ -2,16 +2,16 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 계획 순서로 진행한다. 계약 변경은 [HANDOFF](HANDOFF.md)에만 제안하고 공통 기준 그대로의 작업은 바로 시작한다.
 
-> 전 단계 미실행. 아래는 **구현 예정 파일과 확인명령**이다. 이번 문서 작업에서 코드·JSON·패키지·SQL·보고서를 만들거나 설치·서비스 실행·시험을 수행하지 않았다. 문서의 체크는 구현·실제 확인 후에만 한다.
+> 전 단계 미실행. 아래는 **구현 예정 파일과 확인명령**이다. 문서의 체크는 구현·실제 확인 후에만 한다.
 
 단계 분류: **P0 기반 → P1 필수 MVP → P2 선택 고도화**. P1-1~P1-5는 모두 필수다.
 
 ## 공통 실행 위치와 준비 규칙
 
-모든 명령 블록은 먼저 아래 절대경로로 이동한 뒤 한 줄씩 실행할 **예정**이다. 상대 폴더 명령을 대신 실행하거나 공통 파일을 생성하지 않는다.
+모든 명령 블록은 먼저 아래 폴더(저장소 루트 기준)로 이동한 뒤 한 줄씩 실행할 **예정**이다. 상대 폴더 명령을 대신 실행하거나 공통 파일을 생성하지 않는다.
 
 ```bash
-cd /Users/k5h00/port-cli/Aio-4pj-1team/develop/wonmin
+cd develop/wonmin
 ```
 
 서비스 주소/키는 지혜님이 제공한 실행 환경과 Credential을 사용한다. n8n 내부는 data-api:8800/backend:8000, 호스트 CLI는 같은 서비스의 공개된 포트다. SERVICE_MODE는 실행 설정으로 정하고 저장 호출 두 대상을 동시에 활성화하지 않는다. 환경변수 값이나 키를 보고서에 출력하지 않는다.
@@ -22,7 +22,7 @@ cd /Users/k5h00/port-cli/Aio-4pj-1team/develop/wonmin
 
 1. SPEC의 TM-01~08을 `cases/team.json`, TM-09~10과 신규/중복/영구 거절/일시 오류를 `cases/handoff.json`으로 작성한다. 각 케이스에 ID·조건·입력·예상 HTTP·필수 필드·부작용·정리 경로를 넣는다. app은 `cases/app-integration.md`에 세션/권한/중복/영속성의 수동 확인 절차를 작성한다. 미정 정책 관련 필드는 `Doc/HANDOFF.md` 제안 ID를 연결하고 미판정으로 둔다.
 2. `requests/demo-normal.json`(TM-01), `demo-clarify.json`(TM-02), `demo-handoff.json`(TM-06), `demo-urgent.json`(TM-05), `demo-failure.json`(TM-07), `bench-normal.json`(TM-01)을 만든다. 설명 문서의 가짜 ticket_id를 실제 기대값으로 고정하지 않는다.
-3. 제공된 80일차 키트가 준비되면 `tools/flow.py`와 실행에 필요한 보조 파일을 본인 폴더 안에 배치하고 출처·버전을 기록한다. `--help`와 코드를 읽어 보고서 출력 경로·fault/ops 호스트·인증 처리를 확인한다. tools 기준 상대경로 때문에 보고서가 수업 저장소나 루트로 나가지 않게 한다. 키트가 없으면 해당 파일과 common은 생성 대기, 팀 입력 작성은 계속한다. 과거 일차의 키트를 공통 14유형 원본으로 대체하지 않는다.
+3. 제공된 80일차 키트가 준비되면 `tools/flow.py`와 실행에 필요한 보조 파일을 본인 폴더 안에 배치하고 출처·버전을 기록한다. `--help`와 코드를 읽어 보고서 출력 경로·fault/ops 호스트·인증 처리를 확인한다. tools 기준 상대경로 때문에 보고서가 외부 폴더나 루트로 나가지 않게 한다. 키트가 없으면 해당 파일과 common은 생성 대기, 팀 입력 작성은 계속한다. 과거 일차의 키트를 공통 14유형 원본으로 대체하지 않는다.
 4. 공통 원본을 `cases/common.json`으로 그대로 보존하고 원본 경로·버전·SHA-256을 `runs/INDEX.md`에 기록한다. 판정·질문·고장 조건을 수정하지 않는다. 웹훅만 실행 옵션 `--webhook oke-support`로 선택한다. 원본 before/after의 주소가 현재 시험 인스턴스와 다르면 공통 파일을 고치지 말고 WM-02에 재현·실행 환경 조정 요청을 추가한다.
 5. `runs/INDEX.md`에 환경/모드·커밋·배포 버전·색인/모델·도구 버전·예정 사례와 상태를 기록한다. 이 파일은 시험 후 증거 색인이며 별도의 시작 안내파일을 만들지 않는다.
 
@@ -82,7 +82,7 @@ REL-02·05. 같은 `oke-handoff.json`에 H05/H07/H09와 오류 출력을 추가�
 1. 401/403 등은 최초 호출에서 종료시켜 상태별 재시도를 분리한다. 모든 HTTP 오류에 retryOnFail을 일괄 적용하지 않는다.
 2. WM-01의 수치는 미확정이므로 설정값으로 분리해 Mock에서 상한·기한 동작을 확인한다. 실제 부모 timeout 변경은 다혁님, 공통 반영은 오현님이 한다.
 3. 티켓 실패에도 알림과 DLQ 양쪽을 시도하고 성공 ACK를 따로 누적한다. 하나가 실패해도 다른 시도를 생략하거나 생성 티켓을 지우지 않는다.
-4. practice /dlq는 실제 키트 스키마를 확인해 매핑한다. app DLQ 연결은 WM-02 반영 뒤 교체한다. 알림 재시도/재처리는 WM-03, 부분실패 ok는 WM-04 미확정 표시를 유지한다.
+4. practice /dlq는 실제 키트 스키마를 확인해 매핑하고, app `/dlq`는 `docs/API-CONTRACT.md` 5절(`POST /dlq`) 스키마로 연결한다. 알림 `event_key` 선택 필드와 함께, 알림 재시도/재처리 세부(WM-03)·부분실패 ok(WM-04)는 표시를 유지한다.
 5. timeout 뒤 지연 저장·같은 key 재시도를 관측해 최종 티켓 1건을 확인한다. 즉시 ops만 보고 유실/중복을 단정하지 않는다.
 
 정적/파싱 확인과 사람이 수행할 단독 시험 예정:
@@ -111,7 +111,7 @@ uv run tools/flow.py check workflows/oke-handoff.json
 1. 사람이 errors를 게시하고 실제 ID를 확보한다. 부모 소유자에게 ID와 설정 위치를 전달하고 연결 여부를 기록한다. errors 자체에는 자기 자신을 연결하지 않는다.
 2. 전용 시험 n8n의 **본인 handoff 임시 시험 버전**에서 비민감 고정 Code 오류를 의도적으로 발생시켜 E01 발화를 확인한다. 실제 운영 요청으로 시험 오류를 활성화하는 입력을 남기지 않는다. 부모 설정·부모 실패 ID·errors 실행 ID·알림/DLQ ACK를 보존한다.
 3. errors의 알림만/DLQ만/양쪽 실패를 Mock으로 재현해 유한 종료와 비밀값·stack 제거를 확인한다. 시험 오류를 제거한 버전을 다시 check하고 정상 요청으로 복구를 확인한다.
-4. app 모드에서 backend /tickets·/alerts의 X-Api-Key 인증과 실제 DB 저장, 세션 신원/타인 request_id 거절, 동시 티켓 1건을 확인한다. 재시작은 지혜님이 수행하고 전후 같은 티켓을 조회한다. app.dlq 연결·관측은 WM-02 반영 뒤 검증하며 practice ops로 대체하지 않는다.
+4. app 모드에서 backend `/tickets`·`/alerts`·`/dlq`의 X-Api-Key 인증과 실제 DB 저장, 세션 신원/타인 request_id 거절, 동시 티켓 1건을 확인한다. 재시작은 지혜님이 수행하고 전후 같은 티켓을 조회한다. app 관측은 practice ops로 대체하지 않는다.
 
 **다음 담당자에 넘길 결과:** 각 부모 소유자에게 실제 errors ID·연결 근거, 지혜님에게 app 시험 결과와 미준비 API, 오현님에게 실행별 수습 성공/부분실패/전체실패와 남은 문제. 실제 확인이 없으면 연결 완료라고 쓰지 않는다.
 
@@ -218,13 +218,12 @@ uv run tools/flow.py ops -v
 문서/변경 범위 확인 예정(저장소 루트에서 읽기 전용):
 
 ```bash
-cd /Users/k5h00/port-cli/Aio-4pj-1team
 git diff --check -- develop/wonmin
 git diff --name-only -- develop/wonmin
 git diff --cached --name-only
 ```
 
-다른 작업자의 변경/스테이징이 보이면 건드리지 않고 본인 작업 목록만 보고한다. Git add/commit/push/checkout/reset/stash는 이번 문서 작업에서 수행하지 않는다.
+다른 작업자의 변경/스테이징이 보이면 건드리지 않고 본인 작업 목록만 보고한다.
 
 - [ ] VM 결과·시연 복구·취합 메모·문서 링크·편집 범위 확인
 
@@ -235,5 +234,4 @@ git diff --cached --name-only
 ## 공통 자료
 
 - [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [06-RELIABILITY-AND-SECURITY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/06-RELIABILITY-AND-SECURITY.md) · [07-TESTING-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md) · [08-SUBMISSION.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/08-SUBMISSION.md) · [VIBE-Q-TRETRY.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/76/VIBE-Q-TRETRY.md)
+- [협업 방식과 연결 규칙](../../../docs/COORDINATION.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md) · [아키텍처](../../../docs/ARCHITECTURE.md) · [제출 안내](../../ohyun/SUBMISSION.md)

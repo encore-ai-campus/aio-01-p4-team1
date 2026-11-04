@@ -36,7 +36,7 @@ FK 컬럼에는 필요한 조회 인덱스를 둔다. 아래 표는 논리 구�
 | app.users | id PK, employee_id FK, login_id, password_hash, role, is_active, must_change_password, created_at | employee_id UNIQUE·login_id UNIQUE. role=employee/admin. 관리자 role은 IT팀 직원만 부여하도록 서버 검사 |
 | app.sessions | id PK, user_id FK, token_hash, expires_at, revoked_at | token_hash UNIQUE. 쿠키 토큰 원문 DB 저장 금지 |
 | app.inquiries | id PK, request_id, requester_id FK→employees, question, attempt, context, result JSONB, status, created_at | request_id UNIQUE. 사용자별 소유권 검사 후 조회/재시도. attempt>=1, question 1~500자 |
-| app.tickets | id PK, ticket_id, request_key, inquiry_id FK nullable, requester_id FK, title, category, priority, status, assignee_id FK nullable, reply, created_at, updated_at | request_key UNIQUE·ticket_id UNIQUE. 일반 웹 요청은 inquiry 연결, 교사 직접 웹훅 시험은 inquiry 없이 생성 가능 |
+| app.tickets | id PK, ticket_id, request_key, inquiry_id FK nullable, requester_id FK, title, category, priority, status, assignee_id FK nullable→employees, reply, created_at, updated_at | request_key UNIQUE·ticket_id UNIQUE. assignee_id는 IT팀 직원(app.employees.id) 참조. 일반 웹 요청은 inquiry 연결, 직접 웹훅 시험은 inquiry 없이 생성 가능 |
 | app.alerts | id PK, ticket_id FK nullable, event_key nullable UNIQUE, workflow, node, message, severity, created_at | 티켓 생성 실패도 기록 가능. 선택 event_key로 중복 알림 억제. 민감정보를 가린 message 저장 |
 | app.dlq | id PK, request_id nullable, execution_ref nullable, workflow, node, reason, safe_payload JSONB, status, created_at | 실패 재처리 대기. 비밀값·개인정보를 제거한 입력만 저장 |
 
@@ -54,7 +54,7 @@ priority는 API에서 normal/high로 시작하고 화면 보통/긴급으로 표
 | rag.documents | id PK, doc_key, title, access_level, source_url nullable, source_hash, updated_at | doc_key UNIQUE. access_level은 all/it, 미정 권한 문서는 색인 거절 |
 | rag.chunks | id PK, document_id FK, chunk_no, section, content, content_hash, embedding vector(3072), embedding_model, metadata JSONB | (document_id,chunk_no) UNIQUE. FK 조회 인덱스, 업무 기록과 분리 |
 
-기본 임베딩은 수업 모델 text-embedding-3-large, 기본 출력 3072차원이다.
+기본 임베딩은 공통 기준 모델 `text-embedding-3-large`, 기본 출력 3072차원이다.
 초기 검색은 cosine 거리의 정확 검색, 반환 score는 1-cosine distance, top_k=3을 사용한다.
 권한 조건을 SQL의 검색 대상에 먼저 적용한다. 초기에는 근사 벡터 인덱스를 필수로 만들지 않는다.
 3072차원에 HNSW vector 인덱스를 그대로 만들 수 있다고 가정하지 않는다. 근사 검색을 추가하면 타입/차원 제약과 품질을 별도 검토한다.
@@ -66,4 +66,4 @@ priority는 API에서 normal/high로 시작하고 화면 보통/긴급으로 표
 이 표를 적용하는 데 사전 재협의는 필요 없다. 표를 바꾸려 할 때만 C06 상대와 변경 요청한다.
 확장 활성화·named volume·재색인·새 환경 생성·DB 재시작 유지의 실제 확인은 아직 수행하지 않았다.
 
-근거: [수업 RAG](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/05-RAG-DESIGN-GUIDE.md), [pgvector 공식 사용법·거리·검색·인덱스](https://github.com/pgvector/pgvector).
+근거: [평가·시나리오 기준](EVALUATION-GUIDE.md), [RAG 아키텍처 설계서](RAG-ARCHITECTURE.md), [pgvector 공식 문서](https://github.com/pgvector/pgvector).

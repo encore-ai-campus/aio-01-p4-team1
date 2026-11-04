@@ -38,7 +38,7 @@ P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아�
 
 ## JSON 작성과 정적 확인 방법 (구현 예정)
 
-명령의 workdir는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/dahyeok`으로 지정한다. 아래는 **미실행 명령 예시**다.
+명령의 workdir는 저장소 기준 `develop/dahyeok`으로 지정한다. 아래는 단계별 검증 명령이다.
 
 ```bash
 python3 -m json.tool workflows/oke-support.json > /dev/null
@@ -49,7 +49,7 @@ python3 -m json.tool workflows/oke-support.json > /dev/null
 프로젝트 키트가 제공되고 `tools/flow.py`의 실제 위치·CLI를 확인한 뒤 다음 check를 수행한다. 현재 지정 자료 경로의 Last3Mon/80 키트는 없어 명령은 **예정 경로 템플릿**이다. 다른 실습 키트를 프로젝트 키트인 것처럼 복사/설치하지 않는다.
 
 ```bash
-uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py check /Users/k5h00/port-cli/Aio-4pj-1team/develop/dahyeok/workflows/oke-support.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support.json
 ```
 
 연결 검토 항목:
@@ -65,7 +65,7 @@ uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py check /U
 
 키트·본체·하위 워크플로우·인증·색인·Mock 전환 설정이 준비된 뒤에만 실행한다. 아래 workdir도 담당 폴더다. push/test/bench의 실행 주체는 사람이며 이번 문서 작업에서는 호출하지 않는다. 실제 키는 Credential/안전한 환경 설정에서 주입한다.
 
-1. check 뒤 사람이 같은 본체를 push한다. 교사 키트의 실제 명령 도움말을 먼저 확인하고, 경로가 다르면 실제 경로로만 바꾼다.
+1. check 뒤 사람이 같은 본체를 push한다. `tools/flow.py`의 실제 명령 도움말을 먼저 확인하고, 경로가 다르면 실제 경로로만 바꾼다.
 2. 담당 cases/support-*.json의 해당 단계 입력부터 실행하고 결과를 확인한다. 실제 연결 전에는 Mock 표시가 있어야 한다.
 3. 원민님이 원본 공통 사례를 소유 경로에 준비한 뒤 공통 전부와 LLM 3회를 수행한다. 원본의 before/after·expect·ID를 바꾸지 않는다.
 4. practice 고장 시험의 fault/reset/ops가 실제 data-api를 향하는지 확인한다. app 저장 연동은 별도로 수행하며 같은 티켓을 양쪽에 쓰지 않는다. 고장은 끝나면 복구하고 복구 결과도 기록한다.
@@ -73,10 +73,10 @@ uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py check /U
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py push /Users/k5h00/port-cli/Aio-4pj-1team/develop/dahyeok/workflows/oke-support.json
-uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py test /Users/k5h00/port-cli/Aio-4pj-1team/develop/dahyeok/cases/support-input.json --webhook oke-support -v
-uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py test /Users/k5h00/port-cli/Aio-4pj-1team/develop/wonmin/cases/common.json --webhook oke-support --repeat 3
-uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py bench oke-support /Users/k5h00/port-cli/Aio-4pj-1team/develop/dahyeok/requests/input-valid.json -n 5
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support.json
+uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
+uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
+uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5
 ```
 
 공통·팀 시험 파일은 원민님이 소유한다. 여기서는 해당 파일을 읽어 호출할 뿐 기대값 수정이나 대체 공통 파일 생성을 하지 않는다. bench 원시 결과가 생긴 실제 위치를 확인해 자기 runs에 보존하며, 상대 runs를 대신 편집하지 않는다.
@@ -92,5 +92,5 @@ uv run /Users/k5h00/port-cli/Aio/aio-01d4-stu/Last3Mon/80/tools/flow.py bench ok
 ## 공통 자료
 
 - [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
-- [수업 방식과 연결 규칙](../../../docs/COORDINATION.md)
-- 수업 원문: [04-REFERENCE-ARCHITECTURE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md) · [03-SCENARIOS-AND-DATA.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/03-SCENARIOS-AND-DATA.md) · [09-AGENT-WORKING-RULES.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/09-AGENT-WORKING-RULES.md)
+- [협업 방식과 연결 규칙](../../../docs/COORDINATION.md)
+- 참조 기준: [평가·시나리오 가이드](../../../docs/EVALUATION-GUIDE.md) · [워크플로우 설계서](../../../docs/WORKFLOW-DESIGN.md) · [공통 작업 규칙](../../../AGENTS.md)

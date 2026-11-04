@@ -15,10 +15,10 @@ DB 구조는 [데이터·DB 기준](DATA-AND-DB.md), 역할·파일 소유권은
 {"request_id":"req-001","user":"박서연","channel":"web","question":"VPN이 계속 끊겨요","attempt":1}
 ```
 
-응답은 `request_id`, `route`, `answer`, `sources`, `ticket`, `agents`, `security`를 포함한다. `route`는 `자동 답변`·`보완 질문`·`담당자 이관`·`권한 없음`·`차단` 중 하나다. 빈 질문·없는 직원·너무 긴 질문은 공통 계약의 HTTP 400과 `codes`를 따른다. 각 필드의 상세 형식은 강사 `04-REFERENCE-ARCHITECTURE.md` 3절을 기준으로 고정한다.
+응답은 `request_id`, `route`, `answer`, `sources`, `ticket`, `agents`, `security`를 포함한다. `route`는 `자동 답변`·`보완 질문`·`담당자 이관`·`권한 없음`·`차단` 중 하나다. 빈 질문·없는 직원·너무 긴 질문은 공통 계약의 HTTP 400과 `codes`를 따른다. 각 필드의 상세 형식과 시나리오 판정 기준은 [EVALUATION-GUIDE](EVALUATION-GUIDE.md) 3·4절을 기준으로 고정한다.
 
 X-Team-Key 인증을 사용하고 user는 제공 직원 name과 일치시킨다.
-공통 응답 필드·route는 교사 계약 그대로 유지한다. 웹과 공통 시험은 같은 support를 호출한다.
+공통 응답 필드·route는 표준 계약 그대로 유지한다. 웹과 공통 시험은 같은 support를 호출한다.
 request_id는 한 논리 요청의 재시도에 재사용하며 새 보완 답변 차례에는 새 ID와 증가한 attempt/context를 전달한다.
 웹 request_id 소유권은 FastAPI가 확인한다. 공통 직접 시험은 팀 웹훅 인증과 제공 직원 확인을 따른다.
 
@@ -33,7 +33,7 @@ request_id는 한 논리 요청의 재시도에 재사용하며 새 보완 답�
 | `POST /api/ask` | `question`, 선택 `request_id`, `attempt`, `context` | 공통 웹훅 응답 전체 | 로그인 |
 | `GET /api/my-requests` | 세션 쿠키 | `{items:[...]}` (본인의 문의·답변·티켓 상태 목록) | 로그인 |
 | `GET /api/admin/tickets` | 세션 쿠키 | `{items:[...]}` (이관 티켓·긴급도·담당자·상태 목록) | IT팀 관리자 |
-| `PATCH /api/admin/tickets/{id}` | `status`, 선택 `assignee`, `reply` | 변경된 티켓 객체 (`{id}`는 내부 PK, 화면 표시용은 `ticket_id`) | IT팀 관리자 |
+| `PATCH /api/admin/tickets/{id}` | `status`, 선택 `assignee`, `reply` | 변경된 티켓 객체 (`{id}`는 내부 PK, `ticket_id`는 `T-2001` 표시 번호, `assignee`는 IT팀 직원 `app.employees.id` 정수 또는 `null`) | IT팀 관리자 |
 | `GET /api/admin/employees` | 세션 쿠키 | `{items:[{id,name,dept,user_id}]}` (제공 6명 및 발급 연결 상태) | IT팀 관리자 |
 | `GET /api/admin/users` | 세션 쿠키 | `{items:[{id,employee_id,login_id,name,dept,role,is_active,must_change_password}]}` | IT팀 관리자 |
 | `POST /api/admin/users` | `employee_id`, `login_id`, `temporary_password` | 생성된 계정 요약 (HTTP 201) | IT팀 관리자 |
@@ -45,10 +45,10 @@ request_id는 한 논리 요청의 재시도에 재사용하며 새 보완 답�
 
 user·dept·role은 화면 입력을 믿지 않고 세션에서 서버가 정한다.
 로그인 성공은 user 요약(id,name,dept,role,must_change_password)과 HttpOnly 세션 쿠키, 로그아웃은 ok=true로 한다.
-웹 질문의 성공 응답은 교사 공통 응답 전체(request_id,route,answer,sources,ticket,agents,security 및 필요 시 reason/timings)를 보존한다.
+웹 질문의 성공 응답은 공통 웹훅 응답 전체(request_id,route,answer,sources,ticket,agents,security 및 필요 시 reason/timings)를 보존한다.
 목록은 {"items":[]} 형식, 단건 생성/변경은 해당 객체로 반환한다.
 웹 오류 기본 형태는 {"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}다.
-교사 웹훅의 HTTP400 codes는 웹 오류 형태로 바꾸지 않고 그대로 유지한다.
+공통 웹훅의 HTTP400 codes는 웹 오류 형태로 바꾸지 않고 그대로 유지한다.
 실제 비밀번호는 응답/로그/캡처에 넣지 않는다.
 
 ## 3. support ↔ search (C03)
@@ -85,11 +85,11 @@ Error Workflow는 예상 밖 실행 실패를 별도로 처리한다.
 | `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id`, `event_key` | `stored`, `count` | PostgreSQL 알림 |
 | `POST /dlq` | `request_id`(nullable), `workflow`, `node`, `reason`, `safe_payload`, 선택 `execution_ref` | `stored`, `count` | PostgreSQL DLQ |
 
-중복 `key`는 새 티켓을 만들지 않고 기존 티켓을 반환한다. n8n 내부 호출은 별도 인증을 적용한다. 수업 data-api의 직원·기존 티켓·규정 조회는 제공된 계약을 사용한다.
+중복 `key`는 새 티켓을 만들지 않고 기존 티켓을 반환한다. n8n 내부 호출은 별도 인증을 적용한다. 제공 data-api의 직원·기존 티켓·규정 조회는 정해진 계약을 사용한다.
 
 신규는 HTTP201 {"ticket_id":"T-2001","duplicate":false}, 중복은 HTTP200에 같은 ticket_id와 duplicate=true.
 handoff가 원래 priority를 ticket 객체에 붙인다. /tickets 응답에 priority가 항상 있다는 가정을 하지 않는다.
-POST /alerts는 workflow,node,message,severity와 선택 ticket_id를 받고, 수업 호환 알림 저장 응답은 HTTP200 {"stored":1,"count":1}이며 count는 실제 누적 수다. 웹 관리자 목록은 C01의 /api/admin/alerts에서 제공한다.
+POST /alerts는 workflow,node,message,severity와 선택 ticket_id, event_key를 받고, 공통 호환 알림 저장 응답은 HTTP200 {"stored":1,"count":1}이며 count는 실제 누적 수다. 웹 관리자 목록은 C01의 /api/admin/alerts에서 제공한다.
 FastAPI 내부 API는 X-Api-Key 인증을 사용하며 웹 로그인 쿠키와 구별한다.
 운영 새 업무 기록은 PostgreSQL, 공통 고장 시험 모드는 data-api에 연결한다. 설정으로 선택하고 같은 티켓을 양쪽에 동시 생성하지 않는다.
 fault/reset/ops와 실제 호출 대상이 맞는지 원민님이 확인한다.
@@ -112,7 +112,7 @@ PostgreSQL은 pgvector를 포함한 이미지, named volume과 healthcheck를 �
 Compose build context는 backend=.., frontend=../../sueon.
 공통 환경변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD, BACKEND_ORIGIN이다.
 SERVICE_MODE는 practice 또는 app이며 DB/관측 모드가 혼동되지 않게 README에 기록한다. BACKEND_ORIGIN은 프런트 서버 프록시가 호출할 백엔드 주소(로컬 http://127.0.0.1:8000, Compose http://backend:8000)이며 브라우저 공개 변수로 노출하지 않는다.
-실제 환경값은 Git에 넣지 않는다. 기존 수업 n8n/data-api를 재사용하면 동일 네트워크 연결과 충돌 포트를 지혜님이 조정해 기록한다.
+실제 환경값은 Git에 넣지 않는다. 기존 n8n/data-api를 재사용하면 동일 네트워크 연결과 충돌 포트를 지혜님이 조정해 기록한다.
 전체 배포·VM 환경 반영은 오현님 담당이다.
 
 ## 8. 오류·인증·변경 원칙

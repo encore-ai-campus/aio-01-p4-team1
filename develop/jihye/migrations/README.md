@@ -1,6 +1,6 @@
 # 지혜님 · 마이그레이션 작업 지시
 
-[IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 **구현 예정·미실행**이다. 실제 SQL/마이그레이션 파일은 이 문서 보완에서 생성하지 않는다.
+[IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 P0 단계에서 순서대로 생성·검증한다.
 
 ## 생성 순서
 
@@ -25,11 +25,11 @@ revision 순서는 0001→0002→0003→0004 단일 head로 한다. autogenerate
 | app.users | employee_id bigint, login_id text, password_hash text, role text, is_active bool=true, must_change_password bool=true, created_at=현재시각 | 없음 | employees FK, employee_id/login_id 각각 UNIQUE, role employee/admin CHECK. IT팀 검사는 서버에서 실시 |
 | app.sessions | user_id bigint, token_hash text, expires_at | revoked_at | users FK, token_hash UNIQUE, user_id·expires_at 인덱스. 토큰 원문 없음 |
 | app.inquiries | request_id text, requester_id bigint, question text, attempt integer=1, status text, created_at=현재시각 | context text, result JSONB | employees FK, request_id UNIQUE·길이1~64, question1~500·attempt>=1 CHECK, (requester_id,created_at) 인덱스. status의 초기/전이값은 H04 초안 |
-| app.tickets | ticket_id text, request_key text, requester_id bigint, title text, category text, priority text, status text=open, created_at/updated_at=현재시각 | inquiry_id bigint, assignee_id bigint, reply text | request_key/ticket_id 각각 UNIQUE, inquiry→inquiries·requester→employees·assignee→users FK. request_key1~64·priority normal/high·status open/in_progress/resolved CHECK. 관련FK·(status,created_at) 인덱스 |
-| app.alerts | workflow/node/message/severity text, created_at=현재시각 | ticket_id bigint | ticket_id→tickets.id FK. 외부 T-번호를 직접 bigint에 넣지 않음. FK·created_at 인덱스 |
-| app.dlq | request_id/reason/status text, safe_payload JSONB, created_at=현재시각 | 없음 | request_id 인덱스, 민감 입력 원문 없음. 반복 적재/재처리 API는 H06 검토 후 추가 revision 여부 결정 |
+| app.tickets | ticket_id text, request_key text, requester_id bigint, title text, category text, priority text, status text=open, created_at/updated_at=현재시각 | inquiry_id bigint, assignee_id bigint, reply text | request_key/ticket_id 각각 UNIQUE, inquiry→inquiries·requester→employees·assignee→employees FK. request_key1~64·priority normal/high·status open/in_progress/resolved CHECK. 관련FK·(status,created_at) 인덱스 |
+| app.alerts | workflow/node/message/severity text, created_at=현재시각 | ticket_id bigint, event_key text | ticket_id→tickets.id FK, event_key nullable UNIQUE(중복 알림 억제). 외부 T-번호를 직접 bigint에 넣지 않음. FK·created_at 인덱스 |
+| app.dlq | workflow/node/reason/status text, safe_payload JSONB, created_at=현재시각 | request_id text, execution_ref text | request_id·execution_ref 인덱스, 민감 입력 원문 없음 |
 
-공통 표에 nullable로 명시되지 않은 context/result/reply와 FK 대상 등의 물리 세부를 위처럼 계획한다. 외부 응답 id·assignee 의미는 H03 초안과 맞추며, 변경 검토로 달라지면 적용 전 매핑을 고친다. status 초안에 종속되지 않도록 inquiries.status·dlq.status에는 초기부터 미승인 enum을 CHECK로 고정하지 않는다.
+공통 표의 nullable 필드(context/result/reply, alerts.event_key, dlq.request_id/execution_ref)와 FK 대상(`tickets.assignee_id` → `app.employees.id`)을 위 표대로 일치시킨다. inquiries.status·dlq.status에는 초기부터 과도한 CHECK enum을 강제하지 않는다.
 
 updated_at은 티켓 수정 거래에서 갱신한다. T-2001 번호는 별도 시퀀스와 UNIQUE로 보장하며 로우 수+2001 방식은 쓰지 않는다. 같은 request_key의 티켓 생성 경쟁은 제약 위반을 처리해 기존 소유자 확인 후 기존 티켓을 반환한다. 문의 없이 들어온 직접 웹훅은 inquiry_id=null로 저장할 수 있다.
 
@@ -53,7 +53,7 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 
 ## 구현 후 확인 순서 · 전부 미실행
 
-작업 디렉터리는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/jihye`다. DATABASE_URL은 **개별 빈 검증 DB**를 가리키게 하고 공유/운영 DB에 downgrade를 실행하지 않는다.
+작업 디렉터리는 저장소 기준 `develop/jihye`다. DATABASE_URL은 **개별 빈 검증 DB**를 가리키게 하고 공유/운영 DB에 downgrade를 실행하지 않는다.
 
 1. `uv run alembic -c migrations/alembic.ini heads`와 `history`로 순서·단일 head를 확인한다.
 2. `uv run alembic -c migrations/alembic.ini upgrade head` 후 `current`로0004 head를 확인한다. 동일 upgrade 재실행에서 추가 DDL/데이터 변경이 없어야 한다.
@@ -66,4 +66,4 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 
 유빈님에게 head·테이블/열·모델/차원·role 권한·접속 방식(비밀값 제외)과 실제 검사 결과를 넘긴다. 원민님에게 중복 제약·티켓/알림 거래·DLQ 연결 미정 상태를, 오현님에게 새 환경 생성/재시작/백업·복구 확인 자료를 넘긴다. H02의 비밀번호 이력/잠금용 확장은 공통 반영 후 별도 revision으로 만든다.
 
-[팀 API](../../../docs/API-CONTRACT.md) · [아키텍처 참고](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/tree/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project).
+[팀 API](../../../docs/API-CONTRACT.md) · [데이터·DB 기준](../../../docs/DATA-AND-DB.md) · [전체 아키텍처](../../../docs/ARCHITECTURE.md).

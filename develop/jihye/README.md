@@ -13,7 +13,7 @@ FastAPI에서 직원 신원·권한을 확인하고, 동일한 `oke-support`에 
 3. [IMP-PLAN](Doc/IMP-PLAN.md): **P0-1부터** 한 단계씩 파일을 만들고 해당 확인을 수행한다.
 4. 기준 변경이 필요할 때만 [HANDOFF](Doc/HANDOFF.md)에 기존/제안/영향/검토 상대를 기록한다. 제안은 확정 기준이 아니다.
 
-명령은 본인 폴더 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/jihye`를 작업 디렉터리로 실행하도록 계획한다. 상대 서비스가 아직 없으면 같은 계약의 HTTP Mock으로 진행하고 실제 연결은 별도로 기록한다. 문서 보완 단계에서는 구현 파일 생성이나 실행을 하지 않는다.
+명령은 본인 폴더 `develop/jihye`를 작업 디렉터리로 실행한다. 상대 서비스가 아직 없으면 같은 계약의 HTTP Mock으로 진행하고 실제 연결은 별도로 기록한다.
 
 ## 바로 시작할 첫 단계
 
@@ -50,4 +50,4 @@ IMP-PLAN P0-1에서 `pyproject.toml`, `app/main.py`, `app/core/config.py`, `app/
 
 ## 참고
 
-[환경·FastAPI·VM](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [공통 페이로드](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md) · [요구→SPEC→작은 단계](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/78/VIBE-Q-TCHECK.md).
+[전체 아키텍처](../../docs/ARCHITECTURE.md) · [공통 API](../../docs/API-CONTRACT.md) · [데이터·DB 기준](../../docs/DATA-AND-DB.md) · [평가·시나리오 가이드](../../docs/EVALUATION-GUIDE.md).

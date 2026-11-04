@@ -95,7 +95,7 @@ N05 결과 재사용의 저장·조회 연결은 추가 검토하고 없는 내�
 | verifier | 질문·초안·원근거·가린 접수 검증 | grounded, policy_ok, issues | Tool 없음. 답 재작성 대신 검증 결과 반환 |
 | Code | 형식·출처·권한·실제 상태로 최종 판단 | route, sources, ticket, security | 엄격한 타입·enum·boolean 검사, 출력 마스킹 |
 
-LLM Agent 3개는 각자 모델 연결을 두고 수업 기준 gpt-4.1-mini를 사용한다. 시스템 지시와 직렬화된 질문/근거 데이터를 구분한다. 프롬프트는 다혁님 SPEC에 유지하고 제출 때 실제 노드와 대조한다.
+LLM Agent 3개는 각자 모델 연결을 두고 공통 기준 `gpt-4.1-mini`를 사용한다. 시스템 지시와 직렬화된 질문/근거 데이터를 구분한다. 프롬프트는 다혁님 SPEC에 유지하고 제출 때 실제 노드와 대조한다.
 
 ### 4.2 구조
 
@@ -115,7 +115,7 @@ LLM Agent 3개는 각자 모델 연결을 두고 수업 기준 gpt-4.1-mini를 �
 | --- | --- | --- | --- | --- |
 | 화면 → FastAPI | /api, HttpOnly 세션 | question → 공통 결과 | 401/403·입력 재검증 | 사내 SSO |
 | FastAPI → support | 웹훅 X-Team-Key | 세션 직원+공통 요청 → 응답 | 연결 3초·전체 30초, 자동 재시도 0 | 사내 API 게이트웨이 |
-| 직원·FAQ·기존 티켓 | data-api, 수업 경로별 인증 | name/질문/티켓ID+requester → 데이터 | 타인403 폐기, 404와 장애 구별 | 인사·업무 API |
+| 직원·FAQ·기존 티켓 | data-api, 경로별 인증 | name/질문/티켓ID+requester → 데이터 | 타인403 폐기, 404와 장애 구별 | 인사·업무 API |
 | search | 웹훅 X-Team-Key, DB Credential | query·권한 → evidence | 4초, 503은 장애로 이관 | 검색 서비스 |
 | LLM·임베딩 | OpenAI Credential | 분류·생성·검증·벡터 | 429/장애를 정상 답변으로 위장하지 않음 | 승인 모델 API |
 | handoff | 웹훅 X-Team-Key | 이관 JSON → ticket·수습 결과 | 5초, 불명확한 결과는 접수 완료 금지 | 접수 서비스 |
@@ -183,7 +183,7 @@ Slack·Jira는 운영 확장 예다. app 저장은 FastAPI→PostgreSQL로 구�
 브라우저 35초·FastAPI 30초 등은 실측 전 초기 예산이다. LLM을 포함한 누적 시간과 원본 시험 상한을 비교해 조정한다. HTTP200 수습을 업무 성공으로 집계하지 않는다.
 oke-errors 게시·부모 errorWorkflow 설정은 구현 후 확인한다. 예상 HTTP/LLM 오류는 본체·handoff의 오류 출력에서 처리한다.
 
-## 8. 수업 흐름 적용과 검증 자료
+## 8. 아키텍처 원칙 적용과 검증 자료
 
 | 배운 흐름 | 적용 |
 | --- | --- |
@@ -203,4 +203,4 @@ oke-errors 게시·부모 errorWorkflow 설정은 구현 후 확인한다. 예�
 - 실제 노드·연결선·입출력·시간·보고서는 구현 후 [실행 결과서](EXECUTION-RESULT.md)에 연결한다.
 - [취합 안내](../develop/ohyun/SUBMISSION.md)에 따라 최종 원본을 루트 제출 경로로 모은다.
 
-수업 기준: [워크플로우 템플릿](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/templates/WORKFLOW-DESIGN-TEMPLATE.md) · [공통 아키텍처](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md).
+참조 문서: [전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [평가·시나리오 기준](EVALUATION-GUIDE.md).

@@ -43,4 +43,4 @@ DB/임베딩 모델/포트/기존 API는 선정할 일이 아니다. [공통 API
 
 ## 참고
 
-[주제](../../../docs/TOPIC.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md) · [환경 기준](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [공통 페이로드](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md).
+[주제](../../../docs/TOPIC.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md) · [전체 아키텍처](../../../docs/ARCHITECTURE.md) · [평가·시나리오 가이드](../../../docs/EVALUATION-GUIDE.md).

@@ -7,13 +7,13 @@
 | 항목 | 적용할 기준 |
 | --- | --- |
 | 계정 | 관리자가 제공 직원 계정 발급. 공개 가입 없음. 임시 비밀번호 첫 로그인 변경. IT팀만 admin |
-| 인증 | 로그인 user 요약 id/name/dept/role/must_change_password와 HttpOnly 쿠키, 로그아웃 ok=true. GET /api/auth/me는 id/name/dept/role |
+| 인증 | 로그인 user 요약 id/name/dept/role/must_change_password와 HttpOnly 쿠키, 로그아웃 ok=true. GET /api/auth/me는 id/name/dept/role/must_change_password |
 | 호출 | 같은 출처 /api→프론트 프록시→FastAPI. 브라우저의 DB·n8n·data-api 직접 호출 금지. 서버가 user/dept/role 결정 |
 | 질문 | question 1~500자, attempt 기본 1. 동일 요청 재시도는 같은 request_id, 새 보완 차례는 새 ID와 증가한 attempt/context. attempt>=3이면 본체가 이관 |
 | 결과 | request_id/route/answer/sources/ticket/agents/security 보존, route 5종 그대로 사용. UI에서 점수로 재판정하지 않음 |
-| 목록·오류 | 목록 {"items":[]}, 생성·변경은 해당 객체. 웹 오류 {"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}. 교사 HTTP400 codes는 변환하지 않음 |
-| 관리자 | 계정 생성·비활성화·초기화, 티켓 목록·변경, 알림 목록 API는 이미 정해짐 |
-| 티켓 | 웹 status=open/in_progress/resolved→접수/처리 중/완료, priority=normal/high→보통/긴급. 기존 티켓은 원본 상태 유지. 신규 T-2001부터, 같은 키 한 건 |
+| 목록·오류 | 목록 {"items":[]}, 생성·변경은 해당 객체. 웹 오류 {"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}. 공통 웹훅 HTTP400 codes는 변환하지 않음 |
+| 관리자 | 직원·계정 목록(`GET /api/admin/employees`, `GET /api/admin/users`), 계정 생성·비활성화·초기화, 티켓 목록·변경, 알림 목록 API 확정 |
+| 티켓 | 웹 status=open/in_progress/resolved→접수/처리 중/완료, priority=normal/high→보통/긴급. assignee는 IT팀 `app.employees.id` 정수 또는 `null`. 기존 티켓은 원본 상태 유지. 신규 T-2001부터, 같은 키 한 건 |
 | 권한·보안 | 직원 본인 기록만, 관리자 기능은 IT팀 관리자만. 비밀번호·토큰·실제 연락처는 기록·캡처·브라우저 저장소에 남기지 않음 |
 
 출처: [TOPIC](../../../docs/TOPIC.md) · [API-CONTRACT C01/C07/오류](../../../docs/API-CONTRACT.md) · [DATA-AND-DB](../../../docs/DATA-AND-DB.md). 상세 필드·정책 누락은 [HANDOFF H01~H04](HANDOFF.md)의 제안으로 분리한다. 아래 화면 모델은 Mock 내부 표현이며 미확정 서버 JSON을 확정하지 않는다.
@@ -30,7 +30,7 @@
 | `/ask` · `src/app/(protected)/ask/page.tsx` | 질문 textarea·글자수, route·답·근거·티켓, 보완 답 | 보내기, 보완 보내기, 동일 요청 재시도, 새 문의, 내 문의 | 검증/대기/route 5종/연결 불명 | POST /api/ask / FE-02,05 |
 | `/my-requests` · `src/app/(protected)/my-requests/page.tsx` | 본인 질문·답·시각·티켓 상태 | 새로고침, 행 펼치기, 질문하기 | 로딩/빈 목록/목록/오류 | GET /api/my-requests / FE-03 |
 | `/admin/tickets` · `src/app/(protected)/admin/tickets/page.tsx` | ID·제목·긴급도·담당자·상태·답변 | 행 선택, 저장, 새로고침 | 빈 목록/편집/저장 중/400/403/404/장애 | GET /api/admin/tickets, PATCH /api/admin/tickets/{id} / FE-04T |
-| `/admin/users` · `src/app/(protected)/admin/users/page.tsx` | 제공 직원 식별값·로그인 ID·임시 비밀번호, 대상 계정·활성 상태 | 발급, 비활성화/활성화, 초기화 | 입력/생성 중/오류/요약/대상 없음 | POST /api/admin/users, PATCH /api/admin/users/{id}, POST /api/admin/users/{id}/reset-password / FE-04U. 목록 조회는 H01 제안 |
+| `/admin/users` · `src/app/(protected)/admin/users/page.tsx` | 제공 직원 식별값·로그인 ID·임시 비밀번호, 대상 계정·활성 상태 | 발급, 비활성화/활성화, 초기화 | 입력/생성 중/오류/요약/대상 없음 | GET /api/admin/employees, GET /api/admin/users, POST /api/admin/users, PATCH /api/admin/users/{id}, POST /api/admin/users/{id}/reset-password / FE-04U |
 | `/admin/alerts` · `src/app/(protected)/admin/alerts/page.tsx` | 심각도·시각·안내·선택 ticket_id | 새로고침, 로드된 티켓 보기 | 빈 목록/목록/오류/티켓 없음 | GET /api/admin/alerts / FE-04A |
 
 공통 헤더에는 이름·부서·역할, 질문·내 문의·비밀번호 변경·로그아웃을 둔다. 관리자만 티켓·계정·알림 메뉴를 추가한다. 직접 URL도 세션·역할 확인 뒤 렌더링하되 실제 보안 판정은 FastAPI가 한다. 폼 label·오류 설명·키보드 포커스를 제공하고 색상만으로 상태를 표현하지 않는다. 좁은 화면에서 표는 스크롤 가능하게 하고 입력·버튼은 가리지 않는다.
@@ -39,7 +39,7 @@
 
 - 입력: login_id/password, 변경 시 현재·새 비밀번호와 확인. 확인 칸은 UI에서만 비교하고 전송하지 않는다. 변경 요청의 실제 키·응답은 H02 제안 상태다.
 - 정상 흐름: /login 제출→성공 user→must_change_password=true이면 /change-password→변경 확인 후 직원 /ask·관리자 /admin/tickets. 로그인한 사용자의 /login 접근도 같은 이동 규칙을 적용한다.
-- 새로고침 후 최초 변경 강제 여부를 판단할 정보가 /me에 없는 문제는 H03이다. Mock에서 확인하고 실제 연결 완료로 표시하지 않는다.
+- 새로고침 후 최초 변경 강제 여부는 `GET /api/auth/me`의 `must_change_password`로 판단한다(공통 `API-CONTRACT.md` 반영 완료). Mock에서 먼저 확인하고 실제 백엔드 연결 때 검증한다.
 - 오류: 빈 입력 전송 차단. 로그인 401은 같은 폼에서 실패 안내. 보호 API 401은 민감 상태를 지우고 /login으로 이동하며 자동 재호출하지 않는다. 403은 권한 안내와 돌아갈 메뉴. 비밀번호 정책 오류는 서버의 안전한 메시지를 사용하고 임의 길이·잠금 정책을 만들지 않는다.
 - 변경·로그아웃은 성공 응답 확인 뒤 완료로 표시한다. 로그아웃 실패는 완료 안내를 하지 않는다. 비밀번호·토큰은 localStorage/sessionStorage·로그·캡처에 보관하지 않는다.
 - 통과: S01 직원/관리자/최초 변경 Mock의 이동, S02 새 비밀번호 확인 불일치 시 전송 0회, S03 로그아웃 후 보호 접근 401·내용 없음. 실제 연결 때 같은 흐름과 쿠키 HttpOnly를 확인한다.
@@ -74,7 +74,7 @@
 
 ## FE-04T · 관리자 티켓
 
-GET 목록의 경로용 id를 선택해 PATCH한다. ticket_id는 표시용이며 경로 id와 혼동하지 않는다. status는 필수, assignee/reply는 선택이다. status는 open/in_progress/resolved, priority는 표시만 하고 변경 요청에 넣지 않는다. id·assignee 타입/해제 규칙은 H02 제안이다.
+GET 목록의 경로용 id(내부 정수 PK)를 선택해 PATCH한다. ticket_id는 표시용(`T-2001` 등)이며 경로 id와 혼동하지 않는다. status는 필수, assignee/reply는 선택이다. status는 open/in_progress/resolved, priority는 표시만 하고 변경 요청에 넣지 않는다. assignee는 IT팀 `app.employees.id` 정수 또는 `null`(해제)이다.
 
 목록→행 편집→저장 중 중복 차단→성공 객체로 행 갱신. 실패는 편집값을 유지하고 저장 완료로 덮지 않는다. 알림에서 티켓을 볼 때 목록의 ticket_id와 맞추고 없으면 찾을 수 없음을 표시한다.
 
@@ -84,7 +84,7 @@ GET 목록의 경로용 id를 선택해 PATCH한다. ticket_id는 표시용이�
 
 제공 직원 식별값·login_id·임시 비밀번호로 발급한다. 성공은 계정 요약만 표시하고 비밀번호 입력은 지운다. 반환된 계정 id로 PATCH is_active 또는 reset-password temporary_password를 보낸다. 비활성화/초기화 전 화면에서 대상 이름·ID와 작업을 확인한다. 초기화 결과는 ok·변경 필요 여부만 표시하고 응답에 비밀번호가 있다고 가정하지 않는다.
 
-공통 계약에 계정/미발급 직원 목록 조회가 없어 H01 목록은 Mock으로 격리한다. 기존 POST 반환 계정을 현재 화면에서 관리할 수 있으나 새로고침 후 모든 계정을 관리한다고 주장하지 않는다. 직원 이름·부서를 임의 생성하거나 브라우저에서 data-api를 조회하지 않는다.
+`GET /api/admin/employees`와 `GET /api/admin/users`로 미발급 직원 및 기존 계정을 조회한다(백엔드 미기동 시에는 계약 Mock 사용). 직원 이름·부서를 임의 생성하거나 브라우저에서 data-api를 직접 조회하지 않는다.
 
 통과 S14: 발급 성공/직원 또는 ID 중복 오류(H02 상태·code 제안)/비활성화/초기화, 직원 403. 초기화된 계정은 다음 로그인 변경 화면 이동을 실제 확인한다. 자기 비활성화·마지막 관리자 보호는 H03 제안 상태다.
 
@@ -98,7 +98,7 @@ GET /api/admin/alerts의 items를 심각도·시각·안내·선택 ticket_id로
 
 | 상황 | 예상 화면·행동 | 통과 기준 |
 | --- | --- | --- |
-| HTTP400 codes | 코드와 안전한 입력 안내, 입력 유지 | 교사 codes를 웹 error로 바꾸지 않음 |
+| HTTP400 codes | 코드와 안전한 입력 안내, 입력 유지 | 공통 웹훅 codes를 웹 error로 바꾸지 않음 |
 | HTTP400 웹 error | 안전한 메시지, 폼 수정 | 미정 코드도 일반 입력 오류 처리 |
 | 로그인 401 / 보호 API 401 | 폼 실패 / 로그인 이동 | 무한 재시도·이전 직원 데이터 없음 |
 | HTTP403 / 404 | 권한 없음 / 없는 티켓 | 성공 안내·자동 재시도 없음 |
@@ -152,7 +152,7 @@ M07 오류 · HTTP403 · S13,S16:
 {"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}
 ```
 
-M08 빈 목록 HTTP200은 `{"items":[]}`. HTTP400 교사 오류는 codes를 포함한 원본 형식을 유지하고 백엔드가 제공하는 예시를 그대로 사용한다. 로그인 Mock user는 id=1/name=김민지/dept=IT팀/role=admin/must_change_password=true로 두되 최상위 포장은 H02 제안으로 표시한다. 비어 있지 않은 목록 Mock은 H02 화면 모델과 실제 계약 어댑터를 분리한다.
+M08 빈 목록 HTTP200은 `{"items":[]}`. HTTP400 공통 웹훅 오류는 codes를 포함한 원본 형식을 유지하고 백엔드가 제공하는 예시를 그대로 사용한다. 로그인 Mock user는 id=1/name=김민지/dept=IT팀/role=admin/must_change_password=true로 두되 최상위 포장은 H02 제안으로 표시한다. 비어 있지 않은 목록 Mock은 H02 화면 모델과 실제 계약 어댑터를 분리한다.
 
 ## FE-06 · 실제 연결과 측정
 
@@ -164,4 +164,4 @@ S17은 Mock을 끄고 직원 로그인→질문→보완 또는 답·이관→�
 
 ## 참고
 
-[협업](../../../docs/COORDINATION.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [11-TOPIC-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/11-TOPIC-GUIDE.md) · [02-ENVIRONMENT-AND-SERVICES.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md).
+[협업](../../../docs/COORDINATION.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [주제](../../../docs/TOPIC.md) · [아키텍처](../../../docs/ARCHITECTURE.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md).

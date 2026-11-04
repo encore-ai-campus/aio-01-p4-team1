@@ -28,9 +28,8 @@
 
 ## WM-02 · app DLQ API와 모드별 관측
 
-- 연결/요구: C05·C07 / REL-03·05. 상태: 제안, 검토·실행 없음.
-- 기존: DATA §3에 app.dlq는 있으나 API-CONTRACT C05에는 /tickets와 /alerts만 있다. practice /dlq와 fault/reset/ops는 수업 호환 대상이며 app 저장 관측 API·Error Trigger의 request_id 없는 실패 저장 방법이 없다.
-- 제안: backend 내부 `POST /dlq`를 X-Api-Key로 제공한다. 입력 후보 `request_id`(확인 가능한 경우), `workflow`, `node`, `reason`, `safe_payload`, `execution_ref`(request_id 미상일 때 필수). 새 필드는 아직 공통 계약이 아니다.
+- 연결/요구: C05·C07 / REL-03·05. 상태: **`POST /dlq` 및 `app.dlq` 스키마 공통 반영 완료(내부 ops 조회 및 실제 연결 미실행)**.
+- 반영 내용: `docs/API-CONTRACT.md` 5절과 `docs/DATA-AND-DB.md` 3절에 backend 내부 `POST /dlq`(X-Api-Key, `request_id`/`workflow`/`node`/`reason`/`safe_payload`/`execution_ref`, 201/200)가 반영되었다.
 
 제안 요청 예(비밀값·질문/답 원문·연락처 없음):
 
@@ -49,9 +48,9 @@
 
 ## WM-03 · 알림 중복과 부분완료 재처리
 
-- 연결/요구: C04·C05 / REL-01·02·03. 상태: 제안, 검토·실행 없음.
-- 기존: ticket key 멱등성은 확정. /alerts 입력에는 request_id/멱등 키가 없으며 알림 timeout 후 재시도·중복 티켓 재요청·DLQ replay의 알림 중복 억제 경계가 정해지지 않았다. DATA는 거래/재시도 경계를 백엔드가 보장한다고만 정한다.
-- 제안: /alerts에 내부 선택 `event_key`를 추가한다. 티켓 접수 알림은 `request_id:ticket-created`, 저장 장애는 `request_id:tickets-down`, 예상 밖 오류는 `execution_ref:unexpected-error`로 구분해 백엔드 UNIQUE로 보장한다. 신규 알림 ACK는 기존 stored/count를 유지하고 중복은 stored=0·count 유지·선택 duplicate=true를 반환한다. 기존 키트 호환 모드에는 미지원 필드를 강요하지 않는다.
+- 연결/요구: C04·C05 / REL-01·02·03. 상태: **`POST /alerts` 선택 `event_key` 및 `app.alerts.event_key UNIQUE` 공통 반영 완료(자동 재처리 및 실제 시험 미실행)**.
+- 기존: ticket key 멱등성은 확정. /alerts 입력에는 request_id/멱등 키가 없으며 알림 timeout 후 재시도·중복 티켓 재요청·DLQ replay의 알림 중복 억제 경계가 정해지지 않았다.
+- 제안(공통 반영 완료): /alerts에 내부 선택 `event_key`를 추가한다. 티켓 접수 알림은 `request_id:ticket-created`, 저장 장애는 `request_id:tickets-down`, 예상 밖 오류는 `execution_ref:unexpected-error`로 구분해 백엔드 UNIQUE로 보장한다. 신규 알림 ACK는 기존 stored/count를 유지하고 중복은 stored=0·count 유지·선택 duplicate=true를 반환한다. 기존 키트 호환 모드에는 미지원 필드를 강요하지 않는다.
 - 제안 예: 기존 요청 `{"workflow":"oke-handoff","node":"Create Ticket","message":"티켓 저장 실패","severity":"high"}` → app 선택 필드 `"event_key":"wm-t07:tickets-down"` 추가. 키에 질문/이름/비밀값을 넣지 않는다.
 - 제안 재처리: 티켓 성공·알림 실패는 DLQ stage=alert에 ticket_id/event_key만 연결하고 알림만 재시도한다. 티켓 실패는 stage=ticket으로 분리하며 원래 request_id로 재시도한다. 이미 생성된 티켓을 다시 생성하는 흐름으로 전체 replay하지 않는다. ACK 불명확 상태는 event_key로 조회/중복 억제 후 처리한다. 자동 replay는 후순위다.
 - 제안 경계: 알림과 DLQ 기록의 중복 방지·완료 표시는 백엔드의 거래/멱등 설계로 보장한다. 티켓 성공 응답과 알림 저장이 하나의 원자적 거래라고 가정하지 않는다. 전송 시도 수와 실제 알림 건수는 따로 기록한다.
@@ -65,9 +64,9 @@
 - 연결/요구: C04·C05 / REL-01·02. 상태: 제안, 검토·실행 없음.
 - 기존: 전체 성공 ok=true, 티켓 장애 ok=false, 알림 실패 ticket 유지·reason=alerts_down은 확정이다. 알림만 실패했을 때 ok, 잘못된 C04 입력, 저장 API 401/403·타인 key 거절의 하위 응답 형식/사유는 비어 있다.
 - 제안 A: ok는 **티켓 저장 확인 여부**로 정의한다. 알림만 실패하면 HTTP200 `{"ok":true,"ticket":{"ticket_id":"T-2001","priority":"normal","duplicate":false},"reason":"alerts_down","alerted":false,"dlq":true}`; dlq는 실제 ACK일 때만 true다. 주 실패 reason은 tickets_down을 우선하고 알림/DLQ 실패는 내부 단계 기록으로 남긴다.
-- 제안 B: C04 잘못된 입력은 저장 전 HTTP400 `{"error":{"code":"invalid_handoff_input","message":"이관 입력을 확인해 주세요."}}`. 이것은 teacher support의 HTTP400 codes를 대체하지 않는다. C04 입구 인증 거절은 기존 Header Auth를 따른다.
+- 제안 B: C04 잘못된 입력은 저장 전 HTTP400 `{"error":{"code":"invalid_handoff_input","message":"이관 입력을 확인해 주세요."}}`. 이것은 공통 support 웹훅의 HTTP400 codes를 대체하지 않는다. C04 입구 인증 거절은 기존 Header Auth를 따른다.
 - 제안 C: 저장 API 401/403은 재시도 없이 C04 HTTP200 `ok=false,ticket=null,reason=storage_auth_failed,alerted/dlq=실제ACK`로 처리한다. 타인 key 반환 거절은 별도 `request_owner_mismatch` 사유로 표시하고 support가 개인정보 없이 권한 없음으로 매핑한다. **이 두 reason과 권한 매핑은 새 제안**이며 현재 확정된 tickets_down 계약을 임의 변경하지 않는다.
-- 영향: 다혁님 Handoff 응답 해석·최종 route/reason/안내, 지혜님 소유권 오류 상태, 원민님 H02/H10과 부분실패 기대. teacher common 400 codes·route 집합은 보존한다.
+- 영향: 다혁님 Handoff 응답 해석·최종 route/reason/안내, 지혜님 소유권 오류 상태, 원민님 H02/H10과 부분실패 기대. 공통 400 codes·route 집합은 보존한다.
 - 검토 상대/공통 반영: 다혁님·지혜님, API §4·5·8 반영 오현님.
 - 기다릴 부분/계속할 부분: 미정 필드·새 reason만 확정 판정 보류. 정상·티켓 장애·티켓 보존·401/403 무재시도·타인 정보 미노출은 기존대로 시험 준비한다.
 - 검토 근거·반영 커밋·실제 연결: 없음/미실행.

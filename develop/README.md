@@ -17,17 +17,16 @@
 
 개인 폴더 이름 변경은 역할·웹훅·DB 설계를 바꾸지 않는다. 코드·워크플로우 구현은 아직 준비 단계다.
 
-## 참고할 강사 자료
+## 공통 참조 문서 (저장소 내부 기준)
 
-아래 링크는 지정한 커밋의 수업자료다. 개인 Doc에도 역할별 직접 링크를 보존했다.
+모든 개발·검증·제출 기준은 외부 링크가 아닌 아래 저장소 내부 문서를 기준으로 한다.
 
-- [요구→TODO→SPEC→IMP-PLAN 수업](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Last3Mon/78/VIBE-Q-TCHECK.md)
-- [일정·팀 역할·동결](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/01-SCHEDULE-AND-TEAMS.md)
-- [환경·FastAPI 어댑터·팀 VM](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md)
-- [흐름·공통 계약·하위 워크플로우](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md)
-- [RAG](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/05-RAG-DESIGN-GUIDE.md)
-- [보안·안정성](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/06-RELIABILITY-AND-SECURITY.md)
-- [시험·실제 보고서](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md)
-- [필수 제출 경로·발표](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/08-SUBMISSION.md)
+- [전체 시스템 아키텍처](../docs/ARCHITECTURE.md)
+- [의사결정 기록 (ADR-001)](../docs/adr/ADR-001-project-decisions.md)
+- [팀 헌장 · 역할 · 중간 목표](../docs/TEAM-CHARTER.md)
+- [공통 API · 웹훅 · 실행 환경 계약](../docs/API-CONTRACT.md)
+- [데이터 · PostgreSQL · pgvector 구조](../docs/DATA-AND-DB.md)
+- [제공 데이터 · 공통 14종 시나리오 · 평가/검증 기준](../docs/EVALUATION-GUIDE.md)
+- [협업 · 변경 검토 · PR 절차](../docs/COORDINATION.md)
 
 제출 파일과 취합 방법은 [오현님 제출 안내](ohyun/SUBMISSION.md)를 따른다. 설치·실행 명령은 각 역할의 P0에서 검증 후 자기 README에 적는다.

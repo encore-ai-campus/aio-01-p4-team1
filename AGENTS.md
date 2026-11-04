@@ -30,12 +30,12 @@
 
 ## 확인과 보고
 
-- 워크플로우 JSON은 수업 키트 `flow.py check`로 검사하고, 사람이 n8n에 push·test해 결과를 확인한다. 80일차 키트가 도착하기 전에는 실행했다고 쓰지 않는다.
+- 워크플로우 JSON은 `flow.py check`로 검사하고, 사람이 n8n에 push·test해 결과를 확인한다. 실제 실행 전에는 실행했다고 쓰지 않는다.
 - 코드를 바꾼 역할은 자기 기능의 정상·오류·권한 경계를 확인하고, 실제 실행 결과를 담당 문서에 남긴다.
 - 변경 보고에는 수정 파일, 동작 차이, 확인 방법과 결과, 남은 문제를 적는다. 실패를 통과로 적지 않는다.
 - 팀 VM 배포와 기본 브랜치 병합은 팀의 리드가 관리한다.
 
-교사 원문: [CLI 코딩 에이전트 작업 규칙](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/09-AGENT-WORKING-RULES.md).
+세부 평가 시나리오와 검증 방법은 [EVALUATION-GUIDE](docs/EVALUATION-GUIDE.md)를 따른다.
 
 ## 파일 편집 소유권
 

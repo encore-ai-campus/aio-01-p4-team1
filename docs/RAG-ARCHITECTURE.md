@@ -56,7 +56,7 @@ LF 줄바꿈 정규화 후 본문 해시를 만들고, 실제 제목·절·본�
 
 | 항목 | 적용값·상태 | 선정·확인 근거 |
 | --- | --- | --- |
-| 모델 | text-embedding-3-large | 수업에서 익힌 모델과 통일. 타 모델 대비 우수성을 측정한 것은 아님 |
+| 모델 | text-embedding-3-large | 팀 공통 기준 모델로 통일. 타 모델 대비 우수성을 측정한 것은 아님 |
 | 차원 | 3072 | 공통 DB vector(3072), 질의와 문서에 같은 모델·차원 |
 | 거리 | cosine 정확검색, score=1-distance | 큰 점수가 더 유사. 확률·정답률·0~1 보장값으로 해석하지 않음 |
 | top_k | 3 | 공통 계약값. 이번 비교는 청킹만 변경 |
@@ -104,7 +104,7 @@ C03 응답은 정상/빈 후보 HTTP200, 빈 후보 reason=no_evidence, 임베�
 
 | 항목 | 준비할 구현·시험 | 현재 상태 |
 | --- | --- | --- |
-| 원본 추적 | 수업 원본 버전·문서 해시·권한·설정 대장 보존. 실제 스냅샷·백업 위치 기록 | 미작성·미실행 |
+| 원본 추적 | 제공 원본 버전·문서 해시·권한·설정 대장 보존. 실제 스냅샷·백업 위치 기록 | 미작성·미실행 |
 | 영속성 | n8n 재시작·같은 볼륨의 DB 재시작 후 재색인 없이 건수/해시/검색 비교 | 미실행 |
 | 색인 재생성 | 별도 새 DB에 마이그레이션 후 동일 원본으로 재색인, 건수·권한·검색·시간·비용 확인 | 미실행 |
 | 롤백·부분 재처리 | 문서 거래 실패 롤백, 성공 문서 건너뜀·실패 문서 재실행, 잔여 청크 없음 | 미실행 |
@@ -119,4 +119,4 @@ named volume 유지와 백업은 다르다. 자동 백업 주기·보관 기간�
 
 실제 생성 후 유빈님 Doc의 SOURCE-MANIFEST·CHUNK-COMPARISON·SEARCH-EVAL·INDEX-RESULT·RECOVERY-RESULT 자료를 연결한다. 현재 파일이 존재하거나 시험을 통과한 것으로 표시하지 않는다. 다혁님은 근거 응답·점수 의미를, 원민님은 권한/장애/반복 사례를 받고 오현님이 제출 문서로 취합한다.
 
-수업 기준: [RAG 템플릿](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/templates/RAG-ARCHITECTURE-TEMPLATE.md) · [RAG 가이드](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/05-RAG-DESIGN-GUIDE.md).
+참조 문서: [데이터·DB 기준](DATA-AND-DB.md) · [평가·시나리오 기준](EVALUATION-GUIDE.md) · [전체 구성도](ARCHITECTURE.md).

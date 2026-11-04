@@ -6,7 +6,7 @@
 
 ## 범위와 읽는 순서
 
-**편집은 `develop/wonmin/` 안에서만 한다.** 이번 문서 정비는 그 안의 Markdown에 한정한다. 루트·공통 docs·상대 폴더는 읽기 전용이다. 상대 코드를 복제하거나 본체·검색·백엔드를 대신 구현하지 않는다.
+**편집은 `develop/wonmin/` 안에서만 한다.** 루트·공통 docs·상대 폴더는 읽기 전용이다. 상대 코드를 복제하거나 본체·검색·백엔드를 대신 구현하지 않는다.
 
 1. [TODO](Doc/TODO.md): 목적, 필수와 후순위를 읽는다.
 2. [SPEC](Doc/SPEC.md): REL 요구, 노드 책임, 입출력, 처리표, 팀 시나리오의 기대를 읽는다.
@@ -34,7 +34,7 @@
 
 | 모드 | 티켓·알림·DLQ 대상 | 관측·주의 |
 | --- | --- | --- |
-| `SERVICE_MODE=practice` | data-api:8800의 수업 호환 API | fault/reset/ops가 **같은 data-api 인스턴스**를 보도록 확인한 뒤 공통 고장 시험 |
+| `SERVICE_MODE=practice` | data-api:8800의 공통 호환 API | fault/reset/ops가 **같은 data-api 인스턴스**를 보도록 확인한 뒤 공통 고장 시험 |
 | `SERVICE_MODE=app` | backend:8000 내부 API → PostgreSQL app 테이블 | FastAPI 인증·저장·권한·중복·재시작 유지 별도 통합 시험. data-api ops 수치를 앱 결과로 쓰지 않음 |
 
 직원·규정·FAQ·기존 티켓 조회는 공통 기준대로 data-api를 사용한다. 모드는 새 업무 저장 대상을 선택하며 같은 티켓을 두 저장소에 동시 생성하지 않는다. Docker 안 주소와 호스트 주소는 달라도 같은 인스턴스임을 확인한다. 자세한 대조 절차는 [SPEC REL-05](Doc/SPEC.md#rel-05--실행대상과관측일치)를 따른다.
@@ -55,4 +55,4 @@ HANDOFF의 WM-01~WM-04는 **미검토 제안**이다. 상대 응답·공통 반�
 
 ## 참고
 
-[주제](../../docs/TOPIC.md) · [팀 헌장](../../docs/TEAM-CHARTER.md) · [루트 규칙](../../AGENTS.md) · [본인 규칙](AGENTS.md) · [제출 취합](../ohyun/SUBMISSION.md). 역할별 수업자료 링크는 [IMP-PLAN 공통 자료](Doc/IMP-PLAN.md#공통-자료)에 유지한다.
+[주제](../../docs/TOPIC.md) · [팀 헌장](../../docs/TEAM-CHARTER.md) · [루트 규칙](../../AGENTS.md) · [본인 규칙](AGENTS.md) · [제출 취합](../ohyun/SUBMISSION.md). 공통 참고 링크는 [IMP-PLAN 공통 자료](Doc/IMP-PLAN.md#공통-자료)에 유지한다.

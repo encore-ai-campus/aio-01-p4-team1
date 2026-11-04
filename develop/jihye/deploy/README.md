@@ -13,24 +13,24 @@
 
 [API C07](../../../docs/API-CONTRACT.md)의 내부 주소는 backend:8000, postgres:5432, n8n:5678, data-api:8800이다. 공개 웹 기본3000, 로컬 backend8000/n8n5678/data-api8800을 사용한다. 로컬용 내부 도구 포트는 loopback 바인딩으로 계획한다. postgres5432는 기본 외부 공개하지 않는다. VM의 n8n 관리 접근/비밀번호·공개 경로는 오현님이 관리한다.
 
-PostgreSQL은 pgvector 포함 이미지·named volume·healthcheck를 사용한다. PostgreSQL/pgvector 이미지 태그·digest는 실제 설치/확장 검증 뒤 고정하며 지금 검증한 버전으로 적지 않는다. n8n은 공통 수업 환경과 호환되는 버전을 적용한다. 기존 n8n/data-api를 재사용하면 Compose 중복 기동을 피하고 같은 네트워크 alias·충돌 포트·실제 URL을 기록한다. 포트를 임의 재선정하지 않고 충돌 변경은 C07로 요청한다.
+PostgreSQL은 pgvector 포함 이미지·named volume·healthcheck를 사용한다. PostgreSQL/pgvector 이미지 태그·digest는 실제 설치/확장 검증 뒤 고정하며 지금 검증한 버전으로 적지 않는다. n8n은 공통 평가 환경과 호환되는 버전을 적용한다. 기존 n8n/data-api를 재사용하면 Compose 중복 기동을 피하고 같은 네트워크 alias·충돌 포트·실제 URL을 기록한다. 포트를 임의 재선정하지 않고 충돌 변경은 C07로 요청한다.
 
 프론트 Dockerfile·/api 프록시는 수언님 소유다. 지혜님은 해당 파일을 대신 만들지 않는다. 수언님에게 frontend context와 `/api`→`http://backend:8000` 서버 프록시 조건을 전달한다. 브라우저는 localhost 또는 VM 공개 웹 주소로 접근하며 Docker 내부 호스트명·n8n 키를 브라우저에 넣지 않는다. 프론트 파일이 아직 없으면 postgres/backend를 먼저 확인한다.
 
 ## 환경변수·모드
 
-공통 변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD다. 실제 값·VM 주소·암호·토큰은 문서/로그/화면/저장소에 넣지 않는다. bootstrap 암호는 최초 생성 명령에만 주고 평상시 서버 필수값으로 만들지 않는다.
+공통 변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD, BACKEND_ORIGIN이다. 실제 값·VM 주소·암호·토큰은 문서/로그/화면/저장소에 넣지 않는다. bootstrap 암호는 최초 생성 명령에만 주고 평상시 서버 필수값으로 만들지 않는다.
 
 | 모드 | 실행 목적 | 기록할 것 |
 | --- | --- | --- |
 | practice | 원본 data-api 직원/규정·티켓/알림 및 fault/reset/ops 공통 시험 | support/handoff의 실제 대상 data-api, 관측도 같은 대상인지 원민님 확인 |
-| app | 계정/문의·새 티켓/알림은 PostgreSQL, 직원/규정 원본 조회는 data-api | handoff의 저장 대상 backend /tickets·/alerts, 관리자 조회는 같은 PostgreSQL |
+| app | 계정/문의·새 티켓/알림/DLQ는 PostgreSQL, 직원/규정 원본 조회는 data-api | handoff의 저장 대상 backend /tickets·/alerts·/dlq, 관리자 조회는 같은 PostgreSQL |
 
 SERVICE_MODE 하나가 상대 n8n Credential/URL까지 자동 변경한다고 가정하지 않는다. 시작 전 FastAPI 설정과 n8n의 실제 호출 대상·fault/reset/ops 관측 대상을 대조해 원민님에게 넘긴다. 같은 티켓을 PostgreSQL과 data-api에 이중 생성하지 않는다. PostgreSQL 장애를 data-api로 몰래 우회해 성공으로 표시하지 않는다.
 
 ## 구현 후 로컬 확인 순서 · 아직 실행하지 않음
 
-명령의 작업 디렉터리는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/jihye`다. 실제 비밀 파일은 로컬에서만 `deploy/.env`로 준비하는 계획이다. 명령 출력에 환경값을 펼치는 config 출력은 피한다.
+명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 실제 비밀 파일은 로컬에서만 `deploy/.env`로 준비하는 계획이다. 명령 출력에 환경값을 펼치는 config 출력은 피한다.
 
 1. `uv sync --dev`로 본인 의존성만 설치하고 잠금 파일을 검증한다. 서버 개발 명령은 `uv run uvicorn app.main:app --host 127.0.0.1 --port 8000`로 계획한다. 이미지 내부는 host 0.0.0.0/8000이다.
 2. `docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet`로 경로·문법을 검사한다. 실제 .env·암호·키는 출력/보고서에 복사하지 않는다.
@@ -51,4 +51,4 @@ SERVICE_MODE 하나가 상대 n8n Credential/URL까지 자동 변경한다고 �
 
 VM 배포 후 공통 시험·LLM 반복·실제 runs 결과는 원민님과 오현님이 기록한다. n8n `push/test`는 사람이 수행한다. 80일차 키트가 준비된 뒤 그 키트 작업 디렉터리에서 `uv run tools/flow.py doctor`를 확인하는 계획이며, 현재 키트 준비나 ready를 확인했다고 쓰지 않는다.
 
-[환경·팀 VM](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [제출·시연](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/08-SUBMISSION.md).
+[전체 아키텍처](../../../docs/ARCHITECTURE.md) · [공통 API](../../../docs/API-CONTRACT.md) · [제출·시연](../../ohyun/SUBMISSION.md).

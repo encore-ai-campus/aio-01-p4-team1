@@ -22,7 +22,7 @@
 | [ ] 빈 목록·로딩·400·401·403·404·장애·중복 방지 | 오류를 성공처럼 표시하지 않음 | FE-05 | 각 P0, P1-3 |
 | [ ] 실제 FastAPI·프록시·권한·통합 시연 | Mock과 실제 결과 구분 | FE-01~06 | P1-1~3 |
 
-계정 목록 조회·상세 필드·정책 누락은 HANDOFF H01~H04의 제안이다. 기존 API와 화면 제작은 계속하고 제안 부분의 실제 연결만 공통 반영을 기다린다. 계정 비활성화·초기화 API 자체는 이미 정해졌으므로 재승인을 요구하지 않는다.
+관리자 계정/직원 목록 조회(`GET /api/admin/users`, `GET /api/admin/employees`), `/api/auth/me`의 `must_change_password`, 티켓 `assignee`(`app.employees.id`), 프록시 `BACKEND_ORIGIN`은 `docs/API-CONTRACT.md`에 반영되어 있다. 백엔드 미기동 시에는 계약 Mock으로 진행하고, 세부 오류 코드·복구 제안(HANDOFF H02~H04)만 공통 추가 반영 전까지 어댑터로 분리한다.
 
 ## 후순위 · 필수 완료 뒤
 
@@ -36,6 +36,4 @@ SPEC 시나리오의 기대 결과와 실제 결과를 비교한다. 메뉴를 �
 
 ## 기준과 참고
 
-[주제](../../../docs/TOPIC.md) · [공통 API](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md).
-
-수업 원문: [11-TOPIC-GUIDE.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/11-TOPIC-GUIDE.md) · [02-ENVIRONMENT-AND-SERVICES.md](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md).
+[주제](../../../docs/TOPIC.md) · [공통 API](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [아키텍처](../../../docs/ARCHITECTURE.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md) · [팀 헌장](../../../docs/TEAM-CHARTER.md) · [협업](../../../docs/COORDINATION.md).

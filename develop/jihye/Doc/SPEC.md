@@ -7,8 +7,8 @@
 | 구분 | 적용 내용 | 원본 |
 | --- | --- | --- |
 | 인증 | 공개 가입 없음, 관리자 발급, 첫 관리자 환경변수 1회 준비, 첫 로그인 비밀번호 변경, 세션에서 id/name/dept/role 결정 | [TOPIC](../../../docs/TOPIC.md), [API C01·8](../../../docs/API-CONTRACT.md) |
-| 공개/내부 API | C01의 12개 경로, C02 공통 응답·route 전체 보존, C05 /tickets·/alerts, X-Team-Key와 X-Api-Key 분리 | [API](../../../docs/API-CONTRACT.md) |
-| 오류 | 입력 400, 미로그인/로그인 실패 401, 소유권/관리자 권한 403, 없는 티켓 404. 웹은 error.code/message, 교사 웹훅 400 codes는 그대로 전달 | API 2·8절 |
+| 공개/내부 API | C01의 14개 경로(`GET /api/admin/employees`, `GET /api/admin/users` 포함), C02 공통 응답·route 전체 보존, C05 `/tickets`·`/alerts`(`event_key` 포함)·`/dlq`, X-Team-Key와 X-Api-Key 분리 | [API](../../../docs/API-CONTRACT.md) |
+| 오류 | 입력 400, 미로그인/로그인 실패 401, 소유권/관리자 권한/미변경(`password_change_required`) 403, 없는 티켓·계정 404, 중복·충돌 409(또는 400). 웹은 error.code/message, 공통 웹훅 400 codes는 그대로 전달 | API 2·8절 |
 | 업무 DB | PostgreSQL app, bigint identity PK·timestamptz·FK, 직원 6명 name/dept, 계정/세션/문의/티켓/알림/DLQ. request_id 1~64자, 질문 1~500자, attempt>=1 | [DB 1~3절](../../../docs/DATA-AND-DB.md) |
 | 티켓 | request_key·ticket_id UNIQUE, T-2001부터 별도 시퀀스, open/in_progress/resolved↔접수/처리 중/완료, normal/high↔보통/긴급 | DB 3절 |
 | RAG | rag.documents/chunks, vector(3072), text-embedding-3-large, cosine 정확 검색·score=1-distance·top_k=3, all/it 권한을 검색 전에 적용 | DB 4절 |
@@ -56,24 +56,26 @@ H01 등의 축약은 HANDOFF의 JH-H01 등을 뜻한다. 해당 제안의 수치
 - `SupportResponse`는 request_id, route(정해진 5값), answer(str), sources(list[Source]), ticket(TicketRef 또는 null), agents(list[str]), security(Security)를 필수로 검증한다. `Source`는 doc/section(str), score(유한 float); `TicketRef`는 ticket_id(str), priority(normal/high), duplicate(bool)다. 예시 점수를 신뢰도 임계값으로 사용하지 않는다.
 - `Security`의 blocked_by·reason(문자열 또는 null), masked(비음수 정수) 형식은 73일차 출력 예시와 호환하는 모델 초안으로 H03에 요청한다. 필드는 제거하지 않는다. 선택 reason, timings 및 추가 상위 응답 필드도 보존하며 응답 모델 기본 설정 때문에 소실시키지 않는다. timings의 값은 실제 단계별 ms다.
 - 웹 목록은 `ItemsResponse[T]`의 `{"items":[]}`다. `UserSummary`는 id/name/dept/role, 로그인 user에는 must_change_password를 포함한다. 관리자 계정 응답의 login_id/is_active/employee_id 추가, 문의/티켓/알림 단건 필드의 세부 외형은 H03 초안이다.
-- 웹 `ErrorResponse`는 `{"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}` 외형을 따른다. FastAPI 기본 422/detail을 그대로 노출하지 않는다. 교사 웹훅 HTTP400의 codes 본문은 별도 passthrough로 유지한다.
+- 웹 `ErrorResponse`는 `{"error":{"code":"forbidden","message":"접근 권한이 없습니다."}}` 외형을 따른다. FastAPI 기본 422/detail을 그대로 노출하지 않는다. 공통 웹훅 HTTP400의 codes 본문은 별도 passthrough로 유지한다.
 
 ## 4. C01 API별 검증 예시
 
-아래는 **구현 후 실행할 예시**다. 직원/관리자 세션은 fixture 또는 실제 발급 계정으로 준비한다. `employee_id=2`, `user id=7`, `ticket id=3`, `assignee user_id=8`은 설명용이며 seed 후 조회한 실제 ID로 치환한다. 비밀번호는 비밀 입력/시험용 런타임 생성으로 주고 문서·보고서에 값을 쓰지 않는다.
+아래는 **구현 후 실행할 예시**다. 직원/관리자 세션은 fixture 또는 실제 발급 계정으로 준비한다. `employee_id=2`, `user id=7`, `ticket id=3`, `assignee employee_id=5`(IT팀 직원 ID)는 설명용이며 seed 후 조회한 실제 ID로 치환한다. 비밀번호는 비밀 입력/시험용 런타임 생성으로 주고 문서·보고서에 값을 쓰지 않는다.
 
-공통 계약에 정확한 키가 없는 요청·응답 세부와 성공 상태(아래 ‘초안’)는 H03에서 보완 요청한다. 이미 정해진 401/403/404/400과 로그인/목록/공통 응답 외형은 바로 적용한다.
+공통 계약(`docs/API-CONTRACT.md`)에 반영된 14개 경로와 요청/응답 키를 그대로 적용한다.
 
 | 경로 / 모델 / 요구 | 입력·사전 조건 | 예상 출력·정상 검증 | 오류·경계 검증 |
 | --- | --- | --- | --- |
-| POST /api/auth/login / LoginRequest→LoginResponse / BE-01 | login_id + password, 활성 계정 | 200 초안, `{"user":{"id":7,"name":"박서연","dept":"재무팀","role":"employee","must_change_password":true}}` + HttpOnly 쿠키 | 없는ID/잘못된 암호401 같은 안내, 누락400·쿠키 없음, 비활성 로그인401. 첫 변경 제한은 H01 |
-| POST /api/auth/logout / OkResponse / BE-01 | 세션 쿠키, 본문 없음 | 200 초안 `{"ok":true}`, 세션 폐기·쿠키 삭제 | 이전 쿠키로 me401, 미로그인401 |
-| GET /api/auth/me / UserSummary / BE-01 | 유효 쿠키 | 200 초안 `{"id":7,"name":"박서연","dept":"재무팀","role":"employee"}` | 미로그인/만료/폐기401, 다른 사용자의 요약 미노출 |
-| POST /api/auth/change-password / ChangePasswordRequest→OkResponse / BE-01 | current_password/new_password(키 초안), 임시 암호 세션 | 200 초안 `{"ok":true}`, 저장된 해시 변경·must_change_password=false | 현재 암호 오류401 초안, 새 규칙 위반400, 이전 세션 처리 H01·이력/잠금 H02 |
+| POST /api/auth/login / LoginRequest→LoginResponse / BE-01 | login_id + password, 활성 계정 | 200, `{"user":{"id":7,"name":"박서연","dept":"재무팀","role":"employee","must_change_password":true}}` + `oke_session` HttpOnly 쿠키 | 없는ID/잘못된 암호401 같은 안내, 누락400·쿠키 없음, 비활성 로그인401 |
+| POST /api/auth/logout / OkResponse / BE-01 | 세션 쿠키, 본문 없음 | 200 `{"ok":true}`, 세션 폐기·쿠키 삭제 | 이전 쿠키로 me401, 미로그인401 |
+| GET /api/auth/me / UserSummary / BE-01 | 유효 쿠키 | 200 `{"id":7,"name":"박서연","dept":"재무팀","role":"employee","must_change_password":false}` | 미로그인/만료/폐기401, 다른 사용자의 요약 미노출 |
+| POST /api/auth/change-password / ChangePasswordRequest→OkResponse / BE-01 | current_password/new_password, 임시 암호 세션 | 200 `{"ok":true,"must_change_password":false}`, 저장된 해시 변경·기존 세션 폐기 | 현재 암호 오류401, 새 규칙(12자·3종 조합) 위반400 |
 | POST /api/ask / AskRequest→SupportResponse / BE-02·03 | `{"question":"VPN이 계속 끊겨요","request_id":"web-vpn-001","attempt":1}` | 200, 아래 공통 응답 예시; Mock 수신 user=세션의 박서연, channel=web | 공백/501자/attempt0/ID65자400·support 호출0, 질문500자·ID64자 수락. 다른 직원 키403·조회/호출0 |
-| GET /api/my-requests / ItemsResponse[InquiryView] / BE-03 | 서로 다른 두 직원의 문의를 준비 | 200 초안, 본인 items만. 단건 초안: request_id/question/attempt/result/ticket/created_at | 미로그인401, 타인 ID 필터를 보내도 타인 기록 반환0, 빈 목록 items=[] |
-| GET /api/admin/tickets / ItemsResponse[TicketView] / BE-04 | 관리자 쿠키·새 티켓 | 200 초안, 단건 초안: id/ticket_id/request_id/requester/title/category/priority/status/assignee/reply/created_at/updated_at | 직원403·본문 미노출, 미로그인401, 기존 T-100x 상태를 새 status enum으로 강제 변환하지 않음 |
-| PATCH /api/admin/tickets/{id} / TicketPatch→TicketView / BE-04 | `{"status":"in_progress","assignee":8,"reply":"담당자가 확인 중입니다."}`; 경로 id는 내부PK 초안 | 200 초안, 변경 단건·updated_at 갱신, 화면 ‘처리 중’ | 없는 티켓404, 직원403, 잘못된 status/없는 또는 비IT 담당자400 초안, 생략한 reply/assignee는 기존값 유지 |
+| GET /api/my-requests / ItemsResponse[InquiryView] / BE-03 | 서로 다른 두 직원의 문의를 준비 | 200, 본인 items만. 단건: request_id/question/attempt/result/ticket/created_at | 미로그인401, 타인 ID 필터를 보내도 타인 기록 반환0, 빈 목록 items=[] |
+| GET /api/admin/employees / ItemsResponse[EmployeeAdminView] / BE-01 | 관리자 쿠키 | 200, `{"items":[{"id":1,"name":"이준호","dept":"영업팀","user_id":null}, ...]}` (제공 6명) | 직원403, 미로그인401 |
+| GET /api/admin/users / ItemsResponse[AccountView] / BE-01 | 관리자 쿠키 | 200, `{"items":[{"id":7,"employee_id":2,"login_id":"...", "name":"박서연","dept":"재무팀","role":"employee","is_active":true,"must_change_password":true}]}` | 직원403, 미로그인401, 해시/비밀번호 미포함 |
+| GET /api/admin/tickets / ItemsResponse[TicketView] / BE-04 | 관리자 쿠키·새 티켓 | 200, 단건: id/ticket_id/request_id/requester/title/category/priority/status/assignee/reply/created_at/updated_at | 직원403·본문 미노출, 미로그인401, 기존 T-100x 상태를 새 status enum으로 강제 변환하지 않음 |
+| PATCH /api/admin/tickets/{id} / TicketPatch→TicketView / BE-04 | `{"status":"in_progress","assignee":5,"reply":"담당자가 확인 중입니다."}`; 경로 id는 내부PK, assignee는 IT팀 `app.employees.id` 또는 `null` | 200, 변경 단건·updated_at 갱신, 화면 ‘처리 중’ | 없는 티켓404, 직원403, 잘못된 status/없는 또는 비IT 담당자400, 생략한 reply/assignee는 기존값 유지 |
 | POST /api/admin/users / CreateUserRequest→AccountView / BE-01 | 필드 `employee_id=2`, `login_id`(선택한 ID), `temporary_password`(런타임 비밀 입력); 식별키 초안, 제공 직원의 아직 미발급 계정 | 201 초안, id/employee_id/login_id/name/dept/role/is_active/must_change_password 단건; 일반직원 employee·IT팀 admin | 직원403, 없는 employee_id400 초안, 중복 직원/로그인ID409 초안. 임의 role/user/name으로 권한 상승 불가 |
 | PATCH /api/admin/users/{id} / UserActivePatch→AccountView / BE-01 | `{"is_active":false}` | 200 초안, is_active=false 단건. 세션 폐기 H01 | 직원403, 문자열 false400, 없는 계정404 초안, 최후 관리자/자기 비활성화 H05 |
 | POST /api/admin/users/{id}/reset-password / ResetPasswordRequest→ResetResult / BE-01 | temporary_password, 관리자 쿠키 | 200 초안 `{"ok":true,"must_change_password":true}`, 해시 갱신 | 직원403, 규칙 위반400, 없는 계정404 초안, 기존 세션 폐기 H01·02 |
@@ -92,13 +94,14 @@ HTTP200 support 응답 모델 예시(측정값이 아닌 Mock 입력):
 | 경로 / 모델 | 입력 | 예상 출력 | 오류·통과 기준 |
 | --- | --- | --- | --- |
 | POST /tickets / TicketCreate→TicketCreated | X-Api-Key, `{"key":"web-vpn-001","title":"VPN 연결 점검","requester":"박서연","category":"network","priority":"normal"}` | 신규201 `{"ticket_id":"T-2001","duplicate":false}`, 재시도200 같은ID·duplicate=true | 키 누락/오류401·쓰기0. key 빈값/65자·없는직원·priority 부정값400 초안. 소유자 불일치403·기존 티켓 미노출 |
-| POST /alerts / AlertCreate→AlertStored | X-Api-Key, `{"workflow":"oke-handoff","node":"ticket","message":"티켓 저장을 확인해 주세요","severity":"high"}`, 선택 ticket_id는 외부 T-번호 | 200 `{"stored":1,"count":1}`. count는 실제 누적 수, 항상1로 하드코딩하지 않음 | 쿠키만 보낸 내부 호출401, 필수값 누락400. 외부 ticket_id→app.tickets PK 변환, 티켓 실패면 null로 저장. 없는 ticket_id 처리 H03 |
+| POST /alerts / AlertCreate→AlertStored | X-Api-Key, `{"workflow":"oke-handoff","node":"ticket","message":"티켓 저장을 확인해 주세요","severity":"high"}`, 선택 `ticket_id`(외부 T-번호), 선택 `event_key` | 200 `{"stored":1,"count":1}` (중복 `event_key`는 `stored:0` 또는 중복 억제). count는 실제 누적 수 | 쿠키만 보낸 내부 호출401, 필수값 누락400. 외부 ticket_id→app.tickets PK 변환, 티켓 실패면 null로 저장 |
+| POST /dlq / DlqCreate→DlqStored | X-Api-Key, `{"request_id":"web-vpn-001","workflow":"oke-handoff","node":"Create Ticket","reason":"tickets_down","safe_payload":{"stage":"ticket"}}`, 선택 `execution_ref` | 200 `{"stored":1,"count":1}` | 쿠키만 보낸 내부 호출401, 필수값 누락400, 개인정보·비밀값 원문 제외 |
 
 - DB UNIQUE 제약과 하나의 거래로 티켓 발급/문의 연결을 묶는다. 충돌 시 rollback 후 기존 request_key 소유자를 검사해 같은 직원에게만 반환한다. 시퀀스의 번호 공백은 허용하되 번호를 재사용하지 않는다.
-- 일반 웹 요청은 inquiries를 먼저 저장하고 같은 request_key의 티켓은 inquiry_id에 연결한다. 교사 직접 요청은 inquiry_id=null을 허용한다. SQL 트랜잭션을 n8n HTTP 호출 동안 잡아 두지 않는다.
+- 일반 웹 요청은 inquiries를 먼저 저장하고 같은 request_key의 티켓은 inquiry_id에 연결한다. 직접 웹훅 시험 요청은 inquiry_id=null을 허용한다. SQL 트랜잭션을 n8n HTTP 호출 동안 잡아 두지 않는다.
 - 티켓 저장과 알림 저장은 분리한다. 알림 실패가 이미 commit한 티켓을 지우지 않는다. 재시도에서 티켓은 기존ID를 받고 알림만 복구할 수 있어야 한다.
 - 동시 동일 key 두 호출의 신규/중복 응답과 DB 건수1을 확인한다. 단순 메모리 dict나 ‘조회 후 insert’만으로 멱등을 보장하지 않는다.
-- DLQ 테이블은 공통 구조대로 생성한다. n8n에서 app.dlq로 쓰는 HTTP 계약은 공통에 없어 H06으로 제안한다. 미연결 상태를 운영 DLQ 완료로 쓰지 않는다.
+- DLQ 테이블과 `POST /dlq` 내부 API는 공통 계약(`docs/API-CONTRACT.md` §5, `docs/DATA-AND-DB.md` §3)대로 구현한다.
 
 ## 6. 직원 seed·첫 관리자·권한
 
@@ -129,4 +132,4 @@ HTTP200 support 응답 모델 예시(측정값이 아닌 Mock 입력):
 
 ## 참고
 
-[환경·인증](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/02-ENVIRONMENT-AND-SERVICES.md) · [공통 페이로드](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/04-REFERENCE-ARCHITECTURE.md) · [RAG](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/05-RAG-DESIGN-GUIDE.md) · [보안·안정성](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/06-RELIABILITY-AND-SECURITY.md) · [시험](https://gl.isitsoft.kr/publicproj/aio-01d4-stu/-/blob/9ce9aceba6f66f2ec93a5a32ab23f3bedb06b9a4/Lecture/80-82-Project/student/07-TESTING-GUIDE.md).
+[전체 아키텍처](../../../docs/ARCHITECTURE.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [데이터·DB 기준](../../../docs/DATA-AND-DB.md) · [평가·검증 가이드](../../../docs/EVALUATION-GUIDE.md).

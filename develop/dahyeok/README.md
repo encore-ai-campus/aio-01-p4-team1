@@ -11,7 +11,7 @@
 
 ## 바로 시작하는 순서
 
-저장소 전체를 받은 뒤 작업 위치는 `/Users/k5h00/port-cli/Aio-4pj-1team/develop/dahyeok`으로 고정한다. 명령마다 이 위치 또는 저장소 절대경로를 workdir로 지정한다.
+저장소 전체를 받은 뒤 작업 위치는 저장소 기준 `develop/dahyeok`으로 고정한다. 명령마다 이 위치 또는 저장소 루트를 workdir로 지정한다.
 
 1. [TODO](Doc/TODO.md): 목적과 필수/후순위를 읽는다.
 2. [SPEC](Doc/SPEC.md): `SUP-*` 요구, 노드 순서, 프롬프트, 계약 예시와 예상 route를 읽는다. `WF-*`는 공통 시험 ID다.

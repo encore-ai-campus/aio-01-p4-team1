@@ -219,4 +219,6 @@ RAG는 **규정 원문 → 절 단위 청킹 → 임베딩 → pgvector 저장 �
 
 이 페이지의 화면·노드 그림은 [메인 README](../../../README.md)와 [docs/](../../../docs/README.md)의 기존 자료를 그대로 참조합니다. 별도 이미지 사본·공통 계약 원본을 만들지 않습니다.
 
+[81일차 연결·동결 발표](../DAY81/README.md) · [82일차 최종 발표](../DAY82/README.md)
+
 팀장 작업용: [준비 체크리스트](PREPARATION.md) · [팀원에게 받을 자료](TEAM-INPUTS.md) · [오후 점검·발표 준비](PRESENTATION.md)

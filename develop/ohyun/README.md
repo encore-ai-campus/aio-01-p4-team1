@@ -8,7 +8,15 @@
 
 1. [예상 화면·기능표](../../docs/PREVIEW.md)에서 무엇을 완성할지 확인한다.
 2. 아래 표로 각 담당자의 첫 결과·다음 연결을 받는다. 세부 코드는 해당 담당 CLI가 설명·확인하도록 한다.
-3. [80일차 아침 발표 자료](DAY80/README.md)를 열어 주제·역할·오늘 계획을 소개한다. 실제 작업 관리는 [준비 체크리스트](DAY80/PREPARATION.md)와 [전체 TODO](Doc/TODO.md)를 따른다.
+3. 아래 날짜별 README를 열어 발표하고, 각 폴더의 준비·인계·발표 진행 자료와 [전체 TODO](Doc/TODO.md)로 작업을 관리한다.
+
+| 날짜 | GitHub에서 보여 줄 발표 자료 | 팀장 작업용 |
+| --- | --- | --- |
+| 80일차 | [주제·화면·아키텍처·역할·당일 계획](DAY80/README.md) | [준비](DAY80/PREPARATION.md) · [수신](DAY80/TEAM-INPUTS.md) · [점검/발표](DAY80/PRESENTATION.md) |
+| 81일차 | [연결·RAG·예외 처리·통과 수·동결](DAY81/README.md) | [준비](DAY81/PREPARATION.md) · [수신](DAY81/TEAM-INPUTS.md) · [점검/발표](DAY81/PRESENTATION.md) |
+| 82일차 | [최종 산출물·실제 결과·VM 시연·제출](DAY82/README.md) | [준비](DAY82/PREPARATION.md) · [수신](DAY82/TEAM-INPUTS.md) · [20분 발표/시연](DAY82/PRESENTATION.md) |
+
+실제 결과는 main의 공통 설계서·실행 결과서·데일리에 기록한다. 날짜별 페이지의 확인 대기 칸과 설계 그림을 실제 완료로 소개하지 않는다.
 
 ## 누구에게 무엇을 받나
 

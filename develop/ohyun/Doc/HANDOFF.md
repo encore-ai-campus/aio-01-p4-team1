@@ -40,6 +40,15 @@
 이번 준비 문서 반영(2026-11-03): WORKFLOW-DESIGN·RAG-ARCHITECTURE에 현재 설계 초안을 채우고, TOPIC에 1분 발표문, 헌장에 문서 책임·지원 페어 기본안·중간 목표, 오현님 TODO와 SUBMISSION에 80일차/제출 체크를 반영했다. ARCHITECTURE의 모드별 저장 경로와 ADR의 팀원 확인 상태·파일 소유권 표현을 맞췄다. 기술 계약 자체는 변경하지 않았다. 실제 기능 구현·게시·시험·팀원 지원 확인은 미완료다.
 정적 점검: 변경 Markdown 11개, JSON 예시 4개 파싱, 내부 링크·참조 경로·표 열 수·코드펜스·diff 형식 확인. 오류 없음. Mermaid 이미지 렌더링과 기능 실행은 이번 정적 점검에 포함하지 않았다.
 
+## 2026-11-04 · 사람 중심 시작 안내·예상 화면·노드 설계
+
+- 루트 README를 예상 화면 → 내 담당 → 연결 그림 → 기준 문서 순으로 정리했다. 각 개인 README에는 첫 P0 작업·확정 기준·담당자 결정/검증·선택 고도화·참고 예제·인계 결과를 넣었다.
+- docs/PREVIEW.md와 docs/images/planned/에 설명용 화면 4종, 워크플로우 5종과 API/DB·역할 연결 그림을 추가했다. HTML과 SVG 생성 원본은 docs/previews/에 있다. 실제 서비스 캡처·시험 증거가 아니다.
+- docs/references/에 qnaweb 코드 8개와 워크플로우 8개를 읽기용 .example 사본으로 넣고, 인증·계정·pgvector·권한·오류 처리에서 바꿀 부분을 표시했다. 비밀값·Credential 참조는 교체용으로 치환했다.
+- WORKFLOW-DESIGN에 Code/IF/Switch 제어와 triage/writer/verifier 3역할, 업무 이관과 Agent 간 Handoff의 차이, 예정 노드 유형·분기를 명시했다. 공통 API·DB 계약과 개인 상세 SPEC은 변경하지 않았다.
+- 확인: Markdown 내부 링크·표·코드펜스, JSON 예제·참고 워크플로우 파싱, SVG XML·생성 Python 문법, git diff --check를 점검했다. 예상 화면과 흐름도를 브라우저로 렌더링해 글자·연결선을 확인했다.
+- 남은 작업: 담당자별 첫 P0 구현, 실제 API·DB·n8n 게시/연결·시험, 실제 캡처와 제출 문서 완성. 참고 사본·설계 이미지가 기능 완료나 사람 간 합의의 근거는 아니다.
+
 ## 요청·검토 양식 · 건마다 복사해서 작성
 
 - 연결 ID / 내 SPEC 요구 ID:

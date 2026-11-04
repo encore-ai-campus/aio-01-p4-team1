@@ -1,0 +1,251 @@
+import json
+from datetime import datetime, timezone
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.database import get_db, record_qna_event
+from app.models import ExternalIntegration, QnaFollowup, QnaQuestion, User
+from app.routers.auth import get_current_user
+from app.schemas import (
+    EscalateRequest,
+    FollowupCreate,
+    FollowupOut,
+    IntegrationOut,
+    QnaCreate,
+    QnaOut,
+)
+
+router = APIRouter(prefix="/api/qna", tags=["qna"])
+
+
+def serialize_qna(q: QnaQuestion) -> QnaOut:
+    followups_out = [
+        FollowupOut(
+            id=f.id,
+            qna_id=f.qna_id,
+            author_id=f.author_id,
+            author_name=f.author.name if f.author else "알수없음",
+            author_department=f.author.department if f.author else "",
+            author_role=f.author.role if f.author else "USER",
+            content=f.content,
+            created_at=f.created_at,
+        )
+        for f in (q.followups or [])
+    ]
+    integrations_out = [
+        IntegrationOut.model_validate(ext) for ext in (q.integrations or [])
+    ]
+    latest_ext = integrations_out[0] if integrations_out else None
+
+    return QnaOut(
+        id=q.id,
+        user_id=q.user_id,
+        user_name=q.author.name if q.author else "알수없음",
+        user_username=q.author.username if q.author else "",
+        department=q.author.department if q.author else "",
+        title=q.title,
+        content=q.content,
+        auto_answer=q.auto_answer,  # 명세에 따라 비워둠 (None)
+        status=q.status,
+        is_escalated=q.is_escalated,
+        assignee_id=q.assignee_id,
+        assignee_name=q.assignee.name if q.assignee else None,
+        ticket_status=q.ticket_status,
+        admin_answer=q.admin_answer,
+        escalated_at=q.escalated_at,
+        created_at=q.created_at,
+        updated_at=q.updated_at,
+        followup_count=len(followups_out),
+        external_sync_status=latest_ext.sync_status if latest_ext else None,
+        external_ref_id=latest_ext.external_ref_id if latest_ext else None,
+        followups=followups_out,
+        integrations=integrations_out,
+    )
+
+
+@router.post("", response_model=QnaOut, status_code=status.HTTP_201_CREATED)
+def create_question(
+    req: QnaCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> QnaOut:
+    content = req.content.strip()
+    if not content:
+        raise HTTPException(status_code=400, detail="질문 내용을 입력해 주세요.")
+
+    title = (req.title or "").strip()
+    if not title:
+        first_line = content.splitlines()[0].strip()
+        title = first_line[:80] if len(first_line) > 80 else first_line
+
+    q = QnaQuestion(
+        user_id=current_user.id,
+        title=title,
+        content=content,
+        auto_answer=None,  # 자동답변은 비워둠
+        status="OPEN",
+        is_escalated=False,
+    )
+    db.add(q)
+    db.commit()
+    db.refresh(q)
+
+    record_qna_event(
+        event_type="QUESTION_CREATED",
+        qna_id=q.id,
+        user_id=current_user.id,
+        department=current_user.department,
+        status=q.status,
+    )
+    return serialize_qna(q)
+
+
+@router.get("/my", response_model=List[QnaOut])
+def list_my_questions(
+    status_filter: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> List[QnaOut]:
+    query = db.query(QnaQuestion).filter(QnaQuestion.user_id == current_user.id)
+    if status_filter and status_filter != "ALL":
+        query = query.filter(QnaQuestion.status == status_filter)
+    questions = query.order_by(QnaQuestion.created_at.desc()).all()
+    return [serialize_qna(q) for q in questions]
+
+
+@router.get("/{qna_id}", response_model=QnaOut)
+def get_question_detail(
+    qna_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> QnaOut:
+    q = db.query(QnaQuestion).filter(QnaQuestion.id == qna_id).first()
+    if not q:
+        raise HTTPException(status_code=404, detail="문의 내역을 찾을 수 없습니다.")
+    if current_user.role != "ADMIN" and q.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="본인의 문의만 조회할 수 있습니다.")
+    return serialize_qna(q)
+
+
+@router.post("/{qna_id}/followups", response_model=FollowupOut, status_code=status.HTTP_201_CREATED)
+def add_followup(
+    qna_id: int,
+    req: FollowupCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> FollowupOut:
+    q = db.query(QnaQuestion).filter(QnaQuestion.id == qna_id).first()
+    if not q:
+        raise HTTPException(status_code=404, detail="문의 내역을 찾을 수 없습니다.")
+    if current_user.role != "ADMIN" and q.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="권한이 없습니다.")
+
+    content = req.content.strip()
+    if not content:
+        raise HTTPException(status_code=400, detail="보완 질문 내용을 입력해 주세요.")
+
+    followup = QnaFollowup(
+        qna_id=q.id,
+        author_id=current_user.id,
+        content=content,
+    )
+    db.add(followup)
+
+    if q.status == "OPEN":
+        q.status = "FOLLOW_UP"
+    q.updated_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(followup)
+
+    record_qna_event(
+        event_type="FOLLOWUP_ADDED",
+        qna_id=q.id,
+        user_id=current_user.id,
+        department=current_user.department,
+        status=q.status,
+    )
+
+    return FollowupOut(
+        id=followup.id,
+        qna_id=followup.qna_id,
+        author_id=current_user.id,
+        author_name=current_user.name,
+        author_department=current_user.department,
+        author_role=current_user.role,
+        content=followup.content,
+        created_at=followup.created_at,
+    )
+
+
+@router.post("/{qna_id}/escalate", response_model=QnaOut)
+def escalate_question(
+    qna_id: int,
+    req: Optional[EscalateRequest] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> QnaOut:
+    q = db.query(QnaQuestion).filter(QnaQuestion.id == qna_id).first()
+    if not q:
+        raise HTTPException(status_code=404, detail="문의 내역을 찾을 수 없습니다.")
+    if current_user.role != "ADMIN" and q.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="권한이 없습니다.")
+
+    now = datetime.now(timezone.utc)
+    admin_user = None
+    if req and req.assignee_id:
+        admin_user = db.query(User).filter(User.id == req.assignee_id).first()
+    if not admin_user:
+        admin_user = db.query(User).filter(User.role == "ADMIN").first()
+
+    q.is_escalated = True
+    q.status = "ESCALATED"
+    if not q.ticket_status:
+        q.ticket_status = "OPEN"
+    if admin_user and not q.assignee_id:
+        q.assignee_id = admin_user.id
+    if not q.escalated_at:
+        q.escalated_at = now
+    q.updated_at = now
+
+    reason = (req.reason.strip() if req and req.reason else "담당자 확인 및 이관 요청")
+    ext_ref = f"ITSM-{now.strftime('%y%m%d')}-{q.id:04d}"
+
+    ext = ExternalIntegration(
+        qna_id=q.id,
+        system_name="JIRA_ITSM",
+        external_ref_id=ext_ref,
+        sync_type="TICKET_ESCALATION",
+        sync_status="SUCCESS",
+        request_payload=json.dumps(
+            {
+                "qna_id": q.id,
+                "requested_by": current_user.username,
+                "reason": reason,
+            },
+            ensure_ascii=False,
+        ),
+        response_payload=json.dumps(
+            {
+                "external_ref_id": ext_ref,
+                "assignee": admin_user.username if admin_user else "admin01",
+                "ticket_status": q.ticket_status,
+            },
+            ensure_ascii=False,
+        ),
+        synced_at=now,
+    )
+    db.add(ext)
+    db.commit()
+    db.refresh(q)
+
+    record_qna_event(
+        event_type="ESCALATED",
+        qna_id=q.id,
+        user_id=current_user.id,
+        department=current_user.department,
+        status=q.status,
+    )
+
+    return serialize_qna(q)

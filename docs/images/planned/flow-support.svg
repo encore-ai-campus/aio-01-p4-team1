@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="1030" viewBox="0 0 1380 1030" role="img" aria-labelledby="title desc">
+<title id="title">문의 본체 · oke-support</title><desc id="desc">구현 전 설계안. 다혁님 · 정해진 흐름을 Code / IF / Switch로 제어 · LLM 역할 3개. 노드 유형과 주요 분기를 설명한다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8092aa"/></marker></defs>
+<rect width="1380" height="1030" fill="#f4f7fc"/>
+<style>text{font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif}.title{font-size:30px;font-weight:750;fill:#17243a}.sub{font-size:17px;fill:#61728b}.node{font-size:22px;font-weight:700;fill:#17243a}.type{font-size:14px;font-weight:700}.detail{font-size:17px;fill:#586b84}.label{font-size:15px;fill:#516883;paint-order:stroke;stroke:#f4f7fc;stroke-width:7px;stroke-linejoin:round}</style>
+<rect x="40" y="34" width="108" height="27" rx="13" fill="#e1eaff"/><text x="94" y="53" text-anchor="middle" font-size="13" fill="#245de8">구현 전 설계</text>
+<text class="title" x="40" y="103">문의 본체 · oke-support</text>
+<text class="sub" x="40" y="136">다혁님 · 정해진 흐름을 Code / IF / Switch로 제어 · LLM 역할 3개</text>
+<polyline points="390,235 490,235" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="840,235 940,235" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="1115,290 1115,355" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="940,410 840,410" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" text-anchor="middle" x="890.0" y="400">답변 경로</text>
+<polyline points="490,410 390,410" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" text-anchor="middle" x="440.0" y="400">허용 근거</text>
+<polyline points="215,465 215,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="390,585 490,585" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="840,585 940,585" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" text-anchor="middle" x="890.0" y="575">검증 통과</text>
+<polyline points="1115,465 1115,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="1123" y="520">보완 질문</text>
+<polyline points="1290,410 1330,410 1330,760 1290,760" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" x="1300" y="585.0">긴급·조치</text>
+<polyline points="665,640 665,760 940,760" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="673" y="750">근거·검증 부족</text>
+<polyline points="1115,705 1115,640" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="1123" y="630">이관 결과</text>
+<rect x="40" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="180" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="59" y="206" fill="#245de8">Webhook + Header Auth</text>
+<text class="node" x="59" y="237">문의 받기</text>
+<text class="detail" x="59" y="266">공통 요청 · X-Team-Key</text>
+<rect x="490" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="180" width="6" height="110" rx="3" fill="#596d88"/>
+<text class="type" x="509" y="206" fill="#596d88">Code + HTTP Request</text>
+<text class="node" x="509" y="237">입력·직원·주입 검사</text>
+<text class="detail" x="509" y="266">권한 확인 · 400 / 차단</text>
+<rect x="940" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="180" width="6" height="110" rx="3" fill="#8755ce"/>
+<text class="type" x="959" y="206" fill="#8755ce">AI Agent · triage</text>
+<text class="node" x="959" y="237">문의 분류</text>
+<text class="detail" x="959" y="266">유형 · 긴급도 · 부족한 정보</text>
+<rect x="940" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="355" width="6" height="110" rx="3" fill="#b47a24"/>
+<text class="type" x="959" y="381" fill="#b47a24">Switch / IF</text>
+<text class="node" x="959" y="412">보완·긴급·답변 분기</text>
+<text class="detail" x="959" y="441">attempt 1·2 질문 / 3 이상 이관</text>
+<rect x="490" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="355" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="509" y="381" fill="#245de8">HTTP Request ×2 → Merge</text>
+<text class="node" x="509" y="412">검색·본인 접수 조회</text>
+<text class="detail" x="509" y="441">oke-search + 기존 티켓 조회</text>
+<rect x="40" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="355" width="6" height="110" rx="3" fill="#8755ce"/>
+<text class="type" x="59" y="381" fill="#8755ce">AI Agent · writer + Code</text>
+<text class="node" x="59" y="412">근거로 답변 초안</text>
+<text class="detail" x="59" y="441">허용 근거만 · 출처 형식 검사</text>
+<rect x="40" y="530" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="530" width="6" height="110" rx="3" fill="#8755ce"/>
+<text class="type" x="59" y="556" fill="#8755ce">AI Agent · verifier + Code</text>
+<text class="node" x="59" y="587">초안 검증</text>
+<text class="detail" x="59" y="616">근거 · 정책 · 개인정보 확인</text>
+<rect x="490" y="530" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="530" width="6" height="110" rx="3" fill="#596d88"/>
+<text class="type" x="509" y="556" fill="#596d88">Code / IF</text>
+<text class="node" x="509" y="587">최종 처리 결정</text>
+<text class="detail" x="509" y="616">점수·검증·권한 모두 확인</text>
+<rect x="940" y="530" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="530" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="959" y="556" fill="#245de8">Code → Respond to Webhook</text>
+<text class="node" x="959" y="587">응답 조합·전달</text>
+<text class="detail" x="959" y="616">route · 근거 · ticket · security</text>
+<rect x="940" y="705" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="705" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="959" y="731" fill="#245de8">HTTP Request · oke-handoff</text>
+<text class="node" x="959" y="762">IT팀 접수 호출</text>
+<text class="detail" x="959" y="791">티켓·알림 결과 보존</text>
+<rect x="40" y="884" width="1300" height="112" rx="12" fill="#eaf0fa"/>
+<text class="detail" x="60" y="913">긴급은 이관을 먼저 시도한 뒤 근거·본인 상태를 보강한다. 후속 실패로 재접수하지 않는다.</text>
+<text class="detail" x="60" y="941">검색·접수는 두 갈래 구조이며 실제 동시 실행·소요시간은 구현 후 확인한다.</text>
+<text class="detail" x="60" y="969">각 Agent에 Chat Model 연결. 검색은 HTTP/DB 처리이고 추가 LLM Agent로 세지 않는다.</text>
+</svg>

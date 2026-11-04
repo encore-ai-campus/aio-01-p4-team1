@@ -5,6 +5,14 @@
 
 [전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [데이터·DB](DATA-AND-DB.md) · [본체 상세 지침](../develop/dahyeok/Doc/SPEC.md). 필드·시간 예산은 최신 공통 계약이 우선이다.
 
+## 먼저 이해할 구조 · Agent와 제어 방식
+
+- 서비스는 **고정된 오케스트레이션**으로 시작한다. Code·IF·Switch가 입력·권한·순서·분기를 제어하고 triage(분류)·writer(작성)·verifier(검증)의 LLM 역할 3개를 필요한 경로에서 호출한다. 별도 Supervisor LLM은 기본안에 없다.
+- retriever는 HTTP/DB 검색 역할이며 추가 LLM으로 세지 않는다. 차단·입력 오류는 LLM0회, 보완 경로는 triage만 경유할 수 있다. 모든 문의가 3개 LLM을 전부 호출해야 한다는 뜻이 아니다.
+- oke-handoff는 IT팀 티켓·알림·DLQ를 처리하는 **업무 이관**이다. Agent끼리 자율적으로 제어권을 넘기는 Handoff 패턴을 선택한 것이 아니다.
+- 워크플로우5종은 기능별 파일 경계다. 팀원에게 붙인 개발 CLI는 이 서비스를 만드는 도구이며 서비스 안의 Agent 수와 별개다.
+- 화면에서 보이는 기능과 담당자는 [예상 화면·기능표](PREVIEW.md), 재사용할 코드는 [내부 참고 예제](references/README.md)를 따른다.
+
 ## 1. 업무 시나리오
 
 오케퐁 직원 6명이 로그인해 사내 IT 문제를 질문한다. FastAPI가 세션으로 직원을 확인하고 문의를 저장한 뒤 n8n에 전달한다. n8n은 입력·주입 공격·권한을 확인하고 규정 검색과 본인 접수 조회를 거쳐 검증된 답변을 제공한다. 정보가 부족하면 보완 질문을 하고, 세 번째에도 부족하거나 근거·검증이 불충분하거나 실제 조치가 필요하면 IT팀 티켓으로 이관한다. 보안 사고는 긴급 접수·알림을 우선하며 규정에 있는 초동 조치만 안내한다.
@@ -82,6 +90,32 @@ LLM 장애도 안전한 이관 경로로 보낸다. 입구 인증 실패는 n8n�
 계획 노드 묶음: N01 Webhook → N02 입력 → N03 직원 → N04 주입 → N06 Triage → N07 분기 → N08 검색 입력 → N09 검색/N10 접수 → N11 Merge → N12 근거 검사 → N13 Writer → N14 Verifier → N15 판단 → N20 이관 → N22 최종 필터 → N23 Respond. 모든 요청이 전부 경유하는 것은 아니다. 상세 연결은 개인 SPEC에 따른다.
 
 N05 결과 재사용의 저장·조회 연결은 추가 검토하고 없는 내부 API를 가정하지 않는다. 티켓 멱등성은 이 연결과 별도로 필수다. 실제 노드 수와 게시 상태는 구현 후 기록한다.
+
+### 3.1 담당별 노드 설계 그림
+
+그림은 구현 전 노드 계획이다. 한 박스에 묶인 HTTP×2→Merge처럼 여러 노드를 요약한 부분이 있으며 실제 노드 수·이름·버전·연결선은 구현 후 확인한다. 내부 구현 선택은 담당자가 구체화하고 외부 계약은 유지한다.
+
+**다혁님 · 본체** — Webhook·직원/입력·triage·두 조회·writer·verifier·분기·Respond.
+
+![문의 본체 노드 설계](images/planned/flow-support.svg)
+
+**유빈님 · 색인** — HTTP 목록/본문·Split Out·Code 청킹·임베딩·Postgres 문서 거래·집계·Respond. 임베딩 HTTP Request는 초기 구현안이며 기존 Embeddings 하위 노드를 쓰려면 저장 노드·rag 스키마 호환을 먼저 검증한다.
+
+![색인 노드 설계](images/planned/flow-index.svg)
+
+**유빈님 · 검색** — 입력/권한 검증·동일 모델 임베딩·Postgres 권한 WHERE/정렬/top3·근거·Respond. 후보 없음과 장애를 구분한다.
+
+![검색 노드 설계](images/planned/flow-search.svg)
+
+**원민님 · 이관** — 입력 검사·Switch 모드·티켓/제한 재시도·알림·필요한 DLQ·ACK 집계·Respond. 두 저장 대상에 동시 생성하지 않는다.
+
+![이관 노드 설계](images/planned/flow-handoff.svg)
+
+**원민님 · 예상 밖 오류** — Error Trigger·마스킹·모드·독립 알림/DLQ·종료. 부모 응답을 대신하지 않는다.
+
+![오류 처리 노드 설계](images/planned/flow-errors.svg)
+
+규정·공통 계약을 바꾸는 결정과 내부 노드 구현 선택은 구분한다. 개인 README의 확정/담당자 결정/선택 표에서 자기 범위를 확인한다.
 
 ## 4. 에이전트 역할 · 분기 · 병렬 · 루프
 

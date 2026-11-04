@@ -1,43 +1,47 @@
-# 다혁님 · 문의 처리 자동화
+# 다혁님 · 문의 처리 본체
 
-직원 문의를 검사하고 분류해, 허용된 근거로 답하거나 보완 질문·IT팀 이관으로 마무리하는 `oke-support` 본체를 담당한다. 검색·저장·이관을 직접 중복 구현하지 않는다.
+**목표:** 질문을 검사·분류하고 근거 답변, 보완 질문 또는 IT팀 이관으로 끝낸다. 작업 폴더는 develop/dahyeok. 아래는 실제 n8n 캡처가 아닌 설계다.
 
-## 범위와 현재 상태
+<img src="../../docs/images/planned/flow-support.svg" width="680" alt="문의 본체 설계">
 
-- 구현 시 소유 파일: `workflows/oke-support.json`, 본체 전용 요청·Mock·시험 자료, `Doc/`.
-- 지금은 **작업 지시 문서만 보완한 상태**다. 워크플로우·요청 JSON·패키지는 아직 생성하지 않았으며 설치·check·push·test·서비스 연결은 미실행이다.
-- 편집은 `develop/dahyeok/` 안에서만 한다. 이번 문서 정비의 편집 범위는 그 안의 Markdown뿐이다. 공통 docs·루트·다른 담당자 폴더는 읽기 전용이다.
-- `oke-search`·`oke-index`는 유빈님, `oke-handoff`·`oke-errors`는 원민님, 신원·문의/티켓 저장·DB는 지혜님 소유다.
+## 내가 만들 것
 
-## 바로 시작하는 순서
+- workflows/oke-support.json 한 파일의 입력·직원·주입 검사.
+- triage 분류 → 검색/본인 접수 조회 → writer 초안 → verifier 검증.
+- Code·IF·Switch로 보완·긴급·이관·실패를 제어하고 공통 응답을 한 번 반환.
+- 요청·Mock·예외 확인 자료와 실제 노드·연결선 설계 자료. 검색·저장은 다른 담당 모듈을 호출한다.
 
-저장소 전체를 받은 뒤 작업 위치는 저장소 기준 `develop/dahyeok`으로 고정한다. 명령마다 이 위치 또는 저장소 루트를 workdir로 지정한다.
+## 지금 첫 작업 · P0-1
 
-1. [TODO](Doc/TODO.md): 목적과 필수/후순위를 읽는다.
-2. [SPEC](Doc/SPEC.md): `SUP-*` 요구, 노드 순서, 프롬프트, 계약 예시와 예상 route를 읽는다. `WF-*`는 공통 시험 ID다.
-3. [IMP-PLAN](Doc/IMP-PLAN.md): **P0-1부터 한 단계씩** 구현한다. 첫 결과는 Webhook→입력 검사→직원 확인→규칙 차단→응답의 JSON 골격과 로컬 요청 예시다. 이 문서 정비에서는 생성하지 않는다.
-4. 단계별 실제 확인 결과를 기록한 뒤 다음 단계로 간다. 하위 서비스가 없으면 SPEC의 같은 계약으로 Mock을 만들고, 실제 연결 결과와 구분한다.
+저장소 루트에서 cd develop/dahyeok 후 [IMP-PLAN P0-1](Doc/IMP-PLAN.md)의 Webhook→입력/직원 Mock→주입 검사→Respond 골격과 요청 파일부터 만든다. 첫 완료는 빈 질문·501자·없는 직원의 400, 주입 차단, LLM0회 확인이다. 아직 접수하지 않은 임시 응답을 접수 완료로 표시하지 않는다.
 
-[API-CONTRACT](../../docs/API-CONTRACT.md)·[DATA-AND-DB](../../docs/DATA-AND-DB.md)의 기본안을 적용하는 데 사전 동의는 필요 없다. 미정 정책은 [HANDOFF](Doc/HANDOFF.md)에 제안으로 분리했다. 해당 부분만 확정 상태를 확인하고 나머지 구현은 진행한다.
+## 정해진 것과 내가 정할 것
 
-## 변경할 때의 검토 상대
+| 구분 | 적용·결정 |
+| --- | --- |
+| 확정 | 공통 입출력·route5개·LLM3역할, 보완1·2/부족3이상 이관, 긴급 우선, 같은 support, search/handoff는 타 담당 소유 |
+| 담당자 결정 | 내부 노드 배치·프롬프트를 SPEC대로 구체화. 점수 기준은 유빈님 측정으로 제안, 하위 오류·시간은 원민님/지혜님과 확인 후 공통 반영 |
+| 선택 고도화 | 재검색·초안 재작성·추가 도구는 필수 경로 검증 뒤 |
 
-| 연결 | 검토 상대 | 변경 요청 대상 |
-| --- | --- | --- |
-| C02 FastAPI↔support | 지혜님 | 공통 필드·오류 코드, 신원 변환, attempt/context, 결과 재사용 API |
-| C03 support↔search | 유빈님 | query/type/access_levels/top_k·evidence·장애 응답, 검색 시간 예산 |
-| C04 support↔handoff | 원민님 | 이관 입력·ticket·중복·부분 실패·시간 예산 |
-| C08 기능↔시험 | 원민님 | 공통 판정과 구현의 불일치, 팀 사례·장애·측정 절차 |
-| C09 통합·공통 기준 | 오현님 | 위 변경의 공통 문서 반영, 제출 자료 취합 |
+별도 Supervisor LLM을 추가한 구조가 아니다. Code가 정해진 순서를 제어한다. oke-handoff는 업무 티켓 이관이며 Agent 간 자율 Handoff와 다르다.
 
-표는 매번 협의할 목록이 아니다. 기준 변경이나 실제 계약 불일치가 있을 때만 내 HANDOFF에 기존/제안/영향/재현을 적는다. 상대 확인·공통 반영·실제 연결은 각각 증거가 있어야 기록한다.
+## 바로 볼 예제
 
-## 넘길 결과
+[도구 조회](../../docs/references/workflows/tools.json.example) · [작성/검토](../../docs/references/workflows/pipeline.json.example) · [모듈](../../docs/references/workflows/module.json.example)
 
-완성 시 본체 JSON, 노드·Agent 역할/연결선, 실제 페이로드, 보완/재검색 한도, check 결과, Mock/실연결 구분과 실패 기록을 제공한다. 제출 자료는 구현 뒤 생성할 `Doc/SUBMISSION-NOTES.md`에 **반영 문서·절 / 실제 설계 / 측정·보고서 경로 / 남은 문제**로 정리한다. 현재 존재하는 파일이나 완료 결과로 취급하지 않는다.
+조회·파싱·분기·모듈 경계를 참고한다. 예제 Tool 구성·executeWorkflow·재작성 루프는 우리 HTTP 하위 계약·Agent3역할·기본 재작성0회에 맞춰 바꾼다. [적용표](../../docs/references/README.md).
 
-루트 설계서와 시험 파일은 소유자가 반영한다. 검토와 최종 GitHub 반영은 상위 담당자가 한다. 설치·실행 명령은 구현 후 검증한 것만 이 README에 추가한다. n8n push·test는 사람이 수행한다.
+## 누구에게 받고 무엇을 넘기나
 
-## 기준·참고
+- 유빈님에게 C03 근거 응답, 원민님에게 C04 티켓·실패 응답을 받는다. 준비 전에는 같은 계약 Mock으로 진행한다.
+- 지혜님과 C02 신원·응답 보존을 연결하고 원민님에게 정상/보완/주입/권한/장애 입력과 기대를 넘긴다.
+- 오현님에게 실제 본체 JSON·노드/연결선·프롬프트·페이로드·확인 결과를 넘겨 워크플로우 설계서를 완성한다.
+- 보고: 변경 파일 / 확인 입력·명령 / 기대와 실제 / Mock·남은 문제·다음 상대. JSON check 후 n8n 게시·시험은 담당자가 확인한다.
 
-[루트 AGENTS](../../AGENTS.md) · [내 AGENTS](AGENTS.md) · [주제](../../docs/TOPIC.md) · [팀 헌장](../../docs/TEAM-CHARTER.md) · [협업 절차](../../docs/COORDINATION.md) · [리드 제출 안내](../ohyun/SUBMISSION.md). 역할별 참고 링크는 [IMP-PLAN](Doc/IMP-PLAN.md)의 공통 자료에 유지한다.
+## 내 CLI 첫 요청
+
+    내 README·AGENTS·공통 API와 SPEC SUP-01/02를 읽고 IMP-PLAN P0-1만 구현해.
+    develop/dahyeok 밖은 수정하지 말고 임시 응답과 실제 접수를 구분해.
+    확인 결과와 사람이 실행할 게시·시험 절차를 보고해.
+
+상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [HANDOFF](Doc/HANDOFF.md).

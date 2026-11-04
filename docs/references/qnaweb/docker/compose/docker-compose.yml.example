@@ -1,0 +1,68 @@
+name: qnaw
+
+services:
+  qnaw-postgres:
+    image: postgres:16-alpine
+    container_name: qnaw-postgres
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: qnaw_user
+      POSTGRES_PASSWORD: REPLACE_LOCAL_SECRET
+      POSTGRES_DB: qnaw_db
+    volumes:
+      - qnaw-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U qnaw_user -d qnaw_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  qnaw-influxdb:
+    image: influxdb:2.7-alpine
+    container_name: qnaw-influxdb
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: qnaw_admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: REPLACE_LOCAL_SECRET
+      DOCKER_INFLUXDB_INIT_ORG: qnaw-org
+      DOCKER_INFLUXDB_INIT_BUCKET: qnaw-metrics
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: REPLACE_LOCAL_SECRET
+    volumes:
+      - qnaw-influxdb-data:/var/lib/influxdb2
+
+  qnaw-be:
+    image: qnaw-be:${BE_VERSION:-latest}
+    container_name: qnaw-be
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      qnaw-postgres:
+        condition: service_healthy
+      qnaw-influxdb:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://qnaw_user:REPLACE_LOCAL_SECRET@127.0.0.1:5432/qnaw_db
+      INFLUXDB_URL: http://127.0.0.1:8086
+      INFLUXDB_TOKEN: REPLACE_LOCAL_SECRET
+      INFLUXDB_ORG: qnaw-org
+      INFLUXDB_BUCKET: qnaw-metrics
+      JWT_SECRET: REPLACE_LOCAL_SECRET
+
+  qnaw-fe:
+    image: qnaw-fe:${FE_VERSION:-latest}
+    container_name: qnaw-fe
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - qnaw-be
+    environment:
+      BACKEND_INTERNAL_URL: http://127.0.0.1:8000
+
+volumes:
+  qnaw-postgres-data:
+    name: qnaw-postgres-data
+  qnaw-influxdb-data:
+    name: qnaw-influxdb-data

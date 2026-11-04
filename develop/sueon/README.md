@@ -1,44 +1,48 @@
 # 수언님 · 직원·관리자 화면
 
-로그인한 직원이 IT 질문의 답·근거·보완 요청·이관 결과를 이해하고 자기 문의를 확인하는 Next.js 화면을 담당한다. IT팀 관리자는 계정 발급·비활성화·비밀번호 초기화, 티켓 처리, 긴급 알림을 사용한다. 브라우저의 업무 API 호출 대상은 FastAPI뿐이다.
+**목표:** 직원 질문부터 IT팀 처리 결과 확인까지 화면으로 연결한다. 작업 폴더는 develop/sueon. 현재 구현 전이며 아래 그림은 예상 화면이다.
 
-## 범위와 시작 순서
+<img src="../../docs/images/planned/ui-employee.png" width="680" alt="직원 예상 화면">
 
-작업 위치는 저장소 루트 기준 `develop/sueon`이다. 화면·API 클라이언트·Mock·테스트·문서를 이 폴더에서만 관리한다. 다른 폴더·루트 설정·공통 docs·DB·n8n 파일은 읽기만 한다. 현재 결과물은 작업 지시 문서이며 실제 코드·패키지·실행 결과는 없다.
+[관리자·계정·로그인 화면과 기능표](../../docs/PREVIEW.md) · [참고 예제](../../docs/references/README.md)
 
-1. [TODO](Doc/TODO.md): 목적과 필수/후순위를 읽는다.
-2. [SPEC](Doc/SPEC.md): FE 요구 ID, 화면별 입력·버튼·상태·API와 Mock의 기대 결과를 읽는다.
-3. [IMP-PLAN](Doc/IMP-PLAN.md): **P0-1부터** 생성 예정 파일과 확인 방법에 따라 한 단계씩 구현한다.
-4. [HANDOFF](Doc/HANDOFF.md): 빠진 정책의 제안 상태를 확인한다. 해당 부분은 Mock으로 격리하고 나머지 작업을 계속한다.
+## 내가 만들 것
 
-[공통 API](../../docs/API-CONTRACT.md)·[데이터·DB](../../docs/DATA-AND-DB.md)·[주제](../../docs/TOPIC.md)를 그대로 적용하는 데 사전 재승인은 필요 없다. 상대 서버가 없으면 같은 계약의 Mock으로 진행한다. 계약 변경이 필요할 때만 아래 상대에게 HANDOFF로 요청한다. 답변이 없다는 이유로 제안을 확정하지 않는다.
+- FE-01 로그인·첫 비밀번호 변경·로그아웃.
+- FE-02 질문·근거·보완 답변·이관/실패 안내, FE-03 내 문의·상태 재조회.
+- FE-04T 티켓 처리, FE-04U 계정 발급/초기화, FE-04A 알림.
+- 같은 출처 /api 프록시·Mock·실제 API 연결. 서버·DB·n8n 파일은 지혜님/다혁님 소유다.
 
-## 변경할 때의 검토 상대
+## 지금 첫 작업 · P0-1
 
-| 연결 | 검토 상대 | 변경 요청 범위 |
-| --- | --- | --- |
-| C01 화면↔웹 API | 지혜님, 공통 반영 오현님 | 요청·응답 필드, HTTP 오류, 세션·비밀번호 정책, 누락 API. 기존/제안/영향/입력 예시를 기록 |
-| C07 서비스↔배포 | 지혜님·오현님 | 프록시 대상 설정, 실행 명령, 포트·환경변수·Dockerfile 경로 변경 |
-| C08 기능↔시험 | 원민님, 필요 시 지혜님 | 화면 시나리오와 공통 시험 불일치. 기대값을 결과에 맞춰 바꾸지 않음 |
-| C09 산출물↔통합 | 오현님 | 화면 흐름·실행 근거·제출 자료 취합 |
+저장소 루트에서 cd develop/sueon 후 [IMP-PLAN P0-1](Doc/IMP-PLAN.md)의 Next.js 골격만 만든다. package.json·설치한 버전의 잠금 파일·src/app/layout.tsx·page.tsx가 첫 결과다. 서버를 기다리지 말고 먼저 기본 화면의 typecheck·build를 확인한다. 실제 API 연결은 뒤 단계다.
 
-## 구현 구성과 전달물
+## 정해진 것과 내가 정할 것
 
-`src/app/` App Router 구조를 사용한다. 실제 생성 예정 경로는 IMP-PLAN에 있다. Next.js·React·Node·시험 도구의 버전은 지금 고정하지 않는다. P0-1에서 공식 호환 조건과 로컬 환경을 확인하고 설치한 버전·명령·lockfile을 기록한다.
+| 구분 | 적용·결정 |
+| --- | --- |
+| 확정 | Next.js/TS, 제공 직원6명, 관리자 발급·세션 쿠키, 화면은 /api만 호출 |
+| 담당자 결정 | 화면 배치·색·컴포넌트·상태 표현은 이 예상안을 바탕으로 설계. API 상세 필드/처리 중 응답 변경은 지혜님과 C01 확인 후 오현님 반영 |
+| 선택 고도화 | 다크모드·추가 통계 등은 필수 실제 연결·시험 이후 |
 
-공개 웹 포트는 3000, 로컬 backend는 8000이다. 브라우저는 같은 출처의 `/api`를 호출하고 프론트 서버가 backend로 프록시한다. Docker의 `backend:8000`은 서버 설정에서만 사용한다. DB·n8n 내부 주소·API 키를 브라우저에 넣지 않는다.
+P0/P1/P2는 구현 단계다. ‘담당자 결정’이라고 모두 개발을 멈추는 것이 아니며 디자인 선택에는 새 승인이 필요 없다.
 
-구현 후 요구 ID별 화면, Mock/실제 연결 구분, 실행 명령, 정상·권한·오류 확인 기록을 제공한다. 캡처는 `evidence/`, 실행 요약은 `Doc/SUBMISSION-NOTES.md`에 두고 오현님에게 전달한다. 두 경로 모두 아직 생성 전이다. 공통 제출 문서는 직접 수정하지 않는다.
+## 바로 볼 예제
 
-설치·빌드·시험·API 연결·협의는 현재 미실행이다. 검토와 최종 GitHub 반영은 상위 담당자가 한다.
+[로그인](../../docs/references/qnaweb/src-fe/src/app/login/page.tsx.example) · [질문](../../docs/references/qnaweb/src-fe/src/app/qna/new/page.tsx.example) · [내 문의](../../docs/references/qnaweb/src-fe/src/app/qna/my/page.tsx.example) · [티켓 편집](../../docs/references/qnaweb/src-fe/src/app/admin/tickets/page.tsx.example)
 
-## 다음 구현 요청 예시
+폼·목록·상태 표현을 참고한다. 예제의 샘플 빠른 로그인·JWT 브라우저 저장을 가져오지 말고 우리 세션 쿠키·첫 변경·공통 API에 맞춘다. 자세한 적용표는 참고 예제 안내에 있다.
 
-```text
-루트/수언 AGENTS.md와 README→TODO→SPEC→IMP-PLAN, 공통 계약을 읽고
-IMP-PLAN P0-1만 구현한다. develop/sueon/ 밖은 읽기만 한다.
-기준은 바로 적용하고 변경 필요분만 HANDOFF에 남긴다.
-수정 파일·FE ID·실제 확인 결과·Mock 사용·미실행을 구분해 보고한다.
-```
+## 누구에게 받고 무엇을 넘기나
 
-[루트 규칙](../../AGENTS.md) · [내 규칙](AGENTS.md) · [협업 절차](../../docs/COORDINATION.md) · [팀 헌장](../../docs/TEAM-CHARTER.md) · [제출 취합](../ohyun/SUBMISSION.md). 참고 원문은 [IMP-PLAN](Doc/IMP-PLAN.md)에 유지한다.
+- 지혜님에게 API 명세·응답 예시·실행법을 받고 Mock을 실제 호출로 연결한다(C01/C07). 오류·권한 시험은 원민님과 확인한다.
+- 오현님에게 화면 소스·검증된 실행법·기능별 실제 결과·가린 캡처를 넘긴다. 직원 질문→이관→관리자 변경→직원 재조회가 완료 기준이다.
+- 매 단계 보고는 변경 파일 / 확인 명령·입력 / 기대와 실제 / Mock·남은 문제·다음 상대 네 묶음으로 한다. 결과는 자기 Doc/SUBMISSION-NOTES.md에 취합한다.
+
+## 내 CLI 첫 요청
+
+    내 README와 AGENTS, 공통 API를 읽고 IMP-PLAN P0-1만 구현해.
+    참고 예제에서 재사용할 구조와 바꿀 부분을 먼저 말해.
+    develop/sueon 밖은 수정하지 말고 실제 확인 결과와 다음 작업을 보고해.
+
+상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [변경 요청 HANDOFF](Doc/HANDOFF.md).

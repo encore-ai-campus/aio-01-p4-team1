@@ -1,58 +1,48 @@
-# 원민님 · 안정성·이관·시험
+# 원민님 · 이관·오류 수습·시험
 
-직원이 자동 답변을 받지 못해도 문의가 유실되지 않도록 티켓·알림·실패 대기열(DLQ)을 연결하고, 팀 전체의 정상·권한·장애 결과를 재현 가능한 증거로 남긴다.
+**목표:** 티켓 중복과 저장 실패를 안전하게 처리하고 시험으로 동작을 증명한다. 작업 폴더는 develop/wonmin. 아래 그림은 구현 전 설계다.
 
-> 현재 상태: 작업 지시 문서 준비. 워크플로우·시험 도구·JSON 요청·설치·서비스 연결·시험·측정은 미실행이다. 문서의 파일명과 실행 명령은 **구현 예정**이며 존재·성공을 뜻하지 않는다.
+<img src="../../docs/images/planned/flow-handoff.svg" width="620" alt="이관 설계">
 
-## 범위와 읽는 순서
+[예상 밖 오류 설계 그림](../../docs/images/planned/flow-errors.svg) · [평가 기준](../../docs/EVALUATION-GUIDE.md)
 
-**편집은 `develop/wonmin/` 안에서만 한다.** 루트·공통 docs·상대 폴더는 읽기 전용이다. 상대 코드를 복제하거나 본체·검색·백엔드를 대신 구현하지 않는다.
+## 내가 만들 것
 
-1. [TODO](Doc/TODO.md): 목적, 필수와 후순위를 읽는다.
-2. [SPEC](Doc/SPEC.md): REL 요구, 노드 책임, 입출력, 처리표, 팀 시나리오의 기대를 읽는다.
-3. [IMP-PLAN](Doc/IMP-PLAN.md): **P0의 파일 준비부터** 한 단계씩 구현하고 확인한다.
-4. 기준 변경이 필요한 경우에만 [HANDOFF](Doc/HANDOFF.md)의 해당 제안을 검토 상대에게 전달한다. 기본안대로 하는 작업에는 새 협의가 필요 없다.
+- workflows/oke-handoff.json: 같은 키 티켓1건·알림·DLQ·제한 재시도·부분 실패.
+- workflows/oke-errors.json: Error Trigger·가린 오류·독립 수습·유한 종료.
+- cases/team.json 5개 이상·요청 파일·공통14유형/LLM3회/bench·실제 runs.
+- 실패→수정→동일 조건 재시험 자료와 실행 결과서 집계.
 
-공통 기준은 [API 계약](../../docs/API-CONTRACT.md) C04·C05·C07, [데이터·DB](../../docs/DATA-AND-DB.md), [협업](../../docs/COORDINATION.md)이다. 상대 서비스가 없으면 같은 입출력의 Mock으로 진행하고 실제 연결 결과와 구별한다.
+## 지금 첫 작업 · P0
 
-## 첫 작업과 제공할 결과
+저장소 루트에서 cd develop/wonmin 후 [IMP-PLAN P0](Doc/IMP-PLAN.md)의 팀 사례·handoff 사례·시연 요청을 먼저 쓴다. SPEC의 TM 사례를 가져와 입력·조건·기대·부작용·정리를 고정한다. 공통 common.json·flow.py는 실제 키트가 준비되면 원본을 확보하고 버전·실행 위치를 기록한다.
 
-첫 작업은 SPEC의 TM-01~TM-10을 시나리오 파일로 옮길 준비다. [IMP-PLAN P0](Doc/IMP-PLAN.md#p0--계약과시험입력준비)의 예정 파일·순서를 따른다. 공통 14유형 원본은 기대값을 바꾸지 않고 보존한다. 키트가 준비되지 않았으면 팀 입력·기대 작성부터 진행하고 공통 시험은 미실행으로 남긴다.
+## 정해진 것과 내가 정할 것
 
-| 담당 산출물 · 모두 구현 예정 | 목적 |
+| 구분 | 적용·결정 |
 | --- | --- |
-| `workflows/oke-handoff.json` | 티켓 생성·중복·알림·DLQ와 C04 응답 |
-| `workflows/oke-errors.json` | Error Trigger 기반 예상 밖 실행 실패 수습 |
-| `cases/common.json`, `cases/team.json`, `cases/handoff.json` | 공통 원본 보존, 팀 사례, 하위 연결 단독 시험 |
-| `requests/demo-*.json`, `requests/bench-normal.json` | 시연·측정 입력 |
-| `tools/flow.py`, `tools/check-evidence.py`, `tools/run-fresh.py` | 제공 키트 도구, 증거 대조, 새로운 요청의 반복 측정 |
-| `runs/` 실제 보고서, `Doc/SUBMISSION-NOTES.md` | 실패·재시험·배포 커밋·측정과 제출 반영 자료 |
+| 확정 | C04/C05, request_id 멱등, /dlq·app event_key, 예상 오류와 Error Trigger 분리, 실제 ACK·14+5이상·LLM3회 |
+| 담당자 검증 | 모드별 DLQ 변환·실제 호출/관측 일치·시간 예산 검증·실패 재현. 지혜님 저장/관측, 다혁님 결과 매핑과 확인. 미정 부분실패 필드·진행 중 응답은 공통 계약에 반영 후 최종 판정 |
+| 선택 고도화 | 자동 replay·알림 묶음·추가 대시보드는 필수 시험 뒤 |
 
-하위 폴더 안내: [workflows](workflows/README.md) · [cases](cases/README.md) · [requests](requests/README.md) · [runs](runs/README.md). 상세 절차는 IMP-PLAN 한 곳에서 관리한다.
+## 바로 볼 예제
 
-## 실행 모드와 확인 책임
+[티켓 처리](../../docs/references/workflows/intake.json.example) · [오류 알림](../../docs/references/workflows/errors.json.example) · [재처리](../../docs/references/workflows/replay.json.example)
 
-| 모드 | 티켓·알림·DLQ 대상 | 관측·주의 |
-| --- | --- | --- |
-| `SERVICE_MODE=practice` | data-api:8800의 공통 호환 API | fault/reset/ops가 **같은 data-api 인스턴스**를 보도록 확인한 뒤 공통 고장 시험 |
-| `SERVICE_MODE=app` | backend:8000 내부 API → PostgreSQL app 테이블 | FastAPI 인증·저장·권한·중복·재시작 유지 별도 통합 시험. data-api ops 수치를 앱 결과로 쓰지 않음 |
+키·오류 출력·Error Trigger·성공 건 해제를 참고한다. 오류 예제는 알림만 있으므로 우리 독립 DLQ·마스킹·모드별 계약을 추가한다. replay는 복구 방식 참고이며 P1에서 새 자동 복구 서비스를 만들라는 뜻이 아니다. [적용표](../../docs/references/README.md).
 
-직원·규정·FAQ·기존 티켓 조회는 공통 기준대로 data-api를 사용한다. 모드는 새 업무 저장 대상을 선택하며 같은 티켓을 두 저장소에 동시 생성하지 않는다. Docker 안 주소와 호스트 주소는 달라도 같은 인스턴스임을 확인한다. 자세한 대조 절차는 [SPEC REL-05](Doc/SPEC.md#rel-05--실행대상과관측일치)를 따른다.
+## 누구에게 받고 무엇을 넘기나
 
-명령은 모두 본인 절대경로에서 실행하도록 IMP-PLAN에 준비한다. 도구·파일이 생기기 전에는 실행하지 않는다. n8n JSON은 담당 에이전트가 check하고 게시·push·test·고장 주입·시연은 사람이 수행한다. VM 배포와 최종 GitHub 반영은 오현님이 맡는다.
+- 지혜님에게 저장 API·모드·실제 관측법을 받고 다혁님에게 C04 성공/실패 JSON과 errors 설정 정보를 넘긴다.
+- 기능 담당자에게 재현 입력·기대/실제·보고서를 전달하고 소유자가 수정한 뒤 같은 조건으로 재시험한다.
+- 오현님에게 실제 JSON·팀 사례·요청·runs·실패/재시험·시연 순서와 결과서 집계를 넘긴다.
+- 완료 기준: 티켓1건·부분 실패 티켓 보존·무한 재귀 없음·모드 일치·필수 실제 보고서. HTTP200만으로 PASS 처리하지 않는다.
+- 보고: 변경 파일 / 확인 입력·명령 / 기대와 실제 / 실패·수정 소유자·다음 상대. n8n 게시·시험은 사람이 확인한다.
 
-## 변경이 필요할 때만 검토할 상대
+## 내 CLI 첫 요청
 
-| 연결 | 검토 상대 | 전달할 것 |
-| --- | --- | --- |
-| C04 | 다혁님 | handoff 입력·응답 변경, 본체 timeout·ticket/reason 매핑, errors 워크플로우 ID |
-| C05 | 지혜님 | 내부 저장 API·인증·멱등성·DLQ·알림 중복·관측 변경 |
-| C07 | 지혜님·오현님 | 모드·서비스 주소·포트·배포 설정 변경 |
-| C08 | 해당 기능 담당 | 재현 입력, 기대/실제 JSON, 마스킹한 실행 근거, 재시험 조건 |
-| C09 | 오현님 | 공통 변경 제안, 실제 보고서·통과/실패 수, 제출·시연 자료 |
+    내 README·AGENTS·평가 기준·SPEC TM 사례를 읽고 IMP-PLAN P0의 시험 입력부터 작성해.
+    develop/wonmin 밖은 수정하지 말고 원본 공통 판정을 바꾸지 마.
+    입력·기대·부작용·정리와 미정 정책을 구분해서 보고해.
 
-HANDOFF의 WM-01~WM-04는 **미검토 제안**이다. 상대 응답·공통 반영·실제 연결은 각각 구분한다. 해당 미정 경계만 Mock/미판정으로 두고 입력 준비·기본 API 매핑·정상/중복 시험 개발을 계속한다.
-
-## 참고
-
-[주제](../../docs/TOPIC.md) · [팀 헌장](../../docs/TEAM-CHARTER.md) · [루트 규칙](../../AGENTS.md) · [본인 규칙](AGENTS.md) · [제출 취합](../ohyun/SUBMISSION.md). 공통 참고 링크는 [IMP-PLAN 공통 자료](Doc/IMP-PLAN.md#공통-자료)에 유지한다.
+상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [HANDOFF](Doc/HANDOFF.md).

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="1030" viewBox="0 0 1380 1030" role="img" aria-labelledby="title desc">
+<title id="title">규정 색인 · oke-index</title><desc id="desc">구현 전 설계안. 유빈님 · 지혜님이 준비한 rag 테이블에 문서 단위로 저장. 노드 유형과 주요 분기를 설명한다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8092aa"/></marker></defs>
+<rect width="1380" height="1030" fill="#f4f7fc"/>
+<style>text{font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif}.title{font-size:30px;font-weight:750;fill:#17243a}.sub{font-size:17px;fill:#61728b}.node{font-size:22px;font-weight:700;fill:#17243a}.type{font-size:14px;font-weight:700}.detail{font-size:17px;fill:#586b84}.label{font-size:15px;fill:#516883;paint-order:stroke;stroke:#f4f7fc;stroke-width:7px;stroke-linejoin:round}</style>
+<rect x="40" y="34" width="108" height="27" rx="13" fill="#e1eaff"/><text x="94" y="53" text-anchor="middle" font-size="13" fill="#245de8">구현 전 설계</text>
+<text class="title" x="40" y="103">규정 색인 · oke-index</text>
+<text class="sub" x="40" y="136">유빈님 · 지혜님이 준비한 rag 테이블에 문서 단위로 저장</text>
+<polyline points="390,235 490,235" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="840,235 940,235" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="1115,290 1115,355" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="940,410 840,410" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" text-anchor="middle" x="890.0" y="400">변경 있음</text>
+<polyline points="490,410 390,410" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" text-anchor="middle" x="440.0" y="400">검증한 벡터</text>
+<polyline points="215,465 215,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="1115,465 1115,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="1123" y="520">권한·형식 오류</text>
+<polyline points="840,410 885,410 885,510 1000,510 1000,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="893" y="500">임베딩 오류</text>
+<polyline points="940,585 390,585" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" text-anchor="middle" x="665.0" y="575">실패 집계</text>
+<polyline points="1290,410 1330,410 1330,690 215,690 215,640" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" x="1300" y="550.0">변경</text>
+<text class="label" style="font-size:13px" x="1300" y="569.0">없음</text>
+<polyline points="215,465 215,505 1115,505 1115,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="1123" y="495">DB 실패</text>
+<rect x="40" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="180" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="59" y="206" fill="#245de8">Webhook + Header Auth</text>
+<text class="node" x="59" y="237">색인 요청</text>
+<text class="detail" x="59" y="266">수동 색인 · 설정·원본 확인</text>
+<rect x="490" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="180" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="509" y="206" fill="#245de8">HTTP Request → Split Out</text>
+<text class="node" x="509" y="237">규정 목록·본문 가져오기</text>
+<text class="detail" x="509" y="266">/docs · 문서별 본문 조회</text>
+<rect x="940" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="180" width="6" height="110" rx="3" fill="#596d88"/>
+<text class="type" x="959" y="206" fill="#596d88">Code</text>
+<text class="node" x="959" y="237">권한·해시·청크 만들기</text>
+<text class="detail" x="959" y="266">all / it · 절 단위 기본청킹</text>
+<rect x="940" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="355" width="6" height="110" rx="3" fill="#b47a24"/>
+<text class="type" x="959" y="381" fill="#b47a24">IF / Code</text>
+<text class="node" x="959" y="412">변경 여부 확인</text>
+<text class="detail" x="959" y="441">같은 원본·설정이면 건너뜀</text>
+<rect x="490" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="355" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="509" y="381" fill="#245de8">HTTP Request · 임베딩 API안</text>
+<text class="node" x="509" y="412">문서 임베딩</text>
+<text class="detail" x="509" y="441">동일 모델 · 유한 수치 3072개</text>
+<rect x="40" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="355" width="6" height="110" rx="3" fill="#15836c"/>
+<text class="type" x="59" y="381" fill="#15836c">Postgres · 단일 거래</text>
+<text class="node" x="59" y="412">문서·청크 교체</text>
+<text class="detail" x="59" y="441">rag.documents / rag.chunks</text>
+<rect x="40" y="530" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="530" width="6" height="110" rx="3" fill="#596d88"/>
+<text class="type" x="59" y="556" fill="#596d88">Code → Respond to Webhook</text>
+<text class="node" x="59" y="587">처리 결과 집계</text>
+<text class="detail" x="59" y="616">성공·건너뜀·실패와 건수</text>
+<rect x="940" y="530" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="530" width="6" height="110" rx="3" fill="#bd5050"/>
+<text class="type" x="959" y="556" fill="#bd5050">오류 출력 → Code</text>
+<text class="node" x="959" y="587">실패 문서 기록</text>
+<text class="detail" x="959" y="616">부분 저장 금지 · 다음 실행 재처리</text>
+<rect x="40" y="884" width="1300" height="112" rx="12" fill="#eaf0fa"/>
+<text class="detail" x="60" y="913">임베딩 호출 방식은 초기 구현안이다. 참조 In-Memory 저장 노드를 그대로 운영에 쓰지 않는다.</text>
+<text class="detail" x="60" y="941">DB 교체는 한 연결의 거래로 구현한다. 필요한 DB 함수·마이그레이션은 지혜님과 연결한다.</text>
+<text class="detail" x="60" y="969">원본 삭제·권한 축소 시 이전 공개 청크가 검색되지 않게 처리하고 별도 시험한다.</text>
+</svg>

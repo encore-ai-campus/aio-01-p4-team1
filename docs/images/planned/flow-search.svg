@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="1030" viewBox="0 0 1380 1030" role="img" aria-labelledby="title desc">
+<title id="title">권한별 검색 · oke-search</title><desc id="desc">구현 전 설계안. 유빈님 · 본체가 검증한 access_levels로 후보를 먼저 제한. 노드 유형과 주요 분기를 설명한다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8092aa"/></marker></defs>
+<rect width="1380" height="1030" fill="#f4f7fc"/>
+<style>text{font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif}.title{font-size:30px;font-weight:750;fill:#17243a}.sub{font-size:17px;fill:#61728b}.node{font-size:22px;font-weight:700;fill:#17243a}.type{font-size:14px;font-weight:700}.detail{font-size:17px;fill:#586b84}.label{font-size:15px;fill:#516883;paint-order:stroke;stroke:#f4f7fc;stroke-width:7px;stroke-linejoin:round}</style>
+<rect x="40" y="34" width="108" height="27" rx="13" fill="#e1eaff"/><text x="94" y="53" text-anchor="middle" font-size="13" fill="#245de8">구현 전 설계</text>
+<text class="title" x="40" y="103">권한별 검색 · oke-search</text>
+<text class="sub" x="40" y="136">유빈님 · 본체가 검증한 access_levels로 후보를 먼저 제한</text>
+<polyline points="390,235 490,235" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="840,235 940,235" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="1115,290 1115,355" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="940,410 840,410" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="490,410 390,410" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="1290,235 1330,235 1330,585 1290,585" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" style="font-size:13px" x="1300" y="410.0">API</text>
+<text class="label" style="font-size:13px" x="1300" y="429.0">장애</text>
+<polyline points="1115,465 1115,530" fill="none" stroke="#8092aa" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text class="label" x="1123" y="520">DB 장애</text>
+<rect x="40" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="180" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="59" y="206" fill="#245de8">Webhook + Header Auth</text>
+<text class="node" x="59" y="237">검색 요청</text>
+<text class="detail" x="59" y="266">query · access_levels · top_k</text>
+<rect x="490" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="180" width="6" height="110" rx="3" fill="#596d88"/>
+<text class="type" x="509" y="206" fill="#596d88">Code / IF</text>
+<text class="node" x="509" y="237">요청·권한 목록 검사</text>
+<text class="detail" x="509" y="266">허용된 all 또는 all+it</text>
+<rect x="940" y="180" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="180" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="959" y="206" fill="#245de8">HTTP Request · 임베딩 API안</text>
+<text class="node" x="959" y="237">질의 임베딩</text>
+<text class="detail" x="959" y="266">문서와 같은 모델·3072차원</text>
+<rect x="940" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="355" width="6" height="110" rx="3" fill="#15836c"/>
+<text class="type" x="959" y="381" fill="#15836c">Postgres · 바인딩 쿼리</text>
+<text class="node" x="959" y="412">허용 후보에서 검색</text>
+<text class="detail" x="959" y="441">권한 WHERE → cosine → top3</text>
+<rect x="490" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="490" y="355" width="6" height="110" rx="3" fill="#596d88"/>
+<text class="type" x="509" y="381" fill="#596d88">Code</text>
+<text class="node" x="509" y="412">근거 응답 구성</text>
+<text class="detail" x="509" y="441">doc · section · text · score</text>
+<rect x="40" y="355" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="40" y="355" width="6" height="110" rx="3" fill="#245de8"/>
+<text class="type" x="59" y="381" fill="#245de8">Respond to Webhook</text>
+<text class="node" x="59" y="412">검색 결과 반환</text>
+<text class="detail" x="59" y="441">200 · 근거 있음 또는 빈 목록</text>
+<rect x="940" y="530" width="350" height="110" rx="13" fill="white" stroke="#dce4ef"/>
+<rect x="940" y="530" width="6" height="110" rx="3" fill="#bd5050"/>
+<text class="type" x="959" y="556" fill="#bd5050">오류 출력 → Respond</text>
+<text class="node" x="959" y="587">장애 응답</text>
+<text class="detail" x="959" y="616">503 · search_unavailable</text>
+<rect x="40" y="884" width="1300" height="112" rx="12" fill="#eaf0fa"/>
+<text class="detail" x="60" y="913">일반 직원에게 it 문서가 후보·근거·LLM 입력으로 들어가지 않아야 한다.</text>
+<text class="detail" x="60" y="941">빈 후보는 200 / no_evidence, 검색 장애는 503으로 구분한다. 입력 오류 세부는 계약에 반영 후 적용.</text>
+<text class="detail" x="60" y="969">점수는 1 - cosine distance. 자동 답변 임계값은 측정 후 본체와 함께 확정한다.</text>
+</svg>

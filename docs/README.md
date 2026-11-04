@@ -4,6 +4,8 @@
 
 | 문서 | 관리하는 내용 |
 | --- | --- |
+| [PREVIEW](PREVIEW.md) | 직원·관리자·계정·로그인 예상 화면과 기능별 담당·연결 |
+| [참고 예제](references/README.md) | 내부에 선별한 코드·워크플로우 사본과 역할별 적용/변경표 |
 | [TOPIC](TOPIC.md) | 주제·문의 범위·사용자 기능 |
 | [ARCHITECTURE](ARCHITECTURE.md) | 전체 시스템 아키텍처 구성도·네트워크·폴더 구조 |
 | [adr/ADR-001](adr/ADR-001-project-decisions.md) | 핵심 아키텍처·인증·DB·협업 의사결정 기록 (ADR) |

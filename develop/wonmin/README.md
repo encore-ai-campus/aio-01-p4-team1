@@ -1,5 +1,7 @@
 # 원민님 · 이관·오류 수습·시험
 
+지혜님 C05 모델 대조 결과: [요청 표본·응답 호환 검토](Doc/C05-MODEL-REVIEW.md). 요청 7/7 적합, 중복 알림 ACK 불일치 1건 및 DLQ HTTP 기대 정리 항목을 기록했다. 실제 API 연결은 미확인이다.
+
 **목표:** 티켓 중복과 저장 실패를 안전하게 처리하고 시험으로 동작을 증명한다. 작업 폴더는 develop/wonmin. 아래 그림은 구현 전 설계다.
 
 <img src="../../docs/images/planned/flow-handoff.svg" width="620" alt="이관 설계">

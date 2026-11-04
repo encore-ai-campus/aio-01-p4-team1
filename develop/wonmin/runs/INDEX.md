@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+C05 후속 검토: [c05-jihye-4bbbf49-review.json](c05-jihye-4bbbf49-review.json), [모델 대조 설명](../Doc/C05-MODEL-REVIEW.md). 실제 DTO 검증 7/7 적합, 중복 알림 응답 직렬화 불일치 1건이며 실제 API·DB/n8n 호출 결과는 아니다.
+
 최신 상태: **P1-1 로컬 구현·HTTP Mock 검증 40개 통과 / 공식 check·n8n·실제 백엔드/DB 미실행**. 최종 검증은 [p1-1-final-20261104T093145Z.txt](p1-1-final-20261104T093145Z.txt), 코드 해시와 실제 관측은 [p1-1-final-20261104T093145Z.json](p1-1-final-20261104T093145Z.json) 참조. 아래 P0 기록은 당시 상태다.
 
 2026-11-04 P0 입력 준비. 브랜치 `feat/wonmin-p0`, 기준 `origin/main` = `ffff63689cc532c9789a3e56b51e6306e66c1d44`. 산출물 커밋은 이 색인을 포함하는 `feat(wonmin): prepare P0 reliability scenarios and demo requests` 커밋으로 식별한다.

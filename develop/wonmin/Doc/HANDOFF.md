@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+최신 C05 검토: [C05-MODEL-REVIEW.md](C05-MODEL-REVIEW.md). 지혜님 `4bbbf49` 실제 모델에 요청 표본 7/7 적합, 중복 알림 ACK의 duplicate 직렬화 불일치 1건 확인. 실제 API/인증/DB는 미실행이다.
+
 기본안대로 구현하는 일에는 새 협의가 필요 없다. [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md)으로 바로 진행한다. 여기는 **공통에 실제로 빠진 정책의 제안과 변경 근거**만 기록한다.
 
 > 2026-11-03 문서 제안 작성. 아래 상태는 모두 **제안 작성·미검토·공통 미반영·실제 연결 미확인**이다. 외부 메시지 전송·상대 동의·설치·시험·PASS를 뜻하지 않는다. 공통 반영은 오현님이 맡는다.
@@ -101,3 +103,13 @@
 - 범위/다음 단계: 티켓 자동 재시도·실패 시 독립 알림/DLQ는 P1-2, Error Trigger/실제 app 연결은 P1-3이다. 현재 dlq=false이며 티켓 실패는 tickets_down으로 안전 반환만 한다. 공통 WF-04 전체 수습을 통과한 구현은 아니다. practice 중복 알림 건수 정책도 WM-03으로 구분한다.
 - 오현님(C07/C09): Credential placeholder 교체, SERVICE_MODE와 Mock/실제 주소 매핑, n8n의 모드/주소 $env 접근 확인, 공식 키트 반입과 사람이 check 후 게시/시험할 환경 준비가 필요하다. 원민 폴더 이외 및 루트/다른 팀원 코드는 수정하지 않았다.
 - 다음 연결 상대: 다혁님 C04, 지혜님 C05, 오현님 키트·배포. 실제 증거는 runs/INDEX.md 참조.
+
+## C05 모델 대조 · 2026-11-04 · 지혜님 4bbbf49
+
+- 변경 파일: Doc/C05-MODEL-REVIEW.md, requests/c05-store-samples.json, tools/check-c05-models.py, runs/c05-jihye-4bbbf49-review.json 및 인계/색인 링크. 워크플로우·Mock·지혜님 코드·공통 계약은 변경하지 않았다.
+- 확인 방법/실제 결과: fetch 후 지혜님 고정 커밋의 common/tickets/alerts 모델을 메모리로 읽고 uv.lock과 동일한 Pydantic 2.14.2로 실제 검증했다. 기존 Code 노드에서 추출한 티켓3·알림2, 후속 구현용 DLQ 계획2 표본은 7/7 필드 손실 없이 적합하다. DLQ는 현재 미전송이며 request_id=null은 허용, 필드 생략은 거절됨을 확인했다.
+- **WM-C05-01 · 응답 불일치:** StoredResponse에는 stored/count만 있고 extra=ignore이므로 backend 결과의 duplicate=true가 제거된다. 원민 app H10의 중복 ACK는 stored=0/count>=1/duplicate=true를 요구하므로 직렬화 전 alerted=true에서 후 alerted=false/alerts_down으로 바뀜을 실제 모델/로컬 Code로 재현했다. count만으로 성공 판정하도록 완화하지 않았다.
+- 지혜님·오현님 검토 항목: 중복 알림의 명시적 ACK 필드/의미를 공통 계약·응답 DTO로 확정할지 검토 필요. 선택 duplicate 또는 이벤트 저장 확인 경로는 제안이며 승인 아님. 현재 요청 DTO 변경 필요는 보이지 않는다.
+- DLQ 상태 기대: 지혜님 현재 POST /dlq 라우터는 StoredResponse+기본200이다. 원민 SPEC의 신규201/중복200은 팀 공통 C05에 별도 확정되어 있지 않으므로 P1-2 전에 기대를 정리해야 한다. `dlq_id`를 실제 확정 응답으로 사용하지 않는다.
+- 미확인: deps는 X-Api-Key 누락401/키 존재501, 기본 backend도501인 골격이다. 이는 코드 검토 결과이며 서버를 호출한 것이 아니다. 실제 키 대조·DB·멱등/동시성·알림/DLQ ACK 및 n8n 연결은 미실행이다.
+- 다음 연결 상대: 지혜님(C05 DTO·응답), 오현님(공통 ACK/상태 정리). 본 문서는 검토 자료 작성이며 외부 전송·상대 동의/수정 완료로 표시하지 않는다.

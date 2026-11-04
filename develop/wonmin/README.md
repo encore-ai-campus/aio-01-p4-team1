@@ -46,3 +46,29 @@
     입력·기대·부작용·정리와 미정 정책을 구분해서 보고해.
 
 상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [HANDOFF](Doc/HANDOFF.md).
+
+## P0 입력 준비 결과 · 2026-11-04
+
+팀 사례 12개, handoff 사례 13개, 시연/bench 요청 6개와 app 통합 확인 절차를 작성했다. [실제 확인·대기 색인](runs/INDEX.md), [정적 확인 출력](runs/p0-validation.txt)을 참조한다. 기능 시험은 아직 미실행이다.
+
+로컬 JSON 문법 재확인(저장소 루트 기준):
+
+```bash
+cd develop/wonmin
+python3 -m json.tool cases/team.json > /dev/null
+python3 -m json.tool cases/handoff.json > /dev/null
+python3 -m json.tool requests/demo-normal.json > /dev/null
+python3 -m json.tool requests/demo-clarify.json > /dev/null
+python3 -m json.tool requests/demo-handoff.json > /dev/null
+python3 -m json.tool requests/demo-urgent.json > /dev/null
+python3 -m json.tool requests/demo-failure.json > /dev/null
+python3 -m json.tool requests/bench-normal.json > /dev/null
+```
+
+`cases/*.json`은 현재 수동 검토 명세다. 공식 키트 suite 형식과의 호환은 원본 확보 후 확인한다. common.json과 flow.py를 임의로 만들지 않는다. P0는 환경변수나 서버 연결을 쓰지 않으므로 루트 .env는 생성하지 않았다.
+
+시연은 정상 → 보완 → 이관(같은 body 2회로 중복 확인) → 긴급 순서다. 장애 요청은 전용 practice의 tickets=error를 먼저 확인한 뒤 보내고 실패해도 fault를 해제한다. 모든 독립 시연·bench 실행에는 새 request_id를 사용한다. `bench-normal.json` 동일 ID 반복은 캐시 측정과 구분한다. 요청 JSON에 장애 주입 옵션·키·주소를 넣지 않는다.
+
+참고 예제의 key 기반 티켓 처리·HTTP 결과 분기, Error Trigger와 성공한 항목만 재처리 해제하는 구조를 검토했다. P1에서는 C04/C05, 모드 선택, ACK, 마스킹, 독립 알림/DLQ를 적용한다. 예제의 알림 전용 오류 처리와 전체 replay를 그대로 복사하지 않는다.
+
+다음 단계는 P1-1 `workflows/oke-handoff.json` 정상·중복 및 C05 Mock 구현이다. n8n 게시·시험은 팀 규칙대로 사람이 수행하고 실제 결과를 기록한다.

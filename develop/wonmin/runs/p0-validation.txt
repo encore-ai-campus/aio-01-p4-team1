@@ -1,0 +1,44 @@
+OK 시나리오: team 12개 / handoff 13개
+OK SPEC TM-01~08 준비
+OK SPEC TM-09~10 준비
+OK 공식 도구 실행/기능 PASS와 수동 명세 구분: oke-support
+OK TM-01 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-02 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-03 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-04 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-05 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-06 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-07 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-08 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-11 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-12 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-13 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-14 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK 공식 도구 실행/기능 PASS와 수동 명세 구분: oke-handoff
+OK TM-09 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK TM-10 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-01 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-02 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-03 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-04 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-05 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-06 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-07 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-08 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-09 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-10 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK HO-11 조건/입력/HTTP/기대/부작용/정리/미판정 기록
+OK 25개 사례 ID와 독립 request_id 유일성
+OK demo-normal 요청이 TM 기대와 일치 (독립 시연 ID)
+OK demo-clarify 요청이 TM 기대와 일치 (독립 시연 ID)
+OK demo-handoff 요청이 TM 기대와 일치 (독립 시연 ID)
+OK demo-urgent 요청이 TM 기대와 일치 (독립 시연 ID)
+OK demo-failure 요청이 TM 기대와 일치 (독립 시연 ID)
+OK bench-normal 요청이 TM 기대와 일치 (독립 시연 ID)
+OK 시연/bench ID 6개 상호 분리
+OK 미확보 공식 common.json/flow.py 임의 생성 없음
+OK 작업 시작점이 최신 origin/main과 동일
+OK 변경/신규 경로 전부 develop/wonmin/ 내부
+OK 모든 서비스 시나리오 미실행 상태 보존
+결과: 로컬 P0 정적 검증만 통과. 기능/Mock/n8n/DB/API 인증/VM 시험은 미실행.
+공식 flow.py suite 호환 및 check/push/test는 미확인.

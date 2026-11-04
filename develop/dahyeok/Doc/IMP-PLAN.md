@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1과 P0-2의 JSON·요청·Mock·로컬 기대값은 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 P0-3 이후 단계는 구현 예정이다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1 `workflows/oke-support.json`과 P0-2 `workflows/oke-support-02.json`의 요청·Mock·로컬 기대값은 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 P0-3 이후 단계는 구현 예정이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -27,13 +27,13 @@
 
 ## 작은 단계별 생성 파일·확인·전달
 
-모든 경로는 `develop/dahyeok/` 기준이다. 같은 본체 JSON을 누적 수정하며 시험용 본체를 복제하지 않는다. 표의 fixture는 소유자 응답을 대체하는 로컬 Mock이며 운영 기준을 바꾸지 않는다.
+모든 경로는 `develop/dahyeok/` 기준이다. 2026-11-04 팀 버전 보존 방식에 따라 P0-1 원본을 `oke-support.json`으로 되돌려 보존하고 P0-2부터 `oke-support-02.json`처럼 번호판을 새로 만든다. 다음 단계는 직전 번호판에서 이어받아 새 번호판에만 구현한다. 이 파일들은 단계 기록이며 n8n에는 선택한 한 버전만 활성화한다. 표의 fixture는 소유자 응답을 대체하는 로컬 Mock이며 운영 기준을 바꾸지 않는다.
 
 | 단계 / SPEC | 실제 생성·수정할 파일(예정) | 작은 작업과 확인 입력/예상 route | 다음 담당자에게 넘길 결과 |
 | --- | --- | --- | --- |
 | P0-1 / SUP-01/02 | 위 본체·6개 requests·fixtures/employees.json·cases/support-input.json | 입력/직원/규칙 관문. DH-T-13→400, 08→차단, 15→규칙 통과. 정상은 미구현 임시 응답 | 지혜님 C02 필드/오류 예시, 원민님 입력·공격 사례 |
-| P0-2 / SUP-03/04 | 본체 수정, requests/clarify-1.json·clarify-2.json·clarify-3.json·clarify-context.json, fixtures/triage-results.json, cases/support-triage.json | N06~07+보완 응답. 프롬프트/파서 스키마를 SPEC대로 적용. DH-T-02 attempt1·2→질문, 3→이관 경로(Mock); 정상 context를 합쳐 missing이 사라지는지도 확인 | 지혜님 새 차례 새 ID/증가 attempt/context 예시, 원민님 한도 기대 |
-| P0-3 / SUP-07/09 | 본체 수정, fixtures/handoff-results.json, requests/no-evidence.json·urgent.json, cases/support-handoff.json | N20과 C04 Mock 연결. 정상 ticket / tickets_down / alerts_down / 전송 실패를 개별 주입. DH-T-03→이관, 04→이관+null. 임시 not_implemented 제거 | 원민님 request_id/requester/category/priority/reason payload와 결과 매핑 |
+| P0-2 / SUP-03/04 | `workflows/oke-support-02.json`, requests/clarify-1.json·clarify-2.json·clarify-3.json·clarify-context.json, fixtures/triage-results.json, cases/support-triage.json | N06~07+보완 응답. 프롬프트/파서 스키마를 SPEC대로 적용. DH-T-02 attempt1·2→질문, 3→이관 경로(Mock); 정상 context를 합쳐 missing이 사라지는지도 확인 | 지혜님 새 차례 새 ID/증가 attempt/context 예시, 원민님 한도 기대 |
+| P0-3 / SUP-07/09 | 새 번호판 `workflows/oke-support-03.json`, fixtures/handoff-results.json, requests/no-evidence.json·urgent.json, cases/support-handoff.json | N20과 C04 Mock 연결. 정상 ticket / tickets_down / alerts_down / 전송 실패를 개별 주입. DH-T-03→이관, 04→이관+null. 임시 not_implemented 제거 | 원민님 request_id/requester/category/priority/reason payload와 결과 매핑 |
 | P1-1 / SUP-05 | 본체 수정, fixtures/search-results.json·ticket-lookups.json, requests/own-ticket.json·other-ticket.json, cases/support-retrieval.json | N08~12 두 갈래+Merge. ID 없음·403·404·지연·search []/503/잘못된 형식. DH-T-06→권한 없음, 03→이관. N10 항상 항목 1개, 조회 실패를 근거 없음으로 합치지 않음 | 유빈님 C03 정확 payload/근거 응답, 원민님 조회 상태별 사례 |
 | P1-2 / SUP-03/06 | 본체 수정, fixtures/writer-results.json·verifier-results.json, cases/support-verification.json | N13~15와 모든 출력 필터. DH-T-14 잘린 JSON/문자열 불리언/위조 출처→이관. DH-T-07→가림. 임계값은 Mock 값으로 분기만 검증하고 품질 통과라고 하지 않음 | 유빈님·원민님 사용 출처/점수 경계/검증 탈락 입력과 출력 |
 | P1-3 / SUP-07/09 | 본체 수정, requests/urgent-complex.json·llm-down.json·slow-ticket.json, cases/support-failures.json | 긴급 N20→N08 보강→N22, handoff_done 유지. DH-T-12→high+보안 근거+본인 상태. writer 실패/조회 지연 뒤에도 재접수 0. DH-T-10→이관 llm_down | 원민님 오류 출력·부분 실패·긴급 단일 접수 관측표, 오현님 시간 예산 후보 |
@@ -42,7 +42,7 @@
 
 ### P0-2 확인 기록 · 2026-11-04
 
-- 변경: 같은 `workflows/oke-support.json`에 N05 관문, N06 triage Agent/모델 연결 자리와 Mock·엄격 JSON 파서, N07 보완/이관 분기를 추가했다. `requests/clarify-*.json`, `fixtures/triage-results.json`, `cases/support-triage.json`을 작성하고 로컬 `tools/flow.py`를 새 구조에 맞게 갱신했다.
+- 변경: 처음에는 `workflows/oke-support.json`에 N05 관문, N06 triage Agent/모델 연결 자리와 Mock·엄격 JSON 파서, N07 보완/이관 분기를 추가했다. 버전 보존 요청에 따라 이후 P0-1을 원래 파일에 복원하고 이 내용을 `workflows/oke-support-02.json`에 보존했다. `requests/clarify-*.json`, `fixtures/triage-results.json`, `cases/support-triage.json`을 작성하고 로컬 `tools/flow.py`를 새 구조에 맞게 갱신했다.
 - Mock 동작: 입력 오류·주입은 triage를 건너뛴다. 일반 문의는 triage Mock을 쓰므로 실제 LLM 호출은 없다. 정보 부족 attempt 1·2는 구체적인 보완 질문, attempt 3은 ticket=null인 미접수 이관 Mock이다. 충분한 context는 보완 질문을 끝내지만 검색·답변이 없어 `not_implemented` 임시 응답으로 끝난다.
 - 로컬 확인: `python3 tools/flow.py check`, `python3 tools/flow.py test-local cases/support-input.json --node-container day65-n8n-n8n-1`, `python3 tools/flow.py test-local cases/support-triage.json --node-container day65-n8n-n8n-1`. P0-1 회귀 입력 6/6, P0-2 입력 4/4, triage 파서 예시 5/5가 로컬 Code 시뮬레이션에서 일치했다.
 - 미확인: Agent 실호출·Credential, 공식 80일차 `flow.py check`, 프로젝트 n8n 게시·웹훅 실행, 실제 handoff 티켓 생성. 이 로컬 결과를 WF-02/02b 또는 P0-2 실제 기능 시험 통과로 표시하지 않는다.
@@ -57,16 +57,17 @@ P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아�
 
 ```bash
 python3 -m json.tool workflows/oke-support.json > /dev/null
+python3 -m json.tool workflows/oke-support-02.json > /dev/null
 ```
 
 생성한 requests/cases/fixtures도 같은 방식으로 각 파일의 JSON 문법을 확인한다. 이 검사만으로 n8n 노드·실행이 통과했다고 하지 않는다.
 
 프로젝트 키트가 제공되고 `tools/flow.py`의 실제 위치·CLI를 확인한 뒤 다음 check를 수행한다. 현재 지정 자료 경로의 Last3Mon/80 키트는 없어 명령은 **예정 경로 템플릿**이다. 다른 실습 키트를 프로젝트 키트인 것처럼 복사/설치하지 않는다.
 
-현재 `develop/dahyeok/tools/flow.py`는 P0-2까지 지원하는 별도 **로컬 검사기**다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
+현재 `develop/dahyeok/tools/flow.py`는 P0-1·P0-2 번호판을 검사하는 별도 **로컬 검사기**다. 기본 대상은 최신 `oke-support-02.json`이다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-02.json
 ```
 
 연결 검토 항목:
@@ -90,7 +91,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-02.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

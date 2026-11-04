@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local P0-2 checker for oke-support; not the team's evaluation-kit flow.py.
+"""Local P0-1/P0-2 checker for oke-support; not the evaluation-kit flow.py.
 
 This tool checks the current Mock workflow and runs Code-node snippets with
 Node.js. It does not import, publish, or call an n8n workflow.
@@ -14,6 +14,14 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+P0_1_NODES = [
+    "N01 Support webhook",
+    "N02 Normalize input",
+    "N03 Validate employee MOCK",
+    "N04 Injection rules",
+    "N22 Finalize P0-1",
+    "N23 Respond",
+]
 REQUIRED_NODES = [
     "N01 Support webhook",
     "N02 Normalize input",
@@ -38,6 +46,7 @@ CODE_CHAIN = [
     "N07 Route triage",
     "N22 Finalize P0-2",
 ]
+P0_1_CODE_CHAIN = P0_1_NODES[1:-1]
 TRIAGE_CODE_NODES = set(CODE_CHAIN[3:6])
 NODE_RUNNER = r"""
 const fs = require('fs');
@@ -98,8 +107,9 @@ def check_flow(path: Path):
     by_name = {node["name"]: node for node in nodes}
     if len(by_name) != len(nodes):
         raise ValueError("duplicate node name")
-    if set(by_name) != set(REQUIRED_NODES):
-        raise ValueError("P0-2 node set differs from the expected Mock workflow")
+    is_p0_1 = set(by_name) == set(P0_1_NODES)
+    if not is_p0_1 and set(by_name) != set(REQUIRED_NODES):
+        raise ValueError("node set differs from the P0-1 or P0-2 Mock workflow")
     if flow.get("name") != "oke-support":
         raise ValueError("workflow name must be oke-support")
     if flow.get("settings", {}).get("executionOrder") != "v1":
@@ -120,7 +130,30 @@ def check_flow(path: Path):
     if len([node for node in nodes if node["type"] == "n8n-nodes-base.respondToWebhook"]) != 1:
         raise ValueError("expected exactly one Respond node")
     if any(node["type"] == "n8n-nodes-base.httpRequest" for node in nodes):
-        raise ValueError("P0-2 Mock workflow must not call a downstream service")
+        raise ValueError("P0 Mock workflow must not call a downstream service")
+
+    fixture = load_json(ROOT / "fixtures/employees.json")
+    employees = fixture["items"]
+    if len(employees) != 6 or any(set(row) != {"name", "dept"} for row in employees):
+        raise ValueError("employee fixture must contain six name/dept rows")
+    mock_code = by_name["N03 Validate employee MOCK"]["parameters"]["jsCode"]
+    for row in employees:
+        if f"name: '{row['name']}', dept: '{row['dept']}'" not in mock_code:
+            raise ValueError(f"workflow Mock differs from fixture: {row['name']}")
+
+    if is_p0_1:
+        if any("langchain" in node["type"] for node in nodes):
+            raise ValueError("P0-1 must not have an LLM node")
+        for source, target in zip(P0_1_NODES, P0_1_NODES[1:]):
+            edges = flow.get("connections", {}).get(source, {}).get("main")
+            if edges != [[{"node": target, "type": "main", "index": 0}]]:
+                raise ValueError(f"expected P0-1 connection {source} -> {target}")
+        if "N23 Respond" in flow.get("connections", {}):
+            raise ValueError("Respond must be the terminal node")
+        for name in P0_1_CODE_CHAIN:
+            if by_name[name]["type"] != "n8n-nodes-base.code":
+                raise ValueError(f"{name} must be a Code node")
+        return flow
 
     expected_main = {
         "N01 Support webhook": [["N02 Normalize input"]],
@@ -153,14 +186,6 @@ def check_flow(path: Path):
     if "openAiApi" not in by_name["N06 Triage model"].get("credentials", {}):
         raise ValueError("triage model credential reference missing")
 
-    fixture = load_json(ROOT / "fixtures/employees.json")
-    employees = fixture["items"]
-    if len(employees) != 6 or any(set(row) != {"name", "dept"} for row in employees):
-        raise ValueError("employee fixture must contain six name/dept rows")
-    mock_code = by_name["N03 Validate employee MOCK"]["parameters"]["jsCode"]
-    for row in employees:
-        if f"name: '{row['name']}', dept: '{row['dept']}'" not in mock_code:
-            raise ValueError(f"workflow Mock differs from fixture: {row['name']}")
     examples = load_json(ROOT / "fixtures/triage-results.json")["examples"]
     if len(examples) < 3 or not any("expect_error" in row for row in examples):
         raise ValueError("triage fixture lacks normal and invalid schema examples")
@@ -173,10 +198,11 @@ def run_local(flow, case_path: Path, container: str | None):
     for case in cases:
         request_file = ROOT / case["request_file"]
         tests.append({"id": case["id"], "body": load_json(request_file)})
-    triage_examples = load_json(ROOT / "fixtures/triage-results.json")["examples"]
+    is_p0_1 = len(flow["nodes"]) == len(P0_1_NODES)
+    triage_examples = [] if is_p0_1 else load_json(ROOT / "fixtures/triage-results.json")["examples"]
     payload = json.dumps(
-        {"flow": flow, "tests": tests, "codeChain": CODE_CHAIN,
-         "triageCodeNodes": sorted(TRIAGE_CODE_NODES), "triageExamples": triage_examples},
+        {"flow": flow, "tests": tests, "codeChain": P0_1_CODE_CHAIN if is_p0_1 else CODE_CHAIN,
+         "triageCodeNodes": [] if is_p0_1 else sorted(TRIAGE_CODE_NODES), "triageExamples": triage_examples},
         ensure_ascii=False,
     )
     if container:
@@ -236,17 +262,18 @@ def run_local(flow, case_path: Path, container: str | None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    check = sub.add_parser("check", help="validate the local P0-2 Mock workflow")
-    check.add_argument("workflow", nargs="?", default="workflows/oke-support.json")
+    check = sub.add_parser("check", help="validate a local P0-1 or P0-2 Mock workflow")
+    check.add_argument("workflow", nargs="?", default="workflows/oke-support-02.json")
     local = sub.add_parser("test-local", help="run Code nodes only; does not call n8n")
     local.add_argument("cases", nargs="?", default="cases/support-input.json")
-    local.add_argument("--workflow", default="workflows/oke-support.json")
+    local.add_argument("--workflow", default="workflows/oke-support-02.json")
     local.add_argument("--node-container", help="existing container that has Node.js")
     args = parser.parse_args()
     try:
         workflow = resolve_path(args.workflow)
         flow = check_flow(workflow)
-        print("LOCAL P0-2 CHECK PASS (not the official evaluation-kit check)")
+        stage = "P0-1" if len(flow["nodes"]) == len(P0_1_NODES) else "P0-2"
+        print(f"LOCAL {stage} CHECK PASS (not the official evaluation-kit check)")
         if args.command == "test-local":
             return run_local(flow, resolve_path(args.cases), args.node_container)
         return 0

@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 import socket
+import statistics
 from urllib import error, parse, request
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -113,7 +114,9 @@ def safe_rows(rows, secrets=()):
     return result
 
 
-def collect_api(environ=None, transport=None, clock=now):
+def collect_api(environ=None, transport=None, clock=now, processor=None, allow_network=False):
+    if transport is None and not allow_network:
+        raise InventoryError('api_network_not_authorized')
     environ = os.environ if environ is None else environ
     transport = http_transport if transport is None else transport
     base, key = environ.get('DATA_API_URL', ''), environ.get('DATA_API_KEY', '')
@@ -153,6 +156,8 @@ def collect_api(environ=None, transport=None, clock=now):
         except InventoryError as exc:
             snapshot['collection_errors'][name] = str(exc)
         snapshot['retrieved_at'][name] = clock()
+    if processor is not None:
+        return processor(snapshot, secrets=(key, os.environ.get('DATA_API_KEY')))
     # 원문 해시와 권한은 원본으로 계산하고, 반환 스냅샷에는 안전한 대장만 남긴다.
     rows = safe_rows(inventory(snapshot, clock=clock), (key, os.environ.get('DATA_API_KEY')))
     return {'mode': 'api', 'prepared_rows': rows}
@@ -244,6 +249,204 @@ def render(snapshot, rows, snapshot_hash=None):
     return report
 
 
+def section_ranges(text):
+    """LF 원문의 반열린 문자 범위를 만든다. 빈 절과 공백도 분석에 보존한다."""
+    text = normalize(text)
+    headings, offset, fence = [], 0, None
+    for line in text.splitlines(keepends=True):
+        if fence:
+            if re.fullmatch(r' {0,3}' + re.escape(fence[0]) + '{' + str(len(fence)) + r',}[ \t]*\n?', line):
+                fence = None
+        else:
+            marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)', line)
+            if marker and not (marker[1][0] == '`' and '`' in marker[2]):
+                fence = marker[1]
+            else:
+                heading = re.match(r'^ {0,3}##(?:[ \t]+(.*?)|[ \t]*)\n?$', line)
+                if heading:
+                    title = re.sub(r'[ \t]+#+[ \t]*$', '', heading[1] or '').strip()
+                    headings.append((offset, offset + len(line), title))
+        offset += len(line)
+    if not headings:
+        return [{'section': '본문', 'start': 0, 'end': len(text), 'body_start': 0}]
+    result = []
+    if text[:headings[0][0]].strip():
+        result.append({'section': '서문', 'start': 0, 'end': headings[0][0], 'body_start': 0})
+    for index, (start, body_start, title) in enumerate(headings):
+        result.append({'section': title, 'start': start if index or result else 0,
+                       'end': headings[index + 1][0] if index + 1 < len(headings) else len(text),
+                       'body_start': body_start})
+    return result
+
+
+def chunk_document(doc_key, title, text, access_level, method):
+    """청크 content를 향후 임베딩 입력으로 그대로 사용한다. 외부 호출은 없다."""
+    if access_level not in ('all', 'it'):
+        raise InventoryError('permission_unconfirmed')
+    text = normalize(text)
+    spans = section_ranges(text)
+    source_hash = digest(text.encode())
+    pieces, excluded = [], []
+    if method == 'section':
+        for order, span in enumerate(spans):
+            if text[span['body_start']:span['end']].strip():
+                pieces.append((span['start'], span['end'], [order]))
+            else:
+                excluded.append(dict(span, reason='empty_section'))
+    elif method == '300':
+        for start in range(0, len(text), 300):
+            end = min(start + 300, len(text))
+            pieces.append((start, end, [i for i, span in enumerate(spans)
+                                      if span['start'] < end and span['end'] > start]))
+    else:
+        raise InventoryError('invalid_chunking_method')
+    chunks, rejected = [], []
+    for start, end, orders in pieces:
+        names = [spans[i]['section'] for i in orders]
+        section = ' / '.join(names)
+        prefix = title + '\n' + section + '\n'
+        body = text[start:end]
+        content = prefix + body
+        if not body.strip():
+            excluded.append({'start': start, 'end': end, 'reason': 'empty_body'})
+            continue
+        # 토크나이저 미설치 상태의 보수적 검토 기준이며 모델 한도 실측값이 아니다.
+        if len(content.encode()) > 8000:
+            rejected.append({'start': start, 'end': end, 'reason': 'oversized_content_review'})
+            continue
+        chunks.append({'doc_key': doc_key, 'access_level': access_level,
+            'chunk_no': len(chunks), 'section': section, 'content': content,
+            'content_hash': digest(content.encode()), 'body_length': len(body),
+            'prefix_length': len(prefix), 'content_length': len(content),
+            'metadata': {'chunking': method, 'chunking_version': 'p0-2-v1',
+                'source_hash': source_hash, 'section_order': orders[0] if orders else None,
+                'part_no': 0 if method == 'section' else start // 300,
+                'source_range': [start, end], 'included_sections': names}})
+    # 제외/거절 범위까지 포함한 원본 분할을 검사한다. 빈 절 제외는 손실과 구별한다.
+    ranges = [c['metadata']['source_range'] for c in chunks]
+    ranges += [[r['start'], r['end']] for r in excluded + rejected]
+    ranges.sort()
+    cursor, exact = 0, True
+    for start, end in ranges:
+        exact = exact and start == cursor
+        cursor = end
+    exact = exact and cursor == len(text)
+    chunk_ranges = [c['metadata']['source_range'] for c in chunks]
+    chunk_characters = sum(end - start for start, end in chunk_ranges)
+    excluded_characters = sum(r['end'] - r['start'] for r in excluded)
+    rejected_characters = sum(r['end'] - r['start'] for r in rejected)
+    status = 'partial' if chunks and rejected else 'rejected' if not chunks else 'complete'
+    reasons = ['oversized_content_review'] if rejected else ['no_content_chunks'] if not chunks else []
+    return {'chunks': chunks, 'sections': spans, 'excluded': excluded, 'rejected': rejected,
+            'status': status, 'reasons': reasons,
+            'source_hash': source_hash, 'coverage_with_exclusions': exact,
+            'order_and_ranges_valid': exact,
+            'chunk_coverage': {'ranges': chunk_ranges, 'characters': chunk_characters,
+                'source_characters': len(text),
+                'ratio': chunk_characters / len(text) if text else None,
+                'covers_entire_source': chunk_characters == len(text)},
+            'coverage_accounting': {'source_characters': len(text),
+                'chunk_characters': chunk_characters, 'excluded_characters': excluded_characters,
+                'rejected_characters': rejected_characters,
+                'all_ranges_accounted': exact}}
+
+
+def length_stats(values):
+    return {'min': min(values), 'median': statistics.median(values), 'max': max(values)} if values else '미측정'
+
+
+def compare_snapshot(snapshot, secrets=()):
+    """동일 원본에서 두 청킹을 계산하고 공개 가능한 통계와 매핑만 반환한다."""
+    secrets = tuple(v for v in (*secrets, os.environ.get('DATA_API_KEY')) if v)
+    rows = inventory(snapshot, clock=lambda: 'not-recorded-in-comparison')
+    safe_inventory = safe_rows(rows, secrets)
+    summary = []
+    cohort_lengths = {method: {state: {'body': [], 'content': []} for state in ('complete', 'partial', 'rejected')} for method in ('section', '300')}
+    for row, safe in zip(rows, safe_inventory):
+        item = {'doc_key': safe['doc_key'], 'access_level': safe['access_level'],
+                'source_hash': row['source_hash'], 'reasons': list(safe['reasons']),
+                'status': 'rejected' if row['reasons'] else 'complete', 'methods': {}}
+        if not row['reasons']:
+            doc = snapshot['document_responses'][row['doc_key']]
+            for method in ('section', '300'):
+                result = chunk_document(row['doc_key'], doc['title'], doc['text'], row['access_level'], method)
+                chunks = result['chunks']
+                bucket = cohort_lengths[method][result['status']]
+                bucket['body'].extend(c['body_length'] for c in chunks)
+                bucket['content'].extend(c['content_length'] for c in chunks)
+                samples = []
+                for chunk in chunks[:3]:
+                    # 본문은 공개 문서도 보고서에 넣지 않는다. 해시·범위로 역추적한다.
+                    sample = {k: copy.deepcopy(chunk[k]) for k in ('chunk_no', 'section', 'content_hash', 'metadata')}
+                    if row['access_level'] != 'all':
+                        sample['section'] = '[非공개]'
+                        sample['metadata']['included_sections'] = ['[非공개]'] * len(sample['metadata']['included_sections'])
+                    sample['content'] = '[본문 비출력: 실제 값은 chunk_document 반환 content이며 content_hash로 추적]'
+                    samples.append(sample)
+                section_inventory = copy.deepcopy(result['sections'])
+                if row['access_level'] != 'all':
+                    for span in section_inventory:
+                        span['section'] = '[非공개]'
+                exclusions = [{k: span[k] for k in ('start', 'end', 'reason')} for span in result['excluded']]
+                item['methods'][method] = {'chunk_count': len(chunks),
+                    'status': result['status'], 'reasons': result['reasons'],
+                    'chunk_coverage': result['chunk_coverage'],
+                    'coverage_accounting': result['coverage_accounting'],
+                    'excluded_ranges': exclusions,
+                    'section_inventory': section_inventory,
+                    'body_lengths': length_stats([c['body_length'] for c in chunks]),
+                    'content_lengths': length_stats([c['content_length'] for c in chunks]),
+                    'prefix_lengths': length_stats([c['prefix_length'] for c in chunks]),
+                    'coverage_with_exclusions': result['coverage_with_exclusions'],
+                    'order_and_ranges_valid': result['order_and_ranges_valid'],
+                    'empty_sections_excluded': len(result['excluded']),
+                    'rejected_ranges': result['rejected'], 'samples': samples}
+            states = [m['status'] for m in item['methods'].values()]
+            item['status'] = 'complete' if all(v == 'complete' for v in states) else 'rejected' if all(v == 'rejected' for v in states) else 'partial'
+            for method, result in item['methods'].items():
+                item['reasons'].extend(method + ':' + reason for reason in result['reasons'])
+        summary.append(item)
+    # 문자열을 직렬화하기 전에 키 반사값을 제거한다.
+    def clean(value):
+        if isinstance(value, str):
+            for key in secrets:
+                value = value.replace(key, '[REDACTED]')
+            return value
+        if isinstance(value, list):
+            return [clean(v) for v in value]
+        if isinstance(value, dict):
+            return {k: clean(v) for k, v in value.items()}
+        return value
+    summary = clean(summary)
+    cohort_statistics = {}
+    for method in ('section', '300'):
+        cohort_statistics[method] = {}
+        for state in ('complete', 'partial', 'rejected'):
+            members = [row for row in summary if row['methods'].get(method, {}).get('status', 'rejected') == state]
+            cohort_statistics[method][state] = {
+                'document_count': len(members),
+                'chunk_count': sum(row['methods'].get(method, {}).get('chunk_count', 0) for row in members),
+                'body_lengths': length_stats(cohort_lengths[method][state]['body']),
+                'content_lengths': length_stats(cohort_lengths[method][state]['content'])}
+    snapshot_hash = digest(json.dumps(summary, ensure_ascii=False, sort_keys=True).encode())
+    return ('# P0-2 청킹 비교\n\n'
+        f'모드: {"api" if snapshot.get("mode") == "api" else "mock"}. 실제 API·인증·원본 미검증.\n'
+        f'동일 스냅샷의 안전한 비교 투영 SHA-256: {snapshot_hash}\n\n'
+        '기본 section / 비교 본문 300 유니코드 문자, overlap=0. '
+        '본문은 LF 정규화 전체 text이며 원본 ## 제목 행도 보존한다. '
+        '두 방식의 접두어는 문서 제목 + LF + 포함 절 제목(여럿이면 / 연결) + LF. '
+        'content는 접두어+원문 범위이며 향후 임베딩 입력과 동일하다. '
+        '범위는 0부터 시작하는 반열린 문자 범위다. 빈 절은 분석에 남기고 기본 청크에서 제외한다.\n'
+        '한도 검토: content UTF-8 8000바이트 초과는 별도 거절. '
+        '토큰 한도 실측이나 최종 운영 한도가 아닌 보수적 개인 검토 기준이다. '
+        'coverage_with_exclusions는 제외/거절까지 합친 범위 대장 검사다. 실제 청크 보존은 chunk_coverage로 별도 확인한다. '
+        '본문·제목 원문은 출력하지 않고 비공개 표제도 가린다.\n'
+        '실제 문서 길이·검색 품질·토큰·비용·시간: 미측정. 아래는 Mock 로컬 분석값이며 색인/검색 결과가 아니다.\n\n'
+        '```json\n' + json.dumps(summary, ensure_ascii=False, indent=2) + '\n```\n\n'
+        '## 상태별 분리 통계\n\n완전 성공·부분 생성·거절을 분리한다. 부분 생성 청크를 완전 성공 건수에 더하지 않는다.\n\n'
+        '```json\n' + json.dumps(cohort_statistics, ensure_ascii=False, indent=2) + '\n```\n')
+
+
 def main(argv=None, *, transport=None):
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -251,6 +454,14 @@ def main(argv=None, *, transport=None):
     inv.add_argument('--source', choices=['mock', 'api'], required=True)
     inv.add_argument('--input', type=Path)
     inv.add_argument('--output', type=Path, required=True)
+    inv.add_argument('--allow-network', action='store_true', help='승인받은 실제 API 실행에만 명시')
+    comparison = sub.add_parser('compare-chunks')
+    comparison.add_argument('--source', choices=['mock', 'api'], required=True)
+    comparison.add_argument('--input', type=Path)
+    comparison.add_argument('--baseline', choices=['section'], default='section')
+    comparison.add_argument('--candidate', choices=['300'], default='300')
+    comparison.add_argument('--output', type=Path, required=True)
+    comparison.add_argument('--allow-network', action='store_true', help='승인받은 실제 API 실행에만 명시')
     args = parser.parse_args(argv)
     output = args.output.resolve()
     if not output.is_relative_to(ROOT):
@@ -259,14 +470,21 @@ def main(argv=None, *, transport=None):
         parser.error('--input required for mock')
     try:
         if args.source == 'api':
-            snapshot = collect_api(transport=transport)
+            if args.command == 'compare-chunks':
+                report = collect_api(transport=transport, processor=compare_snapshot, allow_network=args.allow_network)
+                output.write_text(report, encoding='utf-8')
+                return
+            snapshot = collect_api(transport=transport, allow_network=args.allow_network)
             raw_hash = None
         else:
             raw = args.input.read_bytes()
             snapshot = json.loads(raw)
             raw_hash = None
-        report = render(snapshot, inventory(snapshot), raw_hash)
+        report = compare_snapshot(snapshot) if args.command == 'compare-chunks' else render(snapshot, inventory(snapshot), raw_hash)
         output.write_text(report, encoding='utf-8')
+    except InventoryError as exc:
+        code = 'api_network_not_authorized' if str(exc) == 'api_network_not_authorized' else 'inventory_failed'
+        parser.exit(2, code + '\n')
     except (ValueError, KeyError, TypeError, OSError):
         parser.exit(2, 'Inventory failed; invalid input, configuration, HTTP response, or output. No upstream details logged.\n')
 

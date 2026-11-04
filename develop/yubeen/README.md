@@ -45,3 +45,16 @@
     develop/yubeen 밖은 수정하지 말고 원본 대장·거절 사유·다음 연결을 보고해.
 
 상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [HANDOFF](Doc/HANDOFF.md).
+
+## P0-2 로컬 구현·확인
+
+실제 정답표 확정·검색 평가는 미실행이다. Q01~16 초안은 `cases/rag-search.json`, 합성 C03 계약 예시는 같은 파일의 functional_cases, 비교 결과는 `Doc/CHUNK-COMPARISON.md`, 측정 준비는 `Doc/SEARCH-EVAL.md`에 있다. P0-1 실행 이력과 대장은 보존한다.
+
+작업 디렉터리 `develop/yubeen`에서:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+python3 tools/rag_prepare.py compare-chunks --source mock --input cases/chunk-comparison-mock.json --baseline section --candidate 300 --output Doc/CHUNK-COMPARISON.md
+```
+
+API 모드 옵션은 구현되어 있으나 실제 호출은 별도 승인/환경 확인 후 수행한다. 이번에는 가짜 전송 계층으로만 확인한다. `chunk_document`의 content는 임베딩용 원문을 포함하므로 일반 로그/보고서에 그대로 출력하지 않는다. 보고서에는 범위·길이·해시와 가린 표본만 기록한다.

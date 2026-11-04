@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+최신 C04 검토: [C04-CONNECTION-REVIEW.md](C04-CONNECTION-REVIEW.md). 다혁님 `9bda763` 최신 개발본은 P0-2이며 C04 발신·응답 매핑 미구현. SPEC 표본 수신 적합과 로컬 6건 상태만 확인했고 실제 연결은 미실행이다.
+
 최신 C05 검토: [C05-MODEL-REVIEW.md](C05-MODEL-REVIEW.md). 지혜님 `4bbbf49` 실제 모델에 요청 표본 7/7 적합, 중복 알림 ACK의 duplicate 직렬화 불일치 1건 확인. 실제 API/인증/DB는 미실행이다.
 
 기본안대로 구현하는 일에는 새 협의가 필요 없다. [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md)으로 바로 진행한다. 여기는 **공통에 실제로 빠진 정책의 제안과 변경 근거**만 기록한다.
@@ -113,3 +115,13 @@
 - DLQ 상태 기대: 지혜님 현재 POST /dlq 라우터는 StoredResponse+기본200이다. 원민 SPEC의 신규201/중복200은 팀 공통 C05에 별도 확정되어 있지 않으므로 P1-2 전에 기대를 정리해야 한다. `dlq_id`를 실제 확정 응답으로 사용하지 않는다.
 - 미확인: deps는 X-Api-Key 누락401/키 존재501, 기본 backend도501인 골격이다. 이는 코드 검토 결과이며 서버를 호출한 것이 아니다. 실제 키 대조·DB·멱등/동시성·알림/DLQ ACK 및 n8n 연결은 미실행이다.
 - 다음 연결 상대: 지혜님(C05 DTO·응답), 오현님(공통 ACK/상태 정리). 본 문서는 검토 자료 작성이며 외부 전송·상대 동의/수정 완료로 표시하지 않는다.
+
+## C04 연결 대조 · 2026-11-04 · 다혁님 9bda763
+
+- 변경 파일: Doc/C04-CONNECTION-REVIEW.md, tools/check-c04-dahyeok.mjs, requests/c04-dahyeok-urgent.json, runs/c04-dahyeok-9bda763-review.json 및 문서 링크. 원민 워크플로우·다혁님 파일·공통 계약은 변경하지 않았다.
+- 참조 대상: fetch 후 origin/feat/dahyeok-p0 고정 커밋 9bda7639aaeee3f6dca59f6aabd91e61fa05a847. oke-support.json은 P0-1 보존본, 최신 개발본은 oke-support-02.json(P0-2)이며 C04 구현은 상대 계획 P0-3이다. 상대 자체 flow.py는 공식 키트로 취급하지 않았다.
+- 확인 방법/실제 결과: Git에서 JSON을 메모리로 읽어 기존 Code/표현식 어댑터로 로컬6건 실행. attempt1/2는 보완 질문, attempt3·긴급은 내부 handoff_mock이나 최종 ticket=null/reason=not_implemented다. context-resolved도 미구현 응답이며 injection은 차단이다. 6/6은 골격 상태 확인이고 공통 시나리오나 이관 기능 PASS가 아니다.
+- **WM-C04-01 · 실제 연결 미구현:** 최신 본체에 발신 HTTP Request 노드가0개이고 N20 Prepare/Call/Map도 없다. 실제 C04 URL/Credential/timeout·결과 매핑 검증은 불가하다. SPEC의 긴급 C04 표본1개는 원민 H02에 적합하며 ID/requester/high를 유지했다. 문서 표본의 적합과 실제 생성/호출을 구분했다.
+- 다혁님 후속 연결: 검증한 user→requester, ID 유지, title 마스킹·category/priority/reason, X-Team-Key Credential, 공통 초기 timeout5초·중첩 재시도0을 N20에 적용해야 한다. 정상 reason=null이면 본체 원래 이관 사유 유지, 실패 reason은 보존, 중복 ticket_id/priority/duplicate 보존이 필요하다.
+- WM-04: 상대 SPEC의 alerts_down 예시는 ok=true, 원민 임시 구현은 ok=false이며 둘 다 ticket 보존을 요구한다. 향후 mapper에서 ok=false만 보고 확인된 ticket을 폐기하지 않도록 정책 확인 필요. 현재 mapper가 없어 실제 본체 버그나 합의 완료로 판정하지 않았다.
+- 미확인/다음 상대: 다혁님 C04 실제 호출·매핑 구현, 오현님 게시 버전 선택·공식 키트·n8n 환경. 프로젝트 n8n 게시/웹훅/인증/Executions·저장소는 미실행이다. 다음 버전 제공 뒤 정상/중복/high/tickets_down/alerts_down/전송 실패를 실제 경로로 재확인한다. 본 기록은 외부 전송·상대 동의가 아니다.

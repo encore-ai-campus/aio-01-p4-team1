@@ -81,3 +81,152 @@ IMP-PLAN 확정 요구사항, 공통 파일, 다른 팀원 파일은 수정하�
 | 실제 응답 구조·인증·규정 8종·관리자 문서 | 미검증, 전체 완료 선언 불가 |
 
 실제 API/DB/LLM/n8n 실행, P0-2 구현 없음. 규정 8종의 실제 본문/권한과 관리자 문서 식별자/제공 여부는 미확인이다. 지혜님에게 응답/인증 확인, 원민님·오현님에게 원본/권한 출처 확인이 필요하다. 외부 팀원에게 전송하거나 상대 동의를 기록하지 않았다. commit/push 결과는 실제 Git 명령 결과로 별도 보고한다.
+
+
+## P1-1 Mock 색인 검증 실행 · 2026-11-04
+
+실제 색인 미실행. 아래는 합성 임베딩·저장 더블의 결과다.
+
+```json
+{
+  "mode": "mock",
+  "scenario": "initial-and-repeat",
+  "ok": true,
+  "first": {
+    "indexed": 4,
+    "skipped": 0,
+    "rejected": 1,
+    "failed": 0
+  },
+  "second": {
+    "indexed": 0,
+    "skipped": 4,
+    "rejected": 1,
+    "failed": 0
+  },
+  "checks": {
+    "repeat_unchanged": true,
+    "content_hash_matches": true,
+    "second_run_skips_all_stored": true,
+    "fk_and_unique_valid": true,
+    "embedding_failure_preserves_previous": true,
+    "storage_failure_preserves_previous": true,
+    "retry_succeeds": true
+  },
+  "stored_documents": 4,
+  "actual_api_embedding_db_n8n": "not_executed"
+}
+```
+
+## P1-1 구현 및 검증 범위 · 2026-11-04 · p1-1-local-01
+
+### 선행 확인과 파일
+
+환경은 AIO / feat/yubeen-p0 / 기준 커밋 38f3bfea7f7876e8204363ba01f75db9baf3af3b다. 시작 작업 트리는 깨끗했다. 루트·개인 AGENTS와 개인 README/SPEC/IMP-PLAN/HANDOFF/P0-2-RESULT, 공통 API·DB·RAG 및 협업 기준을 확인했다. 편집은 develop/yubeen 안에 한정하고 P0-1/P0-2 코드·테스트·정답표·기대값을 변경하지 않았다.
+
+- workflows/oke-index.json: active=false의 수동 Mock 검증 워크플로우. 고정 Execute Command로 공통 Python 엔진의 합성 시나리오를 호출하고 안전한 건수/판정만 반환한다. 색인 로직·청킹을 JS로 복제하지 않는다. 현재 실제 문서 색인을 수행하는 운영 워크플로우는 아니다.
+- config/rag-settings.json: text-embedding-3-large/3072차원, section/p0-2-v1/overlap0, cosine/top_k3, 임계값 null, 실제 실행 비활성 설정. 8000바이트 검토 기준은 P0-2와 같으며 토큰 모델 한도 실측값이 아니다.
+- tools/rag_index.py: 공통 색인 엔진과 테스트 전용 MockStore, 외부 연결을 생성하지 않는 PostgreSQL DB-API DML 어댑터. DB DDL/마이그레이션/새 서버를 만들지 않는다.
+- tools/rag_verify.py: Mock 검증 CLI. source=api는 real_index_execution_not_enabled/종료2로 거절한다. 실제 API·OpenAI·DB 드라이버/연결 생성 코드와 자격증명을 포함하지 않는다. --output은 기존 문서 뒤에 기록을 추가하며 기존 이력을 지우지 않는다.
+- tests/test_indexing.py: P1-1 정상·실패·권한·트랜잭션·워크플로우 Mock 검사. 원래 테스트 63개는 보존한다.
+- Doc/HANDOFF.md: 실제 연결에서 확인할 사항을 기록한다.
+
+### 동작과 저장 경계
+
+1. P0-1 inventory로 원본 식별자·권한·본문/제목을 검증한다. 마스킹된 prepared_rows 대장은 저장 입력으로 거절한다.
+2. P0-2 chunk_document를 그대로 호출해 같은 content/content_hash/source_hash/metadata를 사용한다. complete만 저장 후보로 취급한다. partial/rejected는 문서 전체 성공이 아니며 기존 일반 성공본을 유지한다.
+3. 변경 감지는 doc_key·title·access_level·source_url·source_hash, 청크 순서/해시/건수, 저장 모델/차원과 metadata.index_settings_hash를 비교한다. 설정 지문은 모델·차원·청킹·버전·overlap·길이 검토 기준이다. 같은 입력은 임베딩/교체 없이 skipped다.
+4. 모든 청크의 응답 모델·길이3072·숫자·유한성·비영벡터를 검증한 후에만 replace를 호출한다. 실패를 부분 저장 성공으로 보고하지 않는다. 결과에는 원문·제목·벡터·키 대신 SHA-256 document_ref와 고정 상태/사유만 남긴다.
+5. PostgreSQL 어댑터는 전용 autocommit=false 연결 하나의 cursor에서 문서 UPSERT RETURNING id → 기존 청크 DELETE → 새 청크 INSERT → commit 순서로 처리한다. 오류는 rollback한다. 문서 ID 유지, SQL 값 바인딩, rag.documents/rag.chunks 기존 컬럼만 사용한다. 설정 지문은 기존 metadata JSONB에 보존하며 새 컬럼은 요구하지 않는다. read에서는 vector_dims(embedding)로 저장 차원을 확인한다.
+6. 권한 축소 all→it는 일반 실패 때 이전 공개본 보존과 충돌하므로 공통 DATA-AND-DB/RAG의 공개 청크 잔존 금지 기준을 우선한다. 청킹 전에 기존 공개 청크를 제거하는 suspend를 호출하고 permission_reduction_requires_review로 거절한다. 임의로 공개 상태를 유지하거나 자동 재개하지 않는다. 이 DML 경로는 Mock만 검증했다. 실제 검색 중지·권한·접속 장애·동시 변경 운영 확인은 남아 있다. 삭제 동기화/예약 갱신/복구 운영은 구현하지 않았다.
+
+### 실제 실행한 확인
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`: 최종 89개(기존63+신규26) 통과. 초기 87개 통과 후, 검토 중 권한 축소와 긴 절이 동시에 발생할 때에도 공개 청크 중지가 우선해야 하는 순서 경계를 보완하고 주입 설정 검증을 추가했다. 두 회귀를 더해 89개 통과했다.
+- `PYTHONDONTWRITEBYTECODE=1 python3 tools/rag_verify.py index --scenario initial-and-repeat --output Doc/INDEX-RESULT.md`: 종료0. 위 JSON은 이 명령의 합성 결과다. 첫 실행 indexed4/rejected1, 두 번째 skipped4/rejected1. 이전 성공본 해시 유지, FK/고유키 대응, content/hash 일치, 임베딩 중간 실패 보존, 삭제 뒤 저장 실패 롤백, 재시도 성공을 Mock에서 확인했다.
+- 실제 PostgreSQL 서버 대신 DB-API cursor/connection 더블로 한 연결의 commit/rollback 호출·SQL 바인딩·PK/컬럼 매핑을 검사했다. 실제 트랜잭션/FK/고유키/pgvector 검증 성공으로 취급하지 않는다.
+- 워크플로우 JSON 구문·노드 참조·고정 명령·비활성/실행데이터 비저장 설정은 로컬에서 검사한다. 80일차 flow.py 키트는 확인한 저장소에 없다. 66~79일차 도구는 있으나 80일차 check 통과로 대체하지 않았다. 공식 flow.py check는 미실행이다.
+
+### 미검증과 지혜님 확인 사항
+
+- 현재 지혜님 migrations에는 README만 있어 실제 revision·확장·테이블·grant를 검증할 수 없다. 3072차원 vector, doc_key와 document_id/chunk_no 고유키, FK, metadata JSONB, updated_at, vector_dims 사용 가능 여부를 실제 마이그레이션에서 확인해야 한다.
+- 실제 API 응답·X-Api-Key 인증·규정8종/관리자 원문·권한, 실제 임베딩 응답 어댑터/토큰 한도, DB 연결은 미검증이다. embedder 호출 규격은 (content,model,dimensions) → {model,embedding}; 실제 OpenAI 응답 매핑은 연결 시 필요하다.
+- 전용 연결의 트랜잭션 소유권, INSERT/UPDATE/DELETE/SELECT와 시퀀스 권한, 실패 롤백·연결 단절 시 상태 확인, 공개 청크 중지 및 단일 색인 실행 운영을 지혜님과 실제 확인해야 한다. 새 DB 함수/DDL은 추가하지 않았다.
+- n8n 실행 환경에 Python 및 /opt/oke-rag 경로로 담당 폴더 배치가 필요하다. Execute Command 노드가 해당 n8n 버전/보안 설정에서 허용되는지, 실행데이터 보관 설정과 읽기 전용 코드 배치, 80일차 키트 check, 사람의 등록·시험을 확인해야 한다. 공통 Compose를 수정하지 않았다. 기본 Mock 실행은 임시 테스트 저장 더블이며 PostgreSQL의 영속 저장을 대체하지 않는다.
+- 실제 색인 경로를 n8n/원본 API/임베딩 Credential/PostgreSQL에 연결하는 작업은 남아 있다. 현재 CLI와 workflow는 이를 활성화하지 않으며 이번에는 실제 서비스 호출·n8n 등록·실행을 하지 않았다. P1-1 실제 색인 완료를 선언하지 않는다.
+
+Mock 범위의 변경 감지·원자 교체 준비·실패 보존·차원/모델 검증은 완료했다. 실제 원본/권한/DB/워크플로우 연결과 통합 검증은 미완료다. commit/push/merge/P1-2 구현은 수행하지 않았다.
+
+
+## P1-1 Mock 색인 검증 실행 · 2026-11-04
+
+실제 색인 미실행. 아래는 합성 임베딩·저장 더블의 결과다.
+
+```json
+{
+  "mode": "mock",
+  "scenario": "initial-and-repeat",
+  "ok": true,
+  "first": {
+    "indexed": 4,
+    "skipped": 0,
+    "rejected": 1,
+    "failed": 0
+  },
+  "second": {
+    "indexed": 0,
+    "skipped": 4,
+    "rejected": 1,
+    "failed": 0
+  },
+  "checks": {
+    "expected_first_counts": true,
+    "expected_second_counts": true,
+    "stored_documents_present": true,
+    "fault_scenarios_executed": true,
+    "repeat_unchanged": true,
+    "content_hash_matches": true,
+    "second_run_skips_all_stored": true,
+    "fk_and_unique_valid": true,
+    "embedding_failure_preserves_previous": true,
+    "storage_failure_preserves_previous": true,
+    "retry_succeeds": true
+  },
+  "stored_documents": 4,
+  "actual_api_embedding_db_n8n": "not_executed"
+}
+```
+
+## P1-1 독립 검증 결함 보완 · 2026-11-04 · p1-1-local-02
+
+이 절이 최신 보완 상태다. 앞의 89개 테스트 기록과 최초 권한 중지 설명은 당시 실행 이력으로 보존하며, 권한 중지/재개·동시성·검증 성공 판정·연결 실패 처리는 아래 내용으로 정정한다. 실제 서비스 검증 완료로 바꾸지 않는다.
+
+### 결함별 수정
+
+- A / P0 권한 축소 누락: confirmed_restricted_permission은 목록에서 유일한 doc_key의 명시 권한과, name이 일치하는 본문 응답의 명시 권한만 확인한다. 충돌·미확인·중복 또는 다른 문서 본문의 it를 근거로 권한을 바꾸지 않는다. 확인된 it이면 본문/제목 검증 실패보다 기존 공개본 중지를 먼저 처리한다. 중지 처리 오류는 failed이며 정상 rejected/indexed로 숨기지 않는다.
+- B / P0 동시 변경: read 당시 version_token(기존 문서 열·updated_at·청크 상태)을 임베딩 준비 후 replace에 전달한다. Mock은 RLock 안에서 비교·교체한다. PostgresStore는 같은 문서 키의 pg_advisory_xact_lock(hashtextextended(...))과 SELECT FOR UPDATE를 저장 트랜잭션 안에서 획득한 후 버전을 비교한다. 불일치는 stale_document_version으로 쓰기 전 거절한다. 신규 행은 INSERT ON CONFLICT DO NOTHING을 사용해 외부 INSERT 충돌에도 덮어쓰지 않는다. 기존 행은 잠긴 PK를 UPDATE하므로 ID를 유지한다. DDL/새 컬럼/새 DB 함수는 만들지 않았다.
+- C / P1 검증 성공 오판: 기본 합성 시나리오 최초 indexed4/rejected1/failed0과 재실행 skipped4/rejected1/failed0, 저장4문서, 필수 장애 시나리오 수행 여부를 명시적으로 검사한다. 장애 검사 기본값은 false이며, 빈 저장 집합의 all([])는 성공이 아니다. 임베딩 전체 실패 시 ok=false, CLI 종료1이다.
+- D / P1 Mock/DB 불일치: 양쪽 suspend는 문서 ID/행을 보존하고 권한을 it로 축소하며 청크를 제거한다. 기존 행에 청크가 없으면 index_suspended_requires_review로 자동 재색인을 막는다. 재개 승인 조건·작업 주체·구체 절차는 공통에 정의되지 않아 미결정이며 재개 기능은 구현하지 않았다. 이전 기록의 'Mock 문서 삭제' 의미와 자동 재개 가능성은 이 수정으로 제거했다.
+- E / P1 rollback/연결 실패: 소유권을 넘겨받은 전용 autocommit=false 연결의 _transaction으로 처리를 통일했다. SQL 실패 후 rollback 성공은 고정 storage_*_failed, rollback 실패는 storage_rollback_failed, commit 예외는 storage_commit_unknown이다. 후자의 두 경우 연결을 close하고 usable=false로 만들어 재사용을 차단한다. close 자체 실패도 원문을 출력하지 않는다. SQLSTATE08/닫힌 연결도 폐기한다. commit ACK가 불명확할 때 rollback 성공·이전 성공본 보존을 주장하지 않는다.
+
+### 회귀 테스트 및 실제 실행
+
+수정 파일: tools/rag_index.py, tools/rag_verify.py, tests/test_indexing.py, 이 문서, Doc/HANDOFF.md. 기존 P0-1/P0-2 소스·테스트·정답표·공통 파일은 수정하지 않았다. 원래 P1-1의 기존 테스트 26개도 유지했다. 그중 두 권한 중지 테스트의 잘못된 '문서 삭제' 기대는 '같은 행의 it/빈 청크 유지'로 정정했고, SQL 테스트의 고정 쿼리 수·실패 주입 위치·read 행 모양은 잠금 및 updated_at 추가에 맞췄다. 실패 보존·바인딩·PK/commit/rollback 검증 목적은 유지했다.
+
+- 전체 회귀: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`와 최종 재실행에서 총108개 통과(기존89 + 신규19), 종료0. 중간 89/105개 실행도 통과했다.
+- 신규19개: 빈/공백 본문·잘못된 제목의 권한 축소, 출처 미확인·충돌 권한 불변, 중지 실패 failed, ID/중지 상태 재실행 보존, 임베딩 중 권한 변경, 버전 변경, 두 스레드 경합, 임베딩 전체 실패 및 종료1, 빈 fixture 성공 금지, rollback 실패·연결폐기, commit 불명확·close 실패, 정상 rollback 고정 오류, SQLSTATE08 폐기, 트랜잭션 내 잠금/CAS 순서, 신규 INSERT 충돌, DB 중지 SQL의 행 보존, 기존 PK 잠금 UPDATE/바인딩, read commit 불명확, 엔진의 commit 불명확 상태 보고.
+- 정상 CLI: `PYTHONDONTWRITEBYTECODE=1 python3 tools/rag_verify.py index --scenario initial-and-repeat --json` → ok=true/종료0, 최초4색인·1거절, 재실행4건너뜀·1거절. --output 명령으로 위 JSON을 기존 이력 뒤에 추가했다.
+- 실패 CLI: 별도 Python subprocess에서 mock_embed 전체 예외를 주입 → ok=false, failed4, 종료1. 실제 API 호출 없이 확인했으며 합성 원본 예외 문자열이 stdout/stderr에 없었다.
+- 동시성은 Mock 두 스레드와 DB-API 더블의 SQL 실행 순서로만 확인했다. 실제 PostgreSQL 잠금 대기·격리 수준·deadlock·연결 복구는 미검증이다.
+
+### 남은 미검증·위험과 완료 판정
+
+P1-1 Mock의 지적된 다섯 결함은 회귀 범위에서 보완했다. 실제 PostgreSQL·원본 API·OpenAI·n8n은 호출하지 않았다. 실제 색인 완료/실제 트랜잭션 PASS를 선언하지 않는다. n8n 파일은 여전히 비활성 Mock 래퍼이며 공식 80일차 flow.py check는 미실행이다.
+
+모든 색인 쓰기 경로가 같은 문서 잠금 규약을 따라야 한다. 어댑터를 우회해 청크를 직접 수정하는 외부 작업, 원본 API 자체의 오래된 권한/버전 순서, 실제 격리 수준의 보장은 지혜님과 확인해야 한다. 신규 데이터 무결성은 기존 고유키/FK에 의존하며 실제 DDL·권한은 미검증이다.
+
+공개 청크 중지 자체가 DB 장애로 실패하거나 결과가 불명확하면 결과는 failed/고정 실패 코드다. 이때 공개 청크가 제거됐다고 주장할 수 없다. 실제 서비스에서 검색 중단/운영 확인을 강제하는 수습 절차는 아직 없으므로 실제 배포 전 합의·검증이 필요하다. 원본 권한 출처를 확인할 수 없는 입력으로 기존 권한을 임의 변경하지 않는다.
+
+연결 소유권은 전용 연결을 어댑터에 이전한다는 전제다. 풀/공유 연결을 직접 넘기면 안 된다. 풀을 쓸 경우 소유자 측의 물리 연결 폐기·대여 해제 규약이 추가로 필요하다. 실패 연결의 상태 재확인/재접속·중지 문서 재개 정책은 미결정이며 자동 재개는 하지 않는다.
+
+P1-2는 계약/Mock 설계 준비만 조건부 가능하다. 실제 검색 연계는 위 DB 동시성·권한 중지·재개 정책과 실제 원본·권한·색인 확인 이후에 검증해야 한다. 이번에 P1-2 구현·외부 전달·commit/push/merge는 수행하지 않았다.

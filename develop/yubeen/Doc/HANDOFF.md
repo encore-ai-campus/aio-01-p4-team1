@@ -102,3 +102,31 @@
 참고: 지혜님의 P0-1 FastAPI 구현 결과는 연결 담당자의 참고 사항으로만 취급한다. 이번에 구체 구현 결과나 실행 증거가 추가로 제공된 것은 아니므로 지혜님 작업·완료 상태를 독립 검증하거나 변경하지 않았다. 상대 폴더·공통 계약도 수정하지 않았다.
 
 이 회신은 DB 설계 매핑에 한정된다. H-Y02·H-Y03 제안 승인, 실제 권한 출처 확정, 공통 반영 커밋, 실제 API/DB 연결 완료로 해석하지 않는다. 기존 기록과 현재 P0-2 변경사항은 보존한다. commit·push는 수행하지 않는다.
+
+## C06 · P1-1 Mock 색인 준비 · 2026-11-04 · 검토 요청 준비
+
+기존 P0-1 DB 매핑 검토 완료와 실제 저장 미완료 상태는 유지한다. 이번에는 기존 rag 두 테이블의 DML 매핑 및 주입형 색인 엔진을 구현했으며 실제 접속/저장/임베딩/n8n 실행은 하지 않았다. 상대 검토·동의·외부 전달 없음.
+
+- 지혜님: 실제 rag 마이그레이션/확장 vector(3072), FK/고유키/metadata/updated_at, vector_dims, 색인 계정 권한 및 전용 autocommit=false 연결을 확인할 필요가 있다. UPSERT→청크 DELETE→INSERT가 연결 하나의 한 거래로 수행되는 DML 어댑터를 준비했다. 새 DDL/함수/컬럼은 요구하지 않는다. 실제 rollback·연결 단절·재실행 확인은 미실행이다.
+- 권한 축소: 공통 계약의 공개 청크 잔존 금지에 따라 all→it 확인 시 공개 청크를 제거하고 검토 전 저장을 중단하는 보수적 경로를 준비했다. 실패 때 공개 청크 중지의 실제 효과와 검색 중지 운영을 확인해야 한다. H-Y03의 다른 제안을 승인으로 처리하지 않으며 예약 갱신·삭제 동기화·복구 운영은 구현하지 않았다.
+- 실행 환경: workflows/oke-index.json은 비활성 수동 Mock 래퍼다. Python 공통 엔진을 고정 /opt/oke-rag 경로에서 호출하므로 n8n 버전의 Execute Command 지원/허용, Python·담당 코드 배치, 실제 원본·임베딩 어댑터·DB 연결 및 Credential 배치 확인이 필요하다. 이 파일을 운영 색인 완료 워크플로우로 취급하지 않는다. 공통 Compose는 수정하지 않았다.
+- 원민님: 정상4/거절1 → 재실행 건너뜀4/거절1, 임베딩 중간 실패 보존·DB 더블 롤백·재시도·권한 경계 Mock 검사 준비. 실제 DB/본체 통합 시험은 미실행이다.
+- P1-2 인계: chunk content/hash/metadata와 설정 지문 매핑은 준비됐으나 실제 성공 색인 ID는 아직 없다. oke-search 또는 권한 SQL 검색은 이번 범위에서 구현하지 않았다.
+
+근거: tools/rag_index.py, tools/rag_verify.py, config/rag-settings.json, tests/test_indexing.py, Doc/INDEX-RESULT.md 최신 P1-1 절. 80일차 flow.py 키트 부재로 공식 check 미실행이며 로컬 JSON/그래프 검사만 수행한다. commit/push/merge는 수행하지 않는다.
+
+## C06 · P1-1 안전성 결함 보완 후 확인 요청 · 2026-11-04 · 전달 전
+
+기존 검토/실행 이력은 보존한다. 지적된 권한 축소 누락·동시 재공개·검증 성공 오판·Mock/DB 중지 불일치·rollback 실패는 Mock/DB-API 더블에서 보완했다. 전체108개 테스트가 통과했으며 실제 PostgreSQL/API/임베딩/n8n은 미실행이다. 상대 동의·공통 반영·외부 메시지 전송 없음.
+
+지혜님 확인 사항:
+
+1. 기존 테이블·updated_at·metadata·FK/고유키/vector(3072)와 현재 버전 지문 매핑이 실제로 맞는지. 새 DDL/컬럼/마이그레이션은 작성하지 않았다.
+2. PostgreSQL의 pg_advisory_xact_lock(hashtextextended(...)) 사용 가능 여부, 실제 격리 수준, SELECT FOR UPDATE와 동일 트랜잭션 내 비교·UPDATE/INSERT/청크 교체의 원자성. 모든 색인 쓰기 경로의 동일 문서 잠금 규약 준수가 필요하다. 외부 직접 청크 변경·deadlock·잠금 대기·실패 재실행은 실제 시험이 필요하다.
+3. 소유권을 이전한 전용 autocommit=false 연결을 사용한다. SQL 실패/rollback 실패/commit ACK 불명확을 구분하고, 후자의 두 경우 close·재사용 차단한다. 풀/공유 연결은 직접 지원하지 않으며 실제 물리 연결 폐기/대여 해제 규약을 담당자가 확인해야 한다. 불명확한 커밋은 이전 상태 보존 성공으로 처리하지 않는다.
+4. all→it 확인 시 본문/제목 오류와 별개로 같은 문서 ID를 유지하며 it/빈 청크 상태로 중지한다. 이후 동일 입력이나 all 입력도 자동 재개하지 않는다. 중지/재개 권한·승인·실제 원본 재확인 조건은 미결정이며 이번에 임의 확정하지 않았다. 청크 없는 기존 행은 보수적으로 검토 대상으로 막는다.
+5. 중지 DML 실패·결과 불명확 시 실제 검색을 중단하는 운영 수습이 필요하다. 엔진의 failed 보고만으로 공개 데이터 미노출을 보장하지 않는다. 실제 검색 중지·복구·재개 확인은 배포 전 담당자 합의와 통합 시험이 필요하다.
+
+원민님 전달 준비: 빈 본문/잘못된 제목의 권한 축소, 충돌·미확인 권한 불변, 중지 실패, 중지 후 ID 보존·재실행 거절, 두 스레드 경합과 저장 전 CAS, 임베딩 전체 실패 종료1, rollback 실패·commit 불명확 연결 폐기, 기존 정상/건너뜀/부분 실패 보존. 근거는 tests/test_indexing.py의 SafetyDefectRegressionTests·TransactionFailureRegressionTests·AdditionalTransactionTests 및 Doc/INDEX-RESULT.md 최신 절이다.
+
+실제 저장/성공 색인 ID·API/인증·규정/관리자 원본 확인은 미완료다. P1-2 구현은 시작하지 않았으며 commit/push/merge는 하지 않는다.

@@ -2,6 +2,22 @@
 
 [IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 P0 단계에서 순서대로 생성·검증한다.
 
+## 현재 범위와 전제
+
+P0-7 갱신: 현재 로컬 revision은 `0005`다. 새 `0005_readiness_grant.py`는 업무 런타임 oke_app에 public.alembic_version SELECT만 부여한다. 테이블/확장 변경 권한은 주지 않는다. 이전0004를 수정하지 않았으며 현재 코드의 readiness 검증 및 VM 적용에는0005까지 포함한다. 직원 bootstrap·RAG 실제원본 적재와 구분한다.
+
+P0-6 갱신: 직원 seed·첫 관리자 CLI를 구현했으며 DDL revision은 `0004`를 유지한다. 거래 rollback 기반 실제 PostgreSQL 검증은 완료했지만 상시 직원/계정 적재와 실제 원본/VM 실행은 미실행이다. 실행 순서·필수 설정은 [배포 안내](../deploy/README.md)의 P0-6 인계를 따른다. seed는 revision에서 실행하지 않는다.
+
+P0-5 갱신(2026-11-05): 아래 P0-4 설명은 당시 상태다. 현재 전용 검증 DB에 `0003→0004`를 적용해 `rag.documents/chunks`, `vector(3072)`, 두 조회 인덱스와 비밀번호 없는 NOLOGIN 그룹 역할 `oke_app/oke_rag_index/oke_rag_search`의 ACL을 확인했다. 현재 head는 `0004`이며 실제 검증 결과는 IMP-PLAN P0-5 기록을 따른다. 런타임 LOGIN 자격증명/비밀은 이 DDL에 포함하지 않았고 오현님 비밀 설정과 실제 서비스 연결 시 확인한다.
+
+2026-11-05 현재 전용 검증 DB에 P0-4 `0001→0002`를 적용해 vector 확장·app/rag 스키마·업무 테이블 7개를 확인했다. 개인 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 적용 기준과 공통 대조 커밋을 모았다. rag 테이블/권한은 P0-5다. 다른 환경에서 적용 전에는 권한·비밀 설정을 별도로 확인한다.
+
+alembic.ini/env.py/script.py.mako와 Base/session factory 및 업무 모델을 생성했다. history/heads는 단일 체인·`0002 (head)`이고 전용 DB의 current도 `0002 (head)`다. env.py의 include_schemas/include_name은 app/rag만 autogenerate 대상으로 삼으며, public.alembic_version은 관리 이력용 예외 위치다. P0-5의 RAG 모델 등록은 후속 단계다.
+
+DB 접속은 환경변수 DATABASE_URL의 명시적 postgresql+psycopg 드라이버를 사용한다. 설정 누락/형식 오류는 접속 문자열 없이 실패하고, 실제 migration 명령도 SQLAlchemy 예외 원문을 출력하지 않는다. 기본 앱 시작 시 DB 접속/create_all/seed는 하지 않는다. P0-4 실제 DB 검사40개, 전체155개 통과·기존 경고1건이며 자세한 명령은 IMP-PLAN에 있다.
+
+알림 event_key UNIQUE와 DLQ 테이블은 확정된 DB 기반이다. H07의 응답 duplicate 확장은 새 DB 컬럼을 요구하는 제안이 아니며, ACK 명문화 대기로 기본 DDL을 중단하지 않는다. inquiries.context는 nullable text로 두고 API의 최대2,000자 검증은 확정 입력 기준으로 적용한다. 추가 DB CHECK는 공통 논리표와 구별해 물리 구현에서 검토한다.
+
 ## 생성 순서
 
 | 순서 / 예정 파일 | 적용 작업 | 확인할 결과 |
@@ -61,9 +77,10 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 4. `uv run pytest tests/integration/test_persistence.py tests/integration/test_pgvector.py -q`로 본인 문의/티켓·일반/IT 테스트 문서·차원 거절·정확 검색을 확인한다. 테스트용 가상 벡터 결과를 실제 임베딩 품질로 보고하지 않는다.
 5. named volume을 유지한 postgres 재시작 전후 revision/행 수/키/벡터 차원·조회 결과를 비교한다. DB 재시작과 재색인은 별도 확인이다. 기본 절차에 volume 삭제를 넣지 않는다.
 6. rollback 검증은 폐기 가능한 DB에서만 revision 한 단계씩 내렸다 올려 의존 순서를 확인한다. 공유 데이터가 있는 적용 후 rollback은 사전 백업·복원 또는 새 수정 revision으로 오현님이 판단한다. 다운그레이드가 데이터를 복구해 준다고 쓰지 않는다.
+7. P1-4에서 별도 DB 백업을 다른 격리 DB에 복원한 뒤 revision·관계·행 수·해시를 대조한다. 유빈님이 복원 후 권한별 검색을 확인한다. 문서 갱신 실패의 이전 성공본 유지와 권한 축소/삭제 시 이전 공개본 차단을 함께 시험한다. 전체 원본 API 장애를 문서 전체 삭제로 해석하지 않는다. volume 유지 재시작과 백업·복원은 다른 확인이다.
 
 ## 전달 결과
 
-유빈님에게 head·테이블/열·모델/차원·role 권한·접속 방식(비밀값 제외)과 실제 검사 결과를 넘긴다. 원민님에게 중복 제약·티켓/알림 거래·DLQ 연결 미정 상태를, 오현님에게 새 환경 생성/재시작/백업·복구 확인 자료를 넘긴다. H02의 비밀번호 이력/잠금용 확장은 공통 반영 후 별도 revision으로 만든다.
+유빈님에게 head·테이블/열·모델/차원·role 권한·접속 방식(비밀값 제외)과 실제 검사 결과를 넘긴다. 원민님에게 중복 제약·티켓/알림 거래·DLQ 저장 및 ACK 세부 미정 상태를, 오현님에게 새 환경 생성/재시작/백업·복구 확인 자료를 넘긴다. H02의 비밀번호 이력/잠금용 확장은 공통 반영 후 별도 revision으로 만든다.
 
 [팀 API](../../../docs/API-CONTRACT.md) · [데이터·DB 기준](../../../docs/DATA-AND-DB.md) · [전체 아키텍처](../../../docs/ARCHITECTURE.md).

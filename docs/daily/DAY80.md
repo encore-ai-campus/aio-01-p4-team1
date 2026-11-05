@@ -52,3 +52,16 @@
 4. 공식 common 14개 file은 현재 수업 트리에서 찾지 못했다. `flow.py`가 auth header를 보내지 않는 제한을 해결할 공식 지원 절차 또는 인증을 갖춘 시험 harness가 필요하며 기대값을 바꾸지 않는다.
 
 세부 근거와 버전 경계는 [실행 결과서](../EXECUTION-RESULT.md), [워크플로우 설계](../WORKFLOW-DESIGN.md), [RAG 설계](../RAG-ARCHITECTURE.md), `develop/{jihye,dahyeok,yubeen,wonmin}/Doc/`의 단계 결과·HANDOFF 및 main 커밋 기록을 따른다.
+
+## 후속 VM 런타임 정리 · 2026-11-05
+
+통합 스냅샷 `3e0f701` 뒤에 승인된 OKE 명명 전환을 별도로 수행했다. GitHub main 구현 커밋은 `c1a4c8b`이며 VM도 `3e0f701`에서 `c1a4c8b`로 fast-forward했다.
+
+- Compose 프로젝트를 `day65-n8n`에서 `oke`로 바꾸고 서비스 DNS는 유지했다. 기존 `day65-n8n_default` 네트워크와 정확한 external volumes (`day65-n8n_n8n-data`, `oke-jihye-p0_postgres_data`, sandbox TLS/DinD)를 재사용했다. 구 컨테이너는 중지 후 보존했고, 볼륨·이미지·credential·백업·수업 파일은 삭제하지 않았다.
+- 기본 기동에서 SearXNG를 `optional-search` 프로필로 제외했다. RAG index는 기존 `indexing` 수동 프로필로만 실행하며 search는 유지했다. SearXNG와 index가 멈춘 뒤에도 direct C03 일반/IT 검색 및 n8n `oke-search`가 HTTP 200, evidence 3을 반환했다.
+- 신규 C04 검증 요청 `oke-runtime-cleanup-20261105-c04-1`은 HTTP 200으로 티켓 `T-2003` 1건을 만들었다. 동일 요청키 재시도는 같은 ID, `duplicate=true`, alert=true, DLQ=false였다. DB 건수는 기존 employees/users/tickets/alerts/DLQ `6/1/2/3/1`에서 `6/1/3/4/1`; RAG는 `8/33` 그대로였다.
+- `minji.admin`은 로그인/재로그인 성공 후에도 `must_change_password=true`였다. 강제변경 전 보호 API 403, 로그아웃 200, 이전 세션 401을 확인했다. 비밀번호는 바꾸지 않았다. 5개 OKE workflow 중 support/search/handoff/errors 활성, index 비활성; 6개 credential 보존, 16개 참조 모두 존재했다.
+- localhost n8n health/backend ready/FE login은 모두 HTTP 200이고 기존 외부 n8n `:5678/healthz`도 200이었다. FE 외부 루트 502/3000 timeout 문제는 이 작업에서 수정하지 않았다. 공식 flow.py/common-14는 실행하지 않았다.
+- 자원은 전환 전 available RAM 1347 MiB에서 전환 후 1433 MiB, 디스크 여유 41 GiB였다. SearXNG와 index 및 모든 기존 `day65-n8n-*` 컨테이너는 삭제 없이 중지 상태로 남겼다. 체크섬 검증된 롤백 백업은 VM `/home/toor/backups/oke-runtime-cleanup-20261105-final`에 보관했다.
+
+세부 볼륨 매핑, 운영/롤백 명령과 실제 시험 표는 [배포 운영 기록](../deploy/README.md) 및 [실행 결과 8절](../EXECUTION-RESULT.md#8-oke-runtime-cleanup-and-project-rename--2026-11-05)에 있다. 이 확인은 강사 검토/승인이나 자동 답변 품질 PASS를 뜻하지 않는다.

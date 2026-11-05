@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+지혜님 질의 ACK 검토: [alert-no-key-practice-review.json](alert-no-key-practice-review.json), [회신 기준](../Doc/ALERT-NO-KEY-REVIEW.md). key 없음/null·keyed 순차/동시·practice 같은티켓2회·오류부모ID 없음2회·레거시ACK 소비자행렬8그룹 확인. 실제data-api/PG/n8n은 미실행이다.
+
 최신 P1-3(2026-11-05): [최종89/89 원 출력](p1-3-final-20261105T024732Z.txt), [20개 시나리오의 안전한요청/결과·관측·코드해시](p1-3-final-20261105T024732Z.json), [구현·실제 부모연결 절차](../Doc/P1-3-RESULT.md). 최초 p1-3-local-20261105T024621Z.json/.txt도보존. 실제ErrorTrigger자동발화/부모ID설정·backend/DB는미실행이다.
 
 최신 P1-2(2026-11-05): [원 출력65/65](p1-2-local-20261105T022016Z.txt), [실제 fault HTTP Mock 관측·코드 해시](p1-2-local-20261105T022016Z.json), [구현·후속 가이드](../Doc/P1-2-RESULT.md). 알림 duplicate·DLQ HTTP200 승인 적용. 아래 P1-1/C04/C05는 해당 시점의 기록이며 n8n·실제 backend/DB는 여전히 미실행이다.

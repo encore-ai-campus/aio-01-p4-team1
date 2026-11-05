@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+지혜님 후속 질의(2026-11-05): [event_key 없음/null·practice ACK 회신 자료](ALERT-NO-KEY-REVIEW.md). key 없음은 매번 신규/duplicate=false, practice는 key를 보내지 않아 동일티켓 재요청에도 알림추가 가능. HTTP Mock과 실제data-api/PG 미확인을 구분했다.
+
 최신 P1-3(2026-11-05): [oke-errors 구현·실제 부모연결 절차](P1-3-RESULT.md). 전체89개 로컬시험 통과. 실제errors ID·부모설정·자동발화·backend/DB는 미확인이다.
 
 최신 P1-2(2026-11-05): [수습 구현·실제 로컬 결과·추가 진행 가이드](P1-2-RESULT.md). 사용자 전달 팀장 승인으로 알림 duplicate 유지·DLQ HTTP200 적용. 전체 로컬65개 통과, 실제 n8n/백엔드/DB는 미실행이다. 아래 이전 C05 불일치 기록은 승인 전/상대 미반영 당시 근거로 보존한다.

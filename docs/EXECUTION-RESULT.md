@@ -92,7 +92,7 @@
 
 ## 8. OKE runtime cleanup and project rename · 2026-11-05
 
-This is a later runtime observation after the `3e0f701` integration snapshot above. GitHub `main` was advanced by runtime implementation commit `c1a4c8b` (`ops(vm): rename unified compose project to oke`), pushed, and the VM fast-forwarded to it before cutover. A later docs-only commit `1519135` was also pushed and fast-forwarded without restarting services; current repo head on GitHub and VM is `1519135`. The historical `3e0f701` results above remain the earlier baseline.
+This is a later runtime observation after the `3e0f701` integration snapshot above. GitHub `main` was advanced by runtime implementation commit `c1a4c8b` (`ops(vm): rename unified compose project to oke`), pushed, and the VM fast-forwarded to it before cutover. Later docs-only updates were also pushed and fast-forwarded without restarting services. The historical `3e0f701` results above remain the earlier baseline.
 
 | Check | Result | Evidence / limit |
 |---|---|---|

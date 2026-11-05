@@ -76,6 +76,21 @@
         ],
         "reason": null
       }
+    },
+    "found_security": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "evidence": [
+          {
+            "doc": "security-incident",
+            "section": "피싱 의심",
+            "text": "합성 보안 근거이며 실제 초동 조치 문구가 아님",
+            "score": 0.83
+          }
+        ],
+        "reason": null
+      }
     }
   }
 }

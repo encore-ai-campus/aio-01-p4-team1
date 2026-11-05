@@ -1,0 +1,212 @@
+{
+  "purpose": "P1-3 긴급 선이관/보강·장애·같은 실행 재접수 방지 로컬 Mock. 요청 간 멱등 및 실제 8초 지연 시험 아님.",
+  "cases": [
+    {
+      "id": "P13-01-urgent-composite",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found_security",
+      "lookup_result": "own_ok",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "ticket_id": "T-2201",
+        "source_count": 1,
+        "handoff_calls": 1,
+        "lookup_state": "ok",
+        "answer_contains": "T-1002"
+      }
+    },
+    {
+      "id": "P13-02-no-evidence",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "lookup_result": "own_ok",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 0,
+        "handoff_calls": 1
+      }
+    },
+    {
+      "id": "P13-03-search-down",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "unavailable",
+      "lookup_result": "own_ok",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 0,
+        "handoff_calls": 1
+      }
+    },
+    {
+      "id": "P13-04-ticket-timeout",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found_security",
+      "lookup_result": "timeout",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 1,
+        "handoff_calls": 1,
+        "lookup_state": "unavailable"
+      }
+    },
+    {
+      "id": "P13-05-writer-invalid",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found_security",
+      "lookup_result": "own_ok",
+      "writer_result": "truncated",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 0,
+        "handoff_calls": 1,
+        "writer_valid": false
+      }
+    },
+    {
+      "id": "P13-06-verifier-reject",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found_security",
+      "lookup_result": "own_ok",
+      "verifier_result": "ungrounded",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 0,
+        "handoff_calls": 1,
+        "verifier_valid": true
+      }
+    },
+    {
+      "id": "P13-07-ticket-forbidden",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found_security",
+      "lookup_result": "other_forbidden",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 1,
+        "handoff_calls": 1,
+        "lookup_state": "forbidden",
+        "answer_excludes": "T-1002"
+      }
+    },
+    {
+      "id": "P13-08-unrelated-evidence",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found",
+      "lookup_result": "own_ok",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "source_count": 0,
+        "handoff_calls": 1,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P13-09-high-ticket-down",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high_tickets_down",
+      "search_result": "found_security",
+      "lookup_result": "own_ok",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "tickets_down",
+        "ticket": null,
+        "source_count": 0,
+        "handoff_calls": 1
+      }
+    },
+    {
+      "id": "P13-10-triage-down",
+      "request_file": "requests/llm-down.json",
+      "triage_error": "llm_down",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "llm_down",
+        "handoff_calls": 1
+      }
+    },
+    {
+      "id": "P13-11-slow-lookup",
+      "request_file": "requests/slow-ticket.json",
+      "search_result": "found",
+      "lookup_result": "timeout",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "lookup_state": "unavailable",
+        "handoff_calls": 1
+      }
+    },
+    {
+      "id": "P13-12-normal-search",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "source_count": 1,
+        "handoff_calls": 0
+      }
+    },
+    {
+      "id": "P13-13-injection",
+      "request_file": "requests/injection.json",
+      "expect": {
+        "http_status": 200,
+        "route": "차단",
+        "ticket": null,
+        "handoff_calls": 0
+      }
+    },
+    {
+      "id": "P13-14-status-phone-masked",
+      "request_file": "requests/urgent-complex.json",
+      "handoff_result": "high",
+      "search_result": "found_security",
+      "lookup_result": "own_status_phone",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "priority": "high",
+        "handoff_calls": 1,
+        "security_masked": 1,
+        "answer_excludes": "02-0000-0000",
+        "source_count": 1
+      }
+    }
+  ]
+}

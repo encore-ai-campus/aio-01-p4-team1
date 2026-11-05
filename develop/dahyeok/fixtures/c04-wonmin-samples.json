@@ -52,6 +52,30 @@
         "alerted": false,
         "dlq": false
       }
+    },
+    "high": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2201",
+          "priority": "high",
+          "duplicate": false
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      }
+    },
+    "high_tickets_down": {
+      "status": 200,
+      "body": {
+        "ok": false,
+        "ticket": null,
+        "reason": "tickets_down",
+        "alerted": true,
+        "dlq": true
+      }
     }
   }
 }

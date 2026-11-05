@@ -66,6 +66,7 @@ const nodes = Object.fromEntries(data.flow.nodes.map(node => [node.name, node]))
 const results = [];
 for (const test of data.tests) {
   const outputs = {};
+  let handoffCalls = 0;
   const execute = (name, value, allItems) => {
     const items = vm.runInNewContext('(function(){' + nodes[name].parameters.jsCode + '})()', {
       $input: {first: () => ({json: value}), all: () => allItems.map(json => ({json}))},
@@ -91,6 +92,8 @@ for (const test of data.tests) {
       result.handoff_status = fixture.status;
       result.handoff_response = fixture.body;
     }
+    if (name === 'N20 Mock C04') handoffCalls++;
+    if (name === 'N06 Triage MOCK' && test.triage_error) result.error = test.triage_error;
     if (name === 'N13 Writer MOCK' && test.writer_result) {
       const fixture = data.writerResults[test.writer_result];
       if (!fixture) throw Error(test.id + ': unknown writer result');
@@ -113,9 +116,15 @@ for (const test of data.tests) {
   if (value.codes.length || value.employee_lookup !== 'ok' || value.blocked === true) {
     value = execute('N22 Finalize P0-3', value, []);
   } else {
-    for (const name of ['N06 Triage MOCK', 'N06 Parse triage', 'N07 Route triage', 'N08 Build search input']) {
+    for (const name of ['N06 Triage MOCK', 'N06 Parse triage', 'N07 Route triage']) {
       value = execute(name, value, []);
     }
+    if (nodes['N07 Route urgent'] && value.urgent_pre_handoff === true) {
+      for (const name of ['N20 Prepare handoff', 'N20 Mock C04', 'N20 Map handoff']) {
+        value = execute(name, value, []);
+      }
+    }
+    value = execute('N08 Build search input', value, []);
     const base = value;
     let search = base;
     for (const name of ['N09 Mock C03', 'N09 Normalize search']) search = execute(name, search, []);
@@ -130,10 +139,12 @@ for (const test of data.tests) {
                             'N15 Decide answer']) value = execute(name, value, []);
       }
     }
-    value = execute('N20 Prepare handoff', value, []);
-    if (value.handoff_needed) {
-      value = execute('N20 Mock C04', value, []);
-      value = execute('N20 Map handoff', value, []);
+    if (!value.handoff_done) {
+      value = execute('N20 Prepare handoff', value, []);
+      if (value.handoff_needed) {
+        value = execute('N20 Mock C04', value, []);
+        value = execute('N20 Map handoff', value, []);
+      }
     }
     value = execute('N22 Finalize P0-3', value, []);
   }
@@ -152,7 +163,8 @@ for (const test of data.tests) {
     verifierValid: outputs['N14 Parse verifier']?.verifier_valid ?? null,
     verificationFailure: outputs['N14 Parse verifier']?.verification_failure ??
       outputs['N13 Parse writer']?.verification_failure ?? null,
-    writerInput: outputs['N13 Prepare writer']?.writer_input ?? null});
+    writerInput: outputs['N13 Prepare writer']?.writer_input ?? null,
+    handoffCalls});
 }
 process.stdout.write(JSON.stringify(results));
 """
@@ -185,6 +197,7 @@ def check(flow):
     has_ticket = all(name in names for name in TICKET_CHAIN)
     has_merge = "N11 Collect retrieval" in names
     has_verification = "N13 Prepare writer" in names
+    has_urgent = "N07 Route urgent" in names
     if any(name in names for name in TICKET_CHAIN) and not has_ticket:
         raise ValueError("incomplete ticket lookup chain")
     expected_next = "N11 Collect retrieval" if has_merge else "N10 Build ticket lookup" if has_ticket else "N20 Prepare handoff"
@@ -224,17 +237,33 @@ def check(flow):
         if flow["connections"].get("N22 Finalize P0-3", {}).get("main") != [[
             {"node": "N22 Output filter", "type": "main", "index": 0}]]:
             raise ValueError("P1-2 final output connection missing")
+        next_failure = "N21 Already handed off" if has_urgent else "N20 Prepare handoff"
         expected_routes = {
-            "N12 Route evidence": ("N13 Prepare writer", "N20 Prepare handoff"),
+            "N12 Route evidence": ("N13 Prepare writer", next_failure),
             "N13 Writer mode": ("N13 Writer MOCK", "N13 Writer Agent"),
-            "N13 Writer valid": ("N14 Prepare verifier", "N20 Prepare handoff"),
+            "N13 Writer valid": ("N14 Prepare verifier", next_failure),
             "N14 Verifier mode": ("N14 Verifier MOCK", "N14 Verifier Agent"),
-            "N15 Route answer": ("N22 Finalize P0-3", "N20 Prepare handoff"),
+            "N15 Route answer": ("N22 Finalize P0-3", next_failure),
         }
         for source, targets in expected_routes.items():
             actual = flow["connections"].get(source, {}).get("main", [])
             if tuple(branch[0]["node"] for branch in actual if len(branch) == 1) != targets:
                 raise ValueError(f"P1-2 route changed: {source}")
+    if has_urgent:
+        for source, target in (("N07 Route triage", "N07 Route urgent"),
+                               ("N20 Map handoff", "N20 After handoff")):
+            if flow["connections"].get(source, {}).get("main") != [[
+                {"node": target, "type": "main", "index": 0}]]:
+                raise ValueError(f"P1-3 priority connection changed: {source}")
+        expected_routes = {
+            "N07 Route urgent": ("N20 Prepare handoff", "N08 Build search input"),
+            "N20 After handoff": ("N08 Build search input", "N22 Finalize P0-3"),
+            "N21 Already handed off": ("N22 Finalize P0-3", "N20 Prepare handoff"),
+        }
+        for source, targets in expected_routes.items():
+            actual = flow["connections"].get(source, {}).get("main", [])
+            if tuple(branch[0]["node"] for branch in actual if len(branch) == 1) != targets:
+                raise ValueError(f"P1-3 route changed: {source}")
         for model, agent in (("N13 Writer model", "N13 Writer Agent"),
                              ("N14 Verifier model", "N14 Verifier Agent")):
             if flow["connections"].get(model, {}).get("ai_languageModel") != [[
@@ -249,7 +278,7 @@ def run(flow, cases, container):
     tests = [{"id": case["id"], "body": read(ROOT / case["request_file"]),
               "search_result": case.get("search_result"), "lookup_result": case.get("lookup_result"),
               "handoff_result": case.get("handoff_result"), "writer_result": case.get("writer_result"),
-              "verifier_result": case.get("verifier_result")}
+              "verifier_result": case.get("verifier_result"), "triage_error": case.get("triage_error")}
              for case in cases]
     has_ticket = all(name in {node["name"] for node in flow["nodes"]} for name in TICKET_CHAIN)
     has_merge = "N11 Collect retrieval" in {node["name"] for node in flow["nodes"]}
@@ -318,6 +347,10 @@ def run(flow, cases, container):
                 problems.append(key)
         if "source_count" in expected and len(response.get("sources", [])) != expected["source_count"]:
             problems.append("source_count")
+        if "handoff_calls" in expected and row.get("handoffCalls") != expected["handoff_calls"]:
+            problems.append("handoff_calls")
+        if "priority" in expected and (response.get("ticket") or {}).get("priority") != expected["priority"]:
+            problems.append("priority")
         if "answer_contains" in expected and expected["answer_contains"] not in response.get("answer", ""):
             problems.append("answer_contains")
         if expected.get("answer_excludes") and expected["answer_excludes"] in response.get("answer", ""):

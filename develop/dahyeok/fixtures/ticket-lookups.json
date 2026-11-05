@@ -47,6 +47,15 @@
           "email": "TEST_EMAIL"
         }
       }
+    },
+    "own_status_phone": {
+      "status": 200,
+      "body": {
+        "ticket_id": "T-1002",
+        "status": "연락 02-0000-0000 후 처리",
+        "note": "합성 메모",
+        "contact": {}
+      }
     }
   }
 }

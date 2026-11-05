@@ -72,3 +72,38 @@ STEP 4 전에는 다혁님과 오현님이 본체의 검증된 부서/권한을 
 현재 완료된 범위는 Webhook 수신, `X-Team-Key` Header Auth, 다섯 필드의 기본 형식 검사, 임시 HTTP 400 진단 처리, IT 권한 미확인 시 관리자 접근 불허다. 기존 기록의 Python 회귀 108개 통과와 Code 격리 Mock 10/10 통과에 위 **사용자 수행 핵심 HTTP 5건**을 추가한다. 이번 문서 반영 중 이 테스트를 재실행하지 않았다.
 
 실제 직원 신원·IT 권한 검증, query 임베딩, PostgreSQL/pgvector 검색, SQL 권한 사전 필터링, C03 evidence·빈 결과·503 장애 응답, 본체 통합과 검색 품질 측정은 미완료다. TEST 2의 HTTP 400은 STEP 3 임시 진단 응답이며 C03 입력 오류의 최종 형식 확정이 아니다. 실제 검색·임베딩·PostgreSQL 조회는 위 5건에서 실행되지 않았다. P1-1 Index의 Mock 결과와 한계는 앞 절의 기록을 유지한다.
+
+## P1-2 STEP 4 · 합성 fixture 검색
+
+`oke-search.json`에 기본 Code 노드를 하나 추가해 Webhook/Header Auth → STEP 3 검증 → 일반 문서 Mock 검색 → Respond의 4노드·3연결로 구성했다. 기존 `cases/chunk-comparison-mock.json`의 확인된 all/it 합성 문서를 재사용한 스냅샷을 Code에 포함했다. 각 항목에 doc, chunk_id/chunk_no, title, section, text, source, access_level을 보존하며 원본 전체를 한 Mock 청크로 취급한다. P0-2의 실제 청킹 결과나 성공 DB 색인이 아니다. fixture를 변경하면 이 스냅샷도 검토해야 한다.
+
+검증, 권한 확인, query 표현 변환, 후보 선필터, 순위/top3, C03 응답 변환, 예외 응답을 함수로 분리했다. Mock query 표현은 공백 단어 집합이며 점수는 어휘 포함 비율이다. 임베딩·cosine·실제 유사도 점수로 해석하지 않는다. 후보의 access_level=all을 먼저 제한하고 점수 내림차순, doc/chunk_no 동점 순으로 최대 3개를 선정한다. 메타데이터는 내부 Code 출력에 보존하고 HTTP evidence에는 doc/section/text/score만 투영한다. 정상·빈 결과는 C03 HTTP200, 장애는 HTTP503/search_unavailable이다. 합성 장애 query `__mock_search_unavailable__`는 이 Mock 전용이다.
+
+STEP 3 불량 입력은 기존 임시 400 진단, IT 권한 출처 미확인 요청은 기존 200/it_unverified 진단과 검색 차단을 유지한다. 클라이언트 필드나 질문의 관리자 주장으로 IT 권한을 부여하지 않는다. Header Auth와 비활성 설정을 유지한다. SQL은 구현·실행하지 않았다. 실제 교체 시에는 공통 모델 text-embedding-3-large/3072차원과 documents 권한 WHERE → 동일 모델 cosine 정확거리 → doc_key/chunk_no → LIMIT 3을 지켜야 하며 DB 계정·접속 설정은 만들지 않았다.
+
+검증: `node tests/search-mock.test.cjs` 13개 통과/0실패. 워크플로우의 실제 Code 문자열을 격리 실행해 정상·최대3·0개·IT 메타데이터 비노출·IT 주장 차단·입력 오류·장애·결정성·관리자 사칭·연결/Auth를 확인했다. 기존 Python unittest 108개 통과/0실패. JSON 파싱·연결 및 git diff --check 통과. 실제 n8n Import/HTTP 및 Credential 설정 회귀는 미실행이다. 실제 API·임베딩·PostgreSQL 조회도 미실행이며 이전 HTTP 결과를 이번 버전의 실행 근거로 사용하지 않는다.
+
+사용자 검증 시 기존 비활성 워크플로우에 수정본을 반영하고 Credential 연결을 확인한 뒤 Test URL에 query=합성(정상), zzzz-not-present(빈 결과), __mock_search_unavailable__(503)을 전송한다. IT 요청은 기존 차단 진단을 확인한다. HTTP 성공 본문은 C03 형식이라 mock 필드가 없으며 워크플로우 이름·노드 notes와 이 기록으로 Mock임을 식별한다. 운영 활성화 전에 이 합성 경로를 실제 어댑터로 교체해야 한다.
+
+STEP 5/실제 통합 전 질문: 지혜님에게 rag 테이블·확장·최소 권한·접속/마이그레이션 준비, 다혁님·오현님에게 검증된 직원 권한 전달의 신뢰 경계 및 H-Y01 오류 계약, 원민님에게 실제 관리자 원문·일반/IT 양성/음성 평가 자료를 확인한다. 실제 벡터/SQL 실행계획·성능·hit@3·비용·본체 LLM 입력은 미검증이다. Mock 구현 완료가 실제 RAG 검색 완료를 뜻하지 않는다.
+
+### STEP 4 이후 사용자 로컬 HTTP 검증
+
+사용자가 AIO WSL 로컬 n8n에서 직접 수행해 전달한 결과다. Codex가 재실행한 HTTP 시험이 아니다. 실행 일시·실행 ID·성능 수치는 제공되지 않았다. 아래 TEST 2~4의 전달된 입력 요약에는 type이 명시되지 않아 값을 추정하지 않는다.
+
+| 시험 | 요청 요약 | 실제 결과 및 확인 범위 | 판정 |
+| --- | --- | --- | --- |
+| TEST 1 | req-step4-001, query=합성, type=network, all, top_k=3 | HTTP200, ok=true, evidence 3개(mock-plain, mock-structure, mock-unicode), reason=null. score는 Mock 어휘 일치율이며 cosine 아님 | PASS |
+| TEST 2 | req-step4-002, query=zzzz-not-present, all, top_k=3 | HTTP200 확인. n8n 노드 출력에서 ok=true, evidence=[], reason=no_evidence 확인. 터미널 HTTP 본문 전문은 미확인 | PASS |
+| TEST 3 | req-step4-003, query=__mock_search_unavailable__, all, top_k=3 | HTTP503 확인. n8n 노드에서 ok=false, evidence=[], reason=search_unavailable, mock=true 확인. HTTP 본문도 별도 출력 확인. 실제 DB 장애가 아닌 합성 장애 | PASS |
+| TEST 4 | req-step4-004, query=합성, all+it, top_k=3 | HTTP200 STEP 3 진단: valid=true, access_authorization=it_unverified, it_access_granted=false, search_eligible=false, search_executed=false. IT 문서 검색 미실행 | PASS |
+
+TEST 3의 mock=true는 내부 노드 출력 필드다. HTTP 응답은 C03의 ok/evidence/reason 투영이며 내부 출력 전체와 구분한다. TEST 4의 HTTP200은 임시 권한 진단으로 최종 권한 오류 계약의 확정을 뜻하지 않는다.
+
+완료 범위: Header Auth와 STEP 3 입력 검증 유지, 결정적 Mock 어휘 검색, 일반 문서 후보 선필터, 최대3개 제한, C03 정상/빈/장애 응답, 미검증 IT 요청 차단, JavaScript 13개·Python 108개 로컬 테스트 및 위 사용자 HTTP 핵심 4건 확인. 앞 절의 HTTP 미실행 문장은 구현 당시 상태로 보존한다.
+
+미완료 범위: 실제 임베딩 API, PostgreSQL/pgvector 저장·검색, cosine 계산, 검증된 IT 직원의 관리자 문서 검색, 본체 C03 HTTP 통합, 실제 검색 품질 평가, 최종 권한 오류 계약 확정.
+
+### 지혜님에게 전달받은 DB 준비 상태
+
+사용자가 전달한 지혜님 확인 내용: PostgreSQL 접속 확인, pgvector 0.8.6 사용 가능 확인. pgvector 확장 활성화, rag.documents/rag.chunks 생성, 색인·검색 DB 권한은 미완료다. P0-5 완료 후 실제 DB 연동이 가능하며 data-api 응답·인증 방식은 미확정이다. 이는 팀원에게 전달받은 상태이며 Codex가 DB 접속으로 독립 확인한 결과가 아니다.

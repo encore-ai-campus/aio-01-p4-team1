@@ -185,6 +185,22 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
   - 회귀: 일반 이관과 본인 상태 안내는 이전과 같다.
 - 남은 확인: 초동 조치 문구는 공지의 "사내망 분리"만 담았다. 다른 조치를 넣으려면 팀장님 문구가 필요하다. 팀 VM의 oke-support는 아직 `859e3af` 버전이고 Credential이 연결되지 않아 웹훅이 HTTP 500이다(2026-11-05 조회만 함, 변경 없음). VM 반영은 리드·원민님과 맞춘다.
 
+## P1-5 로컬 C03 연동과 본인 상태 문의 보완 · 2026-11-05
+
+- 구성(로컬 n8n, 원민님 handoff 포함): 유빈님 `6780432`의 `oke-search.json`을 Credential만 연결해 import했다. 검색 서버는 유빈님 `tools/search_http.py`의 실제 handler(경로·X-Team-Key·입력 검사·응답 코드)를 쓰고, DB/임베딩 검색만 합성 근거로 대체한 scratchpad 하네스로 띄웠다(n8n 네트워크 게이트웨이 주소). 로컬 n8n에 `SEARCH_SERVICE_URL`을 추가했다. 실제 pgvector·OpenAI 임베딩·규정 원문 결과가 아니다.
+- C03 직접 호출: `["all"]` 200(일반 근거), `["all","it"]` 200(일반+IT 근거), 근거 없음 200 `no_evidence`, `["it"]`·query 누락·top_k=5 400 `invalid_request`. 키 없음·틀린 키는 계약의 401이 아니라 n8n 웹훅 Header Auth의 403이다(본체는 둘 다 이관).
+- 본체 경유(execution 1653~1674): 일반·IT 직원 모두 C03 found → **writer·verifier가 처음 실제 실행**(JSON 유효, verifier `grounded:true`, `policy_ok:true`) → N15 실제 모드 잠금으로 `low_confidence` 이관. 근거 없음은 `no_evidence` 이관, 타인 T-1002 권한 없음, WF-12는 기존과 같다.
+- 발견: 근거가 있으면 본인 T-1002 상태 문의도 writer 경로로 가서 잠금에 걸려 **새 티켓을 만들었다**(WF-07 실패). 응답 `agents`가 writer·verifier 실행 후에도 `["triage"]`다(미수정, 14 후보).
+- 수정(13, 노드·연결선 수 변화 없음):
+  - N12 Evidence gate: writer로 보낼 때 `status_only`(본인 조회 ok + 상태 문의 + 긴급 아님)를 함께 넘긴다.
+  - N20 Prepare handoff: `status_only`이고 본인 조회 ok이면 이관 대신 `ticket_status`로 N22 상태 안내. N15 잠금·verifier 거절과 N15를 거치지 않는 writer 형식 오류를 모두 이 지점에서 처리한다. 자동 답변이 통과하면 기존처럼 writer 답이 나간다.
+- 확인: 로컬 Mock 검사 결과 동일(12/12, 14/14, 13/13, 9/9, 20/20, 6/6). 재게시 `okeSupport13Loc9` execution 1677~1698(모두 success):
+  - 박서연 본인 T-1002: C03 found → writer·verifier 실행 → N20 `ticket_status` → 자동 답변 상태 안내, 새 티켓 0.
+  - 최유진 WF-07: writer 형식 실패로 verifier 생략 → N20 `ticket_status` → 상태 + `010-****-2135`, 새 티켓 0.
+  - 회귀: 타인 권한 없음, T-9999·일반·IT VPN `low_confidence` 이관, 식당 `no_evidence`, WF-12 긴급, 보완 질문이 기존과 같다.
+- 팀 VM(조회만, 변경 없음): 08:27 재반영 후 oke-support(13과 동일)·handoff·errors는 Credential 연결됨. 실행 #8에서 본체 → C04(T-2001)까지 동작했다. oke-search는 main 루트 `workflows/oke-search.json`과 같아 `["all"]`만 허용(IT 400), 주소 `http://127.0.0.1:8765/search`(유빈님 서버는 `/webhook/oke-search`만 받음, 호스트 실행 예정이라 n8n의 127.0.0.1로는 닿지 않음), 인증 none이다. VM 설정은 리드 담당으로 전달했다.
+- 남은 본체 작업: 자동 답변 잠금(N12 점수 기준·N15) 해제는 실측 임계값 승인 후. `agents` 실제 실행 목록 반영.
+
 ## 워크플로우 설계서 공통 반영 요청 · 2026-11-05
 
 - 담당 원고: `Doc/WORKFLOW-DESIGN-DRAFT.md` 1~8절과 `Doc/SUBMISSION-NOTES.md`. 오현님이 소유한 `docs/WORKFLOW-DESIGN.md`의 기존 “구현 예정” 설명을 실제 번호판·노드·로컬 검증 상태와 대조해 반영해 주시기 바란다.

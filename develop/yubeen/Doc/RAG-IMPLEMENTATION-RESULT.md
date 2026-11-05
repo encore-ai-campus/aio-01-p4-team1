@@ -167,3 +167,11 @@ P1-3 오프라인 도구의 요청된 결함 보완 범위는 PASS다. 실제 �
 검색 운영 모드와 n8n JSON은 바꾸지 않았다. 현재 `oke-search`는 비활성 합성 Mock Code 노드이며 Python 어댑터에 접근할 실행 서비스/내부 HTTP 엔드포인트가 없다. `X-Team-Key`는 내부 호출 인증일 뿐 직원 IT 신원 검증이 아니다. 기존 Python 검색은 미확인 `all,it`를 제공자/DB 호출 전에 차단한다. 따라서 일반/IT 실제 검색·C03 실제 HTTP·다혁님 본체 호출·팀 VM 검증은 전부 미실행이다. 장애가 실제 DB 문제인지 임베딩 문제인지 구분하는 운영 관측, 연결 수명/timeout, 운영 URL과 배포 방법도 미확정이다.
 
 검증: Python 전체 168개(기존164+신규 Fake 제공자4) 통과. 신규 검사는 공식 요청 모양/3072차원 반환, 키/입력 누락 시 전송0회, 잘못된 응답과 전송 예외의 C03 503 처리다. 이는 실제 API·DB·HTTP의 성공 근거가 아니다. 기존 n8n Mock 및 P1-3 기록은 유지한다.
+
+## DB 준비 전 C03 HTTP 연결 사전 작업 · 2026-11-05
+
+`tools/search_http.py`에 별도 HTTP 진입점과 호출 경로를 구현했다. `SEARCH_TEAM_KEY` 인증, JSON/필수값 검사, `all`만 허용하는 권한 경계, `OpenAIEmbeddingProvider`→읽기 전용 psycopg 연결→`PgvectorSearchAdapter`→C03 응답을 연결한다. DB 또는 API 키가 없으면 503이며 Fake 결과로 대체하지 않는다. 내부 예외 세부 정보는 응답/HTTP 로그에 남기지 않는다. `SEARCH_MODE=live` 외 모드는 시작을 거절한다.
+
+비활성 `workflows/oke-search.json`은 환경변수 `SEARCH_SERVICE_URL`과 n8n Header Auth Credential을 사용하도록 변경했다. n8n에서 import·push·test하지 않았고 실제 Credential/내부 URL도 미확정이다. 기존 Mock JSON은 `tests/fixtures/oke-search-mock.json`으로 옮겨 회귀 전용으로 사용한다. 워크플로우 구조와 Code 변환은 로컬 테스트 대상이며 n8n 런타임 성공으로 해석하지 않는다.
+
+FAKE 테스트는 로컬 TCP HTTP 왕복, 인증 실패/성공, 입력 오류, 본문 IT 위조 차단, 일반 근거·빈 결과·장애503, DB/API 설정 누락을 확인했다. 전체 Python 171개, JavaScript 16개가 통과했고 `git diff --check`도 통과했다. 실제 DB·OpenAI 호출은 하지 않았다. 로컬 DB 검색·VM 통합·IT 양성 검색은 미완료다. 공식 `flow.py`는 현재 체크아웃에서 찾지 못해 n8n push/test 및 공식 flow 검사도 미실행이다.

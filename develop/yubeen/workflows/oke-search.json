@@ -4,7 +4,7 @@
   "nodes": [
     {
       "id": "search-step1-webhook",
-      "name": "검색 요청 수신 (STEP 1 테스트 전용)",
+      "name": "검색 요청 수신",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -19,11 +19,11 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "notes": "비활성 테스트 전용. n8n 화면에서 Header Auth Credential의 Name=X-Team-Key, Value=비공개 키를 설정하고 이 노드에 연결해야 한다. 키와 Credential ID는 JSON에 넣지 않는다. 미연결 시 실행하지 말고 프로덕션 활성화하지 않는다."
+      "notes": "비활성. X-Team-Key Header Auth Credential을 n8n에서 연결한다. 실제 호출 전 Credential과 내부 서비스 주소를 별도 확인한다."
     },
     {
       "id": "search-step1-inspect",
-      "name": "요청 구조·권한 형식 확인 (STEP 3)",
+      "name": "요청 형식 확인",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
@@ -31,27 +31,45 @@
         0
       ],
       "parameters": {
-        "jsCode": "const body = $input.first().json.body;\nconst isObject = body !== null && typeof body === 'object' && !Array.isArray(body);\nconst fields = ['request_id', 'query', 'type', 'access_levels', 'top_k'];\nconst received = {};\nfor (const field of fields) received[field] = isObject && Object.prototype.hasOwnProperty.call(body, field) ? body[field] : null;\nconst invalid_fields = [];\nif (!isObject) invalid_fields.push('body');\nif (typeof received.request_id !== 'string' || received.request_id.length < 1 || received.request_id.length > 64) invalid_fields.push('request_id');\nif (typeof received.query !== 'string' || received.query.trim().length === 0) invalid_fields.push('query');\nif (typeof received.type !== 'string' || received.type.trim().length === 0) invalid_fields.push('type');\nconst levels = received.access_levels;\nconst validLevels = Array.isArray(levels) && (levels.length === 1 && levels[0] === 'all' || levels.length === 2 && levels[0] === 'all' && levels[1] === 'it');\nif (!validLevels) invalid_fields.push('access_levels');\nif (received.top_k !== 3) invalid_fields.push('top_k');\nconst valid = invalid_fields.length === 0;\nreturn [{ json: { step: 'P1-2 STEP 3', mock: true, diagnostic_only: true, body_is_object: isObject, valid, invalid_fields, received: valid ? received : null, access_authorization: valid && levels.length === 2 ? 'it_unverified' : 'not_verified', it_access_granted: false, search_eligible: valid && levels.length === 1, search_executed: false, http_status: valid ? 200 : 400 } }];"
+        "jsCode": "const body = $input.first().json.body;\nconst valid = body && typeof body === 'object' && !Array.isArray(body)\n  && typeof body.request_id === 'string' && body.request_id.length >= 1 && body.request_id.length <= 64\n  && typeof body.query === 'string' && body.query.trim().length > 0\n  && typeof body.type === 'string' && body.type.trim().length > 0\n  && Array.isArray(body.access_levels) && body.access_levels.length === 1 && body.access_levels[0] === 'all'\n  && body.top_k === 3;\nreturn [{json:{valid:!!valid, request:valid ? {request_id:body.request_id,query:body.query,type:body.type,access_levels:['all'],top_k:3} : null}}];"
       },
-      "notes": "5개 필드의 존재·형식과 [all]/[all,it]의 정확한 순서만 검사한다. 1~64자 request_id는 공통 support 식별자 경계를 사용한다. query 최대 길이·type enum·상세 오류 코드는 H-Y01 미확정으로 추가하지 않는다. 형식상 it 요청은 사용자 권한 확인이 아니며 검색은 실행하지 않는다."
+      "notes": "본문 권한을 신뢰하지 않는다. IT 요청과 잘못된 입력은 HTTP 서비스 호출 전에 차단한다."
     },
     {
-      "id": "search-step4-mock",
-      "name": "일반 문서 Mock 검색 (STEP 4)",
-      "type": "n8n-nodes-base.code",
+      "id": "search-route",
+      "name": "유효한 일반 요청",
+      "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
         480,
         0
       ],
       "parameters": {
-        "jsCode": "const fixture = [{\"doc\": \"mock-structure\", \"chunk_id\": \"mock-structure:0\", \"chunk_no\": 0, \"title\": \"합성 문서\", \"section\": \"본문\", \"text\": \"서문\\n## 절 하나\\n- 첫 항목\\n- 둘째 항목\\n### 하위 제목\\n| 열 | 값 |\\n| --- | --- |\\n| 가 | 나 |\\n```md\\n## 코드 내부\\n```\\n## 빈 절\\n## 마지막\\n끝\\n\", \"source\": \"fixture:chunk-comparison-mock/mock-structure\", \"access_level\": \"all\"}, {\"doc\": \"mock-unicode\", \"chunk_id\": \"mock-unicode:0\", \"chunk_no\": 0, \"title\": \"합성 문서\", \"section\": \"본문\", \"text\": \"## 앞\\n가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂가나다🙂\\n## 뒤\\n나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나나\", \"source\": \"fixture:chunk-comparison-mock/mock-unicode\", \"access_level\": \"all\"}, {\"doc\": \"mock-plain\", \"chunk_id\": \"mock-plain:0\", \"chunk_no\": 0, \"title\": \"합성 문서\", \"section\": \"본문\", \"text\": \"제목 없는 합성 본문\\n\", \"source\": \"fixture:chunk-comparison-mock/mock-plain\", \"access_level\": \"all\"}, {\"doc\": \"mock-it\", \"chunk_id\": \"mock-it:0\", \"chunk_no\": 0, \"title\": \"제한 제목\", \"section\": \"본문\", \"text\": \"## 제한 절\\n합성 제한 본문\\n\", \"source\": \"fixture:chunk-comparison-mock/mock-it\", \"access_level\": \"it\"}];\nconst input = $input.first().json;\n// Mock only: lexical overlap, no embedding/vector similarity.\nfunction authorize(x) { return x.valid === true && x.search_eligible === true && x.received.access_levels.length === 1 && x.received.access_levels[0] === 'all'; }\nfunction encodeQuery(query) { return [...new Set(query.toLowerCase().trim().split(/\\s+/))]; }\nfunction allowedCandidates(rows) { return rows.filter(r => r.access_level === 'all'); }\nfunction rank(rows, terms) { return rows.map(r => ({...r, score: terms.filter(t => (r.title+' '+r.text).toLowerCase().includes(t)).length / terms.length})).filter(r => r.score > 0).sort((a,b) => b.score-a.score || (a.doc < b.doc ? -1 : a.doc > b.doc ? 1 : a.chunk_no-b.chunk_no)).slice(0,3); }\nfunction response(rows) { return {ok:true,evidence:rows.map(r=>({doc:r.doc,section:r.section,text:r.text,score:r.score})),reason:rows.length ? null : 'no_evidence'}; }\nif (!authorize(input)) return [{json:{http_status:input.http_status,response:input}}];\ntry {\n const query = input.received.query;\n // Explicit synthetic fault query, available only in this Mock workflow.\n if (query === '__mock_search_unavailable__') throw new Error('synthetic_fault');\n const selected = rank(allowedCandidates(fixture), encodeQuery(query));\n return [{json:{http_status:200,response:response(selected),mock:true,ranking:'lexical_overlap_not_cosine',selected_metadata:selected.map(({text,...metadata})=>metadata)}}];\n} catch (_) { return [{json:{http_status:503,response:{ok:false,evidence:[],reason:'search_unavailable'},mock:true}}]; }\n"
-      },
-      "notes": "합성 fixture 전용 어휘 일치 검색. 실제 임베딩/DB 없음. 권한 선필터 후 top3. IT 요청은 STEP 3 진단 유지."
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "search-step1-respond",
-      "name": "진단 응답 반환 (HTTP 200)",
+      "name": "C03 응답 반환",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
@@ -60,42 +78,141 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "responseBody": "={{ JSON.stringify($json.body) }}",
         "options": {
-          "responseCode": "={{ $json.http_status }}"
+          "responseCode": "={{ $json.status }}"
         }
       },
-      "notes": "정상 형식은 진단 HTTP 200, 불량 입력은 임시 진단 HTTP 400으로 반환한다. H-Y01 최종 오류 형식이나 C03 검색 결과가 아니다."
+      "notes": "서비스 응답을 C03 본문과 상태 코드로 반환한다. 활성화 전 n8n import/test 검증 필요."
+    },
+    {
+      "id": "search-http",
+      "name": "실제 검색 서비스 호출",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -120
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SEARCH_SERVICE_URL }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request) }}",
+        "options": {
+          "timeout": 4000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "SEARCH_SERVICE_URL은 n8n에서 접근 가능한 /webhook/oke-search 전체 URL로 별도 설정. HTTP Header Auth Credential의 Name=X-Team-Key, Value=비공개 키를 UI에서 연결. URL·키를 JSON에 저장하지 않는다."
+    },
+    {
+      "id": "search-normalize",
+      "name": "검색 응답 검증",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ],
+      "parameters": {
+        "jsCode": "const x=$input.first().json;\nconst failure={status:503,body:{ok:false,evidence:[],reason:'search_unavailable'}};\nif (x.error || ![200,503].includes(x.statusCode)) return [{json:failure}];\nconst b=x.body;\nif (!b || typeof b!=='object' || Array.isArray(b)) return [{json:failure}];\nif (x.statusCode===503) return [{json:failure}];\nconst rows=b.evidence;\nif (b.ok!==true || !Array.isArray(rows) || rows.length>3 ||\n    !rows.every(r=>r && typeof r.doc==='string' && r.doc.trim() && typeof r.section==='string' && r.section.trim() && typeof r.text==='string' && r.text.trim() && typeof r.score==='number' && Number.isFinite(r.score)) ||\n    b.reason!==(rows.length ? null : 'no_evidence')) return [{json:failure}];\nreturn [{json:{status:200,body:{ok:true,evidence:rows.map(r=>({doc:r.doc,section:r.section,text:r.text,score:r.score})),reason:b.reason}}}];"
+      },
+      "notes": "실제 서비스의 C03 외형만 반환하고 오류 상세를 버린다."
+    },
+    {
+      "id": "search-invalid",
+      "name": "입력 거절",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        120
+      ],
+      "parameters": {
+        "jsCode": "return [{json:{status:400,body:{ok:false,evidence:[],reason:'invalid_request'}}}];"
+      },
+      "notes": "H-Y01 상세 400 형식은 미확정."
     }
   ],
   "connections": {
-    "검색 요청 수신 (STEP 1 테스트 전용)": {
+    "검색 요청 수신": {
       "main": [
         [
           {
-            "node": "요청 구조·권한 형식 확인 (STEP 3)",
+            "node": "요청 형식 확인",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "요청 구조·권한 형식 확인 (STEP 3)": {
+    "요청 형식 확인": {
       "main": [
         [
           {
-            "node": "일반 문서 Mock 검색 (STEP 4)",
+            "node": "유효한 일반 요청",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "일반 문서 Mock 검색 (STEP 4)": {
+    "유효한 일반 요청": {
       "main": [
         [
           {
-            "node": "진단 응답 반환 (HTTP 200)",
+            "node": "실제 검색 서비스 호출",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "입력 거절",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "실제 검색 서비스 호출": {
+      "main": [
+        [
+          {
+            "node": "검색 응답 검증",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "검색 응답 검증": {
+      "main": [
+        [
+          {
+            "node": "C03 응답 반환",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "입력 거절": {
+      "main": [
+        [
+          {
+            "node": "C03 응답 반환",
             "type": "main",
             "index": 0
           }
@@ -111,7 +228,7 @@
   },
   "pinData": {},
   "meta": {
-    "phase": "P1-2 STEP 4 Mock lexical search only",
+    "phase": "P1-2 live HTTP bridge prepared, inactive",
     "realSearchVerified": false
   }
 }

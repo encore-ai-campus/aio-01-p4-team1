@@ -139,3 +139,13 @@
 - 원민님(C08): 격리 DB에서 일반/IT/위조/빈 결과/장애 및 본체 LLM 입력 관측을 준비하고, 정답표·두 청킹 색인·관측자료가 확보되기 전 P1-3 실제 품질 수치를 확정하지 말아 달라.
 
 현재 상태는 제공자·SQL 어댑터의 Fake 테스트 가능 수준이다. 실제 DB·OpenAI·n8n HTTP·팀 VM 검증 및 외부 메시지 전송은 수행하지 않았다.
+
+## C03 실제 HTTP 연결 준비 · DB 수신 전 · 미전달
+
+`tools/search_http.py`는 독립 HTTP 서비스다. `SEARCH_TEAM_KEY`가 있어야 시작하며 `SEARCH_MODE=live`만 허용한다. 실행은 `cd develop/yubeen && python3 tools/search_http.py --host 127.0.0.1 --port 8765`이다. n8n에서 접근할 실제 host/port는 배포 담당자가 결정하고 네트워크에서 검증해야 한다. `DATABASE_URL`, `OPENAI_API_KEY`가 없으면 인증된 정상 요청도 503/search_unavailable이다. Python `psycopg` 설치와 접근 가능한 검색 전용 DB 계정이 필요하다. 모델/차원은 `config/rag-settings.json`의 text-embedding-3-large/3072로 고정한다. 예시 변수명은 `search.env.example`에 있으며 값은 비워 두었다.
+
+지혜님에게 받을 것: P0-5 migration head 및 `CREATE EXTENSION vector` 확인, `rag.documents`/`rag.chunks` 컬럼·권한·3072차원 확인, 검색 전용 SELECT 계정의 비밀 전달 경로, 격리 DB 접속 방식, 실제 원본·청크 수와 권한·해시 확인 결과. 수신 뒤 격리 DB에서 read-only SELECT로 `SELECT extname FROM pg_extension WHERE extname='vector'`, `SELECT count(*) FROM rag.documents`, `SELECT count(*) FROM rag.chunks`를 실행하고 schema/권한을 확인한다. 실제 임베딩 키는 승인된 비밀 경로로 주입하고 저장소/로그에 쓰지 않는다.
+
+검증 순서: (1) 격리 DB 및 키 설정 뒤 위 서비스 실행, (2) `POST http://127.0.0.1:8765/webhook/oke-search`에 X-Team-Key와 C03 JSON `request_id/query/type/access_levels:["all"]/top_k:3`을 전송해 일반 검색 200/빈 결과/503을 분리 확인, (3) `all,it` 위조 요청이 400이고 임베딩·DB에 닿지 않는지 확인, (4) 검증된 IT 권한 전달 계약을 다혁님·지혜님·오현님과 확정한 뒤에만 IT 양성 검색을 구현·시험, (5) n8n에서 `SEARCH_SERVICE_URL` 전체 내부 URL과 HTTP Header Auth Credential을 설정하고 비활성 `oke-search.json`을 import/test하여 200·빈200·503 및 인증·오류 분기 확인, (6) 다혁님 본체에서 C03 호출/503 이관/근거 비노출을 시험, (7) 로컬 결과 후 팀 VM에서 네트워크·Credential·시간 예산·실제 원본 권한을 별도 확인한다. 현재 (1)~(7)의 실제 DB/VM 단계는 미실행이다.
+
+다혁님에게 전달할 것: C03 경로와 응답은 유지된다. n8n 워크플로우는 실제 HTTP 서비스 호출 준비 상태이나 비활성이고 URL/Credential/n8n import 검증 전이다. `X-Team-Key`는 서비스 인증일 뿐 직원 IT 신원 근거가 아니므로 현재 `all`만 검색한다. 본체가 `all,it`를 보내도 400으로 차단한다. 직원 세션/부서 검증에서 검색 서비스까지 위변조 없이 권한을 전달하는 계약은 미확정이며 공통 계약 변경은 리드 반영이 필요하다. 기존 합성 Mock은 `tests/fixtures/oke-search-mock.json`의 테스트 자료로만 보존했다.

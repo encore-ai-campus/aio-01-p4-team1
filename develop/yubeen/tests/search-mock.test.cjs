@@ -1,5 +1,5 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const vm=require('node:vm');const path=require('node:path');
-const w=JSON.parse(fs.readFileSync(path.join(__dirname,'../workflows/oke-search.json')));const run=(node,json)=>JSON.parse(JSON.stringify(vm.runInNewContext(`(function(){${node.parameters.jsCode}})()`,{$input:{first:()=>({json})}})[0].json));
+const w=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/oke-search-mock.json')));const run=(node,json)=>JSON.parse(JSON.stringify(vm.runInNewContext(`(function(){${node.parameters.jsCode}})()`,{$input:{first:()=>({json})}})[0].json));
 const base={request_id:'req-001',query:'합성',type:'network',access_levels:['all'],top_k:3};const search=b=>run(w.nodes[2],run(w.nodes[1],{body:b}));
 test('normal C03 shape and max3',()=>{const x=search(base);assert.equal(x.http_status,200);assert(x.response.evidence.length>0&&x.response.evidence.length<=3);assert.deepEqual(Object.keys(x.response),['ok','evidence','reason']);});
 test('zero',()=>assert.equal(search({...base,query:'zzzz-not-present'}).response.reason,'no_evidence'));

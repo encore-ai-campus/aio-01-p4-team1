@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-3의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-10.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-4 이후 단계는 구현 예정이다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-4의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-11.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-5 실제 연결·시험은 남아 있다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -37,7 +37,7 @@
 | P1-1 / SUP-05 | `workflows/oke-support-04.json`~`07.json`, fixtures/search-results.json·ticket-lookups.json·c04-wonmin-samples.json, requests/own-ticket.json·other-ticket.json, cases/support-retrieval.json | N08~12 두 갈래+Merge. ID 없음·403·404·지연·search []/503/잘못된 형식. DH-T-06→권한 없음, 03→이관. N10 항상 항목 1개, 조회 실패를 근거 없음으로 합치지 않음. 로컬 Mock 21/21 | 유빈님 C03 정확 payload/근거 응답, 원민님 조회 상태별 사례 |
 | P1-2 / SUP-03/06 | `workflows/oke-support-08.json`, fixtures/writer-results.json·verifier-results.json, cases/support-verification.json | N13~15와 최종 출력 필터. 잘린 JSON/문자열 불리언/위조 출처→이관, 연락처 가림. 임계값은 Mock 값 0.8로 분기만 검증하며 품질 통과로 표시하지 않음. 로컬 Mock 20/20 | 유빈님·원민님 사용 출처/점수 경계/검증 탈락 입력과 출력 |
 | P1-3 / SUP-07/09 | `workflows/oke-support-10.json`, requests/urgent-complex.json·llm-down.json·slow-ticket.json, cases/support-failures.json | 긴급 N20→N08 Mock 보강→N22, handoff_done 유지. DH-T-12 합성 high+보안 근거+본인 상태. writer 실패/조회 timeout Mock 뒤에도 같은 실행 C04 호출 1회. DH-T-10→이관 llm_down. 로컬 Mock 14/14 | 원민님 오류 출력·부분 실패·긴급 단일 접수 관측표, 오현님 시간 예산 후보 |
-| P1-4 / SUP-08/09 | 본체 수정, fixtures/replay-results.json, requests/duplicate.json, cases/support-replay.json | N05/N22 결과 재사용 연결. DH-CHG-02/04 미반영이면 adapter Mock까지만; 확정된 티켓 key 중복은 실제 검증. DH-T-09 순차/동시/재시작 재전송에서 티켓 1개 | 지혜님 소유권/결과 저장 API 연결 자료, 원민님 중복 관측·표현 불일치 재현 |
+| P1-4 / SUP-08/09 | `workflows/oke-support-11.json`, fixtures/replay-results.json, requests/duplicate.json, cases/support-replay.json | N05 결과 조회·N22 재사용 분기를 Mock으로 연결. 동일 내용 hit는 티켓 ID 보존·duplicate=true 표시, 타인·충돌·처리중·장애는 재생성 차단. 로컬 13/13. 실제 결과 저장·순차/동시/재시작 멱등은 미검증 | 지혜님 소유권/결과 저장 API 연결 자료, 원민님 중복 관측·표현 불일치 재현 |
 | P1-5 / SUP-10 | 본체 실제 주소/설정으로 교체, Doc/SUBMISSION-NOTES.md, Doc/VERIFICATION-RESULTS.md, 실제 생성된 runs/ 보고서 | 제공자 실제 호출, 공통 전체+팀 5개 이상+LLM 3회·bench·임계값 경계. DH-T-01은 측정 기준 반영 후 자동 답변. 실패 원인/수정/같은 조건 재시험 | 오현님 실제 노드/연결선·보고서·측정·미해결 요청, 원민님 최종 회귀 근거 |
 
 ### P0-2 확인 기록 · 2026-11-04
@@ -81,6 +81,13 @@
 - 확인: `python3 tools/retrieval_check.py workflows/oke-support-10.json cases/support-failures.json --node-container day65-n8n-n8n-1` 14/14, 이전 `support-review-fixes.json` 9/9, `support-verification.json` 20/20 로컬 Mock 통과. 합성 긴급 복합 문의에서 high 티켓·보안 출처·본인 상태 및 C04 Mock 1회를 관측했다. `llm_down`과 조회 timeout은 fixture 주입이며 실제 장애·8초 지연을 실행하지 않았다.
 - 원민님 `8b1fd74`의 읽기 전용 C04 페어링 보고서에는 이전 `08`의 요청·매핑 경계 17/17 로컬 호환이 기록되어 있다. 이번 `10`의 긴급 그래프와 실제 C04 HTTP는 해당 보고서의 시험 대상이 아니다. 동일 request_id의 **서로 다른 실행 간 멱등성**은 P1-4/실제 저장 API에서 확인해야 한다. 공식 80일차 `flow.py`, 프로젝트 n8n import·인증·Webhook·시간 예산·실제 규정 답변은 미실행이다.
 
+### P1-4 확인 기록 · 2026-11-05
+
+- `oke-support-10.json`을 보존하고 `oke-support-11.json`에 N05 Replay Mock·파서·분기 관문을 추가했다. 입력·직원·주입 검사 후 완료 결과 hit는 request_id·검증된 requester·question·attempt·context를 대조하고 응답 필드 타입을 검사한 뒤 N22로 바로 보낸다. 이 경우 triage·검색·C04를 재호출하지 않는다. 저장 원본의 ticket은 수정하지 않고 Mock 재응답에서만 duplicate=true로 표시한다. 이 표시는 DH-CHG-04 제안이며 공통 판정 확정이 아니다.
+- 다른 직원의 같은 ID는 권한 없음, 같은 직원의 내용 변경은 로컬 Mock HTTP400/invalid_request로 중단한다. 처리 중·조회 장애·형식이 잘못된 캐시는 ticket=null인 안전 응답으로 끝내고 새로운 C04를 호출하지 않는다. 이 HTTP400 및 안전 응답의 상세 정책은 DH-CHG-02/03 검토 전 임시 처리다. 원본 입력 오류·주입은 replay 조회를 건너뛴다.
+- 로컬 확인: `python3 tools/retrieval_check.py workflows/oke-support-11.json cases/support-replay.json --node-container day65-n8n-n8n-1` 13/13. 합성 첫 miss는 C04 Mock 1회와 T-552532/duplicate=false, 같은 입력의 hit fixture는 C04 Mock 0회와 같은 ID/duplicate=true를 확인했다. 타인·충돌·처리중·장애·잘못된 캐시·긴급 재전송·캐시 답변 전화번호 가림을 포함한다. P1-3 14/14, 보완 9/9, P1-2 20/20도 최신 번호판에서 재확인했다.
+- 제한: 첫 결과를 실제로 저장하거나 동시 요청을 원자적으로 잠그는 내부 API가 아직 없다. `fixtures/replay-results.json`은 저장 결과를 흉내 낸 별도 입력이며 13/13은 순차·동시·프로세스 재시작 후 티켓 1건의 증거가 아니다. 지혜님 `fdcd265` 브랜치에는 제안된 내부 result 조회/저장 경로가 없다. FastAPI 소유권·DB UNIQUE·원민님 C04/C05 멱등을 실제 연결 후 각각 시험해야 한다. 공식 80일차 `flow.py`, 프로젝트 n8n 게시·Webhook·실제 저장은 미실행이다.
+
 P2 선택 고도화는 필수 P1-5 완료 뒤 [TODO](TODO.md)의 후순위를 따른다.
 
 P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아니다. P1까지도 Mock 결과와 실제 서비스 결과를 별도 열로 기록한다. 새 정책 승인이 필요한 adapter를 제외한 Agent/검색/이관/출력 작업은 계속 진행한다.
@@ -101,7 +108,7 @@ python3 -m json.tool workflows/oke-support-02.json > /dev/null
 현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. P1-1~P1-2 번호판은 `tools/retrieval_check.py`로 검사한다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support-10.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-11.json
 ```
 
 연결 검토 항목:
@@ -125,7 +132,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support-10.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support-10.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-11.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

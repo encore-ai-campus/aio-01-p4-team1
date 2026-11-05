@@ -80,6 +80,12 @@ for (const test of data.tests) {
       result.search_http_status = fixture.status;
       result.search_raw = fixture.body;
     }
+    if (name === 'N05 Replay MOCK' && test.replay_result) {
+      const fixture = data.replayResults[test.replay_result];
+      if (!fixture) throw Error(test.id + ': unknown replay result');
+      result.replay_http_status = fixture.status;
+      result.replay_raw = fixture.body;
+    }
     if (name === 'N10 Mock ticket' && test.lookup_result) {
       const fixture = data.ticketResults[test.lookup_result];
       if (!fixture) throw Error(test.id + ': unknown ticket result');
@@ -113,7 +119,11 @@ for (const test of data.tests) {
   for (const name of ['N02 Normalize input', 'N03 Validate employee MOCK', 'N04 Injection rules']) {
     value = execute(name, value, []);
   }
-  if (value.codes.length || value.employee_lookup !== 'ok' || value.blocked === true) {
+  if (nodes['N05 Replay MOCK']) {
+    value = execute('N05 Replay MOCK', value, []);
+    value = execute('N05 Parse replay', value, []);
+  }
+  if (value.codes.length || value.employee_lookup !== 'ok' || value.blocked === true || value.replay_terminal === true) {
     value = execute('N22 Finalize P0-3', value, []);
   } else {
     for (const name of ['N06 Triage MOCK', 'N06 Parse triage', 'N07 Route triage']) {
@@ -164,7 +174,10 @@ for (const test of data.tests) {
     verificationFailure: outputs['N14 Parse verifier']?.verification_failure ??
       outputs['N13 Parse writer']?.verification_failure ?? null,
     writerInput: outputs['N13 Prepare writer']?.writer_input ?? null,
-    handoffCalls});
+    handoffCalls,
+    replayState: outputs['N05 Parse replay']?.replay_state ?? null,
+    triageRan: Boolean(outputs['N06 Triage MOCK']),
+    searchRan: Boolean(outputs['N09 Mock C03'])});
 }
 process.stdout.write(JSON.stringify(results));
 """
@@ -198,6 +211,7 @@ def check(flow):
     has_merge = "N11 Collect retrieval" in names
     has_verification = "N13 Prepare writer" in names
     has_urgent = "N07 Route urgent" in names
+    has_replay = "N05 Replay MOCK" in names
     if any(name in names for name in TICKET_CHAIN) and not has_ticket:
         raise ValueError("incomplete ticket lookup chain")
     expected_next = "N11 Collect retrieval" if has_merge else "N10 Build ticket lookup" if has_ticket else "N20 Prepare handoff"
@@ -264,6 +278,20 @@ def check(flow):
             actual = flow["connections"].get(source, {}).get("main", [])
             if tuple(branch[0]["node"] for branch in actual if len(branch) == 1) != targets:
                 raise ValueError(f"P1-3 route changed: {source}")
+    if has_replay:
+        required = {"N05 Parse replay", "N05 Route replay"}
+        if not required <= names:
+            raise ValueError("P1-4 replay chain incomplete")
+        for source, target in (("N04 Injection rules", "N05 Replay MOCK"),
+                               ("N05 Replay MOCK", "N05 Parse replay"),
+                               ("N05 Parse replay", "N05 Route replay")):
+            if flow["connections"].get(source, {}).get("main") != [[
+                {"node": target, "type": "main", "index": 0}]]:
+                raise ValueError(f"P1-4 replay connection changed: {source}")
+        actual = flow["connections"].get("N05 Route replay", {}).get("main", [])
+        if tuple(branch[0]["node"] for branch in actual if len(branch) == 1) != (
+                "N22 Finalize P0-3", "N05 Triage gate"):
+            raise ValueError("P1-4 replay route changed")
         for model, agent in (("N13 Writer model", "N13 Writer Agent"),
                              ("N14 Verifier model", "N14 Verifier Agent")):
             if flow["connections"].get(model, {}).get("ai_languageModel") != [[
@@ -278,17 +306,20 @@ def run(flow, cases, container):
     tests = [{"id": case["id"], "body": read(ROOT / case["request_file"]),
               "search_result": case.get("search_result"), "lookup_result": case.get("lookup_result"),
               "handoff_result": case.get("handoff_result"), "writer_result": case.get("writer_result"),
-              "verifier_result": case.get("verifier_result"), "triage_error": case.get("triage_error")}
+              "verifier_result": case.get("verifier_result"), "triage_error": case.get("triage_error"),
+              "replay_result": case.get("replay_result")}
              for case in cases]
     has_ticket = all(name in {node["name"] for node in flow["nodes"]} for name in TICKET_CHAIN)
     has_merge = "N11 Collect retrieval" in {node["name"] for node in flow["nodes"]}
     has_verification = "N13 Prepare writer" in {node["name"] for node in flow["nodes"]}
+    has_replay = "N05 Replay MOCK" in {node["name"] for node in flow["nodes"]}
     payload = json.dumps({"flow": flow, "chain": BASE_CHAIN + (TICKET_CHAIN if has_ticket else []) + TAIL,
                           "tests": tests, "searchResults": read(ROOT / "fixtures/search-results.json")["results"],
                           "ticketResults": read(ROOT / "fixtures/ticket-lookups.json")["results"] if has_ticket else {},
                           "handoffResults": read(ROOT / "fixtures/c04-wonmin-samples.json")["results"] if has_merge else {},
                           "writerResults": read(ROOT / "fixtures/writer-results.json")["results"] if has_verification else {},
-                          "verifierResults": read(ROOT / "fixtures/verifier-results.json")["results"] if has_verification else {}},
+                          "verifierResults": read(ROOT / "fixtures/verifier-results.json")["results"] if has_verification else {},
+                          "replayResults": read(ROOT / "fixtures/replay-results.json")["results"] if has_replay else {}},
                          ensure_ascii=False)
     if container:
         cmd = ["docker", "exec", "-i", container, "node", "-e", PARALLEL_RUNNER if has_merge else RUNNER]
@@ -351,6 +382,10 @@ def run(flow, cases, container):
             problems.append("handoff_calls")
         if "priority" in expected and (response.get("ticket") or {}).get("priority") != expected["priority"]:
             problems.append("priority")
+        for key, actual in (("replay_state", "replayState"), ("triage_ran", "triageRan"),
+                            ("search_ran", "searchRan")):
+            if key in expected and row.get(actual) != expected[key]:
+                problems.append(key)
         if "answer_contains" in expected and expected["answer_contains"] not in response.get("answer", ""):
             problems.append("answer_contains")
         if expected.get("answer_excludes") and expected["answer_excludes"] in response.get("answer", ""):

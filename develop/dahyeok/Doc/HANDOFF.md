@@ -85,6 +85,12 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 - `oke-support-10.json`은 high 문의에서 C04 Mock을 먼저 한 번 실행한 뒤 `security-incident` 합성 검색 근거와 성공한 본인 티켓 상태를 보강한다. 부가 단계 실패·타인 조회 403에도 기존 high 이관 결과를 유지한다. 로컬 `cases/support-failures.json` 14/14에서 같은 실행의 C04 Mock 1회를 확인했다.
 - 원민님 `8b1fd74`의 C04 페어링 검증 17/17은 당시 다혁 `08`의 요청·매핑 경계 결과다. `10`의 새 그래프·실제 C04 HTTP·서로 다른 실행의 동일 ID 멱등성까지 확인한 결과로 확대하지 않는다. 실제 n8n 연결 시 선이관 후 Merge가 단일 응답으로 끝나는지와 최초 티켓 ACK를 잃지 않는지 재검증이 필요하다.
 
+## P1-4 결과 재사용 Mock 인계 · 2026-11-05
+
+- `oke-support-11.json`에서 N05 replay hit/miss/forbidden/conflict/processing/unavailable을 합성 응답으로 분리했다. 같은 ID·검증된 직원·내용의 hit는 캐시 결과를 재사용하며 C04 Mock을 호출하지 않는다. 타인·내용 충돌·처리중·조회 장애·잘못된 캐시는 새 이관을 막는다. `cases/support-replay.json` 로컬 13/13이다.
+- 지혜님 `fdcd265`에는 DH-CHG-02의 내부 결과 조회·저장 API가 없으므로 이 결과는 영속 저장/원자 중복 방지 시험이 아니다. 실제 연결 전 requester 검증, question/attempt/context 지문, 완료/처리중/충돌 상태, 저장 ACK와 API 경로를 지혜님·오현님이 확정해야 한다. 현 로컬 Mock의 충돌 HTTP400/invalid_request 및 처리중·장애 안전 응답은 임시 판정이다.
+- 원민님·오현님께는 재사용 응답의 ticket_id/priority 동일성과 duplicate=true 표시를 DH-CHG-04 및 원본 WF-09 판정과 대조 요청한다. 캐시 hit의 duplicate 표시는 저장 원본을 바꾸지 않는 로컬 제안이다. 순차·동시·재시작 후 실제 티켓 1건은 원민 C04/C05와 백엔드 DB를 연결해 검증해야 한다.
+
 ## DH-CHG-05 · 단계별 워크플로우 JSON 보존과 게시 대상
 
 - 연결: C09. 2026-11-04 사용자 요청에 따라 P0-1 원본은 `workflows/oke-support.json`으로 복원하고 P0-2는 `workflows/oke-support-02.json`에 보존했다. 원격의 P0-2 수정 이력은 강제 삭제하지 않고 새 커밋에서 파일 배치를 바로잡는다.

@@ -7,15 +7,46 @@
         "ticket_id": "T-1002",
         "status": "처리 중",
         "note": "합성 처리 메모",
-        "contact": { "phone": "TEST_PHONE", "email": "TEST_EMAIL" }
+        "contact": {
+          "phone": "TEST_PHONE",
+          "email": "TEST_EMAIL"
+        }
       }
     },
     "other_forbidden": {
       "status": 403,
-      "body": { "error": "forbidden", "contact": "SHOULD_NOT_LEAK" }
+      "body": {
+        "error": "forbidden",
+        "contact": "SHOULD_NOT_LEAK"
+      }
     },
-    "not_found": { "status": 404, "body": { "error": "not_found" } },
-    "unavailable": { "status": 503, "body": { "error": "unavailable" } },
-    "timeout": { "status": 0, "transport_error": "timeout" }
+    "not_found": {
+      "status": 404,
+      "body": {
+        "error": "not_found"
+      }
+    },
+    "unavailable": {
+      "status": 503,
+      "body": {
+        "error": "unavailable"
+      }
+    },
+    "timeout": {
+      "status": 0,
+      "transport_error": "timeout"
+    },
+    "own_landline": {
+      "status": 200,
+      "body": {
+        "ticket_id": "T-1002",
+        "status": "처리 중",
+        "note": "문의 전화 02-0000-0000",
+        "contact": {
+          "phone": "TEST_PHONE",
+          "email": "TEST_EMAIL"
+        }
+      }
+    }
   }
 }

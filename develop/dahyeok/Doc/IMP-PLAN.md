@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-2의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-08.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-3 이후 단계는 구현 예정이다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-2의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-09.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-3 이후 단계는 구현 예정이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -68,6 +68,12 @@
 - 확인: `python3 tools/retrieval_check.py workflows/oke-support-08.json cases/support-verification.json --node-container day65-n8n-n8n-1`에서 합성 성공, 점수 미달, 검색 빈 결과/장애, 잘린 writer/verifier JSON, 문자열 불리언, 위조 출처, 근거 없는 티켓 사용, verifier 실패/중단, 질문·답변의 합성 연락처 가림, P0 입력·차단·보완 회귀 등 20/20이 로컬 Code 시뮬레이션과 일치했다. 이전 `07`의 P1-1 사례 21/21과 P0-3 로컬 구조 검사도 재통과했다.
 - 미확인: 실제 C03 근거·품질 측정, 실제 writer/verifier Agent 출력과 Credential, 공식 80일차 `flow.py`, 프로젝트 n8n 실행과 실제 자동 답변의 정확성. Mock 20/20을 공통 WF 시험이나 실제 품질 통과로 표시하지 않는다.
 
+### P1-2 교차 검증 보완 · 2026-11-05
+
+- `oke-support-08.json`을 보존하고 `oke-support-09.json`을 만들었다. 티켓 ID를 포함한 문의에서 조회가 404 또는 장애이면 검색 근거가 있어도 자동 답변을 막고 이관한다. 403 권한 없음 판정은 우선 유지한다. 현재는 상태가 부가적인 문의도 보수적으로 이관한다. 상태 중요도 세분화는 실제 답변 검증 시 다룬다.
+- 전화번호 가림을 010 이외의 일반전화·지역번호·`+82` 형식까지 확장했다. 질문·context, 검색 근거, 조회 메모, writer 초안, 최종 응답에 같은 형식을 적용한다. 합성 번호 네 형식의 직접 출력 필터 검사에서 가림 4건을 확인했다.
+- `cases/support-review-fixes.json` 9/9, 기존 P1-2 `cases/support-verification.json` 20/20 로컬 Mock 통과. 이전 P1-1 `07`의 21건 기대 중 검색 근거가 있으면 항상 이관한다는 두 사례는 P1-2 자동 답변 분기와 의도적으로 다르므로 최신 `09` 전체 회귀 기대값으로 사용하지 않았다. 실제 n8n·API 시험은 미실행이다.
+
 P2 선택 고도화는 필수 P1-5 완료 뒤 [TODO](TODO.md)의 후순위를 따른다.
 
 P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아니다. P1까지도 Mock 결과와 실제 서비스 결과를 별도 열로 기록한다. 새 정책 승인이 필요한 adapter를 제외한 Agent/검색/이관/출력 작업은 계속 진행한다.
@@ -88,7 +94,7 @@ python3 -m json.tool workflows/oke-support-02.json > /dev/null
 현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. P1-1~P1-2 번호판은 `tools/retrieval_check.py`로 검사한다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support-08.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-09.json
 ```
 
 연결 검토 항목:
@@ -112,7 +118,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support-08.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support-08.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-09.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

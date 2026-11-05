@@ -22,6 +22,9 @@
     "down": {
       "output": "",
       "error": "llm_down"
+    },
+    "landline_contact": {
+      "output": "{\"answer\": \"문의 전화는 02-0000-0000 또는 +82 10 0000 0000입니다.\", \"used_sources\": [{\"doc\": \"remote-work-vpn\", \"section\": \"접속 오류\"}], \"used_ticket\": false}"
     }
   }
 }

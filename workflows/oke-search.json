@@ -96,7 +96,7 @@
       ],
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.SEARCH_SERVICE_URL }}",
+        "url": "={{ $env.SEARCH_SERVICE_URL || \"http://127.0.0.1:8765/search\" }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,

@@ -1,5 +1,7 @@
 # 원민님 · IMP-PLAN
 
+현재 본체 연결 근거(2026-11-05): [C04→C05 app 13개 그룹](C04-APP-INTEGRATION-RESULT.md). 실제 로컬 LLM·C04 HTTP·app FastAPI/PG를 연결했고 직원 신원은 별도 계약 fixture다. 긴급 JSON 출력 실패→시험 사본 설정 보완→동일 조건 통과를 기록했다. 본체의 실제 신원 제공자·검색/기존 티켓·공식 평가/팀 VM까지 완료한 결과는 아니다.
+
 현재 P1-3 app 실행(2026-11-05): [실제 오류 수습 결과](ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 Error Trigger 5조건·전체10그룹을 확인했다. 별도 app 사본에서 수행했으며 업무 부모의 운영 모드/연결을 바꾸지 않았다. 다음은 본체 C04 전체 app 연결이다.
 
 현재 실행 근거(2026-11-05): [ec6a735 C05 실제 app 연동](C05-APP-INTEGRATION-RESULT.md). 로컬 Ubuntu에서 실제 n8n·backend·PG 15개 시험 그룹을 통과했다. 전용 app DB의 직원 fixture로 수행했으며, 아래 초기 계획의 미실행 표기는 당시 기록이다. 공식 키트·실제 data-api·본체 전체/팀 VM 및 Error Trigger app 저장 전체 재시험은 별도다.

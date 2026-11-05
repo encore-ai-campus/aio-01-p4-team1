@@ -1,5 +1,7 @@
 # 원민님 · TODO
 
+현재 C04→C05(2026-11-05): [직원 fixture·실제 로컬 LLM·실제 C05 저장 13개 그룹](C04-APP-INTEGRATION-RESULT.md). 정상·긴급·중복·부분/전체 실패·동시2회 확인. 기존 본체의 실제 data-api 미설정 차단과 긴급 JSON 형식 실패를 별도 기록했다. 시험 사본만 JSON 모드를 보완했으며 실제 신원/기존 티켓·C03·팀 VM/공식 평가는 미완료다.
+
 현재 오류 수습(2026-11-05): [실제 app Error Trigger 결과](ERRORS-APP-INTEGRATION-RESULT.md). 자동 발화 5조건과 별도 메타데이터/재진입 probe 등 10개 그룹 통과. 실제 app 알림/DLQ 수습 재시험은 완료했다. 팀 본체 전체·실제 data-api·공통/공식 키트·팀 VM 검증은 남아 있다.
 
 현재 C05 상태(2026-11-05): [ec6a735 실제 app 연결 15개 그룹 통과](C05-APP-INTEGRATION-RESULT.md). 티켓/알림 순차·동시8회·권한 거절, 키 없음/null, DLQ200, 부분 실패·복구 및 PG 재시작 영속성을 확인했다. 전용 app DB/직원 fixture 범위이며 아래 1902a2b/501 기록은 과거 상태다. 본체 C04 전체 연결·실제 data-api·팀 VM·공식 키트는 남아 있다.
@@ -15,7 +17,8 @@
 - [x] 오류 시험 부모 정상 코드/인증 복원·게시 해제 및 일반 경로 복구
 - [x] 지혜 ec6a735 실제 C05 API→DB 저장·키 인증·중복·순차/동시·영속성 확인 (로컬 Ubuntu 전용 app DB/직원 fixture, 15개 그룹)
 - [x] Error Trigger 실제 app 알림/DLQ 저장·부분/전체 실패·복구 및 재진입·중복 ACK 확인 (로컬 Ubuntu 전용 DB)
-- [ ] 실제 data-api 직원/권한·본체 C04 전체 app 연결·팀 VM 시험
+- [x] 본체 C04→handoff→실제 C05 app 연결 시험 (직원 fixture·실제 로컬 LLM, 13개 그룹)
+- [ ] 실제 data-api 직원/권한·기존 업무 본체 연결·WF12 본인 기존 티켓·C03·팀 VM 시험
 - [ ] 다혁님 본체의 실제 C04/업무 LLM 연결·공식 키트·LLM3회·공용 VM 회귀
 
 읽는 순서: [README](../README.md) → 이 문서 → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md). 변경 제안은 [HANDOFF](HANDOFF.md)에만 기록한다.

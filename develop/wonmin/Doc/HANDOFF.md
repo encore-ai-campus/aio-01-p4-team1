@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+다혁님 C04 실제 app 연결(2026-11-05): [원인·13개 그룹·남은 연결](C04-APP-INTEGRATION-RESULT.md). 최신origin/feat/dahyeok-p0=bb2fa1f의 Git 원본으로 시험했고 C04 요청/매핑/B안·실제 C05 저장이 적합했다(직원 fixture, 실제 로컬 qwen). 최초긴급 실행103은 JSON 코드블록 출력→triage_invalid→normal 저장으로 실패했다. 시험 사본 N06 모델 responseFormat=json_object 후 실행111→112의 T-2012/high·사내망 안내·sources=[] 및 전체13그룹 통과. 다혁님 실제 배포 모델 설정 검토/재시험 요청, 정본/기존 workflow는 미수정이다. 지혜/오현님 실제 data-api 주소·키/기존 티켓 권한이 없어 원래 본체는 identity_unavailable로 남는다. 유빈님 C03=503도 확인해 실제 검색·WF12 기존 티켓·팀 VM/공식 평가와 구별한다. 이번 공유는 HANDOFF 기록이며 외부 전송/상대 확인 완료가 아니다.
+
 원민 P1-3 실제 app 수습(2026-11-05): [10개 시험 그룹 결과](ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 부모/처리기82→83,84→85,86→87,88→89,90→91에서 정상·알림 실패·DLQ 실패·전체 실패·복구 확인. 신규/중복 알림 ACK·DLQ200과 실제 PG 행을 대조했고 키/오류 원문 미저장 확인. 정본/상대 코드는 수정하지 않았고 기존 workflow 설정·게시 상태는 보존했다. 임시 부모/probe 비활성화·throw 제거·프록시 복구 완료. 지혜님 API 변경 요청 없음, 오현님 공통 C05 문서 반영은 이전 요청 유지. 다음 연결은 다혁님 본체 C04→handoff→C05 전체 app 시험이다. 상대 확인이나 팀 VM 완료로 처리하지 않는다.
 
 지혜 ec6a735 후속 연결(2026-11-05): [원민 workflow→실제 app 저장 결과](C05-APP-INTEGRATION-RESULT.md). 15개 시험 그룹 통과: 신규/중복·동시8회 티켓/알림 각1건, event_key 없음/null 매번 신규, DLQ200, 부분 실패 시 티켓 유지·독립 sink, PG 재시작 보존. 전용 DB/직원 fixture이며 실제 data-api/팀 VM은 미확인이다. 지혜님께 테스트 Settings의 internal_api_key=None 명시(환경키 상속 시 1개 실패; pytest 자식만 키 제거 후222통과)를 제안한다. 오현님께 origin/main41644de의 C05 예시에 duplicate·DLQ200 명시 후속 커밋을 요청한다(최근 해당 파일 변경 db14b79). 상대 확인/공통 반영 완료로 처리하지 않는다. 아래 501 기록은 과거 결과다.

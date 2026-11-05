@@ -1,26 +1,48 @@
 # Unified VM deployment
 
-`compose.vm.yaml` joins the existing n8n/runners/sandbox services, pgvector PostgreSQL, the course-provided data-api, FastAPI, Next.js frontend, and RAG HTTP services on the existing `day65-n8n_default` network. It deliberately references the existing named volumes for n8n, PostgreSQL, sandbox TLS/DinD, and SearXNG as external volumes. It does not recreate their contents.
+`compose.vm.yaml` runs the team stack as Compose project `oke`. It keeps the existing service DNS names (`n8n`, `backend`, `frontend`, `postgres`, `data-api`, `rag-search`) and reuses the existing `day65-n8n_default` network. Reusing the established network preserves the current VM ingress and other attached peers; this task does not change ingress or publish new ports.
 
-Run from the repository root on the VM, after making and validating the private backups recorded in `UNIFIED-VM-TONIGHT.md`:
+The three critical data volumes are external and retain their exact existing names: `day65-n8n_n8n-data`, `oke-jihye-p0_postgres_data`, and `day65-n8n_sandbox-tls`; sandbox DinD uses its existing external volume ID. The Compose file also retains the existing SearXNG volumes. Never run `down -v`, volume prune, or delete old containers/backups as part of a project rename.
+
+## Standard deployment
+
+From the repository root on the VM, use the existing private environment files and explicitly set the app mode. The deploy helper performs this same sequence. The operator command is `python3 deploy.py deploy` from the private `vm_deploy` folder on the Mac. It fast-forwards VM `main`, validates Compose, builds the three `oke-team-*` images while the old project is available, stops old containers without removing them, then starts project `oke` and checks local readiness. PostgreSQL and n8n never share their volumes concurrently.
 
 ```sh
-docker compose \
+SERVICE_MODE=app docker compose \
   --env-file /home/toor/n8n/day65-n8n/.env \
   --env-file develop/jihye/deploy/.env \
-  -f deploy/compose.vm.yaml -p day65-n8n config --quiet
-docker compose \
+  -f deploy/compose.vm.yaml -p oke config --quiet
+SERVICE_MODE=app docker compose \
   --env-file /home/toor/n8n/day65-n8n/.env \
   --env-file develop/jihye/deploy/.env \
-  -f deploy/compose.vm.yaml -p day65-n8n up -d --build
+  -f deploy/compose.vm.yaml -p oke up -d --build
 ```
 
-The VM-local `develop/jihye/deploy/.env.backend` supplies runtime-only FastAPI settings. `develop/yubeen/search.env` supplies RAG service credentials. These files are private, ignored, and never committed. The RAG indexer uses the `indexing` profile and must remain off until the approved source documents, their hashes, permission manifest, and scoped DB/OpenAI settings are all present. Search returns an unavailable response until its own runtime dependencies are configured.
+The private n8n environment file, backend environment file, and RAG `search.env`/`index.env` remain at their established VM paths and are not committed. The n8n encryption key, user database, credentials, workflow history, PostgreSQL data, and app/RAG records are preserved in the existing external volumes. The backend uses the dedicated application LOGIN, never the PostgreSQL superuser.
 
-Use `SERVICE_MODE=app` explicitly for the shared VM integration run so n8n, runners, and backend select the same app DB path. The employees/docs source is the existing read-only internal service `http://data-api:8800`. Its observed unauthenticated contract is enabled only by the explicit `DATA_API_EMPLOYEES_NO_AUTH=true` CLI setting, fixed to that service origin; do not invent a key/header. Search and indexing use separate `oke_rag_search` and `oke_rag_index` group roles through distinct LOGIN credentials. `develop/yubeen/.env.openai` supplies the existing n8n OpenAI credential key to both RAG processes without putting it in workflow JSON or logs. `search.env` and `index.env` carry separate DB URLs and X-Team-Key values; all three VM env files are mode 600 and Git-ignored. The indexer mounts the original course `data-api/data/docs` directory read-only and checks `rag-permissions.json` hashes before any embedding call.
+## Optional services
 
-The compose file does not configure the external HTTPS reverse proxy. Before team use, route the existing `https://aio-t1.isitsoft.kr/` ingress to the FE without publishing additional ports; test the HTTPS URL itself. `:3000` binding alone is not proof of external reachability.
+SearXNG is excluded from the default service set and retained for recoverable manual use with `--profile optional-search`. No OKE workflow currently references it; C03 search uses `rag-search`, and safe handoff uses the app backend. The RAG index service remains off by default under the `indexing` profile. Start it only for an approved indexing run:
 
-The data-api remains a read-only input source at its existing course-provided bind mount. Its data directory and `server.py` must not be removed, copied into the repository, or modified as part of deployment. The database URL for FastAPI must use the dedicated application LOGIN granted `oke_app`; do not pass the PostgreSQL superuser URL to backend or RAG containers. Keep `SERVICE_MODE` explicit and do not claim app persistence while backend runtime settings or service checks are incomplete.
+```sh
+SERVICE_MODE=app docker compose --env-file /home/toor/n8n/day65-n8n/.env \
+  --env-file develop/jihye/deploy/.env -f deploy/compose.vm.yaml -p oke \
+  --profile indexing up -d rag-index
+```
 
-The frontend listens on port 3000 and proxies `/api/*` server-side to `backend:8000`. PostgreSQL remains loopback-only on 5432; backend remains loopback-only on 8000; n8n keeps its existing 5678 port. Do not run `down -v`, `volume prune`, or delete the course source directory.
+After indexing, stop that service without removing it: `docker compose ... --profile indexing stop rag-index`. Search remains continuously available at the internal `rag-search` service DNS. The indexer reads the existing course documents read-only and checks the committed permission/hash manifest.
+
+## Rollback
+
+Never run old and new Compose projects simultaneously: they intentionally reference the same n8n and PostgreSQL volumes and host ports. If target readiness fails, first stop project `oke`, then restart the retained old containers in dependency order. SearXNG and RAG index remain stopped as directed.
+
+```sh
+docker compose --env-file /home/toor/n8n/day65-n8n/.env --env-file develop/jihye/deploy/.env \
+  -f deploy/compose.vm.yaml -p oke stop
+docker start day65-n8n-postgres-1 day65-n8n-data-api-1 day65-n8n-sandbox-api-1
+docker start day65-n8n-sandbox-runner-1-1 day65-n8n-backend-1 day65-n8n-rag-search-1 day65-n8n-frontend-1
+docker start day65-n8n-n8n-1 day65-n8n-runners-1
+```
+
+This starts the existing containers with their original image IDs and mount bindings; it does not recreate or delete them. Verify n8n `:5678/healthz`, backend health, and PostgreSQL before considering rollback complete. The existing external HTTPS ingress is unchanged. A working local port binding alone does not prove external FE access; prior external FE 502/3000 timeout remains a separate ingress issue.

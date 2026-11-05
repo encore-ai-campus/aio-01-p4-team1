@@ -1,4 +1,4 @@
-name: day65-n8n
+name: oke
 
 services:
   sandbox-certs:
@@ -76,7 +76,7 @@ services:
     environment:
       N8N_BLOCK_ENV_ACCESS_IN_NODE: 'false'
       N8N_PROXY_HOPS: '1'
-      SERVICE_MODE: ${SERVICE_MODE:-practice}
+      SERVICE_MODE: ${SERVICE_MODE:-app}
       DATA_API_URL: http://data-api:8800
       SEARCH_SERVICE_URL: http://rag-search:8765/webhook/oke-search
       INDEX_SERVICE_URL: http://rag-index:8766/internal/oke-index
@@ -95,10 +95,11 @@ services:
     environment:
       N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
       N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: '15'
-      SERVICE_MODE: ${SERVICE_MODE:-practice}
+      SERVICE_MODE: ${SERVICE_MODE:-app}
     restart: unless-stopped
     networks: [internal]
   searxng:
+    profiles: [optional-search]
     image: ghcr.io/searxng/searxng:latest
     env_file:
       - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
@@ -151,7 +152,7 @@ services:
       - path: ${BACKEND_ENV_FILE:-../develop/jihye/deploy/.env.backend}
         required: false
     environment:
-      SERVICE_MODE: ${SERVICE_MODE:-practice}
+      SERVICE_MODE: ${SERVICE_MODE:-app}
       DATA_API_URL: http://data-api:8800
     ports:
       - '127.0.0.1:8000:8000'
@@ -247,6 +248,7 @@ services:
 networks:
   internal:
     external: true
+    # Keep the established network so existing VM ingress and service peers remain attached.
     name: day65-n8n_default
 
 volumes:

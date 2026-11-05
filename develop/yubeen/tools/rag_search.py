@@ -1,7 +1,7 @@
 """C03 adapter boundary. No driver, connection factory, credentials or HTTP calls.
 
 Caller owns authentication/input validation and the supplied DB connection.
-IT access requires a caller-owned, independently verified authorization decision.
+The authenticated HTTP caller owns the employee authorization decision.
 """
 import math
 import json
@@ -123,15 +123,13 @@ class PgvectorSearchAdapter:
         ])
 
 
-def search_with_adapters(query, access_levels, top_k, embedder, repository, *, trusted_access=False):
+def search_with_adapters(query, access_levels, top_k, embedder, repository):
     """Provider protocol reuses Index: (text, model, dimensions)->{model,embedding}.
 
     Test with injected fakes; no fallback and no employee privilege inference.
     """
     if not valid_levels(access_levels) or type(top_k) is not int or top_k != 3:
         return unavailable()  # Internal boundary failure, not final input/auth HTTP policy.
-    if access_levels == ['all', 'it'] and not trusted_access:
-        return forbidden()
     if not valid_query(query):
         return unavailable()
     try:
@@ -144,7 +142,7 @@ def search_with_adapters(query, access_levels, top_k, embedder, repository, *, t
 
 
 def dispatch(query, access_levels, top_k=3, *, mode=None, adapter_enabled=False,
-             embedder=None, repository=None, mock_search=None, trusted_access=False):
+             embedder=None, repository=None, mock_search=None):
     """Mode is server-owned configuration, never a request field.
 
     Mock is available only when explicitly selected and provided by the caller.
@@ -152,8 +150,6 @@ def dispatch(query, access_levels, top_k=3, *, mode=None, adapter_enabled=False,
     """
     if not valid_levels(access_levels) or type(top_k) is not int or top_k != 3:
         return unavailable()
-    if access_levels == ['all', 'it'] and not trusted_access:
-        return forbidden()
     if not valid_query(query):
         return unavailable()
     if mode == 'mock' and mock_search is not None:
@@ -162,6 +158,5 @@ def dispatch(query, access_levels, top_k=3, *, mode=None, adapter_enabled=False,
         except Exception:
             return unavailable()
     if mode == 'adapter' and adapter_enabled and embedder is not None and repository is not None:
-        return search_with_adapters(query, access_levels, top_k, embedder, repository,
-                                    trusted_access=trusted_access)
+        return search_with_adapters(query, access_levels, top_k, embedder, repository)
     return unavailable()

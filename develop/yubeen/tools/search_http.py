@@ -1,11 +1,11 @@
-"""Standalone C03 HTTP entry point; IT needs an independent trusted resolver."""
+"""Standalone C03 HTTP entry point for authenticated support requests."""
 import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hmac
 import json
 import os
 
-from rag_search import OpenAIEmbeddingProvider, PgvectorSearchAdapter, search_with_adapters, unavailable, forbidden, valid_levels
+from rag_search import OpenAIEmbeddingProvider, PgvectorSearchAdapter, search_with_adapters, unavailable, valid_levels
 
 
 def validate_request(body):
@@ -18,9 +18,9 @@ def validate_request(body):
             and body['top_k'] == 3)
 
 
-def live_search(body, trusted_access=False):
-    if body.get('access_levels') == ['all', 'it'] and not trusted_access:
-        return forbidden()
+def live_search(body):
+    if not validate_request(body):
+        return unavailable()
     dsn = os.environ.get('DATABASE_URL')
     if not dsn or not os.environ.get('OPENAI_API_KEY'):
         return unavailable()
@@ -31,17 +31,13 @@ def live_search(body, trusted_access=False):
                              autocommit=True) as connection:
             return search_with_adapters(body['query'], body['access_levels'], 3,
                                         OpenAIEmbeddingProvider(timeout=3),
-                                        PgvectorSearchAdapter(connection), trusted_access=trusted_access)
+                                        PgvectorSearchAdapter(connection))
     except Exception:
         return unavailable()
 
 
-def make_handler(search=live_search, *, trusted_access_resolver=None):
-    """Resolver is server-owned and must verify employee identity independently.
-
-    No production resolver is configured yet. Never derive its result from body,
-    role/is_admin fields, X-Team-Key, or an unverified HTTP header.
-    """
+def make_handler(search=live_search):
+    """Accept the support-owned access list only after X-Team-Key authentication."""
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_):
             pass  # Never log URLs, credentials, or question text.
@@ -70,18 +66,9 @@ def make_handler(search=live_search, *, trusted_access_resolver=None):
                 return self.send_json(400, {'ok': False, 'evidence': [], 'reason': 'invalid_request'})
             if not validate_request(body):
                 return self.send_json(400, {'ok': False, 'evidence': [], 'reason': 'invalid_request'})
-            trusted = False
-            if body['access_levels'] == ['all', 'it']:
-                try:
-                    trusted = (trusted_access_resolver is not None
-                               and trusted_access_resolver(body['request_id']) == ['all', 'it'])
-                except Exception:
-                    trusted = False
-                if not trusted:
-                    return self.send_json(*forbidden())
             try:
-                status, result = search(body, trusted)
-                if status not in (200, 403, 503):
+                status, result = search(body)
+                if status not in (200, 503):
                     raise ValueError()
             except Exception:
                 status, result = unavailable()

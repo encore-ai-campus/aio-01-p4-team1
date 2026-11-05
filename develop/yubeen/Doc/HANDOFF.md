@@ -157,3 +157,9 @@
 변경 전에는 Python 어댑터가 `all,it`를 503/search_unavailable로 반환했고 HTTP 입구는 400/invalid_request로 막았다. 변경 후 형식상 `all,it`는 허용하되 검증 실패는 403/forbidden이다. 400/invalid_request는 필드·목록 형식 오류, 401/unauthorized는 키 누락·불일치, 503/search_unavailable은 임베딩/DB 장애다. 정상/빈 후보는 기존 200 C03 형식을 유지한다. n8n Code 정규화는 하위 400/401/403을 같은 코드로 전달하며 503은 안전한 공통 장애로 반환한다. n8n Webhook 자체의 Header Auth 401 본문은 n8n 실제 버전에서 확인해야 하며 이 변경이 그 본문을 통제한다고 주장하지 않는다.
 
 현재 공식 `oke-search.json`은 비활성이다. 본체 호출 주소 `http://n8n:5678/webhook/oke-search`는 팀 내부 네트워크 계약이며 실제 VM 도달성·Credential·본체 직원 검증·pgvector 결과는 미검증이다. 오현님은 공통 API-CONTRACT 3절에 403/forbidden과 신뢰 경계, 400/401 세부 오류를 반영해야 한다. H-Y01의 옛 `invalid_input` 제안과 현재 `invalid_request` 구현 차이도 정리할 필요가 있다. 원민님은 일반/IT 양성·위조·권한 실패와 하위 503을 분리해 시험해야 한다. 상대 동의·공통 반영·실제 서비스 연결은 기록되지 않았다.
+
+## C03 승인 계약 반영 · 2026-11-05
+
+팀장 승인 계약에 따라 X-Team-Key 인증을 통과한 본체 요청의 `access_levels`를 신뢰한다. `["all"]`과 `["all","it"]`만 허용하며 다른 조합은 400, 키 누락·불일치는 401이다. 독립 `trusted_access_resolver`가 없다는 이유로 IT 요청을 403 처리하던 위 C03 기록은 이전 상태 설명이다. 본체의 직원 부서 조회와 권한 생성 책임은 유지된다. 검색 서비스에 직접 접근 가능한 클라이언트가 팀 키를 얻으면 IT 목록을 요청할 수 있으므로 키와 내부 서비스 접근 통제는 배포 시 확인해야 한다. 실제 DB·n8n·VM 검증은 별도다.
+
+로컬 검증: Python `unittest discover -s tests -q` 190개 통과, JavaScript `node --test tests/*.test.cjs` 3개 통과, `git diff --check` 통과. 인증 키 누락·불일치 401, 잘못된 권한 400, 일반/IT 증거 분리, 정상·빈 결과·503은 Fake HTTP/어댑터 테스트로 확인했다. PostgreSQL 실제 데이터, n8n push/test, 팀 VM은 이번 변경에서 실행하지 않았다.

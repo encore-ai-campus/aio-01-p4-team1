@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+현재 P1-3 실제 app 수습: [자동 Error Trigger·HTTP·SQL 10그룹](errors-app-integration-20261105T102508Z.json), [실제 신규/중복·DLQ ACK와 throw 제거 확인](errors-app-acks-20261105.json), [관련 Node24개](errors-app-regression-20261105.json), [범위·재현·다음 업무](../Doc/ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 발화는5조건이며 자기재진입·중복재처리·ID누락은별도인증probe다. 시험 DB 티켓8→8/알림13→17/DLQ4→9, 기본DB0→0. 기존workflow보존·시험웹훅404·프록시정상복구. 아래 과거미실행/501기록과구별한다.
+
 현재 C05 실제 app 연동: [15개 그룹의 HTTP·SQL 증거](c05-app-integration-20261105T095248Z.json), [종료 후 게시·건강·복구 상태](c05-app-final-state-20261105.json), [회귀97/8 집계](c05-app-regression-20261105.json), [결과·재현·후속 전달](../Doc/C05-APP-INTEGRATION-RESULT.md). 지혜ec6a735/DB0005에서 티켓·알림 동시8회 각1건, 부분 실패와 PG 재시작(티켓8/알림13/DLQ4) 보존을 확인했다. [전체backend 최초221통과/1실패](jihye-ec6a735-full-20261105T094636Z.json)와 [시험 자식 환경 격리 후222통과/경고1](jihye-ec6a735-isolated-tests-20261105T094954Z.json)를 함께 보존한다. 전용 DB의 합성 직원 fixture를 사용했고 실제 data-api/팀 VM은 미시험이다. 기존 아래 501 기록은 당시 상태다.
 
 WF-12 최신 결정 보완: [합성 Code·회귀 집계](wf12-alignment-20261105T074522Z.json), [실제 n8n 코드 갱신·보존](wf12-n8n-update-20261105T074133Z.json), [결과/범위](../Doc/WF12-ALIGNMENT-RESULT.md). TM-05 기대 수정·b975286 pin/Git blob 일치, Node97/Python3 및 다혁 adapter12/retrieval9 통과. 실제 WF-12 전체 HTTP·티켓/알림 ACK와 공식 flow.py는 미실행이다.

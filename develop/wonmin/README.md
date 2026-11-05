@@ -1,5 +1,7 @@
 # 원민님 · 이관·오류 수습·시험
 
+현재 오류 수습(2026-11-05): [oke-errors 실제 app 저장 결과](Doc/ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 Error Trigger 5조건 포함 10개 시험 그룹·관련 Node24개 통과. 알림/DLQ 독립 저장·부분/전체 실패·복구, 중복 ACK와 재진입 차단을 확인했다. 임시 부모/probe는 게시 해제하고 프록시를 복구했다. 다음은 본체 C04→handoff→C05 전체 app 연결이다.
+
 현재 C05 상태(2026-11-05): [지혜 ec6a735 실제 app 연동 결과](Doc/C05-APP-INTEGRATION-RESULT.md). 실제 n8n→FastAPI→PostgreSQL 15개 시험 그룹 통과. 신규/중복·동시8회·부분 실패·PG 재시작 보존을 확인했다. [n8n app 시험 workflow](http://127.0.0.1:15678/workflow/wmc05livecf8ca714f5)는 게시 중이다. 전용 DB/직원 fixture 기준이며 원래 practice 설정·기본 DB는 유지했다. 아래 501/미실행 기록은 과거 시점이다. 팀 VM·실제 data-api·공식 키트·본체 전체 연결은 별도 확인이 필요하다.
 
 다혁 요청 보완(2026-11-05): [WF-12 기대·배포 출처 정합성 수정](Doc/WF12-ALIGNMENT-RESULT.md). 공통/원민 TM-05의 sources=[]·색인 조건을 맞추고 b975286의 Git 원본을 배포하도록 수정했다. 로컬 n8n N22 갱신 및 Credential/모델 보존 확인, Node97·Python3 통과. 실제 전체 WF-12 HTTP·저장 ACK는 미실행이다.

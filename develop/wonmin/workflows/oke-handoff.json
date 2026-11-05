@@ -3,7 +3,7 @@
   "active": false,
   "nodes": [
     {
-      "id": "H01-0",
+      "id": "handoff-0",
       "name": "H01 Handoff Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -26,12 +26,12 @@
       }
     },
     {
-      "id": "H02-1",
+      "id": "handoff-1",
       "name": "H02 Validate and Map",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        180,
+        160,
         300
       ],
       "parameters": {
@@ -39,12 +39,12 @@
       }
     },
     {
-      "id": "H02a-2",
+      "id": "handoff-2",
       "name": "H02a Valid Input",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        360,
+        320,
         300
       ],
       "parameters": {
@@ -73,25 +73,25 @@
       }
     },
     {
-      "id": "H03-3",
+      "id": "handoff-3",
       "name": "H03 Select Store",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        540,
+        480,
         300
       ],
       "parameters": {
-        "jsCode": "const input = $input.first().json;\nconst unavailable = () => [{ json: { ready: false, http_status: 503, response:\n  { ok: false, ticket: null, reason: 'tickets_down', alerted: false, dlq: false } } }];\ntry {\n  const mode = $env.SERVICE_MODE;\n  if (!['practice', 'app'].includes(mode)) return unavailable();\n  const value = mode === 'app' ? ($env.WONMIN_APP_STORE_URL || 'http://backend:8000')\n    : ($env.WONMIN_PRACTICE_STORE_URL || 'http://data-api:8800');\n  // Origin-only deployment setting, parsed without external modules or sandbox URL globals.\n  const match = typeof value === 'string' && /^(https?:\\/\\/[a-zA-Z0-9.-]+)(?::([0-9]{1,5}))?\\/?$/.exec(value);\n  if (!match || (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 65535))) return unavailable();\n  const base_url = match[1] + (match[2] ? ':' + match[2] : '');\n  return [{ json: { ...input, ready: true, mode, base_url } }];\n} catch { return unavailable(); }"
+        "jsCode": "const input = $input.first().json;\nconst unavailable = () => [{ json: { ready: false, http_status: 503, response:\n  { ok: false, ticket: null, reason: 'tickets_down', alerted: false, dlq: false } } }];\ntry {\n  const mode = $env.SERVICE_MODE;\n  if (!['practice', 'app'].includes(mode)) return unavailable();\n  const value = mode === 'app' ? ($env.WONMIN_APP_STORE_URL || 'http://backend:8000')\n    : ($env.WONMIN_PRACTICE_STORE_URL || 'http://data-api:8800');\n  // Origin-only deployment setting, parsed without external modules or sandbox URL globals.\n  const match = typeof value === 'string' && /^(https?:\\/\\/[a-zA-Z0-9.-]+)(?::([0-9]{1,5}))?\\/?$/.exec(value);\n  if (!match || (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 65535))) return unavailable();\n  const base_url = match[1] + (match[2] ? ':' + match[2] : '');\n  const retry_wait_ms = Number($env.WONMIN_RETRY_WAIT_MS ?? 200);\n  const budget_ms = Number($env.WONMIN_HANDOFF_BUDGET_MS ?? 4000);\n  if (!Number.isInteger(retry_wait_ms) || retry_wait_ms < 0 || retry_wait_ms > 200\n    || !Number.isInteger(budget_ms) || budget_ms < 1500 || budget_ms > 4000) return unavailable();\n  return [{ json: { ...input, ready: true, mode, base_url, retry_wait_ms, deadline_at: Date.now() + budget_ms } }];\n} catch { return unavailable(); }"
       }
     },
     {
-      "id": "H03a-4",
+      "id": "handoff-4",
       "name": "H03a Store Ready",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        720,
+        640,
         300
       ],
       "parameters": {
@@ -120,12 +120,12 @@
       }
     },
     {
-      "id": "H03b-5",
+      "id": "handoff-5",
       "name": "H03b App Ticket Store",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        900,
+        800,
         300
       ],
       "parameters": {
@@ -154,12 +154,12 @@
       }
     },
     {
-      "id": "H04-6",
+      "id": "handoff-6",
       "name": "H04 Create Ticket Practice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1080,
+        960,
         300
       ],
       "parameters": {
@@ -196,12 +196,12 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "H04-7",
+      "id": "handoff-7",
       "name": "H04 Create Ticket App",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1260,
+        1120,
         300
       ],
       "parameters": {
@@ -238,25 +238,25 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "H06-8",
-      "name": "H06 Keep Ticket",
+      "id": "handoff-8",
+      "name": "H05 Retry Gate",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1440,
+        1280,
         300
       ],
       "parameters": {
-        "jsCode": "const input = $('H03 Select Store').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst confirmed = b && typeof b.ticket_id === 'string' && /^T-\\d+$/.test(b.ticket_id)\n  && ((reply.statusCode === 201 && b.duplicate === false) || (reply.statusCode === 200 && b.duplicate === true));\nconst ticket = confirmed ? { ticket_id: b.ticket_id, priority: input.priority, duplicate: b.duplicate } : null;\nconst alert_payload = confirmed ? { workflow: 'oke-handoff', node: 'H06 Keep Ticket',\n  message: '담당자 이관 티켓이 접수되었습니다.', severity: input.priority === 'high' ? 'high' : 'normal',\n  ticket_id: b.ticket_id } : null;\nif (alert_payload && input.mode === 'app') alert_payload.event_key = input.request_id + ':ticket-created';\nreturn [{ json: { mode: input.mode, base_url: input.base_url, ticket, alert_payload } }];"
+        "jsCode": "const state = $('H03 Select Store').first().json;\nconst raw = $input.first().json;\nconst status = Number.isInteger(raw.statusCode) ? raw.statusCode : null;\nconst b = raw.body;\nconst ticketBody = b && typeof b.ticket_id === 'string' && /^T-\\d+$/.test(b.ticket_id)\n  && typeof b.duplicate === 'boolean' ? { ticket_id: b.ticket_id, duplicate: b.duplicate } : null;\nconst confirmed = ticketBody && ((status === 201 && !ticketBody.duplicate) || (status === 200 && ticketBody.duplicate));\nlet wait_ms = state.retry_wait_ms;\nlet retryable = !confirmed && (Boolean(raw.error) || (status >= 500 && status <= 599) || status === 429);\nif (status === 429) {\n  const header = raw.headers?.['retry-after'] ?? raw.headers?.['Retry-After'];\n  if (header !== undefined) {\n    if (typeof header !== 'string' || !header.trim()) retryable = false;\n    else {\n      const value = header.trim();\n      const dateFormat = /^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} GMT$/.test(value);\n      const parsed = /^\\d+$/.test(value) ? Number(value) * 1000 : dateFormat ? Date.parse(value) - Date.now() : NaN;\n      if (!Number.isFinite(parsed) || parsed > 200) retryable = false;\n      else wait_ms = Math.max(0, parsed);\n    }\n  }\n}\nconst will_retry = Boolean(retryable && Date.now() + wait_ms + 1000 + 1200 <= state.deadline_at);\n// Retain only a validated response projection. Never retain error bodies, headers or stack.\nreturn [{ json: { ...state, will_retry, wait_ms, first_reply: { statusCode: status, body: ticketBody } } }];"
       }
     },
     {
-      "id": "H06a-9",
-      "name": "H06a Ticket Confirmed",
+      "id": "handoff-9",
+      "name": "H05a Retry Allowed",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1620,
+        1440,
         300
       ],
       "parameters": {
@@ -269,8 +269,8 @@
           },
           "conditions": [
             {
-              "id": "H06a",
-              "leftValue": "={{ $json.ticket !== null }}",
+              "id": "H05a",
+              "leftValue": "={{ $json.will_retry }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",
@@ -285,12 +285,231 @@
       }
     },
     {
-      "id": "H08a-10",
+      "id": "handoff-10",
+      "name": "H05 Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        300
+      ],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": "={{ $json.wait_ms / 1000 }}",
+        "unit": "seconds"
+      }
+    },
+    {
+      "name": "H05 Recheck Budget",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const state = $input.first().json;\nreturn [{ json: { ...state, will_retry: Boolean(state.will_retry && Date.now() + 2200 <= state.deadline_at) } }];"
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "handoff-11"
+    },
+    {
+      "id": "handoff-12",
+      "name": "H05c Retry Still Allowed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H05a",
+              "leftValue": "={{ $json.will_retry }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "handoff-13",
+      "name": "H05b App Retry Store",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H05b",
+              "leftValue": "={{ $json.mode === 'app' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "handoff-14",
+      "name": "H04 Retry Ticket Practice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2240,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/tickets' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.ticket_payload) }}",
+        "options": {
+          "timeout": 1000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_PRACTICE_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "handoff-15",
+      "name": "H04 Retry Ticket App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/tickets' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.ticket_payload) }}",
+        "options": {
+          "timeout": 1000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_APP_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "handoff-16",
+      "name": "H05 Restore First Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        300
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: $input.first().json.first_reply }];"
+      }
+    },
+    {
+      "id": "handoff-17",
+      "name": "H06 Keep Ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const input = $('H03 Select Store').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst confirmed = b && typeof b.ticket_id === 'string' && /^T-\\d+$/.test(b.ticket_id)\n  && ((reply.statusCode === 201 && b.duplicate === false) || (reply.statusCode === 200 && b.duplicate === true));\nconst ticket = confirmed ? { ticket_id: b.ticket_id, priority: input.priority, duplicate: b.duplicate } : null;\nconst attempts = $('H05 Recheck Budget').first().json.will_retry ? 2 : 1;\nreturn [{ json: { request_id: input.request_id, priority: input.priority, mode: input.mode,\n  base_url: input.base_url, ticket, attempts,\n  last_status: Number.isInteger(reply.statusCode) ? reply.statusCode : null } }];"
+      }
+    },
+    {
+      "id": "handoff-18",
+      "name": "H07 Failure Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const state = $input.first().json;\nconst alert_payload = { workflow: 'oke-handoff', node: state.ticket ? 'H06 Keep Ticket' : 'H04 Create Ticket',\n  message: state.ticket ? '담당자 이관 티켓이 접수되었습니다.' : '티켓 저장 결과를 확인하지 못했습니다.',\n  severity: !state.ticket || state.priority === 'high' ? 'high' : 'normal' };\nif (state.ticket) alert_payload.ticket_id = state.ticket.ticket_id;\nif (state.mode === 'app') alert_payload.event_key = state.request_id + (state.ticket ? ':ticket-created' : ':tickets-down');\nreturn [{ json: { ...state, alert_payload, alerted: false, dlq: false } }];"
+      }
+    },
+    {
+      "id": "handoff-19",
       "name": "H08a App Alert Store",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1800,
+        3040,
         300
       ],
       "parameters": {
@@ -319,12 +538,12 @@
       }
     },
     {
-      "id": "H08-11",
+      "id": "handoff-20",
       "name": "H08 Store Alert Practice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1980,
+        3200,
         300
       ],
       "parameters": {
@@ -361,12 +580,12 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "H08-12",
+      "id": "handoff-21",
       "name": "H08 Store Alert App",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2160,
+        3360,
         300
       ],
       "parameters": {
@@ -403,25 +622,203 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "H10-13",
+      "id": "handoff-22",
+      "name": "H08 Check Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const state = $('H07 Failure Context').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst countValid = b && Number.isSafeInteger(b.count) && b.count >= 1;\nconst ack = countValid && ((b.stored === 1 && b.duplicate !== true)\n  || (state.mode === 'app' && b.stored === 0 && b.duplicate === true));\nconst alerted = Boolean(reply.statusCode === 200 && ack);\nconst need_dlq = !state.ticket || !alerted;\nconst safe_payload = { stage: state.ticket ? 'alert' : 'ticket', priority: state.priority, attempts: state.attempts };\nif (Number.isInteger(state.last_status)) safe_payload.last_status = state.last_status;\nif (state.ticket) safe_payload.ticket_id = state.ticket.ticket_id;\nconst dlq_payload = { request_id: state.request_id, workflow: 'oke-handoff',\n  node: state.ticket ? 'H08 Store Alert' : 'H04 Create Ticket',\n  reason: state.ticket ? 'alerts_down' : 'tickets_down', safe_payload };\n// Safe operational summary only. Recovery uses backend inquiry/ticket linkage; no automatic replay.\nreturn [{ json: { request_id: state.request_id, mode: state.mode, base_url: state.base_url,\n  ticket: state.ticket, alerted, dlq: false, need_dlq, dlq_payload } }];"
+      }
+    },
+    {
+      "id": "handoff-23",
+      "name": "H09a Needs DLQ",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3680,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H09a",
+              "leftValue": "={{ $json.need_dlq }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "handoff-24",
+      "name": "H09b App DLQ Store",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3840,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H09b",
+              "leftValue": "={{ $json.mode === 'app' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "handoff-25",
+      "name": "H09 Store DLQ Practice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4000,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/dlq' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.dlq_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_PRACTICE_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "handoff-26",
+      "name": "H09 Store DLQ App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4160,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/dlq' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.dlq_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_APP_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "handoff-27",
+      "name": "H09 Check DLQ",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const state = $('H08 Check Alert').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst dlq = Boolean(reply.statusCode === 200 && b && b.stored === 1\n  && Number.isSafeInteger(b.count) && b.count >= 1);\nreturn [{ json: { ticket: state.ticket, alerted: state.alerted, dlq } }];"
+      }
+    },
+    {
+      "id": "handoff-28",
       "name": "H10 Build Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2340,
+        4480,
         300
       ],
       "parameters": {
-        "jsCode": "const state = $('H06 Keep Ticket').first().json;\nconst reply = $input.first().json;\nconst b = reply.body;\nconst stored = b && Number.isSafeInteger(b.count) && b.count >= 1\n  && (b.stored === 1 || (state.mode === 'app' && b.stored === 0 && b.duplicate === true));\nconst alerted = Boolean(state.ticket && reply.statusCode === 200 && stored);\n// P1-1 only: no retry or DLQ yet. Partial-failure ok is conservatively false pending WM-04.\nreturn [{ json: { http_status: 200, response: { ok: Boolean(state.ticket && alerted), ticket: state.ticket,\n  reason: !state.ticket ? 'tickets_down' : alerted ? null : 'alerts_down', alerted, dlq: false } } }];"
+        "jsCode": "const state = $input.first().json;\nreturn [{ json: { http_status: 200, response: { ok: Boolean(state.ticket && state.alerted),\n  ticket: state.ticket, reason: !state.ticket ? 'tickets_down' : state.alerted ? null : 'alerts_down',\n  alerted: state.alerted === true, dlq: state.dlq === true } } }];"
       }
     },
     {
-      "id": "H11-14",
+      "id": "handoff-29",
       "name": "H11 Respond",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        2520,
+        4640,
         300
       ],
       "parameters": {
@@ -521,7 +918,87 @@
         ]
       ]
     },
+    "H04 Create Ticket Practice": {
+      "main": [
+        [
+          {
+            "node": "H05 Retry Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "H04 Create Ticket App": {
+      "main": [
+        [
+          {
+            "node": "H05 Retry Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05 Retry Gate": {
+      "main": [
+        [
+          {
+            "node": "H05a Retry Allowed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05a Retry Allowed": {
+      "main": [
+        [
+          {
+            "node": "H05 Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H05 Recheck Budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05 Wait": {
+      "main": [
+        [
+          {
+            "node": "H05 Recheck Budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05b App Retry Store": {
+      "main": [
+        [
+          {
+            "node": "H04 Retry Ticket App",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H04 Retry Ticket Practice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H04 Retry Ticket Practice": {
       "main": [
         [
           {
@@ -532,7 +1009,18 @@
         ]
       ]
     },
-    "H04 Create Ticket Practice": {
+    "H04 Retry Ticket App": {
+      "main": [
+        [
+          {
+            "node": "H06 Keep Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05 Restore First Result": {
       "main": [
         [
           {
@@ -547,25 +1035,18 @@
       "main": [
         [
           {
-            "node": "H06a Ticket Confirmed",
+            "node": "H07 Failure Context",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "H06a Ticket Confirmed": {
+    "H07 Failure Context": {
       "main": [
         [
           {
             "node": "H08a App Alert Store",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "H10 Build Result",
             "type": "main",
             "index": 0
           }
@@ -594,7 +1075,7 @@
       "main": [
         [
           {
-            "node": "H10 Build Result",
+            "node": "H08 Check Alert",
             "type": "main",
             "index": 0
           }
@@ -602,6 +1083,86 @@
       ]
     },
     "H08 Store Alert Practice": {
+      "main": [
+        [
+          {
+            "node": "H08 Check Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H08 Check Alert": {
+      "main": [
+        [
+          {
+            "node": "H09a Needs DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H09a Needs DLQ": {
+      "main": [
+        [
+          {
+            "node": "H09b App DLQ Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H10 Build Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H09b App DLQ Store": {
+      "main": [
+        [
+          {
+            "node": "H09 Store DLQ App",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H09 Store DLQ Practice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H09 Store DLQ App": {
+      "main": [
+        [
+          {
+            "node": "H09 Check DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H09 Store DLQ Practice": {
+      "main": [
+        [
+          {
+            "node": "H09 Check DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H09 Check DLQ": {
       "main": [
         [
           {
@@ -617,6 +1178,35 @@
         [
           {
             "node": "H11 Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05 Recheck Budget": {
+      "main": [
+        [
+          {
+            "node": "H05c Retry Still Allowed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "H05c Retry Still Allowed": {
+      "main": [
+        [
+          {
+            "node": "H05b App Retry Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "H05 Restore First Result",
             "type": "main",
             "index": 0
           }

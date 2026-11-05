@@ -1,5 +1,7 @@
 # C05 저장 API 모델 대조 · 2026-11-04
 
+이 문서는4bbbf49/P1-1 당시 검토다. 2026-11-05 사용자 전달 팀장 승인으로 알림 duplicate 유지·DLQ HTTP200을 P1-2에 적용했다. 최신 [P1-2-RESULT.md](P1-2-RESULT.md)를 우선하며, 아래 불일치 재현 스크립트는 원민 당시ceb8efe 워크플로우에 고정해 과거 증거를 재현한다. 상대 실제 응답 모델 반영/연결은 별도 대기다.
+
 **요청 표본 7/7은 지혜님 DTO에 필드 손실 없이 적합하다. 중복 알림 응답에는 연결 불일치 1건이 있다. 실제 API·인증·DB/n8n 연결 완료는 아니다.**
 
 대상: `origin/feat/jihye-p0`, 커밋 `4bbbf49aac652bae947fec1a787b86af7e74f24e`. fetch 후 common.py, tickets.py, alerts.py 모델과 tickets/alerts 라우터, deps.py, tests/test_api_models.py를 읽었다. 원민 워크플로우는 `ceb8efe`의 P1-1 JSON을 사용했다. 다른 팀원 파일은 수정하거나 체크아웃하지 않았다.

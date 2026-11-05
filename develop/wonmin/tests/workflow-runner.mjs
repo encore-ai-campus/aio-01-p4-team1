@@ -46,11 +46,17 @@ export async function run(workflow, body, env, credentials, transport = fetch) {
           signal: AbortSignal.timeout(options.timeout),
           redirect: 'manual',
         });
-        value = { statusCode: response.status, body: await response.json() };
+        value = { statusCode: response.status, headers: Object.fromEntries(response.headers), body: await response.json() };
       } catch {
         if (node.onError !== 'continueRegularOutput') throw Error('Unhandled HTTP failure');
         value = { error: 'local_transport_failure' };
       }
+    } else if (node.type.endsWith('.wait')) {
+      const seconds = expression(node.parameters.amount);
+      if (node.parameters.unit !== 'seconds' || !Number.isFinite(seconds) || seconds < 0 || seconds > 0.2) {
+        throw Error('Unsupported local Wait parameters');
+      }
+      await new Promise(resolve => setTimeout(resolve, seconds * 1000));
     } else if (node.type.endsWith('.respondToWebhook')) {
       return { status: expression(node.parameters.options.responseCode),
         body: JSON.parse(JSON.stringify(expression(node.parameters.responseBody))), history, trace };

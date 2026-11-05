@@ -1,5 +1,7 @@
 # 원민님 · SPEC
 
+2026-11-05 팀장 승인 전달에 따라 알림 duplicate 응답 유지·DLQ HTTP200을 현재 적용 기준으로 갱신했다. 아래 이전 WM 제안/구현 전 예시는 역사적 설계이며 실제 P1-2는 [P1-2-RESULT.md](P1-2-RESULT.md)를 따른다.
+
 [TODO](TODO.md) → 이 문서 → [IMP-PLAN](IMP-PLAN.md). 변경 제안과 미정 정책은 [HANDOFF](HANDOFF.md)에 둔다. 아래 JSON은 **구현 전 시험 기대**이며 실행 결과가 아니다.
 
 ## 적용할 기준
@@ -8,8 +10,8 @@
 | --- | --- | --- |
 | handoff 입구 C04 | POST /webhook/oke-handoff, X-Team-Key. 필수 request_id/requester/title/category/priority/reason, 선택 evidence_summary | API §4 |
 | 저장 C05 | POST /tickets: key=request_id, title/requester/category/priority. 신규 HTTP201, 중복 HTTP200, 같은 ticket_id·duplicate=true | API §5 |
-| 알림 C05 | POST /alerts: workflow/node/message/severity, 선택 ticket_id/event_key. HTTP200 {stored:1,count:실제 누적 수} | API §5 |
-| DLQ C05 | POST /dlq: request_id/workflow/node/reason/safe_payload/execution_ref. 신규 HTTP201, 중복 HTTP200 | API §5 |
+| 알림 C05 | POST /alerts: workflow/node/message/severity, 선택 ticket_id/event_key. HTTP200 {stored:1,count:실제 누적 수}, duplicate bool 유지 | API §5·2026-11-05 승인 |
+| DLQ C05 | POST /dlq: request_id/workflow/node/reason/safe_payload/execution_ref. HTTP200·stored/count ACK (팀장 승인) | API §5·2026-11-05 승인 |
 | 인증 | support/handoff는 X-Team-Key, app 내부 저장은 X-Api-Key. 키는 Credential/환경변수에만 둠 | API §1·4·5·7 |
 | 티켓/상태 | normal/high, app 새 번호 T-2001부터. request_key UNIQUE, 소유자 불일치 시 타인 기록 반환 금지 | DATA §3 |
 | C04 실패 | 티켓 장애도 HTTP200, ok=false, ticket=null, reason=tickets_down. 알림만 실패하면 티켓 유지·reason=alerts_down | API §4 |

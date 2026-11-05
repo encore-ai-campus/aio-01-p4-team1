@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+최신 P1-2(2026-11-05): [원 출력65/65](p1-2-local-20261105T022016Z.txt), [실제 fault HTTP Mock 관측·코드 해시](p1-2-local-20261105T022016Z.json), [구현·후속 가이드](../Doc/P1-2-RESULT.md). 알림 duplicate·DLQ HTTP200 승인 적용. 아래 P1-1/C04/C05는 해당 시점의 기록이며 n8n·실제 backend/DB는 여전히 미실행이다.
+
 최신 C04(2026-11-05): [c04-pair-aac0dbf-review.json](c04-pair-aac0dbf-review.json), [경계 연결 검토](../Doc/C04-PAIR-REVIEW.md). 최신08 요청 생성·응답 매핑과 원민 P1-1의 로컬17개 관측 일치. 실제 C04발신은 Mock이며 n8n·실제backend/DB는 미실행. 아래9bda763/P0-2는 과거 기록이다.
 
 C04 후속 검토: [c04-dahyeok-9bda763-review.json](c04-dahyeok-9bda763-review.json), [연결 대조 설명](../Doc/C04-CONNECTION-REVIEW.md). 최신 P0-2 로컬6건의 골격 상태 및 SPEC 표본1개 수신 적합 확인. C04 발신 노드·응답 mapper는 미구현이며 실제 연결 PASS가 아니다.

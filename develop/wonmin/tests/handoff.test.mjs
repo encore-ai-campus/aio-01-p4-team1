@@ -183,7 +183,7 @@ for (const bad of [
 ]) {
   test(`unconfirmed ticket is never reported successful (${JSON.stringify(bad)})`, () => {
     const node = wf.nodes.find(n => n.name === 'H06 Keep Ticket');
-    const r = code(node, bad, { 'H03 Select Store': { priority: 'normal', mode: 'practice' } });
+    const r = code(node, bad, { 'H03 Select Store': { priority: 'normal', mode: 'practice' }, 'H05 Recheck Budget': { will_retry: false } });
     assert.equal(r.ticket, null);
   });
 }

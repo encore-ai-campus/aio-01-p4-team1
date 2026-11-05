@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+최신 P1-2(2026-11-05): [수습 구현·실제 로컬 결과·추가 진행 가이드](P1-2-RESULT.md). 사용자 전달 팀장 승인으로 알림 duplicate 유지·DLQ HTTP200 적용. 전체 로컬65개 통과, 실제 n8n/백엔드/DB는 미실행이다. 아래 이전 C05 불일치 기록은 승인 전/상대 미반영 당시 근거로 보존한다.
+
 최신 C04 검토(2026-11-05): [C04-PAIR-REVIEW.md](C04-PAIR-REVIEW.md). 다혁님 `aac0dbf`의 최신08에서 C04 요청 생성·응답 매핑 구현 확인. 양쪽 실제 Code와 원민 JSON·HTTP Mock 경계 관측17건 일치. 발신은 아직 N20 Mock C04이며 n8n 실연결은 미실행이다. 아래9bda763 기록은 이전 시점이다.
 
 최신 C05 검토: [C05-MODEL-REVIEW.md](C05-MODEL-REVIEW.md). 지혜님 `4bbbf49` 실제 모델에 요청 표본 7/7 적합, 중복 알림 ACK의 duplicate 직렬화 불일치 1건 확인. 실제 API/인증/DB는 미실행이다.
@@ -134,3 +136,14 @@
 - 결과: 필수6필드 수신 적합, 같은 ID→key, 신규/중복 동일 ticket_id·false→true, high/urgent와 max_attempts 보존, 동시4건 티켓 증가1. ok=false/alerts_down에서도 기존 ticket을 Map와 최종 응답이 보존한다. 이전 WM-04의 해당 코드 매핑 우려는 현재 버전 로컬 범위에서 해소. C05 StoredResponse 중복 알림 ACK 불일치는 별도 미해결이다.
 - 실제 연결 경계: 현재 그래프는 Prepare→gate→N20 Mock C04→Map이며 HTTP Request 노드0개다. 이번 스크립트가 테스트 안에서 Mock 경계 결과를 공급한 것이고 소스 그래프를 실제 연결한 것이 아니다. 발신URL·X-Team-Key Credential·5초timeout·응답 envelope, 프로젝트 n8n/Header Auth/Executions와 실제backend·DB는 미확인이다.
 - 다음 상대: 다혁님 N20 실제HTTP 설정·mapper envelope, 지혜님 C05 실제키/저장/ACK, 오현님 번호판 선택·공식키트·전용 n8n 게시/사람 시험. 원민 P1-2 retry/DLQ·P1-3 errors는 미구현이다. 외부 메시지·상대 승인·공통 반영 완료로 쓰지 않는다.
+
+## P1-2 수습 구현·C05 승인 적용 · 2026-11-05
+
+- 승인 근거: 이번 사용자 메시지의 팀장 지시 "C05 계약(알림 duplicate 필드 유지, DLQ HTTP 200)"를 그대로 적용했다. 상대 재승인을 작업 선행조건으로 삼지 않았다. main550d784와 지혜4904a49는 아직 해당필드/문구가 반영되지 않은 것으로 읽기 확인해 별도 인계한다. 실제 상대 반영 완료로 표시하지 않는다.
+- 변경 파일: workflows/oke-handoff.json(30노드), tools/mock-store.py, tests/recovery.test.mjs·workflow-runner.mjs·handoff.test.mjs, cases/handoff.json, SPEC/TODO/IMP-PLAN·README·P1-2-RESULT·runs 색인/실제 보고서. 모든 편집은 원민 폴더 내부다.
+- 확인 방법/실제 결과: `node --test` 전체65개(기존40+추가25) 통과, 종료0. HTTP fault 시나리오22개와 Code경계3개를 추가했다. tickets_down/alerts_down/알림·DLQ 각각 또는 동시 실패, 영구거절 무재시도,429 Retry-After,동일 key/payload 제한 재시도,알림/DLQ timeout,티켓 지연 저장·동일ID 재요청을 관측했다. 보고서 p1-2-local-20261105T022016Z.json/.txt 참조.
+- 결과 요약: 티켓 최대2회·각1초, 알림/DLQ 각1회·0.6초. 티켓 실패에도 두 sink시도, 알림 실패가 DLQ를 막지 않고, 티켓 성공은 후속 실패로 지우지 않는다. raw body/headers/stack·연락처/키/원문을 DLQ에 넣지 않는다. ACK 없는 sink는false이며 늦게 저장됐을 수 있어0건으로 단정하지 않는다. 전체실패도 단일응답·유한종료다.
+- 지혜님 C05: 알림 신규응답 duplicate=false·중복 stored=0/duplicate=true를 유지하고, DLQ200+stored/count를 제공해 주세요. 원민은 app의 명시적중복ACK를 성공으로 인식하고 DLQ201·잘못된타입은 성공으로 처리하지 않는다. 실제 API키·영속저장·UNIQUE/소유권·동시거래·실제누적수·DLQ중복(stored=0)의 의미는 미검증이다.
+- 다혁님 C04: 기존 mapper/aac0dbf와 현재 P1-2로 로컬 경계17건 재검증 일치. 최신11의 dlq전달 코드는 읽기 확인했으나 전체11 실행은 하지 않았다. 실제C04 HTTP/X-Team-Key·5초timeout·envelope는 아직Mock이므로 실제연결 시험이 필요하다. ok=false+alerts_down의 ticket보존과 tickets_down의 실제알림/DLQ 플래그를 확인해야 한다.
+- 오현님 C07/C09: 공식flow.py/common 원본·해시 및 전용 n8n에서 사람이 Credential연결/게시/시험할 환경이 필요하다. 실행ID·같은호출/fault/ops 대상·전후/지연후 건수·정리결과를 남겨야 한다. 재시도4초예산은 로컬판단값이며 hard SLA/실제n8n 전체시간을 보장한 것이 아니다. common판정/다른폴더/배포설정은 변경하지 않았다.
+- 다음 단계: 원민 P1-3 oke-errors.json/Error Trigger·독립 sink수습 및 부모errorWorkflow 연결. 이후 app인증/권한·DB/동시·재시작/P1-4 공통14종·팀·LLM3회·bench/P1-5 VM회귀를 진행한다. 상세순서는 P1-2-RESULT.md 참조. 이번 변경은 P1-2 로컬완료이며 n8n·실제backend/DB·VM은 미실행, 외부메시지 전송·상대확인/공통반영 완료가 아니다.

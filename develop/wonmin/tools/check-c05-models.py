@@ -14,6 +14,7 @@ from pydantic import ValidationError
 ROOT = Path(__file__).resolve().parents[3]
 OWN = ROOT / 'develop/wonmin'
 DEFAULT_REF = '4bbbf49aac652bae947fec1a787b86af7e74f24e'
+OWN_REF = 'ceb8efe62bc5a124090e23936a7225fc5f1bd46c'
 
 
 def main():
@@ -38,8 +39,10 @@ def main():
     # Execute the checked-in Code nodes to obtain the requests, rather than rewriting their mapping.
     node_source = r'''
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { code } from './develop/wonmin/tests/workflow-runner.mjs';
-const workflow = JSON.parse(readFileSync('develop/wonmin/workflows/oke-handoff.json'));
+// Historical C05 mismatch reproduction uses the original P1-1 workflow, not today's P1-2.
+const workflow = JSON.parse(execFileSync('git', ['show', 'ceb8efe62bc5a124090e23936a7225fc5f1bd46c:develop/wonmin/workflows/oke-handoff.json']));
 const node = name => workflow.nodes.find(n => n.name === name);
 const samples = [];
 for (const name of ['normal', 'high', 'duplicate']) {
@@ -98,7 +101,8 @@ console.log(JSON.stringify({ samples, alert_probe: { raw: observe({ stored: 0, c
     assert computed['alert_probe']['serialized']['alerted'] is False
     report = {'scope': 'pinned DTO model validation + local workflow Code; no FastAPI/n8n/DB execution',
               'jihye_commit': commit, 'pydantic_version': pydantic.__version__, 'source_sha256': hashes,
-              'workflow_sha256': hashlib.sha256((OWN / 'workflows/oke-handoff.json').read_bytes()).hexdigest(),
+              'own_workflow_ref': OWN_REF,
+              'workflow_sha256': hashlib.sha256(subprocess.check_output(['git', 'show', OWN_REF + ':develop/wonmin/workflows/oke-handoff.json'], cwd=ROOT)).hexdigest(),
               'samples': samples, 'request_checks': checks, 'requests_accepted': len(checks),
               'dlq_request_id_omitted': missing_request_id,
               'duplicate_alert_ack': {'backend_input': duplicate_input, 'model_output': duplicate_output,

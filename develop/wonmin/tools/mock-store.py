@@ -87,8 +87,12 @@ class Store:
         # Keep only safe operational fields. Not a raw-payload store or automatic replay queue.
         original = body['safe_payload']
         safe = {}
-        if isinstance(original.get('stage'), str) and original['stage'] in {'ticket', 'alert'}:
+        if isinstance(original.get('stage'), str) and original['stage'] in {'ticket', 'alert', 'unexpected'}:
             safe['stage'] = original['stage']
+        if isinstance(original.get('source_workflow'), str) and original['source_workflow'] in {'oke-support', 'oke-index', 'oke-search', 'oke-handoff', 'unknown'}:
+            safe['source_workflow'] = original['source_workflow']
+        if isinstance(original.get('error_kind'), str) and original['error_kind'] in {'execution_error', 'trigger_error', 'unknown'}:
+            safe['error_kind'] = original['error_kind']
         if isinstance(original.get('priority'), str) and original['priority'] in {'normal', 'high'}:
             safe['priority'] = original['priority']
         for field in ('attempts', 'last_status'):
@@ -98,7 +102,9 @@ class Store:
         if isinstance(ticket_id, str) and ticket_id.startswith('T-') and ticket_id[2:].isdigit():
             safe['ticket_id'] = ticket_id
         with self.lock:
-            self.dlqs.append({'request_id_hash': digest(body['request_id']), 'safe_payload': safe})
+            ref = body.get('execution_ref')
+            execution_ref = ref if isinstance(ref, str) and ref.isascii() and ref.isdigit() and len(ref) <= 20 else None
+            self.dlqs.append({'request_id_hash': digest(body['request_id']), 'execution_ref': execution_ref, 'safe_payload': safe})
             return 200, {'stored': 1, 'count': len(self.dlqs)}
 
     def snapshot(self):

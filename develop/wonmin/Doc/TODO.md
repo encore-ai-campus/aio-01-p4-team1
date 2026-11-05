@@ -28,7 +28,9 @@
 - [ ] P1-1 공식 check·사람의 n8n 게시/실행·실제 저장소 대조
 - [x] P1-2 장애·부분/전체 실패 수습 로컬 구현·HTTP Mock 검증
 - [ ] P1-2 공식 check·사람의 n8n 게시/실행 및 실제 C05 ACK·관측 대조
-- [ ] P1-3 errors·app 통합
+- [x] P1-3 oke-errors Error Trigger·독립 알림/DLQ 로컬 구현·Mock 검증
+- [ ] P1-3 부모 errorWorkflow 실제ID 연결·자동 오류 발화·수습/복구 증거
+- [ ] P1-3 실제 app 인증/권한·DB/동시성·재시작 영속성 통합
 - [ ] P1-4 필수 시험·공통·팀·반복·bench·실패 재시험·동시성 확인
 - [ ] P1-5 필수 VM 회귀·시연·제출 자료
 

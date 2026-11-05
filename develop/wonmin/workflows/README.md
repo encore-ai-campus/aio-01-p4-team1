@@ -1,6 +1,6 @@
 # 원민님 n8n 개발 결과물
 
-2026-11-05: `oke-handoff.json`에 P1-2 장애·부분/전체 실패 수습을 구현했다. `oke-errors.json`은 P1-3 예정이다. 실제 n8n import/게시/실행은 미확인이다.
+2026-11-05: `oke-handoff.json`에 P1-2 장애·부분/전체 실패 수습을 구현했다. `oke-errors.json`도 P1-3 로컬 구현·검증을 완료했다. 실제 n8n import/게시/실행은 미확인이다.
 
 ## 현재 경로
 
@@ -55,3 +55,13 @@ Webhook에는 원래 headers/body가 들어오므로 실행 데이터 자동 저
 공식80일차 도구가 준비되면 `flow.py check workflows/oke-handoff.json` 후 사람이 Credential을 연결해 게시·시험한다. 정상/중복/high 및 tickets_down, alerts_down, DLQ 실패, 모두 실패, 영구거절, 429, 지연 저장을 실행 ID와 같은 인스턴스의 전후 건수로 확인한다. 예상 실패는 H11까지 종료하고, 예상 밖 오류의 Error Trigger 수습은 다음 P1-3 범위다.
 
 실제 결과·추가 진행 가이드는 [P1-2 결과](../Doc/P1-2-RESULT.md)와 [증거 색인](../runs/INDEX.md)을 참조한다. 공식 키트 없이 자체 도구를 flow.py로 대신 만들지 않는다.
+
+## oke-errors · P1-3
+
+[구현 결과·안전한 부모 시험/연결 절차](../Doc/P1-3-RESULT.md)를 따른다. E01 Error Trigger→E02 허용목록 컨텍스트/모드선택→E03 알림/ACK→E04 독립DLQ/ACK→E05 내부Outcome의14노드다. HTTP응답/티켓생성/자동replay/재시도는 없고 errors의 errorWorkflow를 자기ID로 지정하지 않는다. n8n 기본 자기오류 라우팅에 대비해 source이름/ID 재진입 가드도 둔다.
+
+앱/연습모드 설정·Header Auth Credential은 위 handoff와 동일한 WONMIN_APP_STORE_AUTH/WONMIN_PRACTICE_STORE_AUTH를 E03/E04 노드에 연결한다. mode/주소는 요청본문이 아닌 실행설정만 읽는다. errors 입구는 내부 Error Trigger라 webhook용 X-Team-Key Credential이나 URL을 새로 만들지 않는다.
+
+모든HTTP는 각1회·0.6초·continueRegularOutput다. 알림만/DLQ만/둘다 실패를 내부 partial_failure/failed로 기록하고 추가throw하지 않는다. success는 두 수습sink의ACK 확인이지 부모업무 복구가 아니다. Error Trigger 표준에는 검증된 inquiry request_id가 없어 null로 두고, 부모execution.id가 유효하면 추적참조로만 쓴다. 원문오류·stack·URL·headers는 제거하며, 업무/노드이름도 허용목록 외에는unknown이다.
+
+errors 저장 후 실제ID를 부모 소유자에게 전달해 해당 부모 Settings→Error workflow에 연결해야 한다. Error Trigger는 수동Execute로 발화검증하지 못하고 자동실행 부모의 오류로 확인해야 한다. 현재 실제ID/설정/발화는 미확인이며, 이번 변경에서 handoff나 상대부모의 설정을 임의수정하지 않았다.

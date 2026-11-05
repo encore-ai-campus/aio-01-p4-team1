@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+최신 P1-3(2026-11-05): [oke-errors 구현·실제 부모연결 절차](P1-3-RESULT.md). 전체89개 로컬시험 통과. 실제errors ID·부모설정·자동발화·backend/DB는 미확인이다.
+
 최신 P1-2(2026-11-05): [수습 구현·실제 로컬 결과·추가 진행 가이드](P1-2-RESULT.md). 사용자 전달 팀장 승인으로 알림 duplicate 유지·DLQ HTTP200 적용. 전체 로컬65개 통과, 실제 n8n/백엔드/DB는 미실행이다. 아래 이전 C05 불일치 기록은 승인 전/상대 미반영 당시 근거로 보존한다.
 
 최신 C04 검토(2026-11-05): [C04-PAIR-REVIEW.md](C04-PAIR-REVIEW.md). 다혁님 `aac0dbf`의 최신08에서 C04 요청 생성·응답 매핑 구현 확인. 양쪽 실제 Code와 원민 JSON·HTTP Mock 경계 관측17건 일치. 발신은 아직 N20 Mock C04이며 n8n 실연결은 미실행이다. 아래9bda763 기록은 이전 시점이다.
@@ -147,3 +149,12 @@
 - 다혁님 C04: 기존 mapper/aac0dbf와 현재 P1-2로 로컬 경계17건 재검증 일치. 최신11의 dlq전달 코드는 읽기 확인했으나 전체11 실행은 하지 않았다. 실제C04 HTTP/X-Team-Key·5초timeout·envelope는 아직Mock이므로 실제연결 시험이 필요하다. ok=false+alerts_down의 ticket보존과 tickets_down의 실제알림/DLQ 플래그를 확인해야 한다.
 - 오현님 C07/C09: 공식flow.py/common 원본·해시 및 전용 n8n에서 사람이 Credential연결/게시/시험할 환경이 필요하다. 실행ID·같은호출/fault/ops 대상·전후/지연후 건수·정리결과를 남겨야 한다. 재시도4초예산은 로컬판단값이며 hard SLA/실제n8n 전체시간을 보장한 것이 아니다. common판정/다른폴더/배포설정은 변경하지 않았다.
 - 다음 단계: 원민 P1-3 oke-errors.json/Error Trigger·독립 sink수습 및 부모errorWorkflow 연결. 이후 app인증/권한·DB/동시·재시작/P1-4 공통14종·팀·LLM3회·bench/P1-5 VM회귀를 진행한다. 상세순서는 P1-2-RESULT.md 참조. 이번 변경은 P1-2 로컬완료이며 n8n·실제backend/DB·VM은 미실행, 외부메시지 전송·상대확인/공통반영 완료가 아니다.
+
+## P1-3 Error Trigger·독립 수습 · 2026-11-05
+
+- 변경 파일: workflows/oke-errors.json(14노드), tests/errors.test.mjs·workflow-runner.mjs, tools/mock-store.py의 안전한 unexpected/추적참조 관측, cases/errors.json, requests/error-execution·error-trigger-failure.json, P1-3-RESULT·README/TODO/IMP-PLAN·runs 실제보고서. 기존 handoff JSON·상대파일·공통설정은 변경하지 않았다.
+- 확인 방법/실제 결과: 저장소 루트 `node --test` 전체89개(기존65+추가24)통과·종료0.20개 독립Mock 시나리오(재진입/설정오류는호출0)와4개경계검사. 정상·알림만/DLQ만/둘다 실패·timeout, metadata누락/trigger오류,app중복알림ACK,모드·인증거절,원문미노출,자기이름/문자열·숫자ID 재진입 차단을 확인했다. p1-3-final-20261105T024732Z.json/.txt가 최종 실제증거이며 이전 최초통과본도 보존했다.
+- 동작: 알림/DLQ 각1회·0.6초. 앞sink실패가 뒤sink시도를 막지 않는다. 부모inquiry request_id는 검증근거가 없어null, 부모execution.id 유효시참조·없으면null. raw message/stack/URL/headers/context·임의이름을 전달하지 않고 고정/허용목록값만 저장한다. 알림단독성공에도 안전한부모참조를 남긴다. 오류처리기 자기source면외부호출없이종료, 예상sink실패를다시throw하지않는다. E05는내부진단결과이며부모HTTP/실패상태를성공으로바꾸지않는다.
+- 각 부모소유자(다혁/유빈/원민): 실제errors ID 확보 후 Settings Error workflow에 연결해야 한다. errors.json에가짜자기ID/부모ID를기록하지않았고 실제handoff의errorWorkflow도임의변경하지않았다. 자동실행부모의비민감시험오류로parent/errors 실행ID·수습ACK를함께확인해야한다. 수동노드실행은발화증거가아니다.
+- 오현님/지혜님: 공식키트check·Credential/모드·같은저장/관측환경, 실제C05알림duplicate·DLQ200/키검증·DB준비가필요하다. n8n공식문서상ErrorTrigger자체publish는필수가아니고기본자기오류동작이있어코드guard도뒀다. 부모실행저장설정/trigger실패에따라execution.id가없을수있으므로참조관측근거를확인해야한다.
+- 미실행/다음단계: 실제n8nimport/부모설정/자동발화·sink실패·복구 및 app권한/저장/중복/영속성은대기. P1-4/5공통·반복·bench·VM증거로Mock결과를대체하지않는다. 상세안전시험/정리절차는P1-3-RESULT.md참조. 외부메시지·상대동의/연결완료로쓰지않는다.

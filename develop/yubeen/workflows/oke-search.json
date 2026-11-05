@@ -20,14 +20,14 @@
     },
     {
       "id": "search-step1-inspect",
-      "name": "요청 구조 확인 (STEP 1)",
+      "name": "요청 구조·권한 형식 확인 (STEP 3)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [240, 0],
       "parameters": {
-        "jsCode": "const body = $input.first().json.body;\nconst isObject = body !== null && typeof body === 'object' && !Array.isArray(body);\nconst fields = ['request_id', 'query', 'type', 'access_levels', 'top_k'];\nconst received = {};\nfor (const field of fields) received[field] = isObject && Object.prototype.hasOwnProperty.call(body, field) ? body[field] : null;\nreturn [{ json: { step: 'P1-2 STEP 1', mock: true, diagnostic_only: true, body_is_object: isObject, received } }];"
+        "jsCode": "const body = $input.first().json.body;\nconst isObject = body !== null && typeof body === 'object' && !Array.isArray(body);\nconst fields = ['request_id', 'query', 'type', 'access_levels', 'top_k'];\nconst received = {};\nfor (const field of fields) received[field] = isObject && Object.prototype.hasOwnProperty.call(body, field) ? body[field] : null;\nconst invalid_fields = [];\nif (!isObject) invalid_fields.push('body');\nif (typeof received.request_id !== 'string' || received.request_id.length < 1 || received.request_id.length > 64) invalid_fields.push('request_id');\nif (typeof received.query !== 'string' || received.query.trim().length === 0) invalid_fields.push('query');\nif (typeof received.type !== 'string' || received.type.trim().length === 0) invalid_fields.push('type');\nconst levels = received.access_levels;\nconst validLevels = Array.isArray(levels) && (levels.length === 1 && levels[0] === 'all' || levels.length === 2 && levels[0] === 'all' && levels[1] === 'it');\nif (!validLevels) invalid_fields.push('access_levels');\nif (received.top_k !== 3) invalid_fields.push('top_k');\nconst valid = invalid_fields.length === 0;\nreturn [{ json: { step: 'P1-2 STEP 3', mock: true, diagnostic_only: true, body_is_object: isObject, valid, invalid_fields, received: valid ? received : null, access_authorization: valid && levels.length === 2 ? 'it_unverified' : 'not_verified', it_access_granted: false, search_eligible: valid && levels.length === 1, search_executed: false, http_status: valid ? 200 : 400 } }];"
       },
-      "notes": "Webhook의 body에서 5개 필드만 추출한다. null은 미전달을 뜻하며 이 단계에서는 필드·권한·형식 검증을 하지 않는다. 테스트에는 비밀값과 관리자 문서 본문을 넣지 않는다."
+      "notes": "5개 필드의 존재·형식과 [all]/[all,it]의 정확한 순서만 검사한다. 1~64자 request_id는 공통 support 식별자 경계를 사용한다. query 최대 길이·type enum·상세 오류 코드는 H-Y01 미확정으로 추가하지 않는다. 형식상 it 요청은 사용자 권한 확인이 아니며 검색은 실행하지 않는다."
     },
     {
       "id": "search-step1-respond",
@@ -39,17 +39,17 @@
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify($json) }}",
         "options": {
-          "responseCode": 200
+          "responseCode": "={{ $json.http_status }}"
         }
       },
-      "notes": "STEP 1 진단 JSON만 HTTP 200으로 반환한다. C03 검색 성공 응답이나 권한 확인 결과가 아니다."
+      "notes": "정상 형식은 진단 HTTP 200, 불량 입력은 임시 진단 HTTP 400으로 반환한다. H-Y01 최종 오류 형식이나 C03 검색 결과가 아니다."
     }
   ],
   "connections": {
     "검색 요청 수신 (STEP 1 테스트 전용)": {
-      "main": [[{"node": "요청 구조 확인 (STEP 1)", "type": "main", "index": 0}]]
+      "main": [[{"node": "요청 구조·권한 형식 확인 (STEP 3)", "type": "main", "index": 0}]]
     },
-    "요청 구조 확인 (STEP 1)": {
+    "요청 구조·권한 형식 확인 (STEP 3)": {
       "main": [[{"node": "진단 응답 반환 (HTTP 200)", "type": "main", "index": 0}]]
     }
   },
@@ -61,7 +61,7 @@
   },
   "pinData": {},
   "meta": {
-    "phase": "P1-2 STEP 2 header authentication with STEP 1 diagnostics",
+    "phase": "P1-2 STEP 3 input diagnostics; IT authorization unverified",
     "realSearchVerified": false
   }
 }

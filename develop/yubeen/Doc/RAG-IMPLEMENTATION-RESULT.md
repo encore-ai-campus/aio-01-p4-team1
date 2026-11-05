@@ -44,3 +44,31 @@ Index가 준비한 `content`, `content_hash`, 문서 권한과 모델·차원은
 - `Doc/SEARCH-STEP1-RESULT.md`, `Doc/SEARCH-STEP2-RESULT.md`: 구현 당시 정적 검사·미실행 경계. 이후 로컬 HTTP 결과는 위 사용자 보고로 별도 표시.
 - `Doc/SEARCH-EVAL.md`: P0-2 합성 검색 사례와 미측정 평가 양식. 실제 검색 결과가 아님.
 - `workflows/oke-index.json`, `workflows/oke-search.json`: 현재 노드와 비활성 설정.
+
+## P1-2 STEP 3 · 입력·권한 형식 진단 · 2026-11-05
+
+기존 비활성 Webhook(`POST oke-search`, `headerAuth`) → Code → Respond의 3노드·2연결을 유지했다. Code는 `request_id` 문자열 1~64자, `query` 비공백 문자열, `type` 비공백 문자열, `access_levels`의 정확한 `["all"]` 또는 `["all","it"]` 배열, `top_k`의 숫자 3을 검사한다. 중복·역순·`it` 단독은 거절한다. request_id 길이는 공통 요청 식별자 경계를 따르며, Search의 query 최대 길이·type enum·top_k 누락 기본값은 H-Y01 제안 상태여서 추가하지 않았다. 현재 다섯 필드를 필수로 검사하는 것은 이 STEP의 테스트 입력 규약이며 C03의 세부 필수/선택 표가 확정됐다는 뜻은 아니다.
+
+형식이 맞으면 STEP 3 `mock=true`, `diagnostic_only=true`, `valid=true`와 기존 5개 `received` 필드를 HTTP 200 진단 응답으로 돌려준다. 틀리면 `valid=false`, `invalid_fields`만 돌려주고 `received=null`인 임시 HTTP 400 진단 응답이다. 이 JSON은 C03 최종 오류 계약이 아니다. Header Auth의 키 누락·불일치 403 경로는 Webhook에 그대로 있다. 오류 상세 형식과 H-Y01의 401 제안은 채택하지 않았다.
+
+`["all","it"]`의 **형식 통과는 IT팀 신원 확인이 아니다**. Header Auth는 호출자를 확인할 뿐 직원을 확인하지 않는다. 그래서 현재 Code는 IT 형식 요청도 `access_authorization=it_unverified`, `it_access_granted=false`, `search_eligible=false`로 표시한다. `["all"]`만 형식상 `search_eligible=true`이나 이 단계에서 어느 요청도 검색하지 않는다(`search_executed=false`). 질문 본문의 관리자 주장은 읽어 권한을 높이지 않는다. 실제 SQL의 `documents.access_level` 선필터·정렬 전 적용은 STEP 4 의존성으로 남긴다.
+
+로컬 Code 격리 Mock 10사례(정상 all, IT 형식, 필수 누락, 공백 query, 잘못된 타입, top_k 오류, 잘못된/중복 권한, 관리자 사칭, 권한 출처 미확인)가 통과했다. 이는 n8n HTTP 실행이 아니다. 기존 STEP 1·2의 사용자 실행 기록은 위 절의 당시 결과이며 **수정된 STEP 3 JSON의 Import·Credential 재연결·HTTP 200/400/403은 아직 미실행**이다. 실제 DB·임베딩·권한 자료·관리자 문서도 호출하지 않았다.
+
+STEP 4 전에는 다혁님과 오현님이 본체의 검증된 부서/권한을 search가 어떤 신뢰 가능한 경로로 받는지 확인해야 한다. 지혜님과 실제 DB 스키마·연결/최소 권한, 원민님과 일반/IT 음성·양성 시험 자료를 확인해야 한다. H-Y01의 Search 필수/선택·길이·오류 응답은 미확정으로 유지한다. 이 단계의 IT 형식 진단을 IT 문서 검색 허용 근거로 사용하지 않는다.
+
+### 이후 사용자 로컬 n8n HTTP 확인 결과
+
+아래 5건은 **사용자가 AIO WSL의 로컬 n8n에서 직접 실행해 전달한 결과**다. 위의 STEP 3 구현 당시 정적·Mock 검증과 구분한다. 실행 ID·실행 날짜·시간 측정값은 제공되지 않았다.
+
+| 테스트 | 입력 조건 | 사용자가 확인한 실제 결과 | 확인 범위 |
+| --- | --- | --- | --- |
+| TEST 1 | 정상 `["all"]`, `top_k=3` | HTTP 200, Code `valid=true`, Webhook → Code → Respond 3노드 실행 성공 | HTTP 응답 본문 전문은 미확인 |
+| TEST 2 | `top_k=5` | HTTP 400, `valid=false`, `invalid_fields=["top_k"]`, `search_executed=false` | HTTP 응답 본문 확인 |
+| TEST 3 | `["all","it"]`, `top_k=3` | HTTP 200, `valid=true`, `access_authorization="it_unverified"`, `it_access_granted=false`, `search_eligible=false` | HTTP 응답 본문 확인. IT 신원 확인이나 접근 허용 아님 |
+| TEST 4 | 잘못된 인증 키 | HTTP 403, Webhook 인증 단계에서 차단 | n8n 화면에서 Code·Respond 미실행 확인 |
+| TEST 5 | 인증 키 누락 | HTTP 403, Webhook 인증 단계에서 차단 | Code·Respond 미실행 여부의 별도 화면 증거 없음 |
+
+현재 완료된 범위는 Webhook 수신, `X-Team-Key` Header Auth, 다섯 필드의 기본 형식 검사, 임시 HTTP 400 진단 처리, IT 권한 미확인 시 관리자 접근 불허다. 기존 기록의 Python 회귀 108개 통과와 Code 격리 Mock 10/10 통과에 위 **사용자 수행 핵심 HTTP 5건**을 추가한다. 이번 문서 반영 중 이 테스트를 재실행하지 않았다.
+
+실제 직원 신원·IT 권한 검증, query 임베딩, PostgreSQL/pgvector 검색, SQL 권한 사전 필터링, C03 evidence·빈 결과·503 장애 응답, 본체 통합과 검색 품질 측정은 미완료다. TEST 2의 HTTP 400은 STEP 3 임시 진단 응답이며 C03 입력 오류의 최종 형식 확정이 아니다. 실제 검색·임베딩·PostgreSQL 조회는 위 5건에서 실행되지 않았다. P1-1 Index의 Mock 결과와 한계는 앞 절의 기록을 유지한다.

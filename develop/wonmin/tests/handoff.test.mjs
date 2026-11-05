@@ -72,6 +72,8 @@ test('workflow is inactive, Header Auth protected and has one response node', ()
   assert.equal(wf.active, false);
   const hook = wf.nodes.find(n => n.type.endsWith('.webhook'));
   assert.equal(hook.parameters.path, 'oke-handoff');
+  assert.ok(typeof hook.webhookId === 'string' && hook.webhookId.length > 0,
+    'published n8n must register the contract path rather than a workflow-scoped fallback');
   assert.equal(hook.parameters.authentication, 'headerAuth');
   assert.equal(hook.parameters.responseMode, 'responseNode');
   assert.equal(wf.nodes.filter(n => n.type.endsWith('.respondToWebhook')).length, 1);

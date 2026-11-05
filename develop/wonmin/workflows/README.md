@@ -1,5 +1,7 @@
 # 원민님 n8n 개발 결과물
 
+실환경 갱신(2026-11-05): [Ubuntu Compose 결과](../Doc/UBUNTU-INTEGRATION-RESULT.md). 실제 n8n 2.46.6 import/게시·부모 errors ID 연결·자동 발화를 확인했다. 전용 Mock 수습 4조건 성공, 실제 C05는 501이다. 해당 설치본은 errors도 게시해야 실행됐다. 원본 handoff에 webhookId를 추가했으며 실제 ID/관측 설정은 ignored 배포 사본에만 반영한다. 아래 미확인 설명은 이전 구현 단계 당시 기록이다.
+
 2026-11-05: `oke-handoff.json`에 P1-2 장애·부분/전체 실패 수습을 구현했다. `oke-errors.json`도 P1-3 로컬 구현·검증을 완료했다. 실제 n8n import/게시/실행은 미확인이다.
 
 ## 현재 경로

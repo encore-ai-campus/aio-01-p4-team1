@@ -1,0 +1,332 @@
+{
+  "scope": "actual Ubuntu Compose n8n automatic failure; Mock sink vs peer backend explicitly separated",
+  "workflow_ids": {
+    "errors": "wmerr84aab85722",
+    "handoff": "wmhanecca84e267",
+    "failure": "wmfai82080ebab7",
+    "llm": "wmllm12c4cbcae0"
+  },
+  "cases": [
+    {
+      "case": "both_ok",
+      "sink": "private_mock",
+      "parent_http_status": 500,
+      "parent": {
+        "id": 10,
+        "workflow_id": "wmfai82080ebab7",
+        "status": "error",
+        "mode": "webhook",
+        "started_at": "2026-11-05 03:42:38.013",
+        "stopped_at": "2026-11-05 03:42:38.042",
+        "last_node": "H03 Select Store",
+        "outcome": null
+      },
+      "handler": {
+        "id": 11,
+        "workflow_id": "wmerr84aab85722",
+        "status": "success",
+        "mode": "error",
+        "started_at": "2026-11-05 03:42:38.056",
+        "stopped_at": "2026-11-05 03:42:38.117",
+        "last_node": "E05 Outcome",
+        "outcome": {
+          "workflow": "oke-errors",
+          "outcome": "success",
+          "request_id": null,
+          "execution_ref": "10",
+          "source_workflow": "oke-handoff",
+          "source_node": "H03 Select Store",
+          "error_kind": "execution_error",
+          "alerted": true,
+          "dlq": true
+        }
+      },
+      "handler_count": 1,
+      "observed": {
+        "mock": true,
+        "ephemeral": true,
+        "ticket_count": 0,
+        "alert_count": 1,
+        "dlq_count": 1,
+        "calls": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "tickets": [],
+        "alerts": [
+          {
+            "ticket_id": null,
+            "severity": "high"
+          }
+        ],
+        "dlqs": [
+          {
+            "request_id_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+            "execution_ref": "10",
+            "safe_payload": {
+              "stage": "unexpected",
+              "source_workflow": "oke-handoff",
+              "error_kind": "execution_error"
+            }
+          }
+        ],
+        "attempts": [
+          {
+            "endpoint": "alerts",
+            "payload_hash": "a19084503308309028a11f5143dcc685274cf65451982a95753a7187cb0a6590",
+            "key_hash": null
+          },
+          {
+            "endpoint": "dlq",
+            "payload_hash": "f3d3a0e81eed3cc19776485155bb4f10a69eb1dfd2d483dbb91331f9d396dff9",
+            "key_hash": null
+          }
+        ]
+      }
+    },
+    {
+      "case": "alerts_down",
+      "sink": "private_mock",
+      "parent_http_status": 500,
+      "parent": {
+        "id": 12,
+        "workflow_id": "wmfai82080ebab7",
+        "status": "error",
+        "mode": "webhook",
+        "started_at": "2026-11-05 03:42:50.550",
+        "stopped_at": "2026-11-05 03:42:50.566",
+        "last_node": "H03 Select Store",
+        "outcome": null
+      },
+      "handler": {
+        "id": 13,
+        "workflow_id": "wmerr84aab85722",
+        "status": "success",
+        "mode": "error",
+        "started_at": "2026-11-05 03:42:50.577",
+        "stopped_at": "2026-11-05 03:42:50.607",
+        "last_node": "E05 Outcome",
+        "outcome": {
+          "workflow": "oke-errors",
+          "outcome": "partial_failure",
+          "request_id": null,
+          "execution_ref": "12",
+          "source_workflow": "oke-handoff",
+          "source_node": "H03 Select Store",
+          "error_kind": "execution_error",
+          "alerted": false,
+          "dlq": true
+        }
+      },
+      "handler_count": 1,
+      "observed": {
+        "mock": true,
+        "ephemeral": true,
+        "ticket_count": 0,
+        "alert_count": 0,
+        "dlq_count": 1,
+        "calls": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "tickets": [],
+        "alerts": [],
+        "dlqs": [
+          {
+            "request_id_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+            "execution_ref": "12",
+            "safe_payload": {
+              "stage": "unexpected",
+              "source_workflow": "oke-handoff",
+              "error_kind": "execution_error"
+            }
+          }
+        ],
+        "attempts": [
+          {
+            "endpoint": "alerts",
+            "payload_hash": "082e9ce14ae4c04dc8e69ac3dc6b152749e705a2ab58312b0e96998b013726d0",
+            "key_hash": null
+          },
+          {
+            "endpoint": "dlq",
+            "payload_hash": "2795149a79b6d8f83a41ad04f3b35a9e2e0fc2483a32662e8db3046c0553fe3d",
+            "key_hash": null
+          }
+        ]
+      }
+    },
+    {
+      "case": "dlq_down",
+      "sink": "private_mock",
+      "parent_http_status": 500,
+      "parent": {
+        "id": 14,
+        "workflow_id": "wmfai82080ebab7",
+        "status": "error",
+        "mode": "webhook",
+        "started_at": "2026-11-05 03:43:02.408",
+        "stopped_at": "2026-11-05 03:43:02.419",
+        "last_node": "H03 Select Store",
+        "outcome": null
+      },
+      "handler": {
+        "id": 15,
+        "workflow_id": "wmerr84aab85722",
+        "status": "success",
+        "mode": "error",
+        "started_at": "2026-11-05 03:43:02.429",
+        "stopped_at": "2026-11-05 03:43:02.456",
+        "last_node": "E05 Outcome",
+        "outcome": {
+          "workflow": "oke-errors",
+          "outcome": "partial_failure",
+          "request_id": null,
+          "execution_ref": "14",
+          "source_workflow": "oke-handoff",
+          "source_node": "H03 Select Store",
+          "error_kind": "execution_error",
+          "alerted": true,
+          "dlq": false
+        }
+      },
+      "handler_count": 1,
+      "observed": {
+        "mock": true,
+        "ephemeral": true,
+        "ticket_count": 0,
+        "alert_count": 1,
+        "dlq_count": 0,
+        "calls": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "tickets": [],
+        "alerts": [
+          {
+            "ticket_id": null,
+            "severity": "high"
+          }
+        ],
+        "dlqs": [],
+        "attempts": [
+          {
+            "endpoint": "alerts",
+            "payload_hash": "52542520ea46e2590c15c8637803ae66651915679f4376c6ed1c8f20869d5f76",
+            "key_hash": null
+          },
+          {
+            "endpoint": "dlq",
+            "payload_hash": "fe384b9b0de9ae0d5c4c73e88f078c00c29eb9e669685e2fea97030cbb9a9bde",
+            "key_hash": null
+          }
+        ]
+      }
+    },
+    {
+      "case": "all_down",
+      "sink": "private_mock",
+      "parent_http_status": 500,
+      "parent": {
+        "id": 16,
+        "workflow_id": "wmfai82080ebab7",
+        "status": "error",
+        "mode": "webhook",
+        "started_at": "2026-11-05 03:43:14.260",
+        "stopped_at": "2026-11-05 03:43:14.273",
+        "last_node": "H03 Select Store",
+        "outcome": null
+      },
+      "handler": {
+        "id": 17,
+        "workflow_id": "wmerr84aab85722",
+        "status": "success",
+        "mode": "error",
+        "started_at": "2026-11-05 03:43:14.282",
+        "stopped_at": "2026-11-05 03:43:14.310",
+        "last_node": "E05 Outcome",
+        "outcome": {
+          "workflow": "oke-errors",
+          "outcome": "failed",
+          "request_id": null,
+          "execution_ref": "16",
+          "source_workflow": "oke-handoff",
+          "source_node": "H03 Select Store",
+          "error_kind": "execution_error",
+          "alerted": false,
+          "dlq": false
+        }
+      },
+      "handler_count": 1,
+      "observed": {
+        "mock": true,
+        "ephemeral": true,
+        "ticket_count": 0,
+        "alert_count": 0,
+        "dlq_count": 0,
+        "calls": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "tickets": [],
+        "alerts": [],
+        "dlqs": [],
+        "attempts": [
+          {
+            "endpoint": "alerts",
+            "payload_hash": "143340e314252afbd92a56c2cc0c0d50ba727a787ab18ecd361e3e28c0c77069",
+            "key_hash": null
+          },
+          {
+            "endpoint": "dlq",
+            "payload_hash": "cdaad260fe0b33239e34496e33319dc56b19217f97c0a71c692b7569ffe1ff9b",
+            "key_hash": null
+          }
+        ]
+      }
+    },
+    {
+      "case": "actual_backend_unimplemented",
+      "sink": "jihye_backend_real_http",
+      "parent_http_status": 500,
+      "parent": {
+        "id": 18,
+        "workflow_id": "wmfai82080ebab7",
+        "status": "error",
+        "mode": "webhook",
+        "started_at": "2026-11-05 03:43:17.223",
+        "stopped_at": "2026-11-05 03:43:17.268",
+        "last_node": "H03 Select Store",
+        "outcome": null
+      },
+      "handler": {
+        "id": 19,
+        "workflow_id": "wmerr84aab85722",
+        "status": "success",
+        "mode": "error",
+        "started_at": "2026-11-05 03:43:17.285",
+        "stopped_at": "2026-11-05 03:43:17.334",
+        "last_node": "E05 Outcome",
+        "outcome": {
+          "workflow": "oke-errors",
+          "outcome": "failed",
+          "request_id": null,
+          "execution_ref": "18",
+          "source_workflow": "oke-handoff",
+          "source_node": "H03 Select Store",
+          "error_kind": "execution_error",
+          "alerted": false,
+          "dlq": false
+        }
+      },
+      "handler_count": 1
+    }
+  ],
+  "runtime_restored": false,
+  "backend_501_is_unimplemented_not_storage_success": true,
+  "restored_auth_rejects_no_key": 500
+}

@@ -1,5 +1,7 @@
 # 원민님 · 이관·오류 수습·시험
 
+최종 실환경 확인(2026-11-05): [Ubuntu Compose·로컬 모델·자동 Error Trigger 결과](Doc/UBUNTU-INTEGRATION-RESULT.md). 실제 errors ID를 부모에 연결하고 정상/부분/전체 수습 4조건을 확인했다. Ollama 실제 HTTP 200, PostgreSQL 시험 45개·원민 회귀 89개 통과. **실제 C05 저장 API는 501로 미완료**이며 공용 VM 배포·업무 LLM 통합은 별도다. 아래 미실행 표기는 이전 단계 당시 기록이다.
+
 최신 P1-3(2026-11-05): [Error Trigger 수습 결과·부모 연결 절차](Doc/P1-3-RESULT.md). oke-errors.json을 구현했고 전체 로컬89개 통과. 실제 부모 errorWorkflow ID 설정·자동 오류 발화 및 n8n/backend/DB는 미실행이다.
 
 최신(2026-11-05): [P1-2 수습 구현 결과·다음 진행 가이드](Doc/P1-2-RESULT.md). 알림 duplicate·DLQ HTTP200 승인 적용, 티켓 제한 재시도와 알림/DLQ 부분·전체 실패 수습을 구현했다. 실제 n8n/백엔드 연결은 대기다.

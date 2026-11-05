@@ -1,5 +1,7 @@
 # P1-3 oke-errors 결과·실제 연결 절차 · 2026-11-05
 
+후속 실환경 갱신: [Ubuntu Compose 실제 결과](UBUNTU-INTEGRATION-RESULT.md). 아래는 로컬 어댑터 구현 완료 당시 기록이다. 이후 실제 errors ID 연결·자동 발화와 PG 시험을 수행했다. **n8n 2.46.6에서는 inactive errors 실행이 거절되어 게시 후 성공했다.** 아래 일반 문서의 게시 불필수 설명을 설치본 실행 보장으로 사용하지 않는다. 실제 C05 저장은 아직 501로 미완료다.
+
 **Error Trigger·독립 알림/DLQ 수습을 구현했고 전체 로컬89개 시험이 통과했다. 실제 부모 errorWorkflow 연결·자동 Error Trigger 발화·backend/DB 통합은 미실행이다.**
 
 ## 구현한 범위

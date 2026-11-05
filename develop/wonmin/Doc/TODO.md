@@ -1,5 +1,13 @@
 # 원민님 · TODO
 
+2026-11-05 실환경 갱신: [Ubuntu 결과](UBUNTU-INTEGRATION-RESULT.md). 아래 기존 단계 체크와 별도로 실제 완료 범위를 구분한다.
+
+- [x] 로컬 Ubuntu Compose 기동·실제 errors ID 부모 연결·자동 Error Trigger 정상/부분/전체 수습 확인
+- [x] 로컬 Ollama 실제 HTTP 호출·PostgreSQL 통합 45개·원민 회귀 89개 확인
+- [x] 오류 시험 부모 정상 코드/인증 복원·게시 해제 및 일반 경로 복구
+- [ ] 지혜님 실제 C05 API→DB 저장·인증·duplicate 응답·순차/동시·영속성 확인 (현재 API 501)
+- [ ] 다혁님 본체의 실제 C04/업무 LLM 연결·공식 키트·LLM3회·공용 VM 회귀
+
 읽는 순서: [README](../README.md) → 이 문서 → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md). 변경 제안은 [HANDOFF](HANDOFF.md)에만 기록한다.
 
 > 체크박스는 해당 단계의 실제 확인 완료 표시다. P0 입력 작성·정적 확인과 P1-1 로컬 구현·HTTP Mock 40개 검증은 완료했다. 키트·공통 원본 및 실제 n8n/백엔드 기능 시험은 대기다. ../runs/INDEX.md 참조.

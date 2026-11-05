@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+최종 Ubuntu 실환경(2026-11-05): [실제 자동 오류 5조건](ubuntu-errors-matrix.json), [최종 복구·Ollama·PG45](ubuntu-final-restoration.json), [해석·재현·다음 연결](../Doc/UBUNTU-INTEGRATION-RESULT.md). 전용 Mock 4조건의 자동 Error Trigger 수습을 확인했고 실제 backend 조건은 501로 저장 실패다. 매트릭스 종료 시 준비 지연으로 복구 확인이 중단된 사실과 이후 별도 복구 성공을 구분했다. 일반 handoff와 errors 연결 유지, 오류 시험 부모 비활성/404, 로컬 모델 HTTP200, 원민 회귀89 통과. 아래 미실행 표기는 이전 시점 결과다.
+
 지혜님 질의 ACK 검토: [alert-no-key-practice-review.json](alert-no-key-practice-review.json), [회신 기준](../Doc/ALERT-NO-KEY-REVIEW.md). key 없음/null·keyed 순차/동시·practice 같은티켓2회·오류부모ID 없음2회·레거시ACK 소비자행렬8그룹 확인. 실제data-api/PG/n8n은 미실행이다.
 
 최신 P1-3(2026-11-05): [최종89/89 원 출력](p1-3-final-20261105T024732Z.txt), [20개 시나리오의 안전한요청/결과·관측·코드해시](p1-3-final-20261105T024732Z.json), [구현·실제 부모연결 절차](../Doc/P1-3-RESULT.md). 최초 p1-3-local-20261105T024621Z.json/.txt도보존. 실제ErrorTrigger자동발화/부모ID설정·backend/DB는미실행이다.

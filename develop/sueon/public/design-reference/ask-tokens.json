@@ -1,0 +1,109 @@
+{
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "format": "svg"
+  },
+  "color": {
+    "brand": {
+      "50": "#eff6ff",
+      "100": "#dbeafe",
+      "500": "#3b82f6",
+      "600": "#2563eb",
+      "700": "#1d4ed8",
+      "900": "#172b55"
+    },
+    "navigation": {
+      "start": "#12377f",
+      "middle": "#0a265d",
+      "end": "#071b45"
+    },
+    "surface": {
+      "canvas": "#f4f7fb",
+      "card": "#ffffff",
+      "subtle": "#f8fafc",
+      "border": "#e2e8f0"
+    },
+    "status": {
+      "success": "#10b981",
+      "warning": "#f59e0b",
+      "danger": "#dc2626",
+      "info": "#2563eb"
+    },
+    "text": {
+      "strong": "#0f172a",
+      "body": "#475569",
+      "muted": "#94a3b8",
+      "inverse": "#ffffff"
+    }
+  },
+  "radius": {
+    "small": 8,
+    "medium": 12,
+    "large": 16,
+    "card": 22
+  },
+  "shadow": {
+    "card": "0 18px 60px rgba(31, 50, 92, 0.08)",
+    "artboard": "0 34px 80px rgba(31, 48, 79, 0.18)"
+  },
+  "typography": {
+    "family": "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    "title": {
+      "size": 36,
+      "weight": 800,
+      "tracking": "-0.055em"
+    },
+    "cardTitle": {
+      "size": 20,
+      "weight": 800,
+      "tracking": "-0.04em"
+    },
+    "body": {
+      "size": 13,
+      "lineHeight": 1.8,
+      "weight": 400
+    },
+    "label": {
+      "size": 12,
+      "weight": 700
+    }
+  },
+  "state": {
+    "write": {
+      "accent": "brand.600",
+      "panel": "empty",
+      "action": "submit"
+    },
+    "answer": {
+      "accent": "brand.600",
+      "panel": "answer",
+      "action": "new-inquiry"
+    },
+    "clarify": {
+      "accent": "brand.600",
+      "panel": "clarify",
+      "action": "follow-up"
+    },
+    "ticket": {
+      "accent": "brand.600",
+      "panel": "ticket",
+      "action": "new-inquiry"
+    },
+    "forbidden": {
+      "accent": "status.danger",
+      "panel": "forbidden",
+      "action": "new-inquiry"
+    },
+    "blocked": {
+      "accent": "status.danger",
+      "panel": "blocked",
+      "action": "new-inquiry"
+    },
+    "uncertain": {
+      "accent": "status.warning",
+      "panel": "uncertain",
+      "action": "retry"
+    }
+  }
+}

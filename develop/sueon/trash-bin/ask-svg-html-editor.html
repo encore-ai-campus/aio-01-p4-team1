@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>오케퐁 질문 화면 SVG → HTML 편집기</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f7;color:#172033;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}.bar{padding:18px 24px;background:#102e68;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px}.bar h1{font-size:18px;margin:0}.bar p{font-size:12px;margin:5px 0 0;color:#bfdbfe}.actions{display:flex;gap:8px;flex-wrap:wrap}.button,.tab{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}.button{background:#2563eb;color:#fff}.button.secondary,.tab{background:#fff;color:#1d4ed8}.tabs{padding:14px 24px;display:flex;gap:8px;flex-wrap:wrap;background:#fff;border-bottom:1px solid #dbe3ef}.tab.active{background:#2563eb;color:#fff}.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(360px,.8fr);gap:18px;padding:18px 24px}.panel{background:#fff;border:1px solid #dbe3ef;border-radius:14px;overflow:hidden}.panel h2{font-size:14px;margin:0;padding:14px 16px;border-bottom:1px solid #e5eaf1}.preview{padding:14px;background:#f8fafc;min-height:600px;display:grid;place-items:center;overflow:auto}.preview svg{width:100%;height:auto;box-shadow:0 12px 30px #182b4a22}.editor{width:100%;height:600px;resize:vertical;border:0;padding:16px;font:12px/1.5 Consolas,monospace;color:#dbeafe;background:#111827;outline:0}.hint{padding:10px 16px;color:#64748b;font-size:12px;background:#f8fafc;border-top:1px solid #e5eaf1}@media(max-width:900px){.layout{grid-template-columns:1fr}.editor{height:420px}}
+</style>
+</head>
+<body>
+<header class="bar"><div><h1>오케퐁 질문 화면 HTML 편집기</h1><p>SVG 원본을 HTML 안에서 수정하고 미리보기할 수 있습니다.</p></div><div class="actions"><button class="button" id="apply">미리보기 적용</button><button class="button secondary" id="download">HTML 다운로드</button></div></header>
+<nav class="tabs" id="tabs"></nav>
+<main class="layout"><section class="panel"><h2>화면 미리보기</h2><div class="preview" id="preview"></div></section><section class="panel"><h2>HTML / SVG 소스 편집</h2><textarea class="editor" id="editor" spellcheck="false"></textarea><div class="hint">SVG 내부의 색상, 문구, 간격을 수정한 뒤 “미리보기 적용”을 누르세요.</div></section></main>
+<script>
+const files=["ask-write-1920x1080.svg","ask-answer-1920x1080.svg","ask-clarify-1920x1080.svg","ask-ticket-1920x1080.svg","ask-forbidden-1920x1080.svg","ask-blocked-1920x1080.svg"];const labels=["작성","답변","보완 질문","이관","권한 없음","차단"];let current=0;const tabs=document.querySelector("#tabs"),editor=document.querySelector("#editor"),preview=document.querySelector("#preview");files.forEach((file,i)=>{const b=document.createElement("button");b.className="tab"+(i===0?" active":"");b.textContent=labels[i];b.onclick=()=>{current=i;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");load()};tabs.appendChild(b)});async function load(){const r=await fetch("design-reference/"+files[current]);editor.value=await r.text();preview.innerHTML=editor.value}document.querySelector("#apply").onclick=()=>{preview.innerHTML=editor.value};document.querySelector("#download").onclick=()=>{const html="<!doctype html>\n<html lang=\"ko\"><head><meta charset=\"utf-8\"><title>오케퐁 질문 화면</title></head><body style=\"margin:0\">"+editor.value+"</body></html>";const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download=files[current].replace(".svg",".html");a.click();URL.revokeObjectURL(a.href)};load();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+export type Role = "employee" | "admin";
+export type User = { id: number; name: string; dept: string; role: Role; must_change_password: boolean };
+export type Source = { doc: string; section: string; score?: number };
+export type Ticket = { ticket_id: string; priority: "normal" | "high"; duplicate?: boolean } | null;
+export type AskResponse = { request_id: string; route: string; answer: string; sources: Source[]; ticket: Ticket; agents?: string[]; security?: Record<string, unknown>; reason?: string };
+export type ApiError = { error?: { code?: string; message?: string }; codes?: string[] };
+export type ItemsResponse<T> = { items: T[] };
+export type TicketStatus = "open" | "in_progress" | "resolved";
+export type TicketView = { id: number; ticket_id: string; request_id?: string | null; requester: string; title: string; category: string; priority: "normal" | "high"; status: TicketStatus | string; assignee: number | null; reply?: string | null; created_at: string; updated_at: string; [key: string]: unknown };
+export type TicketPatch = { status: TicketStatus; assignee?: number | null; reply?: string | null };
+export type EmployeeAdminView = { id: number; name: string; dept: string; user_id: number | null };
+export type AccountView = { id: number; employee_id: number; login_id: string; name: string; dept: string; role: Role; is_active: boolean; must_change_password: boolean };
+export type CreateAccountRequest = { employee_id: number; login_id: string; temporary_password: string };
+export type AlertView = { id: number; ticket_id: string | null; workflow: string; node: string; message: string; severity: string; created_at: string };
+export type InquiryView = { request_id: string; question: string; attempt: number; result?: AskResponse | Record<string, unknown> | null; ticket?: Ticket | Record<string, unknown> | null; created_at: string; [key: string]: unknown };

@@ -1,0 +1,27 @@
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { api } from "../../../lib/api/client";
+
+type RequestItem = { request_id: string; question?: string; answer?: string; created_at?: string; answered_at?: string; ticket?: { ticket_id: string; status?: string; priority?: "normal" | "high" } | null; source?: string };
+type ViewItem = RequestItem & { status: "처리 중" | "완료" | "접수" | "이관 실패"; date: string; answerDate?: string };
+
+const sampleItems: ViewItem[] = [
+  { request_id: "ui-001", question: "VPN 접속이 안돼요. 어떻게 해야 하나요?", answer: "재택근무 시 VPN 접속이 되지 않는 경우, 먼저 사내 네트워크 연결 상태를 확인해주세요.", date: "2025.11.04 (화) 14:32", answerDate: "2025.11.04 (화) 14:40", status: "처리 중", ticket: { ticket_id: "T-2001", status: "open", priority: "normal" }, source: "재택근무 · VPN 규정 (제3조, 접속 방법 및 주의사항)" },
+  { request_id: "ui-002", question: "사내 메신저 오류가 나요", date: "2025.11.03 (월) 10:21", answerDate: "2025.11.03 (월) 11:05", status: "완료", ticket: null },
+  { request_id: "ui-003", question: "노트북 비밀번호를 변경하고 싶어요", date: "2025.10.29 (수) 16:17", status: "접수", ticket: null },
+  { request_id: "ui-004", question: "회의실 예약 방법을 알려주세요", date: "2025.10.27 (월) 09:50", answerDate: "2025.10.27 (월) 10:12", status: "이관 실패", ticket: null },
+];
+
+function statusClass(status: ViewItem["status"]) { return status === "처리 중" ? "status-progress" : status === "완료" ? "status-done" : status === "접수" ? "status-received" : "status-failed"; }
+function formatDate(value?: string) { return value ? new Date(value).toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" }) : "-"; }
+
+export default function MyRequestsPage() {
+  const [items, setItems] = useState<ViewItem[]>(process.env.NEXT_PUBLIC_USE_MOCK === "true" ? sampleItems : []);
+  const [openId, setOpenId] = useState("ui-001");
+  const [loading, setLoading] = useState(process.env.NEXT_PUBLIC_USE_MOCK !== "true");
+  const [error, setError] = useState("");
+  async function load() { if (process.env.NEXT_PUBLIC_USE_MOCK === "true") { setItems(sampleItems); setLoading(false); return; } setLoading(true); setError(""); try { const result = await api<{ items: RequestItem[] }>("/api/my-requests"); setItems(result.items.map(item => ({ ...item, status: (item.ticket?.status === "resolved" ? "완료" : item.ticket?.status === "open" ? "접수" : "처리 중") as ViewItem["status"], date: formatDate(item.created_at), answerDate: formatDate(item.answered_at) }))); } catch (err) { setError(err instanceof Error ? err.message : "문의 목록을 불러오지 못했습니다."); } finally { setLoading(false); } }
+  useEffect(() => { load(); }, []);
+  return <main className="requests-page"><aside className="requests-sidebar"><Link href="/ask" className="requests-logo"><img src="/assets/okepong-logo.svg" alt="오케퐁" /></Link><nav><Link href="/ask" className="requests-nav"><span>⌂</span>홈</Link><Link href="/my-requests" className="requests-nav selected"><span>◌</span>내 문의</Link><Link href="#service" className="requests-nav"><span>▣</span>IT 서비스</Link><Link href="#status" className="requests-nav"><span>▥</span>서비스 현황</Link><Link href="#settings" className="requests-nav"><span>⚙</span>설정</Link></nav><button className="requests-logout" type="button">↪<span>로그아웃</span></button></aside><section className="requests-main"><header className="requests-header"><div className="user-menu"><span className="user-avatar">●</span><b>김민지 님</b><span>| IT팀⌄</span><span className="header-divider" /><button type="button">⇥ 로그아웃</button></div></header><div className="requests-content"><div className="requests-title-row"><div><div className="requests-title"><span className="title-bubble">•••</span><div><h1>내 문의</h1><p>오케퐁에 문의한 내용과 처리 현황을 확인할 수 있어요.</p></div></div></div><div className="requests-actions"><button className="refresh-button" type="button" onClick={load}>⟳　새로고침</button><Link className="ask-button" href="/ask">✎　질문하기</Link></div></div>{error&&<p className="error" role="alert">{error}</p>}{loading?<section className="request-empty">문의 목록을 불러오는 중입니다…</section>:items.length===0?<section className="request-empty"><strong>아직 문의가 없습니다.</strong><Link href="/ask">첫 질문 남기기</Link></section>:<div className="request-list">{items.map(item=><article className={`request-card ${openId===item.request_id?"expanded":""}`} key={item.request_id}><button className="request-summary" type="button" onClick={()=>setOpenId(openId===item.request_id?"":item.request_id)}><span className="request-icon">◌</span><span className="request-copy"><strong>{item.question??item.request_id}</strong><small>문의일시　{item.date}{item.answerDate&&<>　 |　 답변일시　{item.answerDate}</>}</small></span><span className={`request-status ${statusClass(item.status)}`}>{item.status}</span>{item.status === "처리 중" && <span className="priority">보통</span>}<span className="chevron">{openId===item.request_id?"⌃":"⌄"}</span></button>{openId===item.request_id&&<div className="request-detail"><div><span className="detail-icon">▤</span><div><b>문의 내용</b><p>{item.question}</p></div></div>{item.answer&&<div><span className="detail-icon">▤</span><div><b>답변 내용</b><p>{item.answer}</p></div><button className="more-button" type="button">더보기⌄</button></div>}<div className="request-meta"><span>▤　<b>근거 문서</b>　{item.source??"근거 문서가 확인되면 표시됩니다."}</span><span className="meta-divider" />{item.ticket?<span>▤　<b>티켓 상태</b>　{item.ticket.ticket_id} · {item.ticket.status === "resolved" ? "완료" : item.ticket.status === "open" ? "접수" : "처리 중"}</span>:<span>▤　<b>티켓 상태</b>　티켓 없음</span>}</div></div>}</article>)}</div>}</div></section></main>;
+}

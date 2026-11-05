@@ -1,0 +1,40 @@
+{
+  "purpose": "P1-1 2단계 자기 접수 조회 Mock 기대값. 실제 data-api 호출이 아니다.",
+  "cases": [
+    {
+      "id": "P1-T01-no-id",
+      "request_file": "requests/input-valid.json",
+      "expect": { "http_status": 200, "lookup_state": "skipped", "lookup_request_absent": true }
+    },
+    {
+      "id": "P1-T02-own-masked",
+      "request_file": "requests/own-ticket.json",
+      "lookup_result": "own_ok",
+      "expect": { "http_status": 200, "lookup_state": "ok", "lookup_requester": "박서연", "lookup_ticket_id": "T-1002", "mask_count": 2, "contact_absent": true }
+    },
+    {
+      "id": "P1-T03-other-forbidden",
+      "request_file": "requests/other-ticket.json",
+      "lookup_result": "other_forbidden",
+      "expect": { "http_status": 200, "route": "권한 없음", "ticket": null, "lookup_state": "forbidden", "lookup_requester": "이준호", "contact_absent": true }
+    },
+    {
+      "id": "P1-T04-not-found",
+      "request_file": "requests/not-found-ticket.json",
+      "lookup_result": "not_found",
+      "expect": { "http_status": 200, "lookup_state": "not_found", "contact_absent": true }
+    },
+    {
+      "id": "P1-T05-unavailable",
+      "request_file": "requests/own-ticket.json",
+      "lookup_result": "unavailable",
+      "expect": { "http_status": 200, "lookup_state": "unavailable", "contact_absent": true }
+    },
+    {
+      "id": "P1-T06-timeout",
+      "request_file": "requests/own-ticket.json",
+      "lookup_result": "timeout",
+      "expect": { "http_status": 200, "lookup_state": "unavailable", "contact_absent": true }
+    }
+  ]
+}

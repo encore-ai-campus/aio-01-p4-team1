@@ -1,0 +1,27 @@
+{
+  "purpose": "P1-2 verifier 합성 출력. 실제 LLM 검증 아님.",
+  "results": {
+    "pass": {
+      "output": "{\"grounded\": true, \"policy_ok\": true, \"issues\": []}"
+    },
+    "ungrounded": {
+      "output": "{\"grounded\": false, \"policy_ok\": true, \"issues\": [\"unsupported_procedure\"]}"
+    },
+    "policy_fail": {
+      "output": "{\"grounded\": true, \"policy_ok\": false, \"issues\": [\"unsafe_action\"]}"
+    },
+    "contradictory_issues": {
+      "output": "{\"grounded\": true, \"policy_ok\": true, \"issues\": [\"source_mismatch\"]}"
+    },
+    "wrong_type": {
+      "output": "{\"grounded\": \"true\", \"policy_ok\": true, \"issues\": []}"
+    },
+    "truncated": {
+      "output": "{\"grounded\":true"
+    },
+    "down": {
+      "output": "",
+      "error": "llm_down"
+    }
+  }
+}

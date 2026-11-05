@@ -1,0 +1,30 @@
+{
+  "purpose": "P1-2 writer 합성 출력. 실제 LLM/규정 답변 아님.",
+  "results": {
+    "valid": {
+      "output": "{\"answer\": \"모의 근거를 확인했습니다. 실제 규정 안내가 아닙니다.\", \"used_sources\": [{\"doc\": \"remote-work-vpn\", \"section\": \"접속 오류\"}], \"used_ticket\": false}"
+    },
+    "forged_source": {
+      "output": "{\"answer\": \"위조 출처 초안\", \"used_sources\": [{\"doc\": \"admin-secret\", \"section\": \"권한\"}], \"used_ticket\": false}"
+    },
+    "used_ticket_without_lookup": {
+      "output": "{\"answer\": \"접수 상태가 처리 중입니다.\", \"used_sources\": [{\"doc\": \"remote-work-vpn\", \"section\": \"접속 오류\"}], \"used_ticket\": true}"
+    },
+    "valid_ticket_contact": {
+      "output": "{\"answer\": \"접수 상태가 처리 중입니다. 문의는 support@example.invalid로 보내세요.\", \"used_sources\": [{\"doc\": \"remote-work-vpn\", \"section\": \"접속 오류\"}], \"used_ticket\": true}"
+    },
+    "truncated": {
+      "output": "{\"answer\":\"미완성\""
+    },
+    "wrong_type": {
+      "output": "{\"answer\": \"모의 답변\", \"used_sources\": [{\"doc\": \"remote-work-vpn\", \"section\": \"접속 오류\"}], \"used_ticket\": \"false\"}"
+    },
+    "down": {
+      "output": "",
+      "error": "llm_down"
+    },
+    "landline_contact": {
+      "output": "{\"answer\": \"문의 전화는 02-0000-0000 또는 +82 10 0000 0000입니다.\", \"used_sources\": [{\"doc\": \"remote-work-vpn\", \"section\": \"접속 오류\"}], \"used_ticket\": false}"
+    }
+  }
+}

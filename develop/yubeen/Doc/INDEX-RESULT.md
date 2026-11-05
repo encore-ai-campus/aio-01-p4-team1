@@ -230,3 +230,40 @@ P1-1 Mock의 지적된 다섯 결함은 회귀 범위에서 보완했다. 실제
 연결 소유권은 전용 연결을 어댑터에 이전한다는 전제다. 풀/공유 연결을 직접 넘기면 안 된다. 풀을 쓸 경우 소유자 측의 물리 연결 폐기·대여 해제 규약이 추가로 필요하다. 실패 연결의 상태 재확인/재접속·중지 문서 재개 정책은 미결정이며 자동 재개는 하지 않는다.
 
 P1-2는 계약/Mock 설계 준비만 조건부 가능하다. 실제 검색 연계는 위 DB 동시성·권한 중지·재개 정책과 실제 원본·권한·색인 확인 이후에 검증해야 한다. 이번에 P1-2 구현·외부 전달·commit/push/merge는 수행하지 않았다.
+
+## 개인 n8n 실행 환경 보완 및 Mock 실행 · 2026-11-04
+
+이번 기록은 앞선 Python Mock 검증과 별도로 수행한 개인 n8n 실행 환경 확인이다. 실제 원본 API·OpenAI·PostgreSQL 색인 검증은 여전히 미실행이다. 기존 Python 엔진·설정·워크플로우 원본 JSON은 수정하지 않았다.
+
+### 적용 범위와 백업
+
+- 환경: AIO, feat/yubeen-p0, 개인 Compose `/home/yubeen/day65-n8n/compose.yml`, n8n `day65-n8n-n8n-1`/2.42.6.
+- 추가 백업: `/home/yubeen/n8n-backup/p1-1-runtime-20261104-181408/`. 비공개 디렉터리에 Compose·환경 파일·n8n 전체 데이터·변경 전 대상 워크플로우를 보관했다. 비밀 파일과 실제 값은 프로젝트에 복사하지 않았다.
+- n8n만 정상 중지한 상태에서 데이터 전체를 복사했다. SQLite `integrity_check=ok`, 압축 백업 재추출 후 DB 내용 비교, 암호화 config 해시를 확인했다. 실제 복구용 볼륨 전환 시험은 수행하지 않았다.
+- 기존 `day65-n8n_n8n-data` 볼륨을 유지했다. 다른 실습 컨테이너 4개의 ID와 서비스 설정은 바뀌지 않았다.
+
+### 환경 및 저장된 워크플로우 수정
+
+- 개인 폴더의 `Dockerfile.oke-rag`는 기존 n8n 2.42.6 베이스 다이제스트를 유지한다. 별도 Alpine 3.24 빌드 단계에서 Python 3.14.10을 준비하고 `/opt/oke-python`에 배치한다. n8n의 고정 시스템 라이브러리를 변경하지 않는다.
+- 최초 시스템 패키지 직접 설치 빌드는 고정 libexpat 의존성 충돌로 실패했다. 이 이미지는 적용하지 않았으며, 독립 런타임 방식의 후속 빌드와 검증이 성공한 뒤 적용했다.
+- `.dockerignore`로 환경 파일 등을 빌드 컨텍스트에서 제외했다. 개인 Compose의 n8n 서비스에만 이미지/빌드 설정, `NODES_EXCLUDE=["n8n-nodes-base.localFileTrigger"]`, 담당 폴더의 `/opt/oke-rag:ro` 마운트를 추가했다. 기존 external Runner 구성과 데이터 볼륨은 유지했다.
+- 실제 노드 캐시 `/home/node/.cache/n8n/public/types/nodes.json`에서 Manual Trigger·Execute Command·Code 등록을 확인했다. Local File Trigger는 제외되어 있다. `/healthz`는 HTTP 200이다. 인증이 필요한 `/types/nodes.json`의 익명 요청은 401이므로, 해당 요청을 노드 확인 성공으로 계산하지 않았다.
+- 저장된 `oke-index` 1건은 노드/명령은 원본과 같지만 connections가 비어 있었다. 기존 ID·노드 ID·설정을 유지하고 공식 `n8n import:workflow`로 원본의 연결 2개를 복원했다. 명령 종료 0, 1건 Import를 확인했으며 비활성 상태를 유지했다. DB 직접 UPDATE는 하지 않았다.
+- 최종 비교: 워크플로우 38개 유지, 다른 37개는 행 전체가 동일하다. 대상은 connections·meta·versionId가 바뀌었고 기존 노드는 동일하다. 사용자 1명의 행은 CLI 처리 후 updatedAt만 변경됐으며 다른 계정·인증 값은 동일하다. Credential 4건·소유권·프로젝트·암호화 config는 동일하다. SQLite 무결성도 정상이다.
+
+### 실제 실행 결과와 한계
+
+| 검증 | 실제 결과 |
+| --- | --- |
+| 호스트 전체 unittest | 108개 통과, 종료 0 |
+| 실제 n8n 컨테이너의 읽기 전용 마운트에서 전체 unittest | 108개 실행 중 임시 파일을 tests 아래에 쓰는 3개가 읽기 전용 오류. 원본·테스트·마운트 권한은 바꾸지 않음 |
+| 동일 컨테이너 /tmp 복사본에서 전체 unittest | 108개 통과, 종료 0. 임시 복사본은 자동 정리 |
+| 실제 n8n 컨테이너에서 `python3 /opt/oke-rag/tools/rag_verify.py index --source mock --scenario initial-and-repeat --json` | 종료 0, mode=mock, ok=true. 최초 indexed=4/rejected=1/failed=0, 재실행 skipped=4/rejected=1/failed=0. 모든 checks=true |
+| 네트워크 none인 임시 컨테이너에서 같은 Mock 명령 | 종료 0, ok=true |
+| 격리 n8n 2.42.6의 공식 Import 및 execute CLI | 종료 0. 수동 시작 → Python Mock → 안전한 검증 결과의 세 노드 모두 실행, 최종 ok=true |
+
+격리 워크플로우 시험은 임시 데이터와 internal JavaScript Runner를 사용했다. 기존 n8n의 external Runner를 사용하는 브라우저 수동 실행 및 실제 화면 렌더링은 직접 검증하지 않았다. 이 결과를 해당 경로의 실행 성공으로 확장하지 않는다. 검증 CLI의 고정 필드 `actual_api_embedding_db_n8n=not_executed`는 검증기 자체의 외부 연동 상태이며, 이번에 별도로 수행한 n8n Mock 실행은 위 표로 구분한다.
+
+저장된 연결까지 복원했으므로 기존 n8n 화면을 새로고침해 다시 열면 되며, 별도 재Import는 필요하지 않다. 오래된 편집 화면을 그대로 저장해 연결 복원 내용을 덮어쓰지 않는다. 실제 화면에서 세 노드·연결선 2개·수동 실행 결과를 사람이 확인하는 절차는 남아 있다.
+
+개인 환경의 변경·복구 절차는 `/home/yubeen/day65-n8n/P1-1-RECOVERY.md`에 기록했다. 설정 복구는 백업 Compose로 같은 볼륨을 사용하는 n8n만 재생성하는 방식이며, 데이터 삭제·volume prune·사용자 초기화는 하지 않는다. 실제 원본/권한, OpenAI 임베딩, PostgreSQL 저장/동시성/복구 및 실제 색인 완료는 미검증이다. P1-2 구현·commit·push·merge·팀원 메시지 전송은 하지 않았다.

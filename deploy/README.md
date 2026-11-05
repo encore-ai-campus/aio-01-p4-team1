@@ -49,7 +49,7 @@ This starts the existing containers with their original image IDs and mount bind
 
 ## Cleanup record · 2026-11-05
 
-GitHub `main` and VM repository both run commit `c1a4c8b` (GitHub implementation commit; VM fast-forward target). The pre-switch backup is `/home/toor/backups/oke-runtime-cleanup-20261105-final` (directory mode 700; private files mode 600; PostgreSQL dump nonempty; n8n volume copy 7.87 MB; recorded checksums verified). Local Compose `config --quiet` passed on the VM before the switch and after startup.
+`c1a4c8b` is the deployed runtime implementation commit. Follow-up docs-only commit `1519135` was pushed and fast-forwarded to the VM without restarting services; current GitHub and VM repository head is `1519135`. The pre-switch backup is `/home/toor/backups/oke-runtime-cleanup-20261105-final` (directory mode 700; private files mode 600; PostgreSQL dump nonempty; n8n volume copy 7.87 MB; recorded checksums verified). Local Compose `config --quiet` passed on the VM before the switch and after startup.
 
 | Verification | Result |
 |---|---|

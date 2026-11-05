@@ -55,7 +55,7 @@
 
 ## 후속 VM 런타임 정리 · 2026-11-05
 
-통합 스냅샷 `3e0f701` 뒤에 승인된 OKE 명명 전환을 별도로 수행했다. GitHub main 구현 커밋은 `c1a4c8b`이며 VM도 `3e0f701`에서 `c1a4c8b`로 fast-forward했다.
+통합 스냅샷 `3e0f701` 뒤에 승인된 OKE 명명 전환을 별도로 수행했다. 런타임 구현 커밋은 `c1a4c8b`이며 VM은 이를 배포 기준으로 fast-forward했다. 후속 문서 전용 커밋 `1519135`도 GitHub main에 push하고 VM 저장소를 fast-forward했다. 문서 동기화는 컨테이너를 재시작하지 않았다.
 
 - Compose 프로젝트를 `day65-n8n`에서 `oke`로 바꾸고 서비스 DNS는 유지했다. 기존 `day65-n8n_default` 네트워크와 정확한 external volumes (`day65-n8n_n8n-data`, `oke-jihye-p0_postgres_data`, sandbox TLS/DinD)를 재사용했다. 구 컨테이너는 중지 후 보존했고, 볼륨·이미지·credential·백업·수업 파일은 삭제하지 않았다.
 - 기본 기동에서 SearXNG를 `optional-search` 프로필로 제외했다. RAG index는 기존 `indexing` 수동 프로필로만 실행하며 search는 유지했다. SearXNG와 index가 멈춘 뒤에도 direct C03 일반/IT 검색 및 n8n `oke-search`가 HTTP 200, evidence 3을 반환했다.

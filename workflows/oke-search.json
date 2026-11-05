@@ -15,7 +15,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "oke-search",
-        "authentication": "headerAuth",
+        "authentication": "none",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -97,8 +97,7 @@
       "parameters": {
         "method": "POST",
         "url": "http://127.0.0.1:8765/search",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.request) }}",

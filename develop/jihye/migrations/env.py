@@ -7,8 +7,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.core.config import Settings
 from app.db.base import Base, include_migration_name
 from app.db.session import create_db_engine, database_url
+from app.db import models  # noqa: F401 -- register app tables for autogenerate
 
-# P0-4/5 register business/rag models here. Empty metadata is expected in P0-3.
+# P0-4 app models are registered; P0-5 will add rag models.
 target_metadata = Base.metadata
 
 

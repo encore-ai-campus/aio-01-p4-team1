@@ -1,4 +1,4 @@
-"""Read-only P0-3 checks. Explicit opt-in; never select a default/shared DB."""
+"""Read-only connection checks that remain valid after applying migrations."""
 
 import io
 import os
@@ -7,6 +7,7 @@ import secrets
 import pytest
 from alembic import command
 from alembic.config import Config
+from alembic.script import ScriptDirectory
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
@@ -33,16 +34,17 @@ def test_database_connection_and_session(engine):
         assert session.scalar(text("SELECT current_database()")) == expected
 
 
-def test_pgvector_is_available_but_not_applied_in_p0_3(engine):
+def test_pgvector_is_available(engine):
     with engine.connect() as connection:
         available = connection.scalar(text("SELECT default_version FROM pg_available_extensions WHERE name='vector'"))
         assert available
-        assert connection.scalar(text("SELECT count(*) FROM pg_extension WHERE extname='vector'")) == 0
 
 
-def test_no_application_schemas_or_tables_yet(engine):
+def test_application_schemas_match_the_installed_revision(engine):
     with engine.connect() as connection:
-        assert connection.scalar(text("SELECT count(*) FROM pg_namespace WHERE nspname IN ('app','rag')")) == 0
+        has_version_table = connection.scalar(text("SELECT to_regclass('public.alembic_version') IS NOT NULL"))
+        version = connection.scalar(text("SELECT version_num FROM public.alembic_version")) if has_version_table else None
+        assert connection.scalar(text("SELECT count(*) FROM pg_namespace WHERE nspname IN ('app','rag')")) == (2 if version else 0)
 
 
 def test_wrong_password_is_actually_rejected():
@@ -59,7 +61,8 @@ def test_wrong_password_is_actually_rejected():
         wrong.dispose()
 
 
-def test_alembic_current_has_no_revision(engine):
+def test_alembic_current_matches_the_local_head(engine):
     output = io.StringIO()
     command.current(Config("migrations/alembic.ini", stdout=output))
-    assert output.getvalue().strip() == ""
+    head = ScriptDirectory.from_config(Config("migrations/alembic.ini")).get_current_head()
+    assert output.getvalue().strip() == f"{head} (head)"

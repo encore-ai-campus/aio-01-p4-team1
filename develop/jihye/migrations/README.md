@@ -4,11 +4,11 @@
 
 ## 현재 범위와 전제
 
-2026-11-05 현재 P0-3의 postgres 컨테이너·전용 검증 DB 접속·Alembic 실행 기반을 준비하고 확인했다. 개인 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 적용 기준과 공통 대조 커밋을 모았다. 업무 테이블·확장 활성화는 P0-4·rag 테이블/권한은 P0-5다. 이미지/관리 권한·비밀 설정이 준비되지 않은 환경은 실제 실행 전까지 미실행으로 구분한다.
+2026-11-05 현재 전용 검증 DB에 P0-4 `0001→0002`를 적용해 vector 확장·app/rag 스키마·업무 테이블 7개를 확인했다. 개인 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 적용 기준과 공통 대조 커밋을 모았다. rag 테이블/권한은 P0-5다. 다른 환경에서 적용 전에는 권한·비밀 설정을 별도로 확인한다.
 
-alembic.ini/env.py/script.py.mako와 빈 versions 디렉터리, Base/session factory를 생성했다. history/heads는 종료0·빈 결과이고 실제 DB의 current도 revision 없음이다. 초기 migration을 적용했다고 쓰지 않는다. env.py의 include_schemas/include_name은 app/rag만 autogenerate 대상으로 삼으며, public.alembic_version은 관리 이력용 예외 위치다. 현재 current 조회는 그 테이블도 만들지 않았다. P0-4~5의 모델 등록은 후속 env.py에서 연결한다.
+alembic.ini/env.py/script.py.mako와 Base/session factory 및 업무 모델을 생성했다. history/heads는 단일 체인·`0002 (head)`이고 전용 DB의 current도 `0002 (head)`다. env.py의 include_schemas/include_name은 app/rag만 autogenerate 대상으로 삼으며, public.alembic_version은 관리 이력용 예외 위치다. P0-5의 RAG 모델 등록은 후속 단계다.
 
-DB 접속은 환경변수 DATABASE_URL의 명시적 postgresql+psycopg 드라이버를 사용한다. 설정 누락/형식 오류는 접속 문자열 없이 실패하고, 실제 migration 명령도 SQLAlchemy 예외 원문을 출력하지 않는다. 기본 앱 시작 시 DB 접속/create_all/seed는 하지 않는다. 실제 DB 시험과 기존 회귀의 전체 결과는114개 통과·경고1건이며 자세한 명령은 deploy/README·IMP-PLAN에 있다.
+DB 접속은 환경변수 DATABASE_URL의 명시적 postgresql+psycopg 드라이버를 사용한다. 설정 누락/형식 오류는 접속 문자열 없이 실패하고, 실제 migration 명령도 SQLAlchemy 예외 원문을 출력하지 않는다. 기본 앱 시작 시 DB 접속/create_all/seed는 하지 않는다. P0-4 실제 DB 검사40개, 전체155개 통과·기존 경고1건이며 자세한 명령은 IMP-PLAN에 있다.
 
 알림 event_key UNIQUE와 DLQ 테이블은 확정된 DB 기반이다. H07의 응답 duplicate 확장은 새 DB 컬럼을 요구하는 제안이 아니며, ACK 명문화 대기로 기본 DDL을 중단하지 않는다. inquiries.context는 nullable text로 두고 API의 최대2,000자 검증은 확정 입력 기준으로 적용한다. 추가 DB CHECK는 공통 논리표와 구별해 물리 구현에서 검토한다.
 

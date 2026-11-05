@@ -114,11 +114,19 @@
 
 ## P0-4 · 확장→업무 테이블 생성
 
-- [ ] 연결 SPEC: BE-01·03~05, C05/C06.
+- [x] 연결 SPEC: BE-01·03~05, C05/C06. 전용 검증 DB의 DDL·제약 확인까지 완료; 업무 API 저장 연결은 후속 단계.
 - 생성 예정: `migrations/versions/0001_extensions_and_schemas.py`, `0002_app_tables.py`, `app/db/models/employees.py`, `users.py`, `sessions.py`, `inquiries.py`, `tickets.py`, `alerts.py`, `dlq.py`와 모델 등록 파일; `tests/integration/test_migrations.py`.
 - 작업: [migrations 안내](../migrations/README.md)의 타입/NULL/기본값/FK/고유키를 적용한다. vector·app/rag 생성 후 employees→users→sessions, inquiries→tickets→alerts, dlq 순으로 만든다. T-2001 별도 시퀀스와 request_key UNIQUE를 둔다. 계정 seed를 DDL 안에 섞지 않는다.
 - 확인 예정: `uv run alembic -c migrations/alembic.ini history`, `upgrade head`, `current`를 순서대로 수행한다. `uv run pytest tests/integration/test_migrations.py -q`로 카탈로그를 확인하고 같은 upgrade 재실행이 무변경인지 검사한다. 자동 생성 결과의 확장·스키마·제약은 직접 검토한다.
 - 넘길 결과: 원민님에게 티켓/알림/DLQ 구조·중복 제약·nullable inquiry, 다음 단계에 적용 revision과 실제 오류. H02 추가 보안 컬럼은 기본 revision에 미승인으로 넣지 않는다.
+
+### P0-4 실제 기록 · 2026-11-05
+
+- 전제: P0-3의 격리된 `oke-jihye-p0` DB와 마이그레이션 실행 계정을 사용했다. 개인 README·SPEC·계획·HANDOFF 및 deploy/migrations 안내, 공통 API/DB 계약을 대조했다. 유빈님 청크 표본은 P0-5 연결 입력으로만 사용한다.
+- 구현: `0001`에서 vector 확장과 app/rag 스키마를 만들고, `0002`에서 업무 테이블 7개(employees, users, sessions, inquiries, tickets, alerts, dlq), FK·고유/검사 제약·조회 인덱스·T-2001 전용 시퀀스를 만들었다. `app/db/models/`에 대응 모델을 등록하고 `deploy/check_db.py`에 마이그레이션 검사 명령을 추가했다. 계정 seed와 RAG 테이블/권한은 후속 범위다.
+- 실제 적용: `uv run python deploy/check_db.py --alembic history`는 단일 `0001→0002` 체인, `heads`는 `0002 (head)`였다. 적용 전 `current`는 비어 있었고, `--alembic upgrade`는 종료 0, 적용 후 `current`는 `0002 (head)`였다.
+- 실제 검사: `uv run python deploy/check_db.py --migrations` 종료 0, 40개 통과. DB 카탈로그의 확장·스키마·컬럼/NULL/타입/기본값·FK/UNIQUE/CHECK·인덱스, 합성 자료의 중복/거절 및 재적용 무변경을 확인했다. `--all` 종료 0, 전체 155개 통과·기존 Starlette/httpx 폐기 예정 경고 1건. 검사 기록은 실제 전용 DB 결과이며 실서비스 저장 성공이 아니다.
+- 범위/다음: rag 스키마는 존재하지만 `rag.documents/chunks`, `vector(3072)` 컬럼과 런타임 role/grant는 P0-5에서 만든다. 유빈님 청크 `chunk_no`는 0부터이고 추적값은 metadata JSONB에 담는 방향으로 대조한다. `complete/partial/rejected`는 청킹 준비 상태라 기본 DDL 컬럼으로 추가하지 않는다. 원민님에는 티켓/알림/DLQ 제약과 실제 저장 API 미연결을 구분해 공유한다. 외부 전송·commit·push는 이 기록에서 주장하지 않는다.
 
 ## P0-5 · RAG 테이블·인덱스·접속 권한
 

@@ -11,7 +11,7 @@
 | P0-2 보완 | 2026-11-05 context 최대2,000자 누락과 개인 문서 기준 정리. 전체100개 통과·경고1건 |
 | P0-3 | 전용 PostgreSQL 컨테이너·비밀 설정·접속·Alembic 기반 준비, 실제 DB 시험5개 통과. vector는 가용하지만 아직 활성화하지 않음 |
 | 실제 기능 | 로그인·세션/내부키 검증·DB 저장·n8n/data-api 연결 미구현/미검증 |
-| 다음 | P0-3 결과 인계·확인, 다음 지정 구현은 P0-4 업무 스키마. RAG 테이블/권한은 P0-5 |
+| 현재 | P0-4 전용 DB 마이그레이션 `0002 (head)` 적용·업무 테이블 7개 확인. 다음 지정 구현은 P0-5 RAG 테이블/권한 |
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
@@ -71,7 +71,7 @@ Compose 프로젝트는 `oke-jihye-p0`, DB 서비스는 `postgres`다. 기존 �
 
 시험 컨테이너는 현재 Python3.12 `.venv` site-packages를 읽기 전용으로 참조하고 `/tmp`는 tmpfs를 사용한다. 로컬 검증 도구이며 배포용 backend 이미지는 아니다. check_db.py는 출력의 접속 URL/암호를 가린다. Docker와 uv 캐시 접근 권한이 필요하지만 Docker 소켓 권한 자체는 변경하지 않는다.
 
-확인 결과는 PostgreSQL16.15·사용 가능한 vector0.8.6, digest로 고정한 pgvector 이미지, 정상 접속·잘못된 암호 거절·빈 revision이다. history/heads/current가 비어 있는 것은 P0-3의 예정 상태이며 마이그레이션 적용 완료를 뜻하지 않는다. extension/app/rag는 P0-4, RAG 테이블/grants는 P0-5에서 생성한다.
+P0-3 시점에는 빈 revision이었다. P0-4에서 격리 검증 DB에 `0001→0002`를 적용해 현재 `0002 (head)`와 업무 테이블 7개를 확인했다. 전체 155개 통과·기존 경고 1건이며 자세한 실행 결과는 [IMP-PLAN](Doc/IMP-PLAN.md)에 있다. RAG 테이블/grants는 P0-5에서 생성한다.
 
 전용 DB는 healthy 상태로 남겼고 볼륨을 유지했다. 중지가 필요하면 `docker compose --env-file deploy/.env -f deploy/compose.yaml stop postgres`, 재개는 위 up 명령을 사용한다. 일상 중지/재시작에 `down -v`는 사용하지 않는다. 실제 업무 데이터의 재시작 유지·백업/복원은 후속 단계에서 확인한다.
 

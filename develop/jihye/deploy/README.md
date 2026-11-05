@@ -13,6 +13,8 @@
 
 ## P0-3 실제 실행 기반
 
+P0-4 갱신(2026-11-05): 아래 P0-3 기록의 '테이블 없음'은 당시 상태다. 전용 DB에 `0001→0002`를 적용해 현재 `0002 (head)`와 업무 테이블 7개를 확인했다. `uv run python deploy/check_db.py --alembic current`, `--migrations`, `--all`로 재확인 가능하다. 실제 결과는 마이그레이션 검사40개·전체155개 통과, 기존 경고1건이다. RAG 테이블/권한과 업무 API 저장은 후속이다.
+
 실제 생성 파일은 compose.yaml의 postgres, compose.check.yaml의 검증 전용 db-check, init_db_env.py/check_db.py와 변수 이름만 있는 .env.example이다. 프로젝트 `oke-jihye-p0`는 기존 서비스와 별도 네트워크·named volume을 사용하며 DB 호스트 포트를 공개하지 않는다. 기존 n8n/data-api를 여기에 연결하지 않았다.
 
 ```bash

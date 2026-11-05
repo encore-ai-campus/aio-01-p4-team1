@@ -37,11 +37,14 @@ def test_only_app_and_rag_are_autogenerate_targets():
         assert not include_migration_name("fixture", "table", {"schema_name": schema})
 
 
-def test_p0_3_has_no_business_models_or_fake_revisions():
-    assert not Base.metadata.tables
+def test_p0_4_has_business_models_and_a_single_revision_chain():
+    from app.db import models  # noqa: F401
+
+    assert set(Base.metadata.tables) == {f"app.{table}" for table in (
+        "employees", "users", "sessions", "inquiries", "tickets", "alerts", "dlq")}
     script = ScriptDirectory.from_config(Config("migrations/alembic.ini"))
-    assert script.get_heads() == []
-    assert list(script.walk_revisions()) == []
+    assert script.get_heads() == ["0002"]
+    assert [rev.revision for rev in script.walk_revisions()] == ["0002", "0001"]
 
 
 def test_db_check_redacts_subprocess_failures(monkeypatch, capsys):
@@ -51,7 +54,7 @@ def test_db_check_redacts_subprocess_failures(monkeypatch, capsys):
     password = secrets.token_urlsafe(24)
     url = f"postgresql+psycopg://fixture:{password}@postgres/db"
     monkeypatch.setattr(check_db, "dotenv_values", lambda _: {
-        "DATABASE_URL": url, "POSTGRES_PASSWORD": password,
+        "DATABASE_URL": url, "POSTGRES_PASSWORD": password, "POSTGRES_DB": "db", "POSTGRES_USER": "fixture",
     })
     monkeypatch.setattr("sys.argv", ["check_db.py"])
     monkeypatch.setattr(check_db.subprocess, "run", lambda *args, **kwargs: SimpleNamespace(
@@ -62,3 +65,17 @@ def test_db_check_redacts_subprocess_failures(monkeypatch, capsys):
     assert password not in output
     assert url not in output
     assert "[REDACTED]" in output
+
+
+def test_db_runner_refuses_a_url_pointing_outside_its_service(monkeypatch, capsys):
+    from deploy import check_db
+
+    monkeypatch.setattr("sys.argv", ["check_db.py", "--alembic", "upgrade"])
+    private_input = secrets.token_urlsafe(24)
+    monkeypatch.setattr(check_db, "dotenv_values", lambda _: {
+        "DATABASE_URL": f"postgresql+psycopg://fixture:{private_input}@other-service/db",
+        "POSTGRES_PASSWORD": private_input, "POSTGRES_USER": "fixture", "POSTGRES_DB": "db",
+    })
+    monkeypatch.setattr(check_db.subprocess, "run", lambda *a, **k: pytest.fail("must not run Docker"))
+    assert check_db.main() == 1
+    assert private_input not in capsys.readouterr().out

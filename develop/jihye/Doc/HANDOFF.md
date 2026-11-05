@@ -6,6 +6,8 @@
 
 ## 연결과 상태
 
+P0-4 갱신(2026-11-05): 전용 검증 DB에 `0002 (head)`를 적용해 vector 확장·app/rag 스키마·업무 테이블 7개와 제약을 확인했다. 아래 P0-3 당시의 'DDL 없음' 표기는 실행 이력이다. RAG 테이블/권한·업무 API 실제 저장은 아직 후속이다. 유빈님이 전달한 P0-2 청크 필드(`doc_key`, 0부터 시작하는 `chunk_no`, `section`, `content`, `content_hash`, 길이 및 `metadata`)는 P0-5 매핑 입력이며, `complete/partial/rejected`는 청킹 준비 상태로 DB 필수 컬럼이 아니다. 유빈님께 P0-5 완료 뒤 실제 DDL/접속 권한과 검증 결과를 전달한다. 원민님께는 `tickets.request_key`, `alerts.event_key` 고유 제약과 nullable inquiry, DLQ 구조를 전달하되 API ACK/동시 저장은 실제 연결 후 확인한다. 오현님께는 적용 revision·격리 DB 검사 결과를 전달한다. 외부 메시지 전송·상대 확인은 수행하지 않았다.
+
 | 연결 | 검토 상대 | 상태 |
 | --- | --- | --- |
 | C01 | 수언님·오현님 | H01·03·05 핵심(세션 쿠키·관리자 목록·assignee=employees.id·최후 관리자 보호) 공통 반영 완료, H02 세부 제안 유지·실연결 미실행 |

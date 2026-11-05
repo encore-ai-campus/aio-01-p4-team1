@@ -91,6 +91,18 @@ for (const test of data.tests) {
       result.handoff_status = fixture.status;
       result.handoff_response = fixture.body;
     }
+    if (name === 'N13 Writer MOCK' && test.writer_result) {
+      const fixture = data.writerResults[test.writer_result];
+      if (!fixture) throw Error(test.id + ': unknown writer result');
+      result.writer_output = fixture.output;
+      if (fixture.error) result.error = fixture.error;
+    }
+    if (name === 'N14 Verifier MOCK' && test.verifier_result) {
+      const fixture = data.verifierResults[test.verifier_result];
+      if (!fixture) throw Error(test.id + ': unknown verifier result');
+      result.verifier_output = fixture.output;
+      if (fixture.error) result.error = fixture.error;
+    }
     outputs[name] = result;
     return result;
   };
@@ -111,6 +123,13 @@ for (const test of data.tests) {
     for (const name of ['N10 Build ticket lookup', 'N10 Mock ticket', 'N10 Normalize ticket']) ticket = execute(name, ticket, []);
     value = execute('N11 Join retrieval', null, [search, ticket]);
     value = execute('N12 Evidence gate', value, []);
+    if (nodes['N13 Prepare writer'] && value.retrieval_decision === 'write') {
+      for (const name of ['N13 Prepare writer', 'N13 Writer MOCK', 'N13 Parse writer']) value = execute(name, value, []);
+      if (value.writer_valid) {
+        for (const name of ['N14 Prepare verifier', 'N14 Verifier MOCK', 'N14 Parse verifier',
+                            'N15 Decide answer']) value = execute(name, value, []);
+      }
+    }
     value = execute('N20 Prepare handoff', value, []);
     if (value.handoff_needed) {
       value = execute('N20 Mock C04', value, []);
@@ -118,6 +137,7 @@ for (const test of data.tests) {
     }
     value = execute('N22 Finalize P0-3', value, []);
   }
+  if (nodes['N22 Output filter']) value = execute('N22 Output filter', value, []);
   results.push({id: test.id, final: value, searchRequest: outputs['N08 Build search input']?.search_request ?? null,
     search: outputs['N09 Normalize search']?.search ?? null,
     lookupRequest: outputs['N10 Build ticket lookup']?.lookup_request ?? null,
@@ -127,7 +147,12 @@ for (const test of data.tests) {
     retrievalDecision: outputs['N12 Evidence gate']?.retrieval_decision ?? null,
     handoffPayload: outputs['N20 Prepare handoff']?.handoff_payload ?? null,
     handoffState: outputs['N20 Map handoff']?.handoff?.state ?? null,
-    usableEvidence: outputs['N12 Evidence gate']?.usable_evidence ?? null});
+    usableEvidence: outputs['N12 Evidence gate']?.usable_evidence ?? null,
+    writerValid: outputs['N13 Parse writer']?.writer_valid ?? null,
+    verifierValid: outputs['N14 Parse verifier']?.verifier_valid ?? null,
+    verificationFailure: outputs['N14 Parse verifier']?.verification_failure ??
+      outputs['N13 Parse writer']?.verification_failure ?? null,
+    writerInput: outputs['N13 Prepare writer']?.writer_input ?? null});
 }
 process.stdout.write(JSON.stringify(results));
 """
@@ -159,6 +184,7 @@ def check(flow):
         raise ValueError("P1-1 search/triage/handoff node missing")
     has_ticket = all(name in names for name in TICKET_CHAIN)
     has_merge = "N11 Collect retrieval" in names
+    has_verification = "N13 Prepare writer" in names
     if any(name in names for name in TICKET_CHAIN) and not has_ticket:
         raise ValueError("incomplete ticket lookup chain")
     expected_next = "N11 Collect retrieval" if has_merge else "N10 Build ticket lookup" if has_ticket else "N20 Prepare handoff"
@@ -180,10 +206,40 @@ def check(flow):
             {"node": "N10 Build ticket lookup", "type": "main", "index": 0}]]:
             raise ValueError("retrieval branches changed")
         for source, target in (("N11 Collect retrieval", "N11 Join retrieval"),
-                               ("N11 Join retrieval", "N12 Evidence gate"),
-                               ("N12 Evidence gate", "N20 Prepare handoff")):
+                               ("N11 Join retrieval", "N12 Evidence gate")):
             if flow["connections"].get(source, {}).get("main") != [[{"node": target, "type": "main", "index": 0}]]:
                 raise ValueError(f"retrieval connection changed: {source}")
+        target = "N12 Route evidence" if has_verification else "N20 Prepare handoff"
+        if flow["connections"].get("N12 Evidence gate", {}).get("main") != [[{"node": target, "type": "main", "index": 0}]]:
+            raise ValueError("retrieval gate connection changed")
+    if has_verification:
+        required = {"N12 Route evidence", "N13 Writer mode", "N13 Writer MOCK", "N13 Writer Agent",
+                    "N13 Writer model", "N13 Parse writer", "N13 Writer valid", "N14 Prepare verifier",
+                    "N14 Verifier mode", "N14 Verifier MOCK", "N14 Verifier Agent", "N14 Verifier model",
+                    "N14 Parse verifier", "N15 Decide answer", "N15 Route answer"}
+        if not required <= names:
+            raise ValueError("P1-2 writer/verifier chain incomplete")
+        if "N22 Output filter" not in names:
+            raise ValueError("P1-2 final output filter missing")
+        if flow["connections"].get("N22 Finalize P0-3", {}).get("main") != [[
+            {"node": "N22 Output filter", "type": "main", "index": 0}]]:
+            raise ValueError("P1-2 final output connection missing")
+        expected_routes = {
+            "N12 Route evidence": ("N13 Prepare writer", "N20 Prepare handoff"),
+            "N13 Writer mode": ("N13 Writer MOCK", "N13 Writer Agent"),
+            "N13 Writer valid": ("N14 Prepare verifier", "N20 Prepare handoff"),
+            "N14 Verifier mode": ("N14 Verifier MOCK", "N14 Verifier Agent"),
+            "N15 Route answer": ("N22 Finalize P0-3", "N20 Prepare handoff"),
+        }
+        for source, targets in expected_routes.items():
+            actual = flow["connections"].get(source, {}).get("main", [])
+            if tuple(branch[0]["node"] for branch in actual if len(branch) == 1) != targets:
+                raise ValueError(f"P1-2 route changed: {source}")
+        for model, agent in (("N13 Writer model", "N13 Writer Agent"),
+                             ("N14 Verifier model", "N14 Verifier Agent")):
+            if flow["connections"].get(model, {}).get("ai_languageModel") != [[
+                {"node": agent, "type": "ai_languageModel", "index": 0}]]:
+                raise ValueError(f"{model} not linked to its Agent")
     if any(node["type"] == "n8n-nodes-base.httpRequest" for node in nodes):
         raise ValueError("this local Mock snapshot must not send HTTP requests")
     return True
@@ -192,14 +248,18 @@ def check(flow):
 def run(flow, cases, container):
     tests = [{"id": case["id"], "body": read(ROOT / case["request_file"]),
               "search_result": case.get("search_result"), "lookup_result": case.get("lookup_result"),
-              "handoff_result": case.get("handoff_result")}
+              "handoff_result": case.get("handoff_result"), "writer_result": case.get("writer_result"),
+              "verifier_result": case.get("verifier_result")}
              for case in cases]
     has_ticket = all(name in {node["name"] for node in flow["nodes"]} for name in TICKET_CHAIN)
     has_merge = "N11 Collect retrieval" in {node["name"] for node in flow["nodes"]}
+    has_verification = "N13 Prepare writer" in {node["name"] for node in flow["nodes"]}
     payload = json.dumps({"flow": flow, "chain": BASE_CHAIN + (TICKET_CHAIN if has_ticket else []) + TAIL,
                           "tests": tests, "searchResults": read(ROOT / "fixtures/search-results.json")["results"],
                           "ticketResults": read(ROOT / "fixtures/ticket-lookups.json")["results"] if has_ticket else {},
-                          "handoffResults": read(ROOT / "fixtures/c04-wonmin-samples.json")["results"] if has_merge else {}},
+                          "handoffResults": read(ROOT / "fixtures/c04-wonmin-samples.json")["results"] if has_merge else {},
+                          "writerResults": read(ROOT / "fixtures/writer-results.json")["results"] if has_verification else {},
+                          "verifierResults": read(ROOT / "fixtures/verifier-results.json")["results"] if has_verification else {}},
                          ensure_ascii=False)
     if container:
         cmd = ["docker", "exec", "-i", container, "node", "-e", PARALLEL_RUNNER if has_merge else RUNNER]
@@ -252,6 +312,18 @@ def run(flow, cases, container):
             problems.append("duplicate")
         if "ticket_id" in expected and (response.get("ticket") or {}).get("ticket_id") != expected["ticket_id"]:
             problems.append("ticket_id")
+        for key, actual in (("writer_valid", "writerValid"), ("verifier_valid", "verifierValid"),
+                            ("verification_failure", "verificationFailure")):
+            if key in expected and row.get(actual) != expected[key]:
+                problems.append(key)
+        if "source_count" in expected and len(response.get("sources", [])) != expected["source_count"]:
+            problems.append("source_count")
+        if "answer_contains" in expected and expected["answer_contains"] not in response.get("answer", ""):
+            problems.append("answer_contains")
+        if expected.get("answer_excludes") and expected["answer_excludes"] in response.get("answer", ""):
+            problems.append("answer_excludes")
+        if expected.get("writer_input_excludes") and expected["writer_input_excludes"] in json.dumps(row.get("writerInput"), ensure_ascii=False):
+            problems.append("writer_input_excludes")
         if expected.get("contact_absent") and ("contact" in json.dumps(row["ticketLookup"], ensure_ascii=False) or
                                                "SHOULD_NOT_LEAK" in json.dumps(final, ensure_ascii=False)):
             problems.append("contact_absent")

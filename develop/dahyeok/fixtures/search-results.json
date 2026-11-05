@@ -61,6 +61,21 @@
         ],
         "reason": null
       }
+    },
+    "low_score": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "접속 오류",
+            "text": "합성 저점수 근거",
+            "score": 0.79
+          }
+        ],
+        "reason": null
+      }
     }
   }
 }

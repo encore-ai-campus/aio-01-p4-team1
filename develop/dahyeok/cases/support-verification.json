@@ -1,0 +1,259 @@
+{
+  "purpose": "P1-2 writer/verifier/출력 로컬 Mock. 실제 Agent·품질 검증 아님.",
+  "cases": [
+    {
+      "id": "P12-01-auto-mock",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "verifier_result": "pass",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "source_count": 1,
+        "writer_valid": true,
+        "verifier_valid": true,
+        "answer_contains": "모의 근거"
+      }
+    },
+    {
+      "id": "P12-02-low-score",
+      "request_file": "requests/input-valid.json",
+      "search_result": "low_score",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-03-no-evidence",
+      "request_file": "requests/input-valid.json",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "no_evidence",
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-04-search-down",
+      "request_file": "requests/input-valid.json",
+      "search_result": "unavailable",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "search_unavailable",
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-05-writer-truncated",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "writer_result": "truncated",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "writer_valid": false,
+        "verification_failure": "writer_invalid",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-06-writer-wrong-type",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "writer_result": "wrong_type",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "writer_valid": false,
+        "verification_failure": "writer_invalid",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-07-forged-source",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "writer_result": "forged_source",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "writer_valid": false,
+        "verification_failure": "writer_invalid",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-08-ticket-invented",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "writer_result": "used_ticket_without_lookup",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "writer_valid": false,
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-09-verifier-false",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "verifier_result": "ungrounded",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "writer_valid": true,
+        "verifier_valid": true,
+        "source_count": 0,
+        "answer_excludes": "모의 근거"
+      }
+    },
+    {
+      "id": "P12-10-verifier-string-bool",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "verifier_result": "wrong_type",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "verifier_valid": false,
+        "verification_failure": "verifier_invalid",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-11-verifier-issues",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "verifier_result": "contradictory_issues",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "verifier_valid": true,
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-12-verifier-truncated",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "verifier_result": "truncated",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "verifier_valid": false,
+        "verification_failure": "verifier_invalid",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-13-writer-down",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "writer_result": "down",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "llm_down",
+        "writer_valid": false,
+        "verification_failure": "llm_down",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-14-verifier-down",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "verifier_result": "down",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "llm_down",
+        "verifier_valid": false,
+        "verification_failure": "llm_down",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "P12-15-answer-contact",
+      "request_file": "requests/own-ticket.json",
+      "search_result": "found",
+      "lookup_result": "own_ok",
+      "writer_result": "valid_ticket_contact",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "source_count": 1,
+        "lookup_state": "ok",
+        "security_masked": 3,
+        "answer_excludes": "support@example.invalid",
+        "answer_contains": "***"
+      }
+    },
+    {
+      "id": "P12-16-other-ticket",
+      "request_file": "requests/other-ticket.json",
+      "search_result": "found",
+      "lookup_result": "other_forbidden",
+      "expect": {
+        "http_status": 200,
+        "route": "권한 없음",
+        "ticket": null,
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-17-empty-input",
+      "request_file": "requests/input-empty.json",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "question_required"
+        ],
+        "search_skipped": true,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-18-injection",
+      "request_file": "requests/injection.json",
+      "expect": {
+        "http_status": 200,
+        "route": "차단",
+        "ticket": null,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-19-clarify",
+      "request_file": "requests/clarify-1.json",
+      "expect": {
+        "http_status": 200,
+        "route": "보완 질문",
+        "ticket": null,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "P12-20-question-contact",
+      "request_file": "requests/writer-contact.json",
+      "search_result": "found",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "writer_input_excludes": "support@example.invalid",
+        "security_masked": 1,
+        "source_count": 1
+      }
+    }
+  ]
+}

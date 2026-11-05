@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-07.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-2 이후 단계는 구현 예정이다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-2의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-08.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-3 이후 단계는 구현 예정이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -35,7 +35,7 @@
 | P0-2 / SUP-03/04 | `workflows/oke-support-02.json`, requests/clarify-1.json·clarify-2.json·clarify-3.json·clarify-context.json, fixtures/triage-results.json, cases/support-triage.json | N06~07+보완 응답. 프롬프트/파서 스키마를 SPEC대로 적용. DH-T-02 attempt1·2→질문, 3→이관 경로(Mock); 정상 context를 합쳐 missing이 사라지는지도 확인 | 지혜님 새 차례 새 ID/증가 attempt/context 예시, 원민님 한도 기대 |
 | P0-3 / SUP-07/09 | 새 번호판 `workflows/oke-support-03.json`, fixtures/handoff-results.json, requests/no-evidence.json·urgent.json, cases/support-handoff.json | N20과 C04 Mock 연결. 정상 ticket / tickets_down / alerts_down / 전송 실패를 개별 주입. DH-T-03→이관, 04→이관+null. 임시 not_implemented 제거 | 원민님 request_id/requester/category/priority/reason payload와 결과 매핑 |
 | P1-1 / SUP-05 | `workflows/oke-support-04.json`~`07.json`, fixtures/search-results.json·ticket-lookups.json·c04-wonmin-samples.json, requests/own-ticket.json·other-ticket.json, cases/support-retrieval.json | N08~12 두 갈래+Merge. ID 없음·403·404·지연·search []/503/잘못된 형식. DH-T-06→권한 없음, 03→이관. N10 항상 항목 1개, 조회 실패를 근거 없음으로 합치지 않음. 로컬 Mock 21/21 | 유빈님 C03 정확 payload/근거 응답, 원민님 조회 상태별 사례 |
-| P1-2 / SUP-03/06 | 본체 수정, fixtures/writer-results.json·verifier-results.json, cases/support-verification.json | N13~15와 모든 출력 필터. DH-T-14 잘린 JSON/문자열 불리언/위조 출처→이관. DH-T-07→가림. 임계값은 Mock 값으로 분기만 검증하고 품질 통과라고 하지 않음 | 유빈님·원민님 사용 출처/점수 경계/검증 탈락 입력과 출력 |
+| P1-2 / SUP-03/06 | `workflows/oke-support-08.json`, fixtures/writer-results.json·verifier-results.json, cases/support-verification.json | N13~15와 최종 출력 필터. 잘린 JSON/문자열 불리언/위조 출처→이관, 연락처 가림. 임계값은 Mock 값 0.8로 분기만 검증하며 품질 통과로 표시하지 않음. 로컬 Mock 20/20 | 유빈님·원민님 사용 출처/점수 경계/검증 탈락 입력과 출력 |
 | P1-3 / SUP-07/09 | 본체 수정, requests/urgent-complex.json·llm-down.json·slow-ticket.json, cases/support-failures.json | 긴급 N20→N08 보강→N22, handoff_done 유지. DH-T-12→high+보안 근거+본인 상태. writer 실패/조회 지연 뒤에도 재접수 0. DH-T-10→이관 llm_down | 원민님 오류 출력·부분 실패·긴급 단일 접수 관측표, 오현님 시간 예산 후보 |
 | P1-4 / SUP-08/09 | 본체 수정, fixtures/replay-results.json, requests/duplicate.json, cases/support-replay.json | N05/N22 결과 재사용 연결. DH-CHG-02/04 미반영이면 adapter Mock까지만; 확정된 티켓 key 중복은 실제 검증. DH-T-09 순차/동시/재시작 재전송에서 티켓 1개 | 지혜님 소유권/결과 저장 API 연결 자료, 원민님 중복 관측·표현 불일치 재현 |
 | P1-5 / SUP-10 | 본체 실제 주소/설정으로 교체, Doc/SUBMISSION-NOTES.md, Doc/VERIFICATION-RESULTS.md, 실제 생성된 runs/ 보고서 | 제공자 실제 호출, 공통 전체+팀 5개 이상+LLM 3회·bench·임계값 경계. DH-T-01은 측정 기준 반영 후 자동 답변. 실패 원인/수정/같은 조건 재시험 | 오현님 실제 노드/연결선·보고서·측정·미해결 요청, 원민님 최종 회귀 근거 |
@@ -61,6 +61,13 @@
 - 원민님 `feat/wonmin-p0`의 `oke-handoff.json`과 `handoff-normal.json`·`handoff-duplicate.json`을 읽기 전용으로 대조했다. 입력 6필드와 priority, 신규 `duplicate=false`·중복 `duplicate=true`를 맞췄다. 원민님 알림 실패는 `ok=false`, ticket 보존, `reason=alerts_down`이므로 `07`에서 그 조합을 수용했다. 503/tickets_down은 티켓 없음으로 매핑한다. 표본은 `fixtures/c04-wonmin-samples.json`의 합성 응답이며 실제 하위 실행 결과가 아니다.
 - 보수적 경계: 점수 임계값과 writer/verifier가 없어 검색 결과가 있어도 자동 답변하지 않고 이관한다. C03·티켓 조회·C04는 실제 HTTP 호출이 아닌 Mock이며 반환 티켓 번호도 합성이다. 공식 80일차 `flow.py`, 프로젝트 n8n push/test, 실제 인증·권한·저장·검색 품질·Merge 런타임 동작은 미확인이다.
 
+### P1-2 확인 기록 · 2026-11-05
+
+- 변경: `oke-support-07.json`을 보존하고 `oke-support-08.json`에 N13 writer, N14 verifier, N15 결정 경로를 추가했다. 각 Agent는 별도 모델 연결과 Code JSON 파서를 갖고, 현재는 Mock 분기로 실행한다. writer의 출처가 허용 근거의 부분집합인지, `used_ticket=true`일 때 본인 조회 성공인지 검사한다. verifier의 정확한 불리언·issues 구조를 확인하고, 검증 실패·형식 오류·LLM 장애는 자동 답변에서 제외한다.
+- 출력: 검색 점수 0.8은 **실측/승인 전 로컬 Mock 분기값**으로만 사용한다. 두 Agent가 실제 모드라면 이 Mock 임계값으로 자동 답변하지 않도록 막았다. 성공 Mock은 합성 답변임을 문구에 표시하며 실제 규정 품질을 주장하지 않는다. 출처는 writer가 사용한 허용 evidence의 doc/section/score에서만 만든다. 질문·context·검색·티켓 자료를 writer 전에 가리고, 답변과 sources를 최종 출력에서도 다시 가린다. 가림 개수는 `security.masked`에 합산한다.
+- 확인: `python3 tools/retrieval_check.py workflows/oke-support-08.json cases/support-verification.json --node-container day65-n8n-n8n-1`에서 합성 성공, 점수 미달, 검색 빈 결과/장애, 잘린 writer/verifier JSON, 문자열 불리언, 위조 출처, 근거 없는 티켓 사용, verifier 실패/중단, 질문·답변의 합성 연락처 가림, P0 입력·차단·보완 회귀 등 20/20이 로컬 Code 시뮬레이션과 일치했다. 이전 `07`의 P1-1 사례 21/21과 P0-3 로컬 구조 검사도 재통과했다.
+- 미확인: 실제 C03 근거·품질 측정, 실제 writer/verifier Agent 출력과 Credential, 공식 80일차 `flow.py`, 프로젝트 n8n 실행과 실제 자동 답변의 정확성. Mock 20/20을 공통 WF 시험이나 실제 품질 통과로 표시하지 않는다.
+
 P2 선택 고도화는 필수 P1-5 완료 뒤 [TODO](TODO.md)의 후순위를 따른다.
 
 P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아니다. P1까지도 Mock 결과와 실제 서비스 결과를 별도 열로 기록한다. 새 정책 승인이 필요한 adapter를 제외한 Agent/검색/이관/출력 작업은 계속 진행한다.
@@ -78,10 +85,10 @@ python3 -m json.tool workflows/oke-support-02.json > /dev/null
 
 프로젝트 키트가 제공되고 `tools/flow.py`의 실제 위치·CLI를 확인한 뒤 다음 check를 수행한다. 현재 지정 자료 경로의 Last3Mon/80 키트는 없어 명령은 **예정 경로 템플릿**이다. 다른 실습 키트를 프로젝트 키트인 것처럼 복사/설치하지 않는다.
 
-현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. P1-1 번호판은 `tools/retrieval_check.py`로 검사한다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
+현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. P1-1~P1-2 번호판은 `tools/retrieval_check.py`로 검사한다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support-07.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-08.json
 ```
 
 연결 검토 항목:
@@ -105,7 +112,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support-07.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support-07.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-08.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

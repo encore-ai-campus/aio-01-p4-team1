@@ -133,6 +133,7 @@ def evaluate(cases, repeats=3, bundle=None):
         counts = Counter(); excluded = []; observations = []; measurements = {f:[] for f in FIELDS}
         groups = {f:{} for f in FIELDS}
         hits = sections = quotes = answers = no_answers = false_answers = leaks = leak_observed = answer_observed = 0
+        reciprocal_rank = 0.0
         for q in questions:
             frozen = q.get('source_verified') is True and q.get('status') == 'frozen' and bool(q.get('source_hash'))
             ready = frozen and bool(q.get('question')) and q.get('kind') != 'admin_pending'
@@ -166,6 +167,8 @@ def evaluate(cases, repeats=3, bundle=None):
                     answers += 1
                     matching=[e for e in evidence if e['doc']==q['expected_doc']]
                     hits += bool(matching)
+                    reciprocal_rank += next((1/rank for rank, e in enumerate(evidence, 1)
+                                             if e['doc'] == q['expected_doc']), 0.0)
                     sections += any(section_hit(e, rank, r, q['expected_section'], method,
                                                 bundle['conditions'][method]['source_hashes'])
                                     for rank, e in enumerate(evidence, 1) if e['doc'] == q['expected_doc'])
@@ -190,7 +193,8 @@ def evaluate(cases, repeats=3, bundle=None):
                     'measurements':measured, 'measurement_provenance':provenance,
                     'environment':condition['environment'],'model':condition['model'],
                     'settings_version':condition['settings_version'], 'source_ref':safe_ref(r.get('source_ref'))})
-        output['methods'][method] = {'hit_at_3':ratio(hits,answers),'section_hit_at_3':ratio(sections,answers),
+        output['methods'][method] = {'hit_at_3':ratio(hits,answers),
+            'mrr':ratio(reciprocal_rank,answers),'section_hit_at_3':ratio(sections,answers),
             'evidence_coverage':ratio(quotes,answers),'no_answer_incorrect':ratio(false_answers,answer_observed),
             'no_answer_attempts':no_answers,'permission_leaks':ratio(leaks,leak_observed),
             'response_counts':dict(counts),'measurements':{f:stats(v if len(groups[f]) <= 1 else []) for f,v in measurements.items()},

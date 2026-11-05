@@ -55,6 +55,7 @@ def register_error_handlers(app: FastAPI) -> None:
             405: ("method_not_allowed", "허용되지 않은 요청 방식입니다."),
             409: ("conflict", "요청이 기존 기록과 충돌합니다."),
             503: ("service_unavailable", "일시적으로 요청을 처리할 수 없습니다."),
+            504: ("gateway_timeout", "요청 처리 시간이 초과되었습니다."),
             501: ("not_implemented", "아직 구현되지 않은 기능입니다."),
         }
         code, message = codes.get(exc.status_code, ("http_error", "요청을 처리할 수 없습니다."))

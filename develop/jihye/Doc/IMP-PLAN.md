@@ -2,7 +2,7 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: P0-1~2 및 P0-3 실행 기반·DB 접속 검증 완료. P0-4 이후의 테이블·확장 활성화·업무 저장·배포는 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
+**전체 상태: P0-1~7, P1-1~2 로컬 구현·검증 기록 완료.** C02 실제 n8n 호출, C05 저장, VM·화면 통합은 미확인이다. 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
@@ -195,11 +195,13 @@
 
 ## P1-2 · 문의 선저장·support 어댑터·본인 조회
 
-- [ ] 연결 SPEC: BE-02·03, C01/C02.
-- 생성 예정: `app/services/inquiries.py`, `app/repositories/inquiries.py`, `app/clients/support.py`; ask/requests 라우터; `tests/test_ask_adapter.py`, `tests/integration/test_request_ownership.py`.
+- [x] 연결 SPEC: BE-02·03, C01/C02.
+- 생성/수정: `app/services/inquiries.py`, `app/repositories/inquiries.py`, `app/clients/support.py`, DB backend, `tests/test_ask_adapter.py`, `tests/integration/test_request_ownership.py`.
 - 작업: 서버 신원→공통 user, 문의 선저장→짧은 거래 종료→support 호출→검증된 응답 저장 순서로 만든다. 동일 키는 소유권부터 검사하고 원문 입력의 변조 재사용/실행중 재시도는 H04 검토 결과로 처리한다. DB 거래를 HTTP 대기 동안 유지하지 않는다.
-- 확인 예정: `uv run pytest tests/test_ask_adapter.py tests/integration/test_request_ownership.py -q`. 두 직원의 타인 request_id403·결과 미노출·support 미호출, 본인 목록 분리, 입력400, 공통400 codes,5 route와 reason/timings 보존을 확인한다. timeout/잘못된 JSON은 Mock으로 검증하고 실제 서비스와 구분한다.
-- 넘길 결과: 다혁님에게 실제 수신 페이로드·응답 보존/오류 결과, 수언님에게 본인 문의/재시도 사용법. 연결3초·전체30초·재시도0의 초기 예산을 적용하되 실측 없이 시간 목표 통과로 쓰지 않는다.
+- 구현: `/api/ask`는 세션에서 확인된 계정의 DB 직원 이름만 C02 `user`로 보낸다. request_id 생략 시 UUID를 만들고, 문의를 먼저 commit한 뒤 HTTP 호출을 시작한다. C02 응답의 request_id·필수 필드·5개 route를 검증하고 reason/timings/추가 필드를 보존해 `result`에 저장한다. 문의 목록은 현재 세션 직원의 `requester_id`로 제한하고 created_at/id 내림차순으로 반환한다. DB 트랜잭션은 HTTP 대기 중 열어 두지 않는다.
+- 오류·재시도: request_id 타인 사용은 소유권 검사 우선403, 같은 ID의 question/attempt/context 변경은409다. C02 HTTP400의 `codes` 객체는 그대로 전달하고 문의 상태를 실패로 저장한다. 잘못된 JSON·응답 ID/필드·기타 HTTP 응답은 성공으로 저장하지 않고 안전한503, timeout은504다. 연결 timeout3초·HTTP 전체 deadline30초·자동 재시도0회를 적용한다. 같은 owner/같은 payload의 클라이언트 재요청은 같은 문의 행을 사용해 C02를 다시 호출한다. 이 동작은 확정된 완료 결과 캐시나 동시 실행 잠금으로 표시하지 않는다.
+- 확인: `uv run python deploy/check_db.py --all` 종료0, **208 passed, 1 warning**. 기존 Starlette/httpx 폐기 예정 경고1건. HTTPX MockTransport로 C02 헤더/페이로드, 공통400 passthrough, 5xx·timeout·잘못된 JSON·request_id 불일치·추가 필드 보존·재시도 없음 확인. 전용 PostgreSQL 실 HTTP 시험에서 C02 호출 중 별도 연결로 선저장 상태 조회, 완료 결과 저장, 다른 직원의 빈 목록, 타인 request_id403 및 support 미호출, 변경 본문409, 자동 ID, 입력400 무저장을 확인했다. 시험 데이터 정리 후 전체 회귀도 통과했다.
+- 미확정/다음: 실제 n8n `N8N_WEBHOOK_URL`·`N8N_WEBHOOK_KEY` 설정과 호출은 미실행이다. 결과 캐시·동시 같은 ID 처리·프로세스 재시작 뒤 `submitted` 복구는 HANDOFF H04 제안 상태로 남긴다. 다혁님/원민님과 WF-09 중복 ACK를 대조하고 오현님이 공통 계약을 확정하기 전에는 완료 응답 캐시를 추가하지 않는다. 수언님에게 저장된 본인 문의 응답과 웹의 재요청 입력(request_id 재사용) 형식을 전달한다. 티켓 DB 연결/C05는 P1-3이다.
 
 ## P1-3 · 티켓·알림·관리자 처리와 실패 거래
 

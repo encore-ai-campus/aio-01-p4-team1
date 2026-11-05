@@ -9,6 +9,7 @@ from app.db.session import DatabaseConfigurationError, create_db_engine, create_
 from app.services.accounts import (AccountError, account_items, create_account,
                                    employee_items, reset_password, update_active)
 from app.services.auth import LoginError, authenticate, change_password, logout
+from app.services.inquiries import ask_support, my_requests
 
 
 class DatabaseBackend:
@@ -18,6 +19,8 @@ class DatabaseBackend:
     async def execute(self, operation: str, *, body=None, principal=None, entity_id=None,
                       session_id=None):
         try:
+            if operation == "ask":
+                return await ask_support(self.settings, body=body, principal=principal)
             return await anyio.to_thread.run_sync(
                 lambda: self._execute_sync(operation, body, principal, entity_id, session_id))
         except LoginError:
@@ -32,6 +35,8 @@ class DatabaseBackend:
     def _execute_sync(self, operation, body, principal, entity_id, session_id):
         if not self.settings.database_url:
             raise HTTPException(503)
+        if operation == "my_requests":
+            return my_requests(self.settings, user_id=principal.id)
         engine = create_db_engine(self.settings)
         try:
             with create_session_factory(engine).begin() as session:

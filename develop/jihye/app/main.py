@@ -16,7 +16,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         application.include_router(
             module.router,
             responses={code: {"model": ErrorResponse}
-                       for code in (400, 401, 403, 404, 409, 501, 503)},
+                       for code in (400, 401, 403, 404, 409, 501, 503, 504)},
         )
     # Match the installed request-validation handler instead of advertising 422.
     original_openapi = application.openapi

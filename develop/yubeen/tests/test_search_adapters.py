@@ -1,6 +1,9 @@
 import sys
 from pathlib import Path
 import unittest
+import io
+import json
+from unittest.mock import patch
 from unittest.mock import Mock
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 import rag_search as s
@@ -103,3 +106,46 @@ class ResponseBoundaryRegressionTests(unittest.TestCase):
         for mode in ('mock','adapter'):
             self.assertEqual(s.dispatch('q',['all','it'],mode=mode,adapter_enabled=True,embedder=embed,repository=repo,mock_search=mock),s.unavailable())
         embed.assert_not_called();repo.search.assert_not_called();mock.assert_not_called()
+
+
+class LiveEmbeddingBoundaryTests(unittest.TestCase):
+    class Response(io.BytesIO):
+        def __enter__(self): return self
+        def __exit__(self, *_): self.close()
+
+    def test_request_and_response_with_fake_transport(self):
+        captured = []
+        def fake_open(request, timeout):
+            captured.append((request, timeout))
+            return self.Response(json.dumps({'model':'text-embedding-3-large',
+                'data':[{'index':0,'embedding':[1.0]*3072}]}).encode())
+        with patch.dict('os.environ', {'OPENAI_API_KEY':'fake-test-only'}, clear=True):
+            result=s.OpenAIEmbeddingProvider(opener=fake_open)('VPN','text-embedding-3-large',3072)
+        self.assertEqual(len(result['embedding']),3072)
+        request,timeout=captured[0]
+        self.assertEqual(timeout,10)
+        self.assertEqual(request.full_url,'https://api.openai.com/v1/embeddings')
+        self.assertEqual(json.loads(request.data),{'input':'VPN','model':'text-embedding-3-large',
+            'dimensions':3072,'encoding_format':'float'})
+
+    def test_no_key_or_bad_query_never_calls_transport(self):
+        opener=Mock()
+        provider=s.OpenAIEmbeddingProvider(opener=opener)
+        with patch.dict('os.environ', {}, clear=True):
+            for query in ('', ' ', None):
+                with self.assertRaises(ValueError): provider(query,'text-embedding-3-large',3072)
+            with self.assertRaises(ValueError): provider('VPN','text-embedding-3-large',3072)
+        opener.assert_not_called()
+
+    def test_bad_api_result_is_503_without_details(self):
+        opener=Mock(return_value=self.Response(json.dumps({'model':'text-embedding-3-large',
+            'data':[{'index':0,'embedding':[1.0]}]}).encode()))
+        with patch.dict('os.environ', {'OPENAI_API_KEY':'fake-test-only'}, clear=True):
+            result=s.search_with_adapters('VPN',['all'],3,s.OpenAIEmbeddingProvider(opener=opener),Mock())
+        self.assertEqual(result,s.unavailable())
+
+    def test_transport_exception_is_503_without_details(self):
+        opener=Mock(side_effect=RuntimeError('private diagnostics'))
+        with patch.dict('os.environ', {'OPENAI_API_KEY':'fake-test-only'}, clear=True):
+            result=s.search_with_adapters('VPN',['all'],3,s.OpenAIEmbeddingProvider(opener=opener),Mock())
+        self.assertEqual(result,s.unavailable())

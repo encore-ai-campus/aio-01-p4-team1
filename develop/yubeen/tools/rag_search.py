@@ -4,6 +4,9 @@ Caller owns authentication/input validation and the supplied DB connection.
 Only public access is supported until the C03 employee trust contract is settled.
 """
 import math
+import json
+import os
+from urllib.request import Request, urlopen
 from rag_index import load_settings, validate_embedding
 
 # Contract-based draft: verify schema and exact-search plan after P0-5.
@@ -27,6 +30,42 @@ def unavailable():
 
 def valid_query(query):
     return isinstance(query, str) and bool(query.strip())
+
+
+class OpenAIEmbeddingProvider:
+    """Optional live provider for a caller-owned service; never called on import.
+
+    The API key comes only from the process environment. The caller must approve
+    paid calls and provide a deployment/timeout boundary before using this.
+    """
+    endpoint = 'https://api.openai.com/v1/embeddings'
+
+    def __init__(self, *, opener=None, timeout=10):
+        self.opener = opener or urlopen
+        self.timeout = timeout
+
+    def __call__(self, query, model, dimensions):
+        if not valid_query(query) or model != 'text-embedding-3-large' or dimensions != 3072:
+            raise ValueError('invalid_embedding_request')
+        key = os.environ.get('OPENAI_API_KEY')
+        if not key:
+            raise ValueError('embedding_not_configured')
+        payload = json.dumps({'input': query, 'model': model, 'dimensions': dimensions,
+                              'encoding_format': 'float'}).encode('utf-8')
+        request = Request(self.endpoint, data=payload, method='POST', headers={
+            'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+        try:
+            with self.opener(request, timeout=self.timeout) as response:
+                body = json.load(response)
+            data = body.get('data')
+            if not isinstance(data, list) or len(data) != 1 or data[0].get('index') != 0:
+                raise ValueError('invalid_embedding_response')
+            result = {'model': body.get('model'), 'embedding': data[0].get('embedding')}
+            validate_embedding(result, load_settings())
+            return result
+        except Exception:
+            # urllib errors may contain request URLs, headers or response bodies.
+            raise ValueError('embedding_unavailable') from None
 
 
 def validate_evidence(rows):

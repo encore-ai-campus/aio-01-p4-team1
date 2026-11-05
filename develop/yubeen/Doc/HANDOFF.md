@@ -130,3 +130,12 @@
 원민님 전달 준비: 빈 본문/잘못된 제목의 권한 축소, 충돌·미확인 권한 불변, 중지 실패, 중지 후 ID 보존·재실행 거절, 두 스레드 경합과 저장 전 CAS, 임베딩 전체 실패 종료1, rollback 실패·commit 불명확 연결 폐기, 기존 정상/건너뜀/부분 실패 보존. 근거는 tests/test_indexing.py의 SafetyDefectRegressionTests·TransactionFailureRegressionTests·AdditionalTransactionTests 및 Doc/INDEX-RESULT.md 최신 절이다.
 
 실제 저장/성공 색인 ID·API/인증·규정/관리자 원본 확인은 미완료다. P1-2 구현은 시작하지 않았으며 commit/push/merge는 하지 않는다.
+
+## 실제 검색·본체 연결을 위한 전달 사항 · 미전달
+
+- 지혜님(C06): P0-5 적용 revision/head, vector 확장 버전·활성화, `rag.documents`/`rag.chunks` 카탈로그·3072차원/모델 제약, 검색 전용 계정 SELECT 권한과 읽기 전용 접속 방식(비밀값 제외), 실제 16개 문서의 출처·권한·해시·문서/청크 건수 및 Mock 구분 증거를 부탁한다. 현재 체크아웃에는 migration README만 있어 직접 확인하지 못했다. 별도 격리 DB와 검색 계정으로 SQL 실행계획·권한 선필터를 확인해야 한다.
+- 다혁님(C03): 계약은 `POST /webhook/oke-search`, `X-Team-Key`, `request_id/query/type/access_levels/top_k=3` 요청, 정상 `200/{ok:true,evidence:[{doc,section,text,score}],reason:null}`, 빈 후보 `200/no_evidence`, 장애 `503/search_unavailable`이다. 현재 n8n `oke-search`는 합성 Mock이며 실제 호출 가능한 검색 서비스 URL은 없다. 본체의 직원 부서 조회가 만든 `access_levels`를 검색 서비스까지 변조 불가능하게 전달하는 경계, 내부 HTTP 서비스 소유자·배포 주소·인증·timeout, 본체 LLM 입력의 IT 근거 누출 관측 방법을 확인해 달라. 권한 출처가 확정되기 전 IT 양성 검색은 비활성이다. 알려진 팀 VM n8n 주소를 검색 API 주소로 간주하지 않는다.
+- 오현님(통합): 실제 원본 16개와 관리자 문서 제공/권한 기준, 유료 임베딩 호출 및 색인 비용 승인, 팀 VM 배포 경계와 필요한 환경 주입 방식·시연 담당 확인이 필요하다. 공통 문서 수정은 리드 담당이다.
+- 원민님(C08): 격리 DB에서 일반/IT/위조/빈 결과/장애 및 본체 LLM 입력 관측을 준비하고, 정답표·두 청킹 색인·관측자료가 확보되기 전 P1-3 실제 품질 수치를 확정하지 말아 달라.
+
+현재 상태는 제공자·SQL 어댑터의 Fake 테스트 가능 수준이다. 실제 DB·OpenAI·n8n HTTP·팀 VM 검증 및 외부 메시지 전송은 수행하지 않았다.

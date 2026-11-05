@@ -155,3 +155,15 @@ Fake 테스트14개는 문서 적중, 절 실패, top3 미적중, 빈 결과, �
 회귀15개 추가 후 Python164개(기존149+신규15), JavaScript13개 통과/실패0. 초기 새 테스트1개는 모델명 text-embedding을 본문 키로 오인한 검사 자체의 실패였으며 evidence의 text 필드 유무를 검사하도록 정정 후 모두 통과했다. 잘못된 문구 타입, 결합 절 양성·유사 절/다른 문서 음성, metadata 불일치, 소수 사용량, 출처 없는 비용, 실제/추정 분리, 반복 추적·마스킹·안전한 참조, 중복 JSON의 출력 불변과 중복 보고서 방지를 검증했다. git diff --check 통과.
 
 P1-3 오프라인 도구의 요청된 결함 보완 범위는 PASS다. 실제 원본/정답표 고정·관리자 원문·두 색인·DB/API 연결·본체 관측·원문 범위 진위·실제 토큰/가격 근거와 성능 측정은 미완료다. 실제 검색 품질 평가 완료를 뜻하지 않으며 commit/push는 수행하지 않는다.
+
+## 실제 pgvector·본체 연동 준비 점검
+
+이번 체크아웃의 지혜님 `migrations/`에는 README만 있으며 계획된 0001~0004 revision, `rag.documents`/`rag.chunks` 구현, pgvector 통합 테스트 파일이 없다. 셸에 `DATABASE_URL`과 `OPENAI_API_KEY`가 설정되지 않았고 Python `psycopg`도 설치되어 있지 않다. 기존 문서에는 팀원 전달 기준 PostgreSQL 접속/pgvector 사용 가능 정보만 있고 확장 활성화·두 테이블·권한·실제 데이터 적재 완료 증거는 없다. DB 접속이나 16개 실제 문서·청크 건수 조회, 유료 API 호출은 수행하지 않았다. 16개 원본의 출처/권한/해시도 독립 확인되지 않았다.
+
+읽기 전용 `docker ps`에서 로컬 n8n 관련 5개 컨테이너만 확인했으며 PostgreSQL 컨테이너는 목록에 없었다. 다른 호스트/팀 VM의 DB 상태를 이 결과로 추정하지 않는다.
+
+기존 `PgvectorSearchAdapter`의 `rag.documents`→`rag.chunks` 조인, `MATERIALIZED` 권한/모델 선필터, cosine `<=>`, 동점 정렬, `LIMIT 3`, 바인딩 매개변수와 C03 200/빈 결과/503 경계를 재사용한다. `OpenAIEmbeddingProvider`를 선택 가능한 제공자로 추가했다. 호출 시에만 프로세스의 `OPENAI_API_KEY`를 읽고 공식 embeddings 요청의 모델/3072차원/float 형식과 단일 응답을 검사하며, P1-1 `validate_embedding`으로 벡터를 재검증한다. 빈 query·키 부재는 전송 전에 중단하고 전송 예외/잘못된 응답은 외부 C03 503으로 수렴한다. Fake 전송 테스트만 수행했으며 실제 OpenAI 호출·비용 발생은 없다. API 요청 형식은 OpenAI 공식 Embeddings API 문서 기준이다.
+
+검색 운영 모드와 n8n JSON은 바꾸지 않았다. 현재 `oke-search`는 비활성 합성 Mock Code 노드이며 Python 어댑터에 접근할 실행 서비스/내부 HTTP 엔드포인트가 없다. `X-Team-Key`는 내부 호출 인증일 뿐 직원 IT 신원 검증이 아니다. 기존 Python 검색은 미확인 `all,it`를 제공자/DB 호출 전에 차단한다. 따라서 일반/IT 실제 검색·C03 실제 HTTP·다혁님 본체 호출·팀 VM 검증은 전부 미실행이다. 장애가 실제 DB 문제인지 임베딩 문제인지 구분하는 운영 관측, 연결 수명/timeout, 운영 URL과 배포 방법도 미확정이다.
+
+검증: Python 전체 168개(기존164+신규 Fake 제공자4) 통과. 신규 검사는 공식 요청 모양/3072차원 반환, 키/입력 누락 시 전송0회, 잘못된 응답과 전송 예외의 C03 503 처리다. 이는 실제 API·DB·HTTP의 성공 근거가 아니다. 기존 n8n Mock 및 P1-3 기록은 유지한다.

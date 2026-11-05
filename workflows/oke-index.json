@@ -3,8 +3,8 @@
   "active": false,
   "nodes": [
     {
-      "id": "manual",
-      "name": "수동 Mock 검증 시작",
+      "id": "index-manual",
+      "name": "수동 색인 시작",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
@@ -14,23 +14,42 @@
       "parameters": {}
     },
     {
-      "id": "run",
-      "name": "공통 Python 색인 엔진 Mock 실행",
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
+      "id": "index-http",
+      "name": "실제 색인 서비스 호출",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
         240,
         0
       ],
       "parameters": {
-        "executeOnce": true,
-        "command": "python3 /opt/oke-rag/tools/rag_verify.py index --source mock --scenario initial-and-repeat --json"
+        "method": "POST",
+        "url": "={{ $env.INDEX_SERVICE_URL }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 180000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
       },
-      "notes": "현재 Mock 전용. /opt/oke-rag에 담당 폴더와 Python 런타임 배치 및 Execute Command 허용이 필요하다. 실제 운영 연결 미검증. 사용자 입력을 셸 명령에 삽입하지 않는다."
+      "onError": "continueRegularOutput",
+      "notes": "내부 전용 HTTP. X-Team-Key Header Auth Credential은 n8n UI에 연결한다. URL과 키를 워크플로우에 저장하지 않는다.",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_HEADER_AUTH_CREDENTIAL_ID",
+          "name": "Header Auth account"
+        }
+      }
     },
     {
-      "id": "result",
-      "name": "안전한 검증 결과",
+      "id": "index-result",
+      "name": "색인 결과 검증",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
@@ -38,28 +57,28 @@
         0
       ],
       "parameters": {
-        "jsCode": "const result = JSON.parse($input.first().json.stdout);\nif (result.mode !== 'mock' || result.ok !== true) throw new Error('mock_index_failed');\nreturn [{json: result}];"
+        "jsCode": "const x=$input.first().json;\nif (x.error || !x.body || typeof x.body!=='object') return [{json:{ok:false,reason:'index_unavailable'}}];\nconst b=x.body;\nif (x.statusCode!==200 || b.ok!==true || !b.counts || !Array.isArray(b.documents) || b.documents.length!==8 || b.counts.failed!==0 || b.counts.rejected!==0) return [{json:{ok:false,reason:'index_unavailable'}}];\nreturn [{json:{ok:true,mode:b.mode,counts:b.counts,documents:b.documents.map(d=>({doc_key:d.doc_key,status:d.status,chunk_count:d.chunk_count,reason:d.reason}))}}];"
       },
-      "notes": "원문·벡터·키 대신 Mock 건수와 검사 결과만 반환한다."
+      "notes": "성공 건수와 문서별 상태만 반환한다. 비밀값·원문·벡터는 반환하지 않는다."
     }
   ],
   "connections": {
-    "수동 Mock 검증 시작": {
+    "수동 색인 시작": {
       "main": [
         [
           {
-            "node": "공통 Python 색인 엔진 Mock 실행",
+            "node": "실제 색인 서비스 호출",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "공통 Python 색인 엔진 Mock 실행": {
+    "실제 색인 서비스 호출": {
       "main": [
         [
           {
-            "node": "안전한 검증 결과",
+            "node": "색인 결과 검증",
             "type": "main",
             "index": 0
           }
@@ -75,7 +94,8 @@
   },
   "pinData": {},
   "meta": {
-    "phase": "P1-1 Mock only",
+    "phase": "P1-1 real index HTTP trigger prepared, inactive",
     "realIndexingVerified": false
-  }
+  },
+  "id": "okeIndexFlow01"
 }

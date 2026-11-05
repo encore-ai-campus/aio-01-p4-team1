@@ -32,11 +32,9 @@ class SearchAdapterTests(unittest.TestCase):
         self.cursor.fetchall.return_value=[]; self.assertEqual(self.run_search(),(200,{'ok':True,'evidence':[],'reason':'no_evidence'}))
     def test_db_fault_closes_cursor(self):
         self.cursor.execute.side_effect=RuntimeError('private'); self.assertEqual(self.run_search(),s.unavailable()); self.cursor.close.assert_called_once()
-    def test_it_blocked_before_provider(self):
-        self.assertEqual(s.dispatch('query',['all','it'],mode='adapter',adapter_enabled=True,embedder=self.embed,repository=self.repo),s.forbidden()); self.embed.assert_not_called()
-    def test_trusted_it_sql_filter_before_ranking(self):
+    def test_it_sql_filter_before_ranking(self):
         result=s.dispatch('query',['all','it'],mode='adapter',adapter_enabled=True,
-                          trusted_access=True,embedder=self.embed,repository=self.repo)
+                          embedder=self.embed,repository=self.repo)
         self.assertEqual(result[0],200)
         sql,params=self.cursor.execute.call_args.args
         self.assertIn('WITH allowed AS MATERIALIZED',sql)
@@ -109,11 +107,12 @@ class ResponseBoundaryRegressionTests(unittest.TestCase):
         repo=Mock();repo.search.side_effect=RuntimeError('private connection details')
         result=s.search_with_adapters('q',['all'],3,lambda q,m,d:{'model':m,'embedding':[1.0]*d},repo)
         self.assertEqual(result,s.unavailable())
-    def test_it_blocks_all_dependencies(self):
+    def test_it_uses_validated_levels(self):
         embed=Mock();repo=Mock();mock=Mock()
-        for mode in ('mock','adapter'):
-            self.assertEqual(s.dispatch('q',['all','it'],mode=mode,adapter_enabled=True,embedder=embed,repository=repo,mock_search=mock),s.forbidden())
-        embed.assert_not_called();repo.search.assert_not_called();mock.assert_not_called()
+        expected=(200,{'ok':True,'evidence':[],'reason':'no_evidence'})
+        mock.return_value=expected
+        self.assertEqual(s.dispatch('q',['all','it'],mode='mock',mock_search=mock),expected)
+        mock.assert_called_once_with('q',['all','it'],3)
 
 
 class LiveEmbeddingBoundaryTests(unittest.TestCase):

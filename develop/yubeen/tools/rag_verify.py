@@ -10,6 +10,17 @@ from rag_index import MockStore, index_snapshot, load_settings
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def load_unique_json(path):
+    def unique_pairs(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('duplicate_json_key')
+            result[key] = value
+        return result
+    return json.loads(path.read_text(), object_pairs_hook=unique_pairs)
+
+
 def mock_embed(content, model, dimensions):
     """결정적인 합성 벡터이며 실제 임베딩 또는 검색 품질 자료가 아니다."""
     seed = hashlib.sha256(content.encode()).digest()
@@ -85,7 +96,36 @@ def main(argv=None):
     index.add_argument('--scenario', choices=['initial-and-repeat'], required=True)
     index.add_argument('--output', type=Path)
     index.add_argument('--json', action='store_true')
+    evaluation = sub.add_parser('evaluate', help='offline preparation / explicitly labelled Fake result aggregation')
+    evaluation.add_argument('--cases', type=Path, required=True)
+    evaluation.add_argument('--repeats', type=int, default=3)
+    evaluation.add_argument('--results', type=Path, help='optional local Fake bundle; no service calls')
+    evaluation.add_argument('--output', type=Path)
     args = parser.parse_args(argv)
+    if args.command == 'evaluate':
+        from rag_evaluate import evaluate
+        if args.output and not args.output.resolve().is_relative_to(ROOT):
+            parser.exit(2, 'output_outside_owner_directory\n')
+        try:
+            cases = load_unique_json(args.cases)
+            bundle = load_unique_json(args.results) if args.results else None
+            result = evaluate(cases, args.repeats, bundle)
+        except (ValueError, KeyError, TypeError, OSError, AttributeError) as exc:
+            parser.exit(2, 'duplicate_json_key\n' if str(exc) == 'duplicate_json_key' else 'invalid_offline_evaluation_input\n')
+        identity = hashlib.sha256(json.dumps({'cases': cases, 'results': bundle, 'repeats': args.repeats},
+                                            sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        result['input_sha256'] = identity
+        report_identity = hashlib.sha256(json.dumps(result, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        result['report_sha256'] = report_identity
+        rendered = json.dumps(result, ensure_ascii=False, indent=2)
+        if args.output:
+            marker = '<!-- rag-evaluation:' + report_identity + ' -->'
+            old = args.output.read_text() if args.output.exists() else ''
+            if marker not in old:
+                with args.output.open('a') as stream:
+                    stream.write('\n\n' + marker + '\n## P1-3 오프라인 집계 · 실제 검색 미실행\n\n```json\n' + rendered + '\n```\n')
+        print(rendered)
+        return
     if args.source != 'mock':
         parser.exit(2, 'real_index_execution_not_enabled\n')
     if args.output and not args.output.resolve().is_relative_to(ROOT):

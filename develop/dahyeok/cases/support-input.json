@@ -1,0 +1,70 @@
+{
+  "purpose": "P0-1 로컬 기대값. 직원 조회는 GET /employees 형식의 Mock이며 실제 n8n 시험 결과가 아니다.",
+  "cases": [
+    {
+      "id": "DH-T-01-P0",
+      "request_file": "requests/input-valid.json",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "not_implemented",
+        "ticket": null,
+        "agents": [],
+        "llm_calls": 0
+      }
+    },
+    {
+      "id": "DH-T-13-empty",
+      "request_file": "requests/input-empty.json",
+      "expect": {
+        "http_status": 400,
+        "codes": ["question_required"],
+        "llm_calls": 0
+      }
+    },
+    {
+      "id": "DH-T-13-too-long",
+      "request_file": "requests/input-too-long.json",
+      "expect": {
+        "http_status": 400,
+        "codes": ["too_long"],
+        "llm_calls": 0
+      }
+    },
+    {
+      "id": "DH-T-13-unknown-user",
+      "request_file": "requests/input-unknown-user.json",
+      "expect": {
+        "http_status": 400,
+        "codes": ["unknown_user"],
+        "llm_calls": 0
+      }
+    },
+    {
+      "id": "DH-T-08",
+      "request_file": "requests/injection.json",
+      "expect": {
+        "http_status": 200,
+        "route": "차단",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": { "blocked_by": "rule", "reason": "prompt_injection", "masked": 0 },
+        "llm_calls": 0
+      }
+    },
+    {
+      "id": "DH-T-15-P0",
+      "request_file": "requests/normal-admin-contact.json",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "not_implemented",
+        "ticket": null,
+        "agents": [],
+        "llm_calls": 0,
+        "must_not_route": "차단"
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "purpose": "P0-2 분류 출력 형식의 합성 예시. 실제 Agent 실행 결과가 아니다.",
+  "examples": [
+    {
+      "id": "vague-connection",
+      "output": {
+        "type": "other",
+        "urgency": "normal",
+        "missing": ["접속 대상", "오류 메시지", "발생 시점"],
+        "ticket_id": null,
+        "needs_action": false
+      }
+    },
+    {
+      "id": "resolved-connection",
+      "output": {
+        "type": "network",
+        "urgency": "normal",
+        "missing": [],
+        "ticket_id": null,
+        "needs_action": false
+      }
+    },
+    {
+      "id": "invalid-boolean",
+      "output": {
+        "type": "network",
+        "urgency": "normal",
+        "missing": [],
+        "ticket_id": null,
+        "needs_action": "false"
+      },
+      "expect_error": "triage_invalid"
+    },
+    {
+      "id": "invented-ticket-id",
+      "output": {
+        "type": "other",
+        "urgency": "normal",
+        "missing": [],
+        "ticket_id": "T-9999",
+        "needs_action": false
+      },
+      "expect_error": "triage_invalid"
+    },
+    {
+      "id": "truncated-json",
+      "raw_output": "{\"type\":\"other\"",
+      "expect_error": "triage_invalid"
+    }
+  ]
+}

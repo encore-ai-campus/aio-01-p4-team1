@@ -1,0 +1,94 @@
+{
+  "name": "oke-support",
+  "nodes": [
+    {
+      "name": "N01 Support webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oke-support",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_HEADER_AUTH_CREDENTIAL_ID",
+          "name": "LOCAL_X_TEAM_KEY_HEADER_AUTH"
+        }
+      }
+    },
+    {
+      "name": "N02 Normalize input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst input = body && typeof body === 'object' && !Array.isArray(body) ? body : {};\nconst codes = [];\nconst requestId = typeof input.request_id === 'string' ? input.request_id : '';\nconst question = typeof input.question === 'string' ? input.question.trim() : '';\nconst user = typeof input.user === 'string' ? input.user.trim() : '';\nif (!requestId.trim() || requestId.length > 64) codes.push('invalid_request');\nif (!question) codes.push('question_required');\nelse if (question.length > 500) codes.push('too_long');\nif (!user) codes.push('unknown_user');\nconst attempt = input.attempt === undefined ? 1 : input.attempt;\nif (!Number.isInteger(attempt) || attempt < 1) codes.push('invalid_request');\nconst context = input.context === undefined ? '' : input.context;\nif (typeof context !== 'string' || context.length > 2000) codes.push('invalid_request');\nif (input.channel !== undefined && typeof input.channel !== 'string') codes.push('invalid_request');\nreturn [{ json: { request_id: requestId, user, clean_question: question, context: typeof context === 'string' ? context : '', attempt, channel: input.channel ?? null, codes: [...new Set(codes)], employee_lookup: 'skipped' } }];"
+      }
+    },
+    {
+      "name": "N03 Validate employee MOCK",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300],
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nif (item.codes.length) return [{ json: item }];\n// P0-1 Mock of GET /employees. Replace with the provider's response in P1.\nconst mockResponse = { items: [\n  { name: '이준호', dept: '영업팀' },\n  { name: '박서연', dept: '재무팀' },\n  { name: '최유진', dept: '인사팀' },\n  { name: '한지훈', dept: '개발팀' },\n  { name: '김민지', dept: 'IT팀' },\n  { name: '정우성', dept: 'IT팀' }\n] };\nif (!Array.isArray(mockResponse.items)) return [{ json: { ...item, employee_lookup: 'unavailable' } }];\nconst employee = mockResponse.items.find(row => row.name === item.user);\nif (!employee) return [{ json: { ...item, codes: ['unknown_user'], employee_lookup: 'not_found' } }];\nreturn [{ json: { ...item, user: employee.name, dept: employee.dept, access_levels: employee.dept === 'IT팀' ? ['all', 'it'] : ['all'], employee_lookup: 'ok' } }];"
+      }
+    },
+    {
+      "name": "N04 Injection rules",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300],
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nif (item.codes.length || item.employee_lookup !== 'ok') return [{ json: { ...item, blocked: false } }];\nconst source = `${item.clean_question} ${item.context}`;\nconst inspect = source.normalize('NFKC').replace(/[\\u200B-\\u200F\\u2060\\uFEFF\\u0000-\\u001F]/g, '').toLowerCase();\nconst compact = inspect.replace(/[\\s\\p{P}\\p{S}]+/gu, '');\nconst instructionOverride = /(이전|앞선|위의|previous|prior).{0,24}(지시|명령|instructions?).{0,24}(무시|ignore)/i.test(compact);\nconst promptDisclosure = /(시스템프롬프트|시스템지시|systemprompt|systeminstructions?)/i.test(compact) && /(보여|공개|출력|알려|revea?l|show|print)/i.test(compact);\nconst roleSpoofing = /(<\\|im_start\\|>|\\[inst\\]|<<sys>>)/i.test(inspect);\nreturn [{ json: { ...item, blocked: (instructionOverride && promptDisclosure) || roleSpoofing } }];"
+      }
+    },
+    {
+      "name": "N22 Finalize P0-1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [960, 300],
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nif (item.codes.length) return [{ json: { status_code: 400, response: { error: 'invalid request', codes: item.codes } } }];\nconst common = { request_id: item.request_id, sources: [], ticket: null, agents: [], security: { blocked_by: '', reason: '', masked: 0 } };\nif (item.employee_lookup !== 'ok') return [{ json: { status_code: 200, response: { ...common, route: '담당자 이관', answer: '직원 정보를 확인하지 못해 접수하지 못했습니다. 잠시 후 다시 시도해 주세요.', reason: 'identity_unavailable' } } }];\nif (item.blocked) return [{ json: { status_code: 200, response: { ...common, route: '차단', answer: '보안 정책상 처리할 수 없는 요청입니다. IT 문의 창구로 연락해 주세요.', security: { blocked_by: 'rule', reason: 'prompt_injection', masked: 0 } } } }];\nreturn [{ json: { status_code: 200, response: { ...common, route: '담당자 이관', answer: '개발 중이며 접수하지 않았습니다.', reason: 'not_implemented' } } }];"
+      }
+    },
+    {
+      "name": "N23 Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1200, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": "={{ $json.status_code }}"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "N01 Support webhook": {
+      "main": [[{ "node": "N02 Normalize input", "type": "main", "index": 0 }]]
+    },
+    "N02 Normalize input": {
+      "main": [[{ "node": "N03 Validate employee MOCK", "type": "main", "index": 0 }]]
+    },
+    "N03 Validate employee MOCK": {
+      "main": [[{ "node": "N04 Injection rules", "type": "main", "index": 0 }]]
+    },
+    "N04 Injection rules": {
+      "main": [[{ "node": "N22 Finalize P0-1", "type": "main", "index": 0 }]]
+    },
+    "N22 Finalize P0-1": {
+      "main": [[{ "node": "N23 Respond", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

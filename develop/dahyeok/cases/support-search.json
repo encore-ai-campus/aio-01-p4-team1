@@ -1,0 +1,43 @@
+{
+  "purpose": "P1-1 1단계 C03 요청·검색 Mock 기대값. 실제 검색 호출이 아니다.",
+  "cases": [
+    {
+      "id": "P1-S01-normal-access",
+      "request_file": "requests/input-valid.json",
+      "expect": { "http_status": 200, "route": "담당자 이관", "reason": "no_evidence", "search_state": "empty", "access_levels": ["all"], "top_k": 3, "type": "network" }
+    },
+    {
+      "id": "P1-S02-it-access",
+      "request_file": "requests/search-it.json",
+      "expect": { "http_status": 200, "search_state": "empty", "access_levels": ["all", "it"], "top_k": 3 }
+    },
+    {
+      "id": "P1-S03-claimed-access",
+      "request_file": "requests/search-claim.json",
+      "expect": { "http_status": 200, "access_levels": ["all"], "top_k": 3 }
+    },
+    {
+      "id": "P1-S04-found-mock",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "expect": { "http_status": 200, "route": "담당자 이관", "reason": "low_confidence", "search_state": "found", "ticket_present": true }
+    },
+    {
+      "id": "P1-S05-unavailable",
+      "request_file": "requests/input-valid.json",
+      "search_result": "unavailable",
+      "expect": { "http_status": 200, "reason": "search_unavailable", "search_state": "unavailable" }
+    },
+    {
+      "id": "P1-S06-invalid-score",
+      "request_file": "requests/input-valid.json",
+      "search_result": "invalid_score",
+      "expect": { "http_status": 200, "reason": "search_unavailable", "search_state": "invalid" }
+    },
+    {
+      "id": "P1-S07-input-regression",
+      "request_file": "requests/input-empty.json",
+      "expect": { "http_status": 400, "codes": ["question_required"], "search_skipped": true }
+    }
+  ]
+}

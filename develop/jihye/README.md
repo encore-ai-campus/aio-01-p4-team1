@@ -11,7 +11,7 @@
 | P0-2 보완 | 2026-11-05 context 최대2,000자 누락과 개인 문서 기준 정리. 전체100개 통과·경고1건 |
 | P0-3 | 전용 PostgreSQL 컨테이너·비밀 설정·접속·Alembic 기반 준비, 실제 DB 시험5개 통과. vector는 가용하지만 아직 활성화하지 않음 |
 | 실제 기능 | 로그인·세션/내부키 검증·DB 저장·n8n/data-api 연결 미구현/미검증 |
-| 현재 | P0-6 직원 seed·첫 관리자 CLI 구현 및 Mock/전용 DB 검증 완료. 실제 원본/VM bootstrap은 미실행. 다음 단계 P0-7 |
+| 현재 | P0-7 로컬 backend/DB 기동·readiness·중지/회복 검증 완료. 현재 revision0005. frontend/n8n/data-api/VM 통합 미실행. 다음 단계 P1-1 |
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
@@ -37,7 +37,7 @@ uv run pytest -q
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-- `GET /health/live` → `200 {"status":"ok"}`. P0-1 실제 소켓 확인은18000에서 수행했다. DB readiness는 P0-7 예정이며 현재 제공하지 않는다.
+- `GET /health/live` → `200 {"status":"ok"}`. `/health/ready`는 DB·revision·pgvector 전제200/503이며 scope=database다. 로컬 backend 컨테이너는127.0.0.1:18000에서 실제 확인했다. 기동은 [deploy 안내](deploy/README.md)의 P0-7 절을 따른다.
 - `/docs`·`/openapi.json` 또는 `app.main.create_app().openapi()`로 계약을 볼 수 있다. 실제 업무 미구현은501, 보호 경로의 쿠키/키 누락은401, 임의 쿠키/키를 넣어도501이다. 실행 서버에 Mock 성공 기능은 없다.
 - Mock은 `tests/conftest.py`의 dependency override·HTTPX MockTransport에만 있다. 정상5 route·400 codes·계정/저장 예시는 해당 시험 파일에 있다. 실제 서비스 경계는 `app/api/deps.py`다.
 - 환경변수 이름은 `app/core/config.py`에서 읽고 `.env`는 자동으로 읽지 않는다. 기본 SERVICE_MODE=app이며 app/practice만 허용하지만 실제 저장 전환은 아직 없다. DB/키 없이 골격 기동 가능하며 실제 기능은 사용 경계에서 설정을 필수 검사해야 한다. 비밀값은 문서·응답·로그에 남기지 않는다.
@@ -82,6 +82,8 @@ P0-3 시점에는 빈 revision이었다. P0-4에서 격리 검증 DB에 `0001→
 수언님은 웹 모델/화면, 다혁님은 C02 요청/응답, 원민님은 C05 저장 ACK를 대조한다. 유빈님은 DB 준비 후 rag 저장·검색을 연결하며 오현님은 공통 반영·VM 배포·최종 취합을 맡는다. 원민님 요청 표본7/7과 유빈님 회신은 사용자가 전달한 결과이고 이번 보완의 재확인·실연결 증거가 아니다. 외부 전송은 하지 않았다.
 
 ## 검증 이력과 참고 예제
+
+P0-7 최신 결과: **188개 통과·기존 경고1건**. 실제 DB/runtime 로그인과 HTTP ready200→DB중지503/live200→재기동ready200을 확인했다. revision/vector 누락 조건은 가짜 DB 시험으로 구분하며 VM/AI통합 결과는 아니다. 아래 결과는 이전 단계 이력이다.
 
 P0-6 최신 결과: `uv run python deploy/check_db.py --all`에서 **180개 통과·기존 경고1건**. 아래158개는 P0-5 당시 기록이다. 직원/관리자 검증 자료는 거래 rollback했으며 실제 원본 수집과 VM 실행은 아직 하지 않았다.
 

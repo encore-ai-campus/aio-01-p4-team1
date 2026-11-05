@@ -18,7 +18,7 @@ class ContractProbe(BaseModel):
 
 @pytest.fixture
 def client():
-    application = create_app(Settings(_env_file=None))
+    application = create_app(Settings(_env_file=None, database_url=None))
 
     # Test-only routes exercise the installed handlers without publishing ask/auth.
     @application.post("/_probe")
@@ -93,10 +93,10 @@ def test_server_error_is_safe(client):
 
 
 def test_liveness_and_only_health_is_published():
-    application = create_app(Settings(_env_file=None))
+    application = create_app(Settings(_env_file=None, database_url=None))
     with TestClient(application) as client:
         assert client.get("/health/live").json() == {"status": "ok"}
-        assert client.get("/health/ready").status_code == 404
+        assert client.get("/health/ready").status_code == 503
         assert client.post("/api/auth/signup").status_code == 404
         assert client.get("/health/live").status_code == 200
     assert "/health/live" in application.openapi()["paths"]

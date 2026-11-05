@@ -155,6 +155,8 @@
 
 ### P0-6 실제 기록 · 2026-11-05
 
+- 재확인 기록: 기존 P0-6 구현을 요청 문서와 다시 대조한 뒤 `uv run python deploy/check_db.py --all`을 재실행했다. 종료0, **180 passed, 1 warning in 10.53s**. 기존 Starlette/httpx 경고1건이며 원본 API·VM 실행 결과는 아니다. 코드 추가 수정 없이 재확인했고, 기록 전 저장소 전체 `git status --short`와 `git diff --name-only`는 빈 결과였다. 이번 기록 수정은 `develop/jihye/Doc/IMP-PLAN.md`에만 한정한다. 다음 구현은 P0-7, P0-6의 실제 원본/VM seed·첫 관리자 적용은 오현님 환경 확인 후 별도로 연결한다.
+
 - 구현: 직원 수집 클라이언트·bootstrap 서비스·CLI·Argon2id 보안 모듈과 테스트를 추가했다. 서버 시작과 공개 API에서 자동 seed/계정 생성은 하지 않는다. 정확한6명/부서를 검증하고 누락·추가·중복·부서 변경·기존 DB 불일치를 거절한다. seed는 직원만 적재한다.
 - 원본 경계: 지원 형태는 Mock `{employees:[{name,dept,...}]}`이며 실제 응답 확인이 아니다. 실제 인증을 추정하지 않고 `DATA_API_EMPLOYEES_AUTH_HEADER`에 확인된 헤더 이름을 명시하도록 했다. DATA_API_URL/KEY와 해당 명령 전용 설정이 없으면 실행을 거절한다. 실제 data-api 호출은 미실행이다.
 - 관리자: seed 완료·지정 IT직원·빈 계정 집합에서만 첫 admin을 만든다. BOOTSTRAP_ADMIN_PASSWORD/SESSION_SECRET 누락은 DB 작업 전 실패한다. 12자/3종/본인 이름·login_id 포함 금지와 Argon2id를 적용했다. 동일 활성 관리자 재실행은 생성0건·해시/역할 보존, 다른 기존 계정은 복구/승격하지 않고 거절한다. 동일 advisory 거래 잠금으로 seed/bootstrap을 직렬화했으며 동시 실행 자체의 시험은 미실행이다.
@@ -163,11 +165,23 @@
 
 ## P0-7 · backend 이미지·준비 상태·배포 묶음
 
-- [ ] 연결 SPEC: BE-05·06, C07.
+- [x] 연결 SPEC: BE-05·06, C07. 전용 로컬 DB/backend 빌드·기동·readiness 확인. frontend/실제 n8n·data-api/VM 전체 연결은 미실행.
 - 생성 예정: `deploy/backend.Dockerfile`, `deploy/.dockerignore`; `deploy/compose.yaml`의 backend/frontend/n8n/data-api 연결; `app/api/routes/health.py` 준비 상태 확장; `tests/integration/test_readiness.py`.
 - 작업: [deploy 안내](../deploy/README.md)의 컨테이너/로컬 포트·build context·비밀 제외·프로세스/DB 준비 상태를 적용한다. backend는 본인 폴더를 context로 사용한다. frontend Dockerfile·프록시는 수언님 소유이며 아직 없으면 DB/backend까지만 확인한다. n8n/data-api 기존 환경 재사용 여부·실제 모드를 기록한다.
 - 확인 예정: `docker compose --env-file deploy/.env -f deploy/compose.yaml build backend`, DB 적용 후 `up -d backend`, `curl --fail http://127.0.0.1:8000/health/ready`, `uv run pytest tests/integration/test_readiness.py -q`. DB 중단/미적용 revision/vector 누락을 준비 완료로 표시하지 않고 오류에 비밀값을 노출하지 않는지 확인한다. 전체 웹/AI 기능 완료 확인은 P1이다.
 - 넘길 결과: 오현님에게 검증한 설치/기동/마이그레이션/seed/health 순서·버전·모드·서비스 대상·남은 의존성. 배포나 VM 회귀를 완료했다고 기록하지 않는다.
+
+### P0-7 실제 기록 · 2026-11-05
+
+- 범위: 예제에서 이미지/health 구조만 참고하고 자동 create_all/seed는 사용하지 않았다. 기존 Doc/IMP-PLAN 재확인 기록 변경을 보존했다. frontend 폴더에 빌드 파일이 없어 본 계획의 허용 범위인 DB/backend까지 구현했다. 기존 n8n/data-api 컨테이너는 실행 중이나 네트워크 연결·Credential·워크플로우는 이번에 변경/실호출하지 않았다.
+- 파일: `deploy/backend.Dockerfile`, Dockerfile 전용 ignore와 deploy/.dockerignore, uv.lock에서 내보낸 `requirements.lock`, Compose backend, 전용 로컬 계정 준비 도구 `init_backend_env.py`, `app/services/readiness.py`, health 라우터와 tests/integration/test_readiness.py. 마이그레이션 계정을 런타임에 쓰지 않기 위해 `0005_readiness_grant.py`에서 oke_app에 public.alembic_version SELECT만 추가했다. 기존 적용 revision은 덮어쓰지 않았다. 실제 로컬 revision은0005다.
+- 준비 확인: readiness는 DB 접속·현재 코드의 단일 head·vector 확장 및 embedding vector(3072)를 검사해200/503을 반환한다. scope=database로 한정하며 n8n/data-api/로그인 기능 완료를 의미하지 않는다. liveness는 DB와 독립이다. 설정/DB 오류의 URL·암호·예외 원문을 응답하지 않는다.
+- 빌드: Python3.12 slim 기존 digest를 사용하고 uv.lock의 고정 의존성으로 `docker compose --env-file deploy/.env -f deploy/compose.yaml build backend` 성공. uv export 최초 sandbox 실행은 캐시 쓰기 제한으로 실패한 뒤 허용 재실행으로 성공했다. 빌드 시 pip root 경고는 설치 단계이며 실제 실행은 UID10001이다.
+- 런타임: 전용 DB에 LOGIN `oke_backend_login`과 oke_app 연결을 생성했다. 비밀값은 Git 제외·권한600의 deploy/.env.backend에만 저장했다. migration 관리자 URL과 분리했고 실제 컨테이너의 current_user·역할 생성 권한 없음·비밀파일/호스트.venv 미포함을 확인했다. 이 도구는 전용 로컬 DB용이며 VM에는 관리자가 별도 계정/비밀을 준비한다.
+- 실제 HTTP: 기본8000 노출 시 Docker 포트 연결 오류로 종료1. 다른 서비스 변경 없이 `BACKEND_PORT=18000`으로 재기동해 backend/postgres healthy를 확인했다. ready200 → 전용 DB 중지 후 ready503·live200 → 같은 volume으로 DB 재기동 후 ready200을 확인했다. 현재 로컬127.0.0.1:18000이고 기본 설정은8000이다. 기존 서비스는 변경하지 않았다.
+- 검사: `uv run python deploy/check_db.py --all` 최종 종료0, **188 passed, 1 warning in 7.70s**. 새readiness8개와 기존180개다. 기존 OpenAPI/health 시험이 readiness 미존재를 기대해 최초2개 실패, 그 뒤 DB 환경변수 상속으로1개 실패했다. 새경로/설정없음 조건을 명시해 수정 후 재시험했다. revision/vector 누락·차원 불일치는 가짜DB 응답, 접속/권한·중지/회복은 실제 전용DB/HTTP 결과로 구분한다. Starlette/httpx 기존경고1건 유지.
+- 다음: 오현님께0005 포함 적용순서·이미지/환경 이름·runtime 계정 분리·health 범위를 인계한다. 유빈님 DB LOGIN·실원본/임베딩과 다혁님 C03/C04 네트워크는 VM 준비 후 담당자와 연결한다. 수언님 frontend 파일은 소유자 준비 뒤 프록시로 연결한다. 다음 지정 구현은 P1-1이며 실제VM·로그인·AI통합·공식flow.py 완료로 처리하지 않는다. commit/push/외부전송 없음.
+- 최종 확인: 이미지 재빌드 성공 후 같은188개를 재실행해 종료0·188 passed/1 warning in 6.45s를 확인했다. 저장소 전체 변경 경로가 develop/jihye 내부이고 private DB URL/암호가 변경 파일에 없음을 값 출력 없이 검사했다. deploy/.env.backend는 Git 제외·권한600이며 이번 검증용 LOGIN은 해당 로컬 DB에만 준비했다. 다른 역할/실행 환경의 자격증명 준비 완료를 뜻하지 않는다.
 
 ## P1-1 · 세션·관리자 발급·권한
 

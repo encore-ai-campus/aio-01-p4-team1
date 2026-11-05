@@ -27,10 +27,10 @@ def test_openapi_matches_current_contract():
     paths = schema["paths"]
     assert {p: set(ops) for p, ops in paths.items() if p.startswith("/api/")} == WEB
     assert sum(len(ops) for ops in WEB.values()) == 14
-    assert set(paths) == set(WEB) | {"/health/live", "/tickets", "/alerts", "/dlq"}
+    assert set(paths) == set(WEB) | {"/health/live", "/health/ready", "/tickets", "/alerts", "/dlq"}
     for path, operations in paths.items():
         for method, operation in operations.items():
-            if path != "/health/live":
+            if not path.startswith("/health/"):
                 assert "400" in operation["responses"]
                 assert "501" in operation["responses"]
                 assert "422" not in operation["responses"]

@@ -75,7 +75,7 @@ def ticket_values(requester_id):
 def test_extension_schema_revision_and_rag_tables(engine):
     with engine.connect() as connection:
         assert connection.scalar(text("SELECT extversion FROM pg_extension WHERE extname='vector'"))
-        assert connection.scalar(text("SELECT version_num FROM public.alembic_version")) == "0004"
+        assert connection.scalar(text("SELECT version_num FROM public.alembic_version")) == "0005"
         inspector = inspect(connection)
         assert set(inspector.get_table_names(schema="app")) == set(FIELDS)
         assert set(inspector.get_table_names(schema="rag")) == {"documents", "chunks"}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local P0-1/P0-2 checker for oke-support; not the evaluation-kit flow.py.
+"""Local P0-1 to P0-3 checker for oke-support; not the evaluation-kit flow.py.
 
 This tool checks the current Mock workflow and runs Code-node snippets with
 Node.js. It does not import, publish, or call an n8n workflow.
@@ -37,6 +37,10 @@ REQUIRED_NODES = [
     "N22 Finalize P0-2",
     "N23 Respond",
 ]
+P0_3_NODES = [
+    name if name != "N22 Finalize P0-2" else "N22 Finalize P0-3"
+    for name in REQUIRED_NODES
+] + ["N20 Prepare handoff", "N20 Handoff gate", "N20 Mock C04", "N20 Map handoff"]
 CODE_CHAIN = [
     "N02 Normalize input",
     "N03 Validate employee MOCK",
@@ -47,7 +51,11 @@ CODE_CHAIN = [
     "N22 Finalize P0-2",
 ]
 P0_1_CODE_CHAIN = P0_1_NODES[1:-1]
+P0_3_CODE_CHAIN = CODE_CHAIN[:-1] + [
+    "N20 Prepare handoff", "N20 Mock C04", "N20 Map handoff", "N22 Finalize P0-3"
+]
 TRIAGE_CODE_NODES = set(CODE_CHAIN[3:6])
+HANDOFF_CODE_NODES = {"N20 Prepare handoff", "N20 Mock C04", "N20 Map handoff"}
 NODE_RUNNER = r"""
 const fs = require('fs');
 const vm = require('vm');
@@ -58,8 +66,10 @@ for (const test of data.tests) {
   let value = {body: test.body};
   const outputs = {};
   for (const name of data.codeChain) {
-    if (data.triageCodeNodes.includes(name) &&
+    if (data.skippableNodes.includes(name) &&
         (value.codes.length || value.employee_lookup !== 'ok' || value.blocked === true)) continue;
+    if (data.handoffNodes.includes(name) && name !== 'N20 Prepare handoff' &&
+        value.handoff_needed !== true) continue;
     const code = nodes[name].parameters.jsCode;
     const items = vm.runInNewContext('(function(){' + code + '})()', {
       $input: {first: () => ({json: value})},
@@ -69,6 +79,12 @@ for (const test of data.tests) {
       throw new Error(test.id + ': invalid output from ' + name);
     }
     value = items[0].json;
+    if (name === 'N20 Mock C04' && test.mock_result) {
+      const fixture = data.handoffResults[test.mock_result];
+      if (!fixture) throw new Error(test.id + ': unknown handoff fixture');
+      value.handoff_status = fixture.status;
+      value.handoff_response = fixture.body ?? {error: fixture.transport_error};
+    }
     outputs[name] = value;
   }
   result.push({id: test.id, actual: value});
@@ -108,8 +124,10 @@ def check_flow(path: Path):
     if len(by_name) != len(nodes):
         raise ValueError("duplicate node name")
     is_p0_1 = set(by_name) == set(P0_1_NODES)
-    if not is_p0_1 and set(by_name) != set(REQUIRED_NODES):
-        raise ValueError("node set differs from the P0-1 or P0-2 Mock workflow")
+    is_p0_2 = set(by_name) == set(REQUIRED_NODES)
+    is_p0_3 = set(by_name) == set(P0_3_NODES)
+    if not (is_p0_1 or is_p0_2 or is_p0_3):
+        raise ValueError("node set differs from the P0-1, P0-2 or P0-3 Mock workflow")
     if flow.get("name") != "oke-support":
         raise ValueError("workflow name must be oke-support")
     if flow.get("settings", {}).get("executionOrder") != "v1":
@@ -168,6 +186,17 @@ def check_flow(path: Path):
         "N07 Route triage": [["N22 Finalize P0-2"]],
         "N22 Finalize P0-2": [["N23 Respond"]],
     }
+    if is_p0_3:
+        expected_main["N05 Triage gate"] = [["N05 Triage mode"], ["N22 Finalize P0-3"]]
+        expected_main["N07 Route triage"] = [["N20 Prepare handoff"]]
+        expected_main.pop("N22 Finalize P0-2")
+        expected_main.update({
+            "N20 Prepare handoff": [["N20 Handoff gate"]],
+            "N20 Handoff gate": [["N20 Mock C04"], ["N22 Finalize P0-3"]],
+            "N20 Mock C04": [["N20 Map handoff"]],
+            "N20 Map handoff": [["N22 Finalize P0-3"]],
+            "N22 Finalize P0-3": [["N23 Respond"]],
+        })
     for source, branches in expected_main.items():
         actual = flow.get("connections", {}).get(source, {}).get("main")
         targets = [[edge["node"] for edge in branch] for branch in actual or []]
@@ -178,7 +207,7 @@ def check_flow(path: Path):
         raise ValueError("triage Agent model connection missing")
     if "N23 Respond" in flow.get("connections", {}):
         raise ValueError("Respond must be the terminal node")
-    for name in CODE_CHAIN:
+    for name in (P0_3_CODE_CHAIN if is_p0_3 else CODE_CHAIN):
         if by_name[name]["type"] != "n8n-nodes-base.code":
             raise ValueError(f"{name} must be a Code node")
     if by_name["N06 Triage Agent"]["type"] != "@n8n/n8n-nodes-langchain.agent":
@@ -189,6 +218,12 @@ def check_flow(path: Path):
     examples = load_json(ROOT / "fixtures/triage-results.json")["examples"]
     if len(examples) < 3 or not any("expect_error" in row for row in examples):
         raise ValueError("triage fixture lacks normal and invalid schema examples")
+    if is_p0_3:
+        if by_name["N20 Handoff gate"]["type"] != "n8n-nodes-base.if":
+            raise ValueError("P0-3 handoff gate must be an IF node")
+        results = load_json(ROOT / "fixtures/handoff-results.json")["results"]
+        if not {"normal_success", "high_success", "tickets_down", "alerts_down", "transport_timeout"}.issubset(results):
+            raise ValueError("P0-3 C04 fixture is incomplete")
     return flow
 
 
@@ -197,12 +232,18 @@ def run_local(flow, case_path: Path, container: str | None):
     tests = []
     for case in cases:
         request_file = ROOT / case["request_file"]
-        tests.append({"id": case["id"], "body": load_json(request_file)})
+        tests.append({"id": case["id"], "body": load_json(request_file),
+                      "mock_result": case.get("mock_result")})
     is_p0_1 = len(flow["nodes"]) == len(P0_1_NODES)
+    is_p0_3 = len(flow["nodes"]) == len(P0_3_NODES)
     triage_examples = [] if is_p0_1 else load_json(ROOT / "fixtures/triage-results.json")["examples"]
+    handoff_results = load_json(ROOT / "fixtures/handoff-results.json")["results"] if is_p0_3 else {}
+    code_chain = P0_1_CODE_CHAIN if is_p0_1 else P0_3_CODE_CHAIN if is_p0_3 else CODE_CHAIN
     payload = json.dumps(
-        {"flow": flow, "tests": tests, "codeChain": P0_1_CODE_CHAIN if is_p0_1 else CODE_CHAIN,
-         "triageCodeNodes": [] if is_p0_1 else sorted(TRIAGE_CODE_NODES), "triageExamples": triage_examples},
+        {"flow": flow, "tests": tests, "codeChain": code_chain,
+         "skippableNodes": [] if is_p0_1 else sorted(TRIAGE_CODE_NODES | (HANDOFF_CODE_NODES if is_p0_3 else set())),
+         "handoffNodes": sorted(HANDOFF_CODE_NODES) if is_p0_3 else [],
+         "handoffResults": handoff_results, "triageExamples": triage_examples},
         ensure_ascii=False,
     )
     if container:
@@ -227,6 +268,14 @@ def run_local(flow, case_path: Path, container: str | None):
         for key in ("route", "reason", "codes", "ticket", "agents", "sources", "security"):
             if key in expected and response.get(key) != expected[key]:
                 problems.append(f"{key}: {response.get(key)!r} != {expected[key]!r}")
+        if "ticket_id" in expected and (response.get("ticket") or {}).get("ticket_id") != expected["ticket_id"]:
+            problems.append("ticket_id mismatch")
+        if expected.get("ticket_present") is True:
+            ticket = response.get("ticket")
+            if not isinstance(ticket, dict) or not str(ticket.get("ticket_id", "")).startswith("T-"):
+                problems.append("ticket missing")
+        if "priority" in expected and (response.get("ticket") or {}).get("priority") != expected["priority"]:
+            problems.append("priority mismatch")
         if "must_not_route" in expected and response.get("route") == expected["must_not_route"]:
             problems.append("unexpected blocked route")
         for phrase in expected.get("answer_contains", []):
@@ -255,24 +304,24 @@ def run_local(flow, case_path: Path, container: str | None):
         else:
             print(f"PASS parser {example['id']}")
     total = len(cases) + len(triage_examples)
-    print(f"local result: {total - failed}/{total} passed; n8n webhook and triage Agent were not called")
+    print(f"local result: {total - failed}/{total} passed; n8n webhook, triage Agent and handoff service were not called")
     return 1 if failed else 0
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    check = sub.add_parser("check", help="validate a local P0-1 or P0-2 Mock workflow")
-    check.add_argument("workflow", nargs="?", default="workflows/oke-support-02.json")
+    check = sub.add_parser("check", help="validate a local P0-1 to P0-3 Mock workflow")
+    check.add_argument("workflow", nargs="?", default="workflows/oke-support-03.json")
     local = sub.add_parser("test-local", help="run Code nodes only; does not call n8n")
     local.add_argument("cases", nargs="?", default="cases/support-input.json")
-    local.add_argument("--workflow", default="workflows/oke-support-02.json")
+    local.add_argument("--workflow", default="workflows/oke-support-03.json")
     local.add_argument("--node-container", help="existing container that has Node.js")
     args = parser.parse_args()
     try:
         workflow = resolve_path(args.workflow)
         flow = check_flow(workflow)
-        stage = "P0-1" if len(flow["nodes"]) == len(P0_1_NODES) else "P0-2"
+        stage = "P0-1" if len(flow["nodes"]) == len(P0_1_NODES) else "P0-3" if len(flow["nodes"]) == len(P0_3_NODES) else "P0-2"
         print(f"LOCAL {stage} CHECK PASS (not the official evaluation-kit check)")
         if args.command == "test-local":
             return run_local(flow, resolve_path(args.cases), args.node_container)

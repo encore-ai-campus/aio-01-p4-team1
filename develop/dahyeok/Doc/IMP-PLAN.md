@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1 `workflows/oke-support.json`과 P0-2 `workflows/oke-support-02.json`의 요청·Mock·로컬 기대값은 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 P0-3 이후 단계는 구현 예정이다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1 `workflows/oke-support.json`, P0-2 `workflows/oke-support-02.json`, P0-3 `workflows/oke-support-03.json`의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 프로젝트 n8n과 공통 시험은 미실행이며 P1 이후 단계는 구현 예정이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -47,6 +47,13 @@
 - 로컬 확인: `python3 tools/flow.py check`, `python3 tools/flow.py test-local cases/support-input.json --node-container day65-n8n-n8n-1`, `python3 tools/flow.py test-local cases/support-triage.json --node-container day65-n8n-n8n-1`. P0-1 회귀 입력 6/6, P0-2 입력 4/4, triage 파서 예시 5/5가 로컬 Code 시뮬레이션에서 일치했다.
 - 미확인: Agent 실호출·Credential, 공식 80일차 `flow.py check`, 프로젝트 n8n 게시·웹훅 실행, 실제 handoff 티켓 생성. 이 로컬 결과를 WF-02/02b 또는 P0-2 실제 기능 시험 통과로 표시하지 않는다.
 
+### P0-3 확인 기록 · 2026-11-05
+
+- 변경: P0-2 번호판을 복사해 `workflows/oke-support-03.json`을 새로 만들었다. N20에서 검증된 user/request_id·분류 category·normal/high·이관 사유로 C04 입력을 만들고, Mock 성공·tickets_down·alerts_down·timeout/형식 오류를 구분한다. P0-1·P0-2 JSON은 수정하지 않았다.
+- 로컬 Mock: 성공 응답의 ticket_id는 합성 번호다. 최종 안내에 실제 티켓이 생성되지 않았음을 명시한다. 티켓 장애는 ticket=null, 알림 실패는 ticket을 보존한다. timeout/형식 오류는 접수 성공으로 추정하지 않는다. 이관 성공/실패의 alerted·dlq는 Mock 내부 결과만 보존하며 실제 저장을 주장하지 않는다.
+- 확인: `python3 tools/flow.py check workflows/oke-support-03.json` 및 `python3 tools/flow.py test-local cases/support-handoff.json --node-container day65-n8n-n8n-1`에서 P0-3 입력·실패·회귀 사례 12/12와 triage 파서 예시 5/5가 로컬 Code 시뮬레이션과 일치했다. P0-1·P0-2 파일도 로컬 구조 검사를 다시 통과했다.
+- 미확인: 원민님 실제 `oke-handoff`, 티켓·알림·DLQ 생성, 공식 80일차 `flow.py check`, 프로젝트 n8n 게시·웹훅/Agent 실행. `handoff_unavailable` 외부 reason은 DH-CHG-03 제안 상태이므로 공통 확정처럼 배포하지 않는다. 실제 C04 연결 전에는 WF-03/04/12 통과로 표시하지 않는다.
+
 P2 선택 고도화는 필수 P1-5 완료 뒤 [TODO](TODO.md)의 후순위를 따른다.
 
 P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아니다. P1까지도 Mock 결과와 실제 서비스 결과를 별도 열로 기록한다. 새 정책 승인이 필요한 adapter를 제외한 Agent/검색/이관/출력 작업은 계속 진행한다.
@@ -64,10 +71,10 @@ python3 -m json.tool workflows/oke-support-02.json > /dev/null
 
 프로젝트 키트가 제공되고 `tools/flow.py`의 실제 위치·CLI를 확인한 뒤 다음 check를 수행한다. 현재 지정 자료 경로의 Last3Mon/80 키트는 없어 명령은 **예정 경로 템플릿**이다. 다른 실습 키트를 프로젝트 키트인 것처럼 복사/설치하지 않는다.
 
-현재 `develop/dahyeok/tools/flow.py`는 P0-1·P0-2 번호판을 검사하는 별도 **로컬 검사기**다. 기본 대상은 최신 `oke-support-02.json`이다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
+현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. 기본 대상은 최신 `oke-support-03.json`이다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support-02.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-03.json
 ```
 
 연결 검토 항목:
@@ -91,7 +98,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support-02.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support-02.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-03.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

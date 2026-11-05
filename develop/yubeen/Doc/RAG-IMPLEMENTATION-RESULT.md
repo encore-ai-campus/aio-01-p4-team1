@@ -107,3 +107,31 @@ TEST 3의 mock=true는 내부 노드 출력 필드다. HTTP 응답은 C03의 ok/
 ### 지혜님에게 전달받은 DB 준비 상태
 
 사용자가 전달한 지혜님 확인 내용: PostgreSQL 접속 확인, pgvector 0.8.6 사용 가능 확인. pgvector 확장 활성화, rag.documents/rag.chunks 생성, 색인·검색 DB 권한은 미완료다. P0-5 완료 후 실제 DB 연동이 가능하며 data-api 응답·인증 방식은 미확정이다. 이는 팀원에게 전달받은 상태이며 Codex가 DB 접속으로 독립 확인한 결과가 아니다.
+
+## P1-2 STEP 5 · 외부 연결 없는 검색 어댑터 준비
+
+추가 파일: tools/rag_search.py, tests/test_search_adapters.py. 기존 n8n 워크플로우와 STEP 4 Mock 코드는 수정하지 않았다. 실제 제공자/DB 연결 생성·SDK·드라이버·키·새 환경변수는 추가하지 않았다.
+
+Index의 load_settings/validate_embedding과 (text,model,dimensions) → {model,embedding} 제공자 규약을 재사용한다. 모델 text-embedding-3-large, 3072차원, 숫자·유한값·비영벡터·모델 일치를 검증한다. 호출자는 Webhook 인증과 STEP 3 입력 검사를 수행해야 하며 이 Python 경계는 직원 권한을 추론하지 않는다. 현재 ['all']만 지원하고 IT 목록은 제공자/DB 호출 전에 실패시킨다. 내부 어댑터의 503은 연결 경계 실패이며 H-Y01의 최종 입력/권한 오류 응답을 확정하지 않는다.
+
+PgvectorSearchAdapter는 호출자가 소유한 전용 DB-API 연결을 받으며 직접 접속하지 않는다. 공통 rag.documents/chunks 컬럼으로 작성한 SQL 초안은 MATERIALIZED 허용 후보에서 documents.access_level과 embedding_model을 WHERE로 먼저 제한한다. <=> 거리 ASC, doc_key/chunk_no ASC, LIMIT 3 및 score=1-distance를 사용한다. 권한·모델·질의 벡터·개수는 execute의 바인딩 매개변수로 전달한다. type은 SQL 필터에 사용하지 않는다. cursor는 정리하지만 연결의 commit/rollback/close, statement timeout과 전체 deadline은 호출자 책임이며 실제 통합 전 구현·검증해야 한다. P0-5 스키마·pgvector 확장·최소 권한과 실행계획 검증 전에는 실제 실행 완료 SQL로 간주하지 않는다.
+
+실행 선택 dispatch의 mode는 서버 소유 설정이다. mock은 명시적으로 선택하고 제공한 Mock 함수만 호출한다. adapter는 adapter_enabled=True와 두 제공자를 모두 명시해야 하며 기본 비활성이다. 모드 누락·미준비·제공자/DB 실패는 503/search_unavailable이고 Mock 자동 대체는 없다. 현재 n8n은 기존 STEP 4 Mock만 사용하며 Python 어댑터와 연결하지 않았다. 향후 n8n 호출 경로와 안전한 Credential·연결 주입 방식은 실제 통합 시 준비한다.
+
+로컬 검증: Python unittest 122개 통과(기존108+신규14), 실패0. 신규 시험은 Fake 제공자·DB만 사용해 모델/3072차원, 잘못된 차원·NaN/Infinity/bool·0벡터·모델 혼입·제공자 장애, SQL 필터/바인딩/LIMIT/동점 정렬, evidence/빈 결과, DB 장애/cursor 정리, IT 차단, top_k, 미설정 모드와 Mock 자동 대체 금지를 확인했다. 기존 n8n Code 로직 JavaScript 13개도 통과했다. 실제 OpenAI API·DB·pgvector·n8n HTTP 실행은 이번에 수행하지 않았다.
+
+지혜님 P0-5 후 확장 활성화·실제 두 테이블/제약·검색 계정 SELECT 권한·vector 차원·접속/트랜잭션·timeout·정확검색 실행계획을 확인해야 한다. 다혁님·오현님과 직원 권한 출처와 서버 호출 신뢰 경계, H-Y01 최종 오류 형식 및 본체 HTTP 연결 예산을 확정한 뒤 연결한다. 실제 IT 검색은 계속 비활성이다. 실제 색인·질의 임베딩 모델 일치, 관리자 양성 사례, 성능·품질·비용은 미검증이다.
+
+### STEP 5 독립 리뷰 PARTIAL 결함 보완
+
+독립 리뷰에서 교체 repository가 반환한 4개 결과·metadata를 공통 경계가 그대로 정상 응답에 넣는 P1, dispatch의 Mock 분기가 공백 query를 제공자에 전달하는 P2, 잘못된 repository 결과·score 경계 회귀 부족 P2가 확인되어 완료 판정을 보류했다.
+
+rag_search.py에 validate_evidence를 추가했다. repository 규약은 list/tuple의 dict 항목이며 최대3개, doc/section/text는 비공백 문자열, score는 bool 제외 유한 int/float만 허용한다. 잘못된 결과는 기존 503/search_unavailable로 처리하고 초과 결과를 잘라 성공 처리하지 않는다. 추가 metadata·DB/debug 필드는 네 공개 필드만 새 dict로 투영해 제거한다. 기본 PgvectorSearchAdapter와 교체 repository 모두 같은 함수로 검증한다. 점수에 새 범위·확률 정책을 추가하지 않았다. 유한 score의 실제 cosine 산출·의미는 SQL/DB 통합 검증 대상이며 -1을 0으로 자르지 않는다.
+
+공통 valid_query를 dispatch 모드 분기 전에 적용해 빈·공백·비문자열을 Mock과 임베딩 제공자 호출 전에 차단한다. 반환은 기존 Python 내부 안전 실패 503이며 최종 입력 오류 HTTP 계약의 확정이 아니다. SQL·워크플로우·Index는 수정하지 않았다.
+
+신규 회귀 13개: 4건 결과 거절, 추가 필드 제거/원본 불변, 필수 필드 누락, 문자열 타입·빈 값, 잘못된 score, 잘못된 컬렉션/항목, 정상1~3개/tuple, 빈 결과, 유한 score 경계, 양 모드의 잘못된 query 제공자 0회, 정상 명시 Mock, repository 예외 비노출, IT 요청의 모든 의존성 호출0회. Python 전체135개(기존108+STEP5 최초14+보완13) 통과/실패0, JavaScript 기존13개 통과/실패0.
+
+기존 테스트와 별도 일회성 재현도 확인했다: repository 4개 반환은503, 1개+metadata는 네 공개 필드만200, Mock 공백 query는503/제공자0회다. 최초 두 결함의 동작은 재현되지 않았다. JSON4노드/3연결·HeaderAuth·비활성, SQL 권한 WHERE 유지, 비밀값 패턴 검사, git diff --check를 확인했다. 실제 n8n HTTP·DB·OpenAI는 실행하지 않았다.
+
+보완 후 STEP5의 외부 연결 없는 연결부 준비 범위는 PASS로 판단한다. 실제 DB/임베딩 검색과 본체 통합은 여전히 미완료이며, 권한 전달·최종 오류 계약·timeout/연결 수명·실제 SQL 실행계획·검색 품질은 앞 절의 확인 사항으로 유지한다. 기존 STEP1~4 실행 결과를 이번 버전의 실제 통합 검증으로 확대하지 않는다.

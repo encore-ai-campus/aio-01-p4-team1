@@ -122,6 +122,31 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 - 미확인: C03 실제 근거, writer·verifier 실제 실행(검색 통과 0건이라 미실행), 티켓 생성·중복(WF-09), LLM 장애(`llm-down`은 장애 주입 없이 정상 호출됨), 긴급 알림, 답변 품질 임계값. triage는 LLM이라 반복 실행 결과가 달라질 수 있어 3회 반복 측정이 남았다.
 - 다음: 유빈님 `oke-search.json`, 원민님 `oke-handoff.json`을 로컬 n8n에 import해 13으로 같은 요청을 재실행한 뒤 Mock 제거판(14)을 만든다. 지혜님께는 제공 data-api `/employees`가 `employees` 키라는 점을 공유하고, FastAPI 쪽 형식이 `items`로 유지되는지 확인을 부탁드린다.
 
+## P1-5 로컬 C04 연동 1단계 · 2026-11-05
+
+- 대상: 원민님 `origin/feat/wonmin-p0` `e249957`의 `workflows/oke-handoff.json`을 `git show`로 꺼내 Credential ID만 바꾼 사본을 로컬 n8n에 import·게시했다. 원민님 파일·작업 트리는 바꾸지 않았다. practice 저장소는 기본값 `http://data-api:8800`, Credential은 `WONMIN_X_TEAM_KEY`(본체 C04 키와 같은 값)·`WONMIN_PRACTICE_STORE_AUTH`·`WONMIN_APP_STORE_AUTH`(로컬 값). `oke-errors`는 연결하지 않았다. C03은 여전히 없음(404).
+- C04 직접 호출: 인증 없음 403. 같은 request_id 2회 → `T-2001` duplicate false→true, `/tickets-created` 0→1.
+- 13 경유(execution 1580~1594, 모두 success): urgent·urgent-complex는 high 티켓 신규(`T-2002`·`T-2003`), clarify-3(attempt 3)·input-valid(C03 404)는 normal 티켓, duplicate 2회는 `T-2006` duplicate false→true(WF-09 형태). other-ticket `권한 없음`·injection `차단`은 티켓 0. 서로 다른 요청 5건에 티켓 5건, urgent-complex 재전송은 duplicate=true로 추가 생성 없음. 긴급 선이관 뒤 C04 재호출 0회.
+- 알림: data-api `/alerts`에 티켓마다 H06 알림 저장, duplicate 재전송도 알림 1건 추가(원민님 README의 practice 중복 알림 허용 범위). DLQ 0건.
+- 확인 필요(13 본체): urgent-complex(WF-12)는 본인 T-1002 조회가 ok였으나 C03이 없어 writer가 실행되지 않았고 응답은 "IT팀 티켓이 접수되었습니다."뿐이다. WF-12의 본인 상태 안내가 근거 없이도 나와야 하는지 C03 연결 후 재확인한다. 실제 모드에서도 내부 decision 값이 `handoff_mock`으로 남아 있어 이름 정리가 필요하다(응답 영향 없음).
+- 미확인: tickets_down·alerts_down·DLQ·영구 거절·지연 저장 장애 경로, `oke-errors` 연동, app 모드, C03 실제 근거와 writer·verifier.
+
+## 13 수정: 본인 티켓 상태 안내 경로 · 2026-11-05
+
+- 이유: 7교시 VM 시연 [본인 조회 정상]과 WF-07. 기존 13은 본인 T-1002 조회가 ok여도 규정 검색 근거가 없으면 N20 이관으로 새 티켓을 만들었다(로컬 재현: 박서연 "T-1002 처리 상태를 알려주세요" → 담당자 이관, 새 T-2007). 상태 문의는 규정 문서에 근거가 없어 C03 연결 뒤에도 같은 결과가 된다.
+- 변경 노드(노드·연결선 수 변화 없음, 이전 13은 git `c151c8b`):
+  1. N12 Evidence gate: 티켓 ID가 있고 본인 조회 ok이며 질문이 처리 상태/상황/현황을 묻고 사용할 규정 근거가 없을 때만 `decision=ticket_status`. 근거가 있으면 기존 writer 경로를 유지한다. 긴급 보강·타인(forbidden)·없는/장애 조회는 기존과 같다.
+  2. N20 Prepare handoff: `ticket_status`는 이관하지 않는다.
+  3. N22 Finalize: `자동 답변`, sources=[], ticket=null로 티켓 ID·제목·상태·갱신일을 안내한다. 연락처를 물으면 본인 전화만 `앞3-****-뒤4`로 가려 안내하고 이메일·note·담당자는 내보내지 않는다.
+  4. N10 Normalize ticket: 상태 안내용 title(가림 적용)·updated와 `phone_hint`를 만든다. N13 Prepare writer는 `phone_hint`를 writer에 넘기지 않는다.
+- 로컬 검사: adapter 12/12, failures 14/14·replay 13/13·review-fixes 9/9·verification 20/20·ticket-lookup 6/6. 첫 시도에서 근거가 있는 본인 티켓 사례(P12-15)를 가로채 실패해 근거 없음 경우로만 좁혔다.
+- 로컬 n8n 실행(execution 1599~1609, 모두 success, C04는 원민님 handoff, C03 없음):
+  - 박서연 T-1002 상태 → `자동 답변` "T-1002 (VPN 인증서 재발급) 문의는 현재 '처리 중' 상태입니다…", 새 티켓 0.
+  - 이준호 T-1002 → `권한 없음`.
+  - 최유진 "T-1003 처리 상황과 제 연락처 알려주세요"(WF-07) → `자동 답변`, 연락처 `010-****-2135`, masked 2, 새 티켓 0.
+  - 회귀: T-9999 없음·긴급 복합·일반 문의는 기존대로 이관(티켓 3건), clarify-1 보완 질문, injection 차단.
+- 남은 확인: agents 값은 `["triage"]`로 두었다(조회 단계 이름은 공통에 없음). 상태 문의 판정은 정규식이라 다른 표현("T-1002 끝났나요?")은 기존 이관으로 간다. VM의 실제 티켓 형식이 data-api와 같은지 시연 전에 확인한다.
+
 ## 워크플로우 설계서 공통 반영 요청 · 2026-11-05
 
 - 담당 원고: `Doc/WORKFLOW-DESIGN-DRAFT.md` 1~8절과 `Doc/SUBMISSION-NOTES.md`. 오현님이 소유한 `docs/WORKFLOW-DESIGN.md`의 기존 “구현 예정” 설명을 실제 번호판·노드·로컬 검증 상태와 대조해 반영해 주시기 바란다.

@@ -26,7 +26,7 @@ P0-4 갱신(2026-11-05): 전용 검증 DB에 `0002 (head)`를 적용해 vector �
 | --- | --- | --- |
 | C01 | 수언님·오현님 | H01·03·05 핵심(세션 쿠키·관리자 목록·assignee=employees.id·최후 관리자 보호) 공통 반영 완료, H02 세부 제안 유지·실연결 미실행 |
 | C02 | 다혁님·오현님 | 시간 예산·503/504 확정. 응답 캐시/상태·추가 오류코드 등 H04 세부와 H03 nullable 타입은 미확정, 실제 연결 미실행 |
-| C05 | 원민님·오현님 | 기존4bbbf49 요청7/7 적합 회신 수신. H07 알림 duplicate 유지·DLQ200 팀장 승인 전달받음. 공통 반영 커밋·모델 확장·실제 저장/동시성은 미확인/후속 |
+| C05 | 원민님·오현님 | 요청7/7 적합 및 event_key 경계 회신 수신. H07 팀장 승인 적용해 P1-3 로컬 저장·ACK 구현과 전용 DB 검증 완료. 공통 반영 커밋·workflow/live data-api 실연결은 미확인 |
 | C06 | 유빈님 | P0-3 실제 DB 접속·vector 가용성 확인. DDL·활성화·grants·실제 색인은 P0-4~5 이후. data-api 응답/인증 및 청크 상태의 DB 저장 필요 여부 추가 확인 |
 | C07 | 오현님·영향받는 담당 | 전용 Compose DB 기동·health·접속·Alembic 기반 확인. 기존 서비스 미변경·호스트 DB포트 미공개. backend/전체Compose/VM은 미실행 |
 
@@ -75,14 +75,18 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 
 ## JH-H07 · C05 알림 ACK·DLQ 상태 명문화 검토
 
-**현재 상태: 사용자 전달로 팀장 승인 수신(알림 duplicate 필드 유지·DLQ HTTP200).** 로컬 공통 API의 명문화 커밋은 아직 확인되지 않았고 모델/실제 저장 반영은 후속이다. 프론트 최종 연결은 팀장이 맡으며 지혜님은 P0-3 DB 기반에 집중하라는 방향도 전달받았다. 아래 제안 설명은 승인 전 검토 배경으로 보존하며 ‘미확정’은 승인 전 당시 상태로 읽는다.
+**현재 상태: 사용자 전달로 팀장 승인 및 원민님 세부 회신 수신, P1-3 로컬 구현·전용 PostgreSQL 검증 완료.** 공통 API 문서의 명문화 커밋과 원민 workflow/app 실제 연결은 아직 확인되지 않았다. 아래 ‘미확정’ 표기는 승인 전 당시 검토 이력으로 읽는다.
 
 - 출처: 사용자가 전달한 원민님 회신. 대조 대상4bbbf49, 요청 표본7/7 적합(티켓3·알림2·DLQ2). 직접 상대코드 조회/재실행은 하지 않았다.
 - 발견: StoredResponse는 duplicate를 직렬화하지 않아 원민님이 중복알림 성공을 확인하지 못하고 alerts_down으로 판정할 수 있다. DLQ의 현재로컬200과 원민SPEC 신규201 기대가 다르며 공통API§5는DLQ상태코드를 명시하지 않았다.
-- 검토 의견/제안: 알림 전용 AlertStoredResponse로 분리해 duplicate:bool=False를 추가하고, DLQ는HTTP200+저장ACK검증으로 명문화하는 방향. 모델기본값이 중복확인 증거는 아니며 실제DB가 같은event_key의 기존저장을 확인할 때만duplicate=true다.
-- ACK 제안: 신규 `{"stored":1,"count":5,"duplicate":false}`, 같은event_key기존저장 `{"stored":0,"count":5,"duplicate":true}`를 alerted=true로 해석. 누적count만으로 성공추정 금지. event_key없는요청·동일키변경본문·practice저장소ACK호환성은 함께 확인해야 한다.
-- 반영 상대/순서: 원민님·지혜님 C05검토 → 오현님 공통계약 명시 → 지혜님 P0-2모델/Mock 보완 및 P1-3실제저장 → 원민SPEC/신규·동일키·동시 재시험. 공식공통반영·실연결은 미확인이다. 현재모델/코드는 확장하지 않았다.
-- 차단 범위: ACK확장에 의존하는 성공판정만 미확정이다. P0-3~5확정DB기반과 기본DLQ구현은 이 제안 때문에 중단하지 않는다.
+- 당시 검토안: 알림 전용 AlertStoredResponse로 duplicate를 분리하고 DLQ는HTTP200+저장ACK로 판정하는 방향이었다. 현재는 아래 승인 기준으로 구현했다. 모델 기본값이 중복확인 증거는 아니며 app DB가 같은 event_key 기존 저장을 확인할 때만 duplicate=true다.
+- 원민님 추가 회신(사용자가 전달, 기준자료 `feat/wonmin-p0`의 `31e3fa0`): `event_key` 생략/null은 매번 신규 저장(`stored=1`, `duplicate=false`, count 증가), 새 키도 같은 신규 ACK, 같은 키 재요청은 `stored=0`, `duplicate=true`, count 유지다. 내용·티켓이 같아도 키가 없으면 중복 억제하지 않는다. count만으로 성공을 판단하지 않는다.
+- 저장소별 호환: practice의 기존 신규 응답 `{"stored":1,"count":...}`처럼 `duplicate`가 빠져도 원민님 consumer는 허용한다. 지혜님 app 응답은 승인대로 신규/중복 모두 `duplicate`를 명시한다. 원민님이 전달한 practice HTTP Mock에서 같은 티켓 2회 요청은 티켓 1건·알림 2건이었다. 이는 상대의 Mock 결과 전달이며 실제 data-api/PostgreSQL 검증은 아니다.
+- ACK 판정: 신규 `{"stored":1,"count":N,"duplicate":false}`, 기존 키 확인 `{"stored":0,"count":N,"duplicate":true}`만 해당 저장 결과로 인정한다. cumulative count만으로 성공을 추정하지 않는다. DLQ는 승인 기준 HTTP200이며 저장 ACK를 확인한다.
+- 상대 검토 결과: 원민님은 해당 내용을 검토 8개 그룹에서 통과했다고 회신했다. 회신자료는 `develop/wonmin/Doc/ALERT-NO-KEY-REVIEW.md`, 커밋 `31e3fa0`이다. 직접 해당 시험을 재실행한 결과가 아니다.
+- P1-3 지혜님 결과: app 응답 모델에 duplicate를 명시하고, app PostgreSQL에서 event_key 없음/신규/동일키/동시 요청과 count를 확인했다. FastAPI HTTP 경로로 tickets 신규201/중복200, alerts ACK와 DLQ200도 확인했다. practice 응답 호환은 HTTP MockTransport로만 확인했다. 전체 222개 시험 통과·기존 경고1건. 상세는 [IMP-PLAN P1-3 실제 기록](IMP-PLAN.md#p1-3-실제-기록--2026-11-05)에 있다. 이는 원민 workflow나 live practice data-api 실연결 결과가 아니다.
+- 다음 반영: 오현님 공통계약 명문화 커밋을 확인한다. 그 뒤 원민님 workflow에서 app C05 실제 HTTP 신규/동일 키/동시 요청·부분 실패를 재시험한다. 공통 반영 및 workflow 실연결은 현재 미확인이다.
+- 남은 확인: 오현님 공통 API 명문화 커밋, 원민 workflow→app C05 실연결, live practice data-api 응답/인증. 승인된 ACK 의미로 P1-3 로컬 구현을 막지 않았다.
 
 ## P0-3 인계·확인·공유 · 2026-11-05
 

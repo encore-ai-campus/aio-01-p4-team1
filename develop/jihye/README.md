@@ -12,8 +12,8 @@
 | P0-3 | 전용 PostgreSQL 컨테이너·비밀 설정·접속·Alembic 기반 준비, 실제 DB 시험5개 통과. vector는 가용하지만 아직 활성화하지 않음 |
 | 인증·계정 | P1-1 로그인·세션·비밀번호 변경·관리자 계정 발급/회수 구현 및 로컬 PostgreSQL HTTP 통합 확인. VM 로그인은 미확인 |
 | 문의·support | P1-2 문의 선저장·본인 목록·C02 어댑터 구현 및 로컬 PostgreSQL+MockTransport 확인. 실제 n8n 미호출 |
-| 업무 처리 | 티켓·알림 저장/C05 및 n8n·data-api 실연결은 후속 P1 단계 |
-| 현재 | P0-7 로컬 backend/DB readiness와 P1-1~2 확인 완료. DB revision 0005. frontend/n8n/data-api/VM 통합 미실행 |
+| 업무 처리 | P1-3 C05 티켓·알림·DLQ 로컬 PostgreSQL 저장과 practice 어댑터 확인. 팀 n8n/data-api 실연결은 미확인 |
+| 현재 | P0-7·P1-1~3 로컬 구현·전용 DB 검증 완료. revision 0005. frontend/n8n/VM 통합 미실행 |
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
@@ -40,9 +40,9 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 - `GET /health/live` → `200 {"status":"ok"}`. `/health/ready`는 DB·revision·pgvector 전제200/503이며 scope=database다. 로컬 backend 컨테이너는127.0.0.1:18000에서 실제 확인했다. 기동은 [deploy 안내](deploy/README.md)의 P0-7 절을 따른다.
-- `/docs`·`/openapi.json` 또는 `app.main.create_app().openapi()`로 계약을 볼 수 있다. 로그인·계정 관리는 DB와 `SESSION_SECRET`이 필요하며 미설정/접속 실패는503이다. 문의 API는 DB에 먼저 저장한 뒤 설정된 C02 URL로 전달한다. 실제 n8n 연결 설정 전에는 안전한503을 반환한다. 티켓·알림 저장은 후속 단계라 미구현은501이다. 실행 서버에 Mock 성공 기능은 없다.
+- `/docs`·`/openapi.json` 또는 `app.main.create_app().openapi()`로 계약을 볼 수 있다. 로그인·계정 관리는 DB와 `SESSION_SECRET`이 필요하며 미설정/접속 실패는503이다. 문의 API는 DB에 먼저 저장한 뒤 설정된 C02 URL로 전달한다. 실제 n8n 연결 설정 전에는 안전한503을 반환한다. C05 내부 저장은 `X-Api-Key`로 보호하고 app 모드는 PostgreSQL, practice 모드는 설정된 data-api 한 곳만 사용한다. 실행 서버에 Mock 성공 기능은 없다.
 - Mock은 `tests/conftest.py`의 dependency override·HTTPX MockTransport에만 있다. 정상5 route·400 codes·계정/저장 예시는 해당 시험 파일에 있다. 실제 서비스 경계는 `app/api/deps.py`다.
-- 환경변수 이름은 `app/core/config.py`에서 읽고 `.env`는 자동으로 읽지 않는다. 기본 SERVICE_MODE=app이며 app/practice만 허용하지만 실제 저장 전환은 아직 없다. DB/키 없이 골격 기동 가능하며 실제 기능은 사용 경계에서 설정을 필수 검사해야 한다. 비밀값은 문서·응답·로그에 남기지 않는다.
+- 환경변수 이름은 `app/core/config.py`에서 읽고 `.env`는 자동으로 읽지 않는다. `SERVICE_MODE=app`은 PostgreSQL, `practice`는 설정된 data-api로 C05 쓰기를 한 곳에만 보낸다. practice adapter는 MockTransport로만 확인했으며 live data-api 응답/인증은 미검증이다. practice 모드 관리자 티켓·알림 읽기/수정은 확인된 data-api 계약이 없어 503으로 닫는다. C05 내부 API는 `INTERNAL_API_KEY` 설정을 필수로 확인한다. 비밀값은 문서·응답·로그에 남기지 않는다.
 
 ## 지금 적용할 기준과 미확정 구분
 

@@ -197,7 +197,7 @@ REL-04~06. VM 반영은 오현님이 수행한다. 배포 커밋이 바뀔 때�
 3. `demo-clarify.json`으로 보완 질문, 새 ID·attempt=3의 한도 사례로 티켓을 보여 준다.
 4. 전용 practice에서 tickets error → `demo-failure.json` → ticket=null·사유·DLQ/알림을 보여 준다.
 5. 즉시 fault all ok로 복구하고 정상 요청을 확인한다. 장애 단계가 실패해도 정리 명령을 먼저 수행한다.
-6. `demo-urgent.json`으로 high 티켓·알림·초동 근거를, `demo-handoff.json` 재호출로 같은 ticket_id·한 건 저장을 보여 준다.
+6. `demo-urgent.json`으로 high 티켓·알림·sources=[] 및 사내망 분리 안내·본인 T-1002 상태를, `demo-handoff.json` 재호출로 같은 ticket_id·한 건 저장을 보여 준다. 일반 직원의 이 사례에는 IT 전용 보안 규정 색인을 선행조건으로 요구하지 않는다.
 7. 요청별 실행 노드·시간·마스킹·실패/재시험 보고서를 보여 주고 app 관리자 화면의 실제 티켓/권한 흐름을 별도 보여 준다. practice DLQ가 app에 저장됐다고 설명하지 않는다.
 
 실제 시연 호출 형식:

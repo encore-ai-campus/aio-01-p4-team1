@@ -203,7 +203,7 @@
       "status": "not_run",
       "conditions": [
         "practice 정상",
-        "보안 규정 색인과 본인 티켓 조회 준비"
+        "긴급 티켓·알림 저장 및 본인 T-1002 조회 준비"
       ],
       "input": {
         "request_id": "wm-t05",
@@ -216,13 +216,12 @@
         "http_status": 200,
         "equals": {
           "route": "담당자 이관",
-          "ticket.priority": "high"
+          "ticket.priority": "high",
+          "sources": []
         },
-        "source_docs_include": [
-          "security-incident"
-        ],
         "checks": [
-          "근거 초동 조치 및 본인 T-1002 상태만 안내",
+          "answer에 신규 긴급 티켓 ID·사내망 분리 안내·본인 T-1002 처리 상태 포함",
+          "IT 전용 보안 문서 근거 및 타인 티켓 상태 미노출",
           "알림 실제 ACK 확인"
         ],
         "status": 200

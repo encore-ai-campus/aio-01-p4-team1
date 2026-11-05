@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+다혁 WF-12 요청 보완(2026-11-05): [원인·수정·검증·n8n 반영](WF12-ALIGNMENT-RESULT.md). 사용자 요청의 공통 cases/team.json 및 원민 사본 TM-05를 sources=[]로 갱신하고 보안 규정 색인 조건을 제거했다. 다혁 b975286 병합·pin/Git blob 출처 일치·미병합 거절 보완, Node97/Python3 및 다혁 adapter12/retrieval9 통과. 로컬 n8n은 N22만 갱신하고 Credential/모델/설정 보존을 확인했다. 오현님께 docs/EVALUATION-GUIDE.md WF-12의 이전 근거 문구 정리를 인계한다. 전체 WF-12 HTTP·실제 ACK는 data-api 연결 후 확인이 필요하다.
+
 지혜 후속1902a2b 확인(2026-11-05): [최신 배포에서 C05 재시험](C05-LIVE-1902a2b-RESULT.md). 새 직원 seed/관리자 CLI를 병합·backend 재빌드했고 전체180개/원민89개가 통과했다. 실제 C05는33회 중401×3/501×30, DB0→0으로 계속 차단된다. 지혜 README에도 키 검증/저장 미구현으로 기록돼 있다. 실제 C05 구현 커밋·브랜치 확인 및 해당 구현 반영이 필요하다.
 
 최신 C05 실제 검증(2026-11-05): [실제 backend·DB·n8n app 결과와 지혜님 요청](C05-LIVE-RESULT.md). 지혜4fdc313·다혁859e3af는 최신, 유빈1b0c3b5 새3커밋을 병합했다. 실제 저장 API33회 중 누락키3회401/나머지30회501, 시험 DB tickets/alerts/dlq 모두0→0이었다. StoredResponse duplicate도 여전히 제거된다. 지혜님 내부키 대조·실제 저장·duplicate 응답·직원 seed 구현 후 원민이 동일 조건으로 재시험한다. 이번 결과는 저장 검증 차단이며 동시성/영속성 통과가 아니다.

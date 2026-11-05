@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+WF-12 최신 결정 보완: [합성 Code·회귀 집계](wf12-alignment-20261105T074522Z.json), [실제 n8n 코드 갱신·보존](wf12-n8n-update-20261105T074133Z.json), [결과/범위](../Doc/WF12-ALIGNMENT-RESULT.md). TM-05 기대 수정·b975286 pin/Git blob 일치, Node97/Python3 및 다혁 adapter12/retrieval9 통과. 실제 WF-12 전체 HTTP·티켓/알림 ACK와 공식 flow.py는 미실행이다.
+
 지혜1902a2b 후속 실측: [전체 backend180](jihye-1902a2b-full-20261105T055426Z.json), [실제 C05 재시험](c05-live-20261105T055450Z.json), [판정/다음 연결](../Doc/C05-LIVE-1902a2b-RESULT.md). 최신 backend를 실제 교체하고 새CLI/bootstrap 파일까지 해시 대조했다. 전체180 및 원민89 통과와 실제 C05저장 미구현(401×3/501×30·DB0→0)을 구분한다.
 
 최신 C05 실제 저장 검증: [c05-live-20261105T053604Z.json](c05-live-20261105T053604Z.json), [해석·지혜님 후속 요청](../Doc/C05-LIVE-RESULT.md). 실제 backend33회(401×3/501×30), 시험 접두사 DB0→0, 별도 n8n app 응답 tickets_down 및 시험 workflow 게시 해제. 저장 미구현으로 차단됐으며 동시8건 호출 자체를 중복 처리 성공으로 표시하지 않는다. 유빈 최신3커밋 병합 후 원민89/유빈172 회귀 통과.

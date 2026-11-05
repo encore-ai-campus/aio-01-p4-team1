@@ -1,5 +1,7 @@
 # 원민님 · 이관·오류 수습·시험
 
+다혁 요청 보완(2026-11-05): [WF-12 기대·배포 출처 정합성 수정](Doc/WF12-ALIGNMENT-RESULT.md). 공통/원민 TM-05의 sources=[]·색인 조건을 맞추고 b975286의 Git 원본을 배포하도록 수정했다. 로컬 n8n N22 갱신 및 Credential/모델 보존 확인, Node97·Python3 통과. 실제 전체 WF-12 HTTP·저장 ACK는 미실행이다.
+
 현재 실행 환경(2026-11-05): [병합 소스 n8n·Compose 재배포 결과](Doc/TEAM-REDEPLOY-RESULT.md). 5개 팀 workflow를 n8n에서 확인할 수 있다. 본체/검색/이관/errors 게시, index 수동 Mock 실행35 성공, DB0004·실제 PG48·원민89 통과. 직원 API·실제 저장·임베딩 연결은 미완료다. 기존 사용자/Assistant/볼륨은 유지했다.
 
 최종 실환경 확인(2026-11-05): [Ubuntu Compose·로컬 모델·자동 Error Trigger 결과](Doc/UBUNTU-INTEGRATION-RESULT.md). 실제 errors ID를 부모에 연결하고 정상/부분/전체 수습 4조건을 확인했다. Ollama 실제 HTTP 200, PostgreSQL 시험 45개·원민 회귀 89개 통과. **실제 C05 저장 API는 501로 미완료**이며 공용 VM 배포·업무 LLM 통합은 별도다. 아래 미실행 표기는 이전 단계 당시 기록이다.

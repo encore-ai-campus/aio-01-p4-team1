@@ -1,0 +1,980 @@
+{
+  "schema": "wonmin-p0-review-v1",
+  "execution": "flow_py_compatible",
+  "note": "P0 입력·기대 명세. 공식 flow.py suite 형식은 원본 키트 확보 후 대조한다. 자동 실행/기능 PASS 증거가 아니다.",
+  "webhook": "oke-handoff",
+  "required_response_fields": [
+    "ok",
+    "ticket",
+    "reason",
+    "alerted",
+    "dlq"
+  ],
+  "cases": [
+    {
+      "id": "TM-09",
+      "name": "알림만 실패",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=201; /alerts=503; /dlq=정상"
+      ],
+      "input": {
+        "request_id": "wm-t09",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "reason": "alerts_down",
+          "alerted": false,
+          "ticket.priority": "normal",
+          "ticket.duplicate": false
+        },
+        "checks": [
+          "ticket_id 존재; 기존 티켓 보존"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 1",
+        "알림 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-03/04: ok 및 alert-stage DLQ 정책 미판정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-t09",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "TM-10",
+      "name": "티켓·알림·DLQ 모두 실패",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=500; /alerts=503; /dlq=503"
+      ],
+      "input": {
+        "request_id": "wm-t10",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null,
+          "reason": "tickets_down",
+          "alerted": false,
+          "dlq": false
+        },
+        "checks": [
+          "알림과 DLQ 독립 시도",
+          "유한 종료; 원문/stack/비밀값 미노출; 접수 완료 안내 없음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓/알림/DLQ 0",
+        "각 sink 호출 횟수 관측"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-t10",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-01",
+      "name": "신규 normal",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=201; /alerts=200 stored=1"
+      ],
+      "input": {
+        "request_id": "wm-h01",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": true,
+          "reason": null,
+          "ticket.priority": "normal",
+          "ticket.duplicate": false,
+          "alerted": true,
+          "dlq": false
+        },
+        "checks": [
+          "/tickets에 key=request_id 및 원래 payload",
+          "저장 응답에 priority 없어도 C04에 원래 값 유지",
+          "ticket_id 타입 및 비어 있지 않음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 1",
+        "알림 저장 ACK",
+        "DLQ 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h01",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-02",
+      "name": "신규 high",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=201; /alerts=200 stored=1"
+      ],
+      "input": {
+        "request_id": "wm-h02",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "high",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": true,
+          "reason": null,
+          "ticket.priority": "high",
+          "ticket.duplicate": false,
+          "alerted": true,
+          "dlq": false
+        },
+        "checks": [
+          "/tickets에 key=request_id 및 원래 payload",
+          "저장 응답에 priority 없어도 C04에 원래 값 유지",
+          "ticket_id 타입 및 비어 있지 않음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 1",
+        "알림 저장 ACK",
+        "DLQ 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h02",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "high",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-03",
+      "name": "같은 key 순차 중복",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "동일 input 2회",
+        "Mock C05 key UNIQUE"
+      ],
+      "input": {
+        "request_id": "wm-h03",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 2,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": true
+        },
+        "checks": [
+          "두 ticket_id 동일",
+          "첫 duplicate=false, 두 번째 duplicate=true",
+          "저장 API HTTP201 후 HTTP200"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 1"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-03: 알림 중복 관측 정책"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h03",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-04",
+      "name": "저장 영구 거절 400",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=400; alerts/dlq 정상"
+      ],
+      "input": {
+        "request_id": "wm-h04",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null
+        },
+        "checks": [
+          "/tickets 최초 1회, 재시도 0",
+          "알림과 DLQ 독립 시도 및 ACK와 플래그 일치",
+          "storage_auth_failed 같은 미승인 reason 강제 금지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "타인 티켓 반환 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-04: 상태별 세부 C04 오류 사유 미판정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h04",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-05",
+      "name": "저장 영구 거절 401",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=401; alerts/dlq 정상"
+      ],
+      "input": {
+        "request_id": "wm-h05",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null
+        },
+        "checks": [
+          "/tickets 최초 1회, 재시도 0",
+          "알림과 DLQ 독립 시도 및 ACK와 플래그 일치",
+          "storage_auth_failed 같은 미승인 reason 강제 금지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "타인 티켓 반환 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-04: 상태별 세부 C04 오류 사유 미판정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h05",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-06",
+      "name": "저장 영구 거절 403",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=403; alerts/dlq 정상"
+      ],
+      "input": {
+        "request_id": "wm-h06",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null
+        },
+        "checks": [
+          "/tickets 최초 1회, 재시도 0",
+          "알림과 DLQ 독립 시도 및 ACK와 플래그 일치",
+          "storage_auth_failed 같은 미승인 reason 강제 금지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "타인 티켓 반환 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-04: 상태별 세부 C04 오류 사유 미판정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h06",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-07",
+      "name": "저장 영구 거절 404",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=404; alerts/dlq 정상"
+      ],
+      "input": {
+        "request_id": "wm-h07",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null
+        },
+        "checks": [
+          "/tickets 최초 1회, 재시도 0",
+          "알림과 DLQ 독립 시도 및 ACK와 플래그 일치",
+          "storage_auth_failed 같은 미승인 reason 강제 금지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "타인 티켓 반환 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-04: 상태별 세부 C04 오류 사유 미판정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h07",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-08",
+      "name": "일시 오류 429",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=429 지속; alerts/dlq ACK 정상"
+      ],
+      "input": {
+        "request_id": "wm-h08",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null,
+          "reason": "tickets_down",
+          "alerted": true,
+          "dlq": true
+        },
+        "checks": [
+          "티켓 최대 2회·각 1초; 알림/DLQ 각 최대 1회·0.6초; 부모 handoff timeout 5초 (API §8 초기값)",
+          "재시도는 같은 key/payload",
+          "실제 호출·시간·ACK 대조"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "즉시 티켓 0",
+        "알림/DLQ 실제 저장 ACK"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-01: 로컬 기본200ms/4초 retry 예산 적용. 실제 n8n 시간·팀 SLA는 미측정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h08",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-09",
+      "name": "일시 오류 500",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=500 지속; alerts/dlq ACK 정상"
+      ],
+      "input": {
+        "request_id": "wm-h09",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null,
+          "reason": "tickets_down",
+          "alerted": true,
+          "dlq": true
+        },
+        "checks": [
+          "티켓 최대 2회·각 1초; 알림/DLQ 각 최대 1회·0.6초; 부모 handoff timeout 5초 (API §8 초기값)",
+          "재시도는 같은 key/payload",
+          "실제 호출·시간·ACK 대조"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "즉시 티켓 0",
+        "알림/DLQ 실제 저장 ACK"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-01: 로컬 기본200ms/4초 retry 예산 적용. 실제 n8n 시간·팀 SLA는 미측정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h09",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-10",
+      "name": "일시 오류 timeout",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "Mock /tickets=timeout 지속; alerts/dlq ACK 정상"
+      ],
+      "input": {
+        "request_id": "wm-h10",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "ok": false,
+          "ticket": null,
+          "reason": "tickets_down",
+          "alerted": true,
+          "dlq": true
+        },
+        "checks": [
+          "티켓 최대 2회·각 1초; 알림/DLQ 각 최대 1회·0.6초; 부모 handoff timeout 5초 (API §8 초기값)",
+          "재시도는 같은 key/payload",
+          "실제 호출·시간·ACK 대조"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "즉시 티켓 0",
+        "알림/DLQ 실제 저장 ACK"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-01: 로컬 기본200ms/4초 retry 예산 적용. 실제 n8n 시간·팀 SLA는 미측정"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h10",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-11",
+      "name": "timeout 후 지연 저장과 재요청",
+      "requirements": [
+        "REL-01",
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "전용 Mock: 최초 timeout 이후 저장은 완료",
+        "후속 동일 요청은 정상 반환"
+      ],
+      "input": {
+        "request_id": "wm-h11",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 2,
+      "expect": {
+        "http_status": 200,
+        "checks": [
+          "최초 timeout 응답만으로 유실 단정 금지",
+          "지연 저장 완료 후 같은 input 재요청",
+          "최종 ticket_id 동일, duplicate=true",
+          "지연 후 같은 key 티켓 1"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "최종 티켓 1"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "실행 도구 준비 후 지연·관측 시점을 기록"
+      ],
+      "dlq_contract": {
+        "http_status": 200,
+        "ack": {
+          "stored": 1,
+          "count": "양의 정수 실제 누적 수"
+        }
+      },
+      "request": {
+        "request_id": "wm-h11",
+        "requester": "한지훈",
+        "title": "식당 앱 점검 요청",
+        "category": "other",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-12",
+      "name": "티켓 장애·알림 성공·DLQ 장애",
+      "requirements": [
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "전용 Mock의 endpoint별 fault plan 사용",
+        "같은 실제 HTTP Mock 인스턴스로 호출·관측"
+      ],
+      "input": {
+        "request_id": "wm-p12-ho-12",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "reason": "tickets_down",
+          "alerted": true,
+          "dlq": false
+        },
+        "checks": [
+          "티켓 성공이면 기존 ticket 보존; 실패이면 ticket=null",
+          "알림과 DLQ 각각 최대1회·서로 독립 확인",
+          "실패 raw body/headers/stack 원문을 DLQ에 복사하지 않음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "알림 1",
+        "DLQ 0"
+      ],
+      "cleanup": [
+        "독립 Mock 종료",
+        "같은 사례 실제 서비스 시험은 담당자 fault 해제·정상 복구 확인 후 종료"
+      ],
+      "pending": [
+        "공식 flow suite 변환·n8n 실연결 미확인"
+      ],
+      "request": {
+        "request_id": "wm-p12-ho-12",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-13",
+      "name": "티켓 장애·알림 장애·DLQ 성공",
+      "requirements": [
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "전용 Mock의 endpoint별 fault plan 사용",
+        "같은 실제 HTTP Mock 인스턴스로 호출·관측"
+      ],
+      "input": {
+        "request_id": "wm-p12-ho-13",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "reason": "tickets_down",
+          "alerted": false,
+          "dlq": true
+        },
+        "checks": [
+          "티켓 성공이면 기존 ticket 보존; 실패이면 ticket=null",
+          "알림과 DLQ 각각 최대1회·서로 독립 확인",
+          "실패 raw body/headers/stack 원문을 DLQ에 복사하지 않음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "알림 0",
+        "DLQ 1"
+      ],
+      "cleanup": [
+        "독립 Mock 종료",
+        "같은 사례 실제 서비스 시험은 담당자 fault 해제·정상 복구 확인 후 종료"
+      ],
+      "pending": [
+        "공식 flow suite 변환·n8n 실연결 미확인"
+      ],
+      "request": {
+        "request_id": "wm-p12-ho-13",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "HO-14",
+      "name": "티켓 성공·알림 장애·DLQ 장애",
+      "requirements": [
+        "REL-02",
+        "REL-05"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "전용 Mock의 endpoint별 fault plan 사용",
+        "같은 실제 HTTP Mock 인스턴스로 호출·관측"
+      ],
+      "input": {
+        "request_id": "wm-p12-ho-14",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "reason": "alerts_down",
+          "alerted": false,
+          "dlq": false
+        },
+        "checks": [
+          "티켓 성공이면 기존 ticket 보존; 실패이면 ticket=null",
+          "알림과 DLQ 각각 최대1회·서로 독립 확인",
+          "실패 raw body/headers/stack 원문을 DLQ에 복사하지 않음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 1",
+        "알림 0",
+        "DLQ 0"
+      ],
+      "cleanup": [
+        "독립 Mock 종료",
+        "같은 사례 실제 서비스 시험은 담당자 fault 해제·정상 복구 확인 후 종료"
+      ],
+      "pending": [
+        "공식 flow suite 변환·n8n 실연결 미확인"
+      ],
+      "request": {
+        "request_id": "wm-p12-ho-14",
+        "requester": "박서연",
+        "title": "VPN 현장 점검 요청",
+        "category": "network",
+        "priority": "normal",
+        "reason": "no_evidence"
+      }
+    }
+  ],
+  "approved_c05": {
+    "authority": "2026-11-05 사용자 전달 팀장 승인",
+    "alerts_duplicate": "응답에서 bool 필드 유지; 같은 event_key 기존 저장 확인 ACK",
+    "dlq_http_status": 200
+  },
+  "local_verification": "tests/recovery.test.mjs 및 runs의 실제 보고서 참조. 이 수동 suite 자체의 공식 flow 실행은 미실행."
+}

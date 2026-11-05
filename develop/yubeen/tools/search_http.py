@@ -55,7 +55,7 @@ def make_handler(search=live_search):
                 return self.send_json(404, {'ok': False, 'evidence': [], 'reason': 'not_found'})
             key = os.environ.get('SEARCH_TEAM_KEY', '')
             supplied = self.headers.get('X-Team-Key', '')
-            if not key or not hmac.compare_digest(supplied, key):
+            if not key or not hmac.compare_digest(supplied.encode('utf-8'), key.encode('utf-8')):
                 return self.send_json(401, {'ok': False, 'evidence': [], 'reason': 'unauthorized'})
             try:
                 length = int(self.headers.get('Content-Length', '0'))

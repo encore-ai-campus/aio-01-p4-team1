@@ -258,7 +258,7 @@ class IndexCliWorkflowTests(unittest.TestCase):
             self.assertIn('"ok": true',output.read_text())
 
     def test_workflow_is_inactive_fixed_command_and_safe_graph(self):
-        workflow=json.loads((ROOT/'workflows/oke-index.json').read_text())
+        workflow=json.loads((ROOT/'tests/fixtures/oke-index-mock.json').read_text())
         self.assertFalse(workflow['active'])
         nodes={node['name']:node for node in workflow['nodes']}
         for name, outputs in workflow['connections'].items():

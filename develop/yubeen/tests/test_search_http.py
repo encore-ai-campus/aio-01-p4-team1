@@ -71,6 +71,7 @@ class SearchHttpTests(unittest.TestCase):
 
     def test_missing_key_and_invalid_levels(self):
         self.assertEqual(self.send(self.body(), key='')[0], 401)
+        self.assertEqual(self.send(self.body(access_levels=['all','it']), key='é')[0], 401)
         for levels in ([], ['it'], ['all', 'unknown'], 'all'):
             self.assertEqual(self.send(self.body(access_levels=levels))[0], 400)
         self.assertEqual(self.fake_calls, [])

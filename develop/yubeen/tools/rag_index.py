@@ -21,11 +21,13 @@ def load_settings(path=None):
     return validate_settings(settings)
 
 
-def validate_settings(settings):
+def validate_settings(settings, *, comparison=False):
     required = {'embedding_model': 'text-embedding-3-large', 'embedding_dimensions': 3072,
                 'distance': 'cosine', 'top_k': 3, 'chunking': 'section',
                 'chunking_version': 'p0-2-v1', 'overlap': 0,
                 'content_review_max_utf8_bytes': 8000, 'score_threshold': None}
+    if comparison and settings.get('chunking') == '300':
+        required['chunking'] = '300'
     if any(settings.get(k) != v for k, v in required.items()):
         raise IndexError('invalid_settings')
     return settings
@@ -94,9 +96,9 @@ def confirmed_restricted_permission(snapshot, key):
     return bool(levels) and all(level == 'it' for level in levels)
 
 
-def index_snapshot(snapshot, embedder, store, settings=None):
+def index_snapshot(snapshot, embedder, store, settings=None, *, comparison=False):
     """모든 벡터 준비 후, 저장 트랜잭션 안에서 읽었던 버전과 비교해 교체한다."""
-    settings = validate_settings(settings) if settings is not None else load_settings()
+    settings = validate_settings(settings, comparison=comparison) if settings is not None else load_settings()
     if 'prepared_rows' in snapshot:
         raise IndexError('masked_snapshot_not_indexable')
     rows = prepare.inventory(snapshot)

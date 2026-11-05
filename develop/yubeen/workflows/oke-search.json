@@ -33,7 +33,7 @@
       "parameters": {
         "jsCode": "const body = $input.first().json.body;\nconst valid = body && typeof body === 'object' && !Array.isArray(body)\n  && typeof body.request_id === 'string' && body.request_id.length >= 1 && body.request_id.length <= 64\n  && typeof body.query === 'string' && body.query.trim().length > 0\n  && typeof body.type === 'string' && body.type.trim().length > 0\n  && Array.isArray(body.access_levels) && (body.access_levels.length === 1 && body.access_levels[0] === 'all' || body.access_levels.length === 2 && body.access_levels[0] === 'all' && body.access_levels[1] === 'it')\n  && body.top_k === 3;\nreturn [{json:{valid:!!valid, request:valid ? {request_id:body.request_id,query:body.query,type:body.type,access_levels:body.access_levels,top_k:3} : null}}];"
       },
-      "notes": "[all] 또는 [all,it] 형식만 통과. 본문 자체는 직원 권한 증명이 아니며 Python 서비스의 독립 검증 전에는 IT 요청을 403으로 거절한다."
+      "notes": "[all] 또는 [all,it] 형식만 통과. 본체가 직원 조회로 만든 권한을 X-Team-Key 인증 이후 신뢰한다. Python 서비스는 독립 resolver 부재로 IT 요청을 거절하지 않는다."
     },
     {
       "id": "search-route",

@@ -130,11 +130,19 @@
 
 ## P0-5 · RAG 테이블·인덱스·접속 권한
 
-- [ ] 연결 SPEC: BE-05·06, C06.
+- [x] 연결 SPEC: BE-05·06, C06. 전용 DB의 DDL·그룹 역할 권한 확인까지 완료; 실제 서비스 로그인·색인은 미연결.
 - 생성 예정: `migrations/versions/0003_rag_tables.py`, `0004_indexes_and_grants.py`, `app/db/models/rag.py`, `tests/integration/test_pgvector.py`, `tests/integration/test_db_permissions.py`.
 - 작업: rag.documents/chunks·vector(3072)·all/it·FK·UNIQUE를 적용하고 FK/조회 인덱스를 만든다. 정확 cosine·score=1-distance·top_k3 기준을 유지한다. 마이그레이션/업무/색인/검색 권한을 구분한다. 필요한 DB role은 관리 권한으로 비밀 입력을 사용해 준비하고 암호를 revision에 넣지 않는다.
 - 확인 예정: `uv run alembic -c migrations/alembic.ini upgrade head`, `heads`, `current`로 단일0004 head를 확인한다. `uv run pytest tests/integration/test_pgvector.py tests/integration/test_db_permissions.py -q`로3072차원 수락/3071거절·권한 누락 거절·정확 검색 전 all/it 필터·권한별 쓰기/DDL 거절을 확인한다. 가상 벡터 시험은 실제 모델 품질 시험과 분리한다.
 - 넘길 결과: 유빈님에게 head·열/차원·모델·권한·인증 주입 방법과 가상 벡터 검사 결과. 유빈님이 실제 문서/임베딩/재색인을 구현한다. HNSW·다른 모델·차원은 추가하지 않는다.
+
+### P0-5 실제 기록 · 2026-11-05
+
+- 시작: P0-4 `0002 (head)` 전용 검증 DB와 깨끗한 작업 트리에서 시작. README·AGENTS·TODO·SPEC·HANDOFF·IMP-PLAN, 공통 API/DB와 migrations/README 기준을 확인했다. 유빈님 청크 표본의 0부터 시작하는 `chunk_no`와 metadata 추적값을 입력으로 대조했다.
+- 구현: `0003`에서 `rag.documents/chunks`, `vector(3072)`, all/it CHECK, FK, `(document_id,chunk_no)` UNIQUE 및 0 이상 CHECK를 만들었다. `0004`에서 FK/권한 조회 인덱스와 `oke_app`, `oke_rag_index`, `oke_rag_search`의 비밀번호 없는 NOLOGIN 그룹 역할을 생성하고 schema/table/sequence 및 미래 객체 기본 권한을 구분했다. 마이그레이션 소유자 계정은 런타임에 사용하지 않는다. 문서 권한의 직원별 적용은 검색 SQL에서 별도 수행해야 한다.
+- 적용: 전용 Compose DB에서 `--alembic heads`가 `0004 (head)`임을 확인한 뒤 `--alembic upgrade` 종료0, `--alembic current`가 `0004 (head)`임을 확인했다. 처음 `metadata` 예약 속성 경고가 나와 Python 속성만 `metadata_`로 고치고 실제 DB 컬럼명은 `metadata`로 유지했다.
+- 검증: `uv run python deploy/check_db.py --all` 종료0, **158 passed, 1 warning**. 기존 P0-4 카탈로그/멱등성 검사를 유지했고 실제 DB에서 RAG 테이블/3072차원·3071차원 거절, 미지 권한 거절, 0번 청크, 가상 벡터의 정확 cosine `score=1-distance`·all/all+it 사전 필터, 역할별 SELECT/INSERT/DDL 거절 및 시퀀스 권한을 확인했다. 검증용 문서는 거래 rollback으로 제거했다. 경고1건은 기존 Starlette/httpx 폐기 예정 경고다.
+- 경계: NOLOGIN 역할의 ACL은 실제 DB에서 확인했지만, 서비스별 LOGIN 계정/비밀·n8n Credential·실제 임베딩·data-api 원본·재색인·HTTP 검색은 확인하지 않았다. 운영 접속 자격증명 연결은 오현님 관리의 비밀 설정과 유빈님 실제 Index/Search 연결 때 검증한다. `complete/partial/rejected`는 청킹 준비 상태여서 컬럼으로 추가하지 않았다. HNSW/다른 모델도 미추가다. 상대에게 전송하거나 실제 동의를 받았다고 기록하지 않는다.
 
 ## P0-6 · 직원 seed와 첫 관리자
 

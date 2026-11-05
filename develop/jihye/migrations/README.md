@@ -4,6 +4,8 @@
 
 ## 현재 범위와 전제
 
+P0-5 갱신(2026-11-05): 아래 P0-4 설명은 당시 상태다. 현재 전용 검증 DB에 `0003→0004`를 적용해 `rag.documents/chunks`, `vector(3072)`, 두 조회 인덱스와 비밀번호 없는 NOLOGIN 그룹 역할 `oke_app/oke_rag_index/oke_rag_search`의 ACL을 확인했다. 현재 head는 `0004`이며 실제 검증 결과는 IMP-PLAN P0-5 기록을 따른다. 런타임 LOGIN 자격증명/비밀은 이 DDL에 포함하지 않았고 오현님 비밀 설정과 실제 서비스 연결 시 확인한다.
+
 2026-11-05 현재 전용 검증 DB에 P0-4 `0001→0002`를 적용해 vector 확장·app/rag 스키마·업무 테이블 7개를 확인했다. 개인 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 적용 기준과 공통 대조 커밋을 모았다. rag 테이블/권한은 P0-5다. 다른 환경에서 적용 전에는 권한·비밀 설정을 별도로 확인한다.
 
 alembic.ini/env.py/script.py.mako와 Base/session factory 및 업무 모델을 생성했다. history/heads는 단일 체인·`0002 (head)`이고 전용 DB의 current도 `0002 (head)`다. env.py의 include_schemas/include_name은 app/rag만 autogenerate 대상으로 삼으며, public.alembic_version은 관리 이력용 예외 위치다. P0-5의 RAG 모델 등록은 후속 단계다.

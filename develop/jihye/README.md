@@ -11,7 +11,7 @@
 | P0-2 보완 | 2026-11-05 context 최대2,000자 누락과 개인 문서 기준 정리. 전체100개 통과·경고1건 |
 | P0-3 | 전용 PostgreSQL 컨테이너·비밀 설정·접속·Alembic 기반 준비, 실제 DB 시험5개 통과. vector는 가용하지만 아직 활성화하지 않음 |
 | 실제 기능 | 로그인·세션/내부키 검증·DB 저장·n8n/data-api 연결 미구현/미검증 |
-| 현재 | P0-4 전용 DB 마이그레이션 `0002 (head)` 적용·업무 테이블 7개 확인. 다음 지정 구현은 P0-5 RAG 테이블/권한 |
+| 현재 | P0-5 전용 DB 마이그레이션 `0004 (head)` 적용·RAG 테이블/그룹 역할 확인. 다음 단계는 P0-6 직원 seed·첫 관리자 |
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
@@ -83,6 +83,6 @@ P0-3 시점에는 빈 revision이었다. P0-4에서 격리 검증 DB에 `0001→
 
 ## 검증 이력과 참고 예제
 
-최신 전체 시험은 **114 passed, 경고1건**이다. 기존100개+DB기반9개+실제DB5개를 격리된동일Docker네트워크에서 실행했다. 일반 `uv run pytest -q`는 DB시험 opt-in이 없으면5개를skip하므로 전체실연결 확인은위check_db.py --all을 사용한다. 기존 Starlette TestClient의 HTTPX 사용 폐기 예정 경고가 남는다. 과거 결과와 초기 연결실패·보안조치·재시험은 [IMP-PLAN 실제 기록](Doc/IMP-PLAN.md)에 보존한다. 공통14종·최종 LLM3회 반복 시험 수와 구분한다.
+최신 전체 시험은 전용 DB에서 **158 passed, 경고1건**이다(`uv run python deploy/check_db.py --all`). P0-3의 114개와 P0-4의 155개는 당시 이력이다. 일반 `uv run pytest -q`는 DB 시험 opt-in이 없으면 건너뛰므로 실제 DB 확인에는 위 명령을 사용한다. 기존 Starlette TestClient의 HTTPX 사용 폐기 예정 경고가 남는다. 초기 연결 실패·보안 조치·재시험은 [IMP-PLAN 실제 기록](Doc/IMP-PLAN.md)에 보존한다. 공통14종·최종 LLM3회 반복 시험 수와 구분한다.
 
 [앱 예제](../../docs/references/qnaweb/src-be/app/main.py.example)·[모델](../../docs/references/qnaweb/src-be/app/models.py.example)·[라우터](../../docs/references/qnaweb/src-be/app/routers/qna.py.example)·[Compose](../../docs/references/qnaweb/docker/compose/docker-compose.yml.example)에서는 계층 분리만 참고한다. create_all/자동시드·JWT·InfluxDB·10명 예제 대신 Alembic/명시적bootstrap·세션·app/rag·제공6명 기준을 적용한다. 예제의 존재가 실제 기능 완료를 뜻하지 않는다.

@@ -72,13 +72,13 @@ def ticket_values(requester_id):
                 title="합성 시험 문의", category="fixture", priority="normal")
 
 
-def test_extension_schema_revision_and_no_rag_tables(engine):
+def test_extension_schema_revision_and_rag_tables(engine):
     with engine.connect() as connection:
         assert connection.scalar(text("SELECT extversion FROM pg_extension WHERE extname='vector'"))
-        assert connection.scalar(text("SELECT version_num FROM public.alembic_version")) == "0002"
+        assert connection.scalar(text("SELECT version_num FROM public.alembic_version")) == "0004"
         inspector = inspect(connection)
         assert set(inspector.get_table_names(schema="app")) == set(FIELDS)
-        assert inspector.get_table_names(schema="rag") == []
+        assert set(inspector.get_table_names(schema="rag")) == {"documents", "chunks"}
 
 
 @pytest.mark.parametrize("table", FIELDS)

@@ -7,5 +7,6 @@ from app.db.models.inquiries import Inquiry
 from app.db.models.tickets import Ticket
 from app.db.models.alerts import Alert
 from app.db.models.dlq import Dlq
+from app.db.models.rag import Document, Chunk
 
-__all__ = ["Employee", "User", "Session", "Inquiry", "Ticket", "Alert", "Dlq"]
+__all__ = ["Employee", "User", "Session", "Inquiry", "Ticket", "Alert", "Dlq", "Document", "Chunk"]

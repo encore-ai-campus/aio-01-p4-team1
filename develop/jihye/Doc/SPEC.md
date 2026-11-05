@@ -19,8 +19,8 @@
 | 관리자 | 제공 IT직원만 admin, 본인·마지막 활성 관리자 비활성화 거절. 충돌409(또는400 안내) | P0-6 bootstrap·P1-1 예정 | API §2·8, DB §3 |
 | 시간 예산 | 브라우저35초, backend→support 연결3초·전체30초·자동 재시도0. 조회2초·search4초·handoff5초; 티켓 최대2회·각1초, 알림/DLQ 각1회·0.6초 | P1-2/3·연결 실측 예정. 성능 달성 결과 아님 | API §8, 워크플로우 §4~5 |
 | 업무 저장 | app7테이블, request_key·ticket_id UNIQUE, T-2001~. 알림 실패가 commit한 티켓을 취소하지 않음 | P0-4·P1-3 예정 | DB §3, 워크플로우 §7 |
-| 알림·DLQ | POST /dlq와 alerts.event_key는 확정. /alerts HTTP200 stored/count. 현 /dlq200은 로컬 기준이며 공통 상태 코드 명문화 대기 | P0-2 모델, 실제 저장 P1-3. 알림 duplicate 확장은 H07 제안 | API §5, HANDOFF H07 |
-| RAG | documents/chunks, vector(3072), text-embedding-3-large, all/it, cosine 정확검색·score=1-distance·top_k3 | P0-3~5 기반 제공, 쿼리/색인은 유빈님 | DB §4, RAG §3~4 |
+| 알림·DLQ | POST /dlq와 alerts.event_key는 확정. /alerts HTTP200 stored/count. 알림 duplicate 유지·DLQ200은 사용자 전달 팀장 승인 수신, 공통 명문화 커밋 미확인 | P0-2 모델의 확장 보완 별도, 실제 저장 P1-3. 이번 P0-3 모델 변경 없음 | API §5, HANDOFF H07 |
+| RAG | documents/chunks, vector(3072), text-embedding-3-large, all/it, cosine 정확검색·score=1-distance·top_k3 | P0-3 접속/가용성 확인, DDL·활성화/권한은P0-4~5 예정. 쿼리/색인은 유빈님 | DB §4, RAG §3~4 |
 | RAG 거래·복구 | 문서 교체 한 거래, 갱신 실패 시 이전 성공본 유지. 권한 축소/삭제는 이전 공개 청크 차단. named volume과 별도 백업·복원 구분 | P0-5 연결 대조·P1-4 실제 확인 예정 | RAG §4~5 |
 
 출처: [API](../../../docs/API-CONTRACT.md), [DB](../../../docs/DATA-AND-DB.md), [평가](../../../docs/EVALUATION-GUIDE.md), [RAG](../../../docs/RAG-ARCHITECTURE.md), [워크플로우](../../../docs/WORKFLOW-DESIGN.md), [ADR](../../../docs/adr/ADR-001-project-decisions.md). 서비스별 인증은 구분한다: 웹=세션, support/search/handoff=X-Team-Key, FastAPI 내부 저장=X-Api-Key. 실제 data-api 읽기 응답/인증은 미확인으로 유지한다.
@@ -31,7 +31,7 @@
 - Security는 공통 필드 blocked_by/reason/masked를 유지한다. 현재 nullable 허용 등 세부 타입의 호환성은 다혁님과 대조한다.
 - H04의 처리 중 응답·상태 전이·오류 request_id 필드·응답 캐시 세부는 제안이다. 같은 키 본문 충돌 거절과 타인 소유권 검사는 확정이므로 대기시키지 않는다. 캐시 응답이 WF-09의 재요청 duplicate=true 판정과 충돌하지 않도록 다혁님·원민님과 확인한다.
 - H05의 비어 있지 않은 계정 집합에서 관리자 부재 복구 같은 운영 세부는 별도 검토다. 본인/최후 관리자 보호는 이미 확정이다.
-- H07 알림 전용 duplicate ACK 확장·DLQ200 명문화는 원민님 제안 수신 상태이며 공통 반영 전 확정 구현하지 않는다.
+- H07 알림 전용 duplicate ACK 확장·DLQ200은 사용자 전달로 팀장 승인을 수신했다. 공통 문서 명문화 커밋은 미확인이고 이번 P0-3에는 모델 보완을 포함하지 않는다. 승인·공통 반영·모델 반영·실제 저장 확인을 각각 기록한다.
 
 ### 기준 상세
 

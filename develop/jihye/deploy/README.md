@@ -1,15 +1,34 @@
 # 지혜님 · 서버·DB·배포 작업 지시
 
-[IMP-PLAN P0](../Doc/IMP-PLAN.md)에서 단계별로 작성한다. 이 문서는 배포 작업의 상세 조건이다. **아래 파일·명령·상태는 구현 예정이며 실행 결과가 아니다.** 실제 팀 VM 배포와 환경값 등록은 오현님이 담당한다.
+[IMP-PLAN P0](../Doc/IMP-PLAN.md)에서 단계별로 작성한다. 이 문서는 배포 작업의 상세 조건이다. **P0-3 실제 실행 절 외의 전체 배포 파일·명령은 후속 구현 예정이다.** 실제 팀 VM 배포와 환경값 등록은 오현님이 담당한다.
 
 ## 현재 상태와 단계별 전제
 
-2026-11-05 현재 설치된 로컬 API 골격·OpenAPI·Mock 시험은 P0-1~2 범위에서 확인했다. 아래 Compose·Dockerfile·DB/readiness·VM 절차는 아직 구현/실행하지 않았다. 현재 확정 주소·모드·인증·시간 예산은 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)을 따른다.
+2026-11-05 현재 P0-1~2와 P0-3 postgres Compose·실제 접속·Alembic 실행 기반을 확인했다. 아래 backend Dockerfile·readiness·전체 Compose·VM 절차는 아직 구현/실행하지 않았다. 현재 확정 주소·모드·인증·시간 예산은 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)을 따른다.
 
 - P0-3: Docker/Compose·pgvector 이미지 확보와 본인 전용 DB 비밀 설정이 전제다. postgres 부분·volume·healthcheck·DB 접속·Alembic 기반만 구현하고 테이블/전체 서비스는 후속으로 둔다.
 - P0-7: DB 마이그레이션·확장 준비 뒤 backend 이미지·readiness를 확인한다. frontend가 없으면 타인 파일을 만들지 않고 DB/backend 확인 범위로 기록한다.
 - P1-4: 실제 제공자·키트·격리 검증 환경이 준비된 뒤 통합·재시작·백업/복원을 확인한다. 실제 환경/키 전달과 팀 VM 반영은 오현님이 관리한다.
 - SERVICE_MODE 설정, n8n Credential/URL, fault/reset/ops 관측 대상은 각각 확인한다. 기본 app/practice 선택만으로 전체 호출 대상이 바뀌었다고 판정하지 않는다.
+
+## P0-3 실제 실행 기반
+
+실제 생성 파일은 compose.yaml의 postgres, compose.check.yaml의 검증 전용 db-check, init_db_env.py/check_db.py와 변수 이름만 있는 .env.example이다. 프로젝트 `oke-jihye-p0`는 기존 서비스와 별도 네트워크·named volume을 사용하며 DB 호스트 포트를 공개하지 않는다. 기존 n8n/data-api를 여기에 연결하지 않았다.
+
+```bash
+uv run python deploy/init_db_env.py
+docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet
+docker compose --env-file deploy/.env -f deploy/compose.yaml up -d --wait postgres
+docker compose --env-file deploy/.env -f deploy/compose.yaml ps
+uv run python deploy/check_db.py
+uv run python deploy/check_db.py --all
+```
+
+최종114개 통과·경고1건(실제 DB5개 포함). 확인 이미지는 compose.yaml에 digest 고정한 pgvector/pgvector:pg16, 실제 PostgreSQL16.15·사용 가능한 vector0.8.6이다. vector 활성화·테이블·grants는 아직 없다. 처음 호스트→Docker bridge 접속과 시험 컨테이너의 임시 디렉터리 누락으로 실패했고, 같은 Docker 네트워크와 /tmp tmpfs로 수정 후 재시험했다.
+
+검증 도구는 설치된 Linux x86_64 Python3.12 .venv를 읽기 전용으로 참조한다. backend 배포 이미지는 P0-7에서 별도로 만든다. 로컬 DATABASE_URL은 postgres 호스트를 사용하므로 호스트 셸에서 직접 DB 명령을 실행한다고 접속되는 것은 아니다. 현재 실접속 검증은 check_db.py에서 수행한다. DB는 healthy 상태로 남기고 volume을 유지했다.
+
+private deploy/.env는 권한600·Git 제외다. 처음 상세 traceback에 자동생성 검증용 암호가 노출되어 교체했고 출력 마스킹/짧은 traceback·보안 회귀를 추가했다. 실제 값이나 과거 값은 기록하지 않는다. 이 migration용 접속을 앱/RAG 런타임에 공유하지 않고 P0-5 최소 권한을 별도로 준비한다. DB 준비 상태·실패/재시험 원자료는 IMP-PLAN 실제 기록을 따른다.
 
 ## 만들 파일과 기준
 

@@ -2,7 +2,7 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: P0-1~2 구현·로컬/Mock 시험 완료. P0-3 이후·DB 적용·배포 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
+**전체 상태: P0-1~2 및 P0-3 실행 기반·DB 접속 검증 완료. P0-4 이후의 테이블·확장 활성화·업무 저장·배포는 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
@@ -13,7 +13,7 @@
 1. **P0-2 보완:** 기존4bbbf49에서 빠진 context2,000자 제약과 시험을 추가한다. DB·외부 키·팀원 서비스는 필요하지 않다.
 2. **개인 문서 정리:** SPEC에 확정 기준을 모으고 옛 제안/실행 이력을 구분한다. P0-3 이후는 계획 정리만 하며 이번에 구현하지 않는다.
 3. **팀원 인계:** OpenAPI·fixture·저장 요청 예시와 미확정 항목을 HANDOFF에서 제공한다. 실제 공유 기준 커밋은 보완 커밋 생성 후 갱신한다. 문서 작성과 외부 전송·상대 확인을 구분한다.
-4. **다음 지정 단계 P0-3:** 아래 단계 전제 충족 후 DB 실행 기반만 구현한다. 알림 ACK 확장 협의가 미완료여도 확정된 DB 기반 작업은 진행 가능하다.
+4. **이번 지정 단계 P0-3:** DB 실행 기반과 실제 접속 검증까지 완료했다. 아래 실제 기록을 따른다. 다음 지정 구현은 P0-4이며 RAG 테이블/권한은 P0-5다. C05 ACK 확장은 팀장 승인 수신 상태로, 공통 문서 반영과 모델 보완은 별도 연결 작업이다.
 
 | 단계 | 시작 전제 | 해당 단계 범위·완료 판정 | 다음 인계 |
 | --- | --- | --- | --- |
@@ -88,11 +88,29 @@
 
 ## P0-3 · DB 컨테이너와 마이그레이션 실행 기반
 
-- [ ] 연결 SPEC: BE-05·06, C06/C07.
+- [x] 연결 SPEC: BE-05·06, C06/C07의 P0-3 실행 기반·접속 범위만 확인. 테이블·활성화·저장 완료는 아님.
 - 생성 예정: `deploy/compose.yaml`의 postgres 부분, `deploy/.env.example`, `migrations/alembic.ini`, `env.py`, `script.py.mako`, `app/db/base.py`, `session.py`, `tests/integration/test_db_connection.py`.
 - 작업: [deploy 안내](../deploy/README.md)의 서비스명/포트를 그대로 사용하고 pgvector 포함 이미지·named volume·healthcheck를 준비한다. 실제 설치 검증 후 태그/digest를 기록한다. Alembic 대상은 app/rag만, URL은 DATABASE_URL에서 읽는다. 공개 postgres 포트나 루트 설정을 만들지 않는다.
 - 확인 예정: 비밀 파일 준비 후 `docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet`, `up -d postgres`, `ps`를 각각 수행한다. `uv run pytest tests/integration/test_db_connection.py -q`로 본인 검증 DB 접속과 잘못된 자격증명 거절을 확인한다. pg_isready와 schema 적용 확인을 구분한다.
 - 넘길 결과: 다음 단계/유빈님에게 검증한 이미지·확장 가용성·접속 방법(비밀 제외), 오현님에게 실제 네트워크/충돌 여부. 미가용 서비스는 미실행으로 남긴다.
+
+### P0-3 실제 기록 · 2026-11-05
+
+- 전제/범위: 개인 SPEC·계획과 공통 기준을 읽고 진행했다. 폴더 내 깨끗한 fdcd265에서 시작했으며 Docker/Compose·캐시 이미지를 확인했다. 예제의 volume/health 구조만 참고했고 host network·InfluxDB·자동 create_all/seed는 가져오지 않았다. 이번 출력은 전용 DB 접속과 빈 Alembic 기반이다. 실제 업무/rag DDL은 P0-4~5에 남겼다.
+- 생성: `deploy/compose.yaml`, `compose.check.yaml`, `.env.example`, `init_db_env.py`, `check_db.py`; `app/db/__init__.py`, `base.py`, `session.py`; `migrations/alembic.ini`, `env.py`, `script.py.mako`, `versions/.gitkeep`; `tests/test_db_basics.py`, `tests/integration/test_db_connection.py`. pyproject에는 integration marker만 추가했다. helper는 비밀 설정 생성과 Docker 네트워크 시험을 재현하기 위한 P0-3 보조 도구다. 실제 `deploy/.env`는 Git 제외·권한600이며 값은 문서에 남기지 않는다.
+- 환경: Docker Compose v5.6.0, 기존 postgres의 호스트5432/55432 사용 확인. 기본 공개 포트를 바꾸거나 기존 DB를 재사용하지 않고 프로젝트 `oke-jihye-p0`, 서비스 `postgres`, 컨테이너 `oke-jihye-p0-postgres-1`, 볼륨 `oke-jihye-p0_postgres_data`와 전용 네트워크로 격리했다. 호스트 ports 설정 없음. backend/n8n/data-api/프론트는 기동/수정하지 않았다.
+- 검증한 DB 이미지: `pgvector/pgvector:pg16@sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b`(amd64). 실제 PostgreSQL16.15, 사용 가능한 vector0.8.6. 별도 시험 컨테이너는 Python3.12 slim digest를 compose.check.yaml에 고정했다. 실제 extension CREATE는 하지 않았다.
+- `uv run python deploy/init_db_env.py`: 첫 sandbox 실행은 uv 캐시 읽기 전용으로 종료2, 허용된 재실행은 종료0. private 설정을 새로 만들었으며 재실행은 기존 파일을 덮어쓰지 않는다. `git check-ignore deploy/.env`와 `stat`으로 제외·권한600을 확인했다.
+- `uv run alembic -c migrations/alembic.ini history`와 `heads`: sandbox 캐시 제한 후 재실행 각각 종료0·빈 결과. revision이 없는 P0-3 상태이며 이를 head 적용 완료로 부르지 않는다. `uv run pytest tests/test_db_basics.py -q` 첫 검증8개 통과 후 출력 마스킹 회귀1개를 추가했다. 기본 접속드라이버는 postgresql+psycopg이며 실행 시 DATABASE_URL을 읽고 앱 시작에는 DB 접속을 강제하지 않는다.
+- `docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet`: 종료0. `up -d --wait postgres`: 종료0·healthy. `ps`의5432/tcp는 내부포트이고 호스트 publish가 아니다. pg_isready만으로 로그인 성공을 판정하지 않았다.
+- 최초 실제시험 `uv run python deploy/check_db.py`: 호스트에서 bridge IP로 접근해 5개 모두 시간 초과로 실패(종료1). 잘못된 암호 시험도 인증 거절이 아니라 연결 실패였으므로 통과로 집계하지 않았다. 실제 호스트/daemon 네트워크 경계 때문에 compose 네트워크의 시험 컨테이너로 경로를 수정했다. 비밀번호 거절은 SQLSTATE 유무뿐 아니라 인증 거절 메시지도 검사하도록 보강했다.
+- 위 최초 실패의 pytest 상세 traceback에 자동생성 검증용 암호가 노출됐다. 그 값은 기록하지 않았고 전용 DB의 암호와 private env를 교체했다. 같은 볼륨으로 해당 컨테이너만 재생성해 설정을 일치시켰다. 이후 check_db.py는 subprocess 출력을 캡처해 URL/암호를 가리고 짧은 traceback을 사용한다. 출력 마스킹 회귀 시험을 추가했다. 다른 서비스의 비밀값은 조회/변경하지 않았다.
+- Docker 안 재시험1회는 읽기 전용 시험 컨테이너에 임시 디렉터리가 없어 수집 전에 실패했다. `/tmp` tmpfs를 추가한 다음 같은 `uv run python deploy/check_db.py`는 종료0, **5 passed, 1 warning in 0.82s**였다.
+- 실제 DB 시험5개: SELECT1·Session·현재DB 대조, vector 가용성 및 미활성화, app/rag 미생성, 잘못된 비밀번호의 실제 거절, Alembic current의 빈 revision을 확인했다. public.alembic_version은 후속 마이그레이션 bookkeeping 위치이며 P0-3 current 조회는 만들지 않았다. autogenerate 반영 대상은 app/rag만이다.
+- 최종 `uv run python deploy/check_db.py --all`: 종료0, **114 passed, 1 warning in 4.11s**(기존100 + DB기반9 + 실제DB5). 기존 Starlette TestClient HTTPX 폐기 예정 경고1건 유지. 합성 Mock 시험과 실제 DB 시험을 구분하며 업무/RAG 저장·임베딩·n8n 통합 통과를 뜻하지 않는다. 두 Compose 파일을 합친 config 검사도 종료0이었다.
+- 남은 상태: 전용 DB는 현재 healthy로 남기고 volume을 유지했다. 업무/rag 테이블·vector 활성화·grants·직원/계정·API 저장·readiness·VM 배포·공식flow.py 검사는 미실행이다. 기존 서비스/볼륨은 변경하지 않았다. 같은 DB를 재시작한 뒤 업무 기록 유지 시험은 P1-4에서 수행한다.
+- 다음: P0-4가 확장/app/rag와 업무 테이블, P0-5가 RAG 테이블·접속 권한을 준비한다. 유빈님·다혁님에게 P0-3의 접속 기반 완료와 실저장 미준비를 구분해 공유한다. 준비 예상 시각은 후속 단계의 실제 착수/장애 확인 뒤 전달하며 임의 확정하지 않는다. 상대별 인계 자료는 HANDOFF의 P0-3 절에 정리했다. 커밋·push·외부 메시지 전송은 하지 않았다.
+- 최종 검사: `uv lock --check --offline` 종료0(38개,2ms), `git diff --check` 종료0. 수정/신규22개 경로가 모두 develop/jihye 내부, 로컬 문서 링크87개 대상 존재, 변경 파일에 private DB URL/암호 원문이 없음을 값 출력 없이 검사했다. staging 없음. deploy/.env는 추적되지 않고 Git 제외·권한600이다.
 
 ## P0-4 · 확장→업무 테이블 생성
 

@@ -1,6 +1,6 @@
 # 다혁님 · 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-4의 요청·Mock·로컬 기대값을 작성했고 Code 독립 실행만 확인했다. 최신 번호판은 `workflows/oke-support-11.json`이다. 프로젝트 n8n과 공통 시험은 미실행이며 P1-5 실제 연결·시험은 남아 있다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 본체 `SUP-*` 요구만 구현하며 공통 `WF-*` 기대는 바꾸지 않는다. P0-1~P0-3과 P1-1~P1-4의 요청·Mock·로컬 기대값을 작성했고 P1-5 1단계 HTTP 경로를 `workflows/oke-support-12.json`에 준비했다. 프로젝트 n8n·실제 서비스·공통 시험은 미실행이다.
 
 ## 첫 작업 P0-1 · 입력과 차단 골격
 
@@ -38,7 +38,7 @@
 | P1-2 / SUP-03/06 | `workflows/oke-support-08.json`, fixtures/writer-results.json·verifier-results.json, cases/support-verification.json | N13~15와 최종 출력 필터. 잘린 JSON/문자열 불리언/위조 출처→이관, 연락처 가림. 임계값은 Mock 값 0.8로 분기만 검증하며 품질 통과로 표시하지 않음. 로컬 Mock 20/20 | 유빈님·원민님 사용 출처/점수 경계/검증 탈락 입력과 출력 |
 | P1-3 / SUP-07/09 | `workflows/oke-support-10.json`, requests/urgent-complex.json·llm-down.json·slow-ticket.json, cases/support-failures.json | 긴급 N20→N08 Mock 보강→N22, handoff_done 유지. DH-T-12 합성 high+보안 근거+본인 상태. writer 실패/조회 timeout Mock 뒤에도 같은 실행 C04 호출 1회. DH-T-10→이관 llm_down. 로컬 Mock 14/14 | 원민님 오류 출력·부분 실패·긴급 단일 접수 관측표, 오현님 시간 예산 후보 |
 | P1-4 / SUP-08/09 | `workflows/oke-support-11.json`, fixtures/replay-results.json, requests/duplicate.json, cases/support-replay.json | N05 결과 조회·N22 재사용 분기를 Mock으로 연결. 동일 내용 hit는 티켓 ID 보존·duplicate=true 표시, 타인·충돌·처리중·장애는 재생성 차단. 로컬 13/13. 실제 결과 저장·순차/동시/재시작 멱등은 미검증 | 지혜님 소유권/결과 저장 API 연결 자료, 원민님 중복 관측·표현 불일치 재현 |
-| P1-5 / SUP-10 | 본체 실제 주소/설정으로 교체, Doc/SUBMISSION-NOTES.md, Doc/VERIFICATION-RESULTS.md, 실제 생성된 runs/ 보고서 | 제공자 실제 호출, 공통 전체+팀 5개 이상+LLM 3회·bench·임계값 경계. DH-T-01은 측정 기준 반영 후 자동 답변. 실패 원인/수정/같은 조건 재시험 | 오현님 실제 노드/연결선·보고서·측정·미해결 요청, 원민님 최종 회귀 근거 |
+| P1-5 / SUP-10 | `workflows/oke-support-12.json` HTTP 준비본, 이후 Doc/SUBMISSION-NOTES.md·VERIFICATION-RESULTS.md 및 실제 runs/ 보고서 | 1단계: 직원·C03·기존 티켓·C04 HTTP 노드와 합성 응답 어댑터. 이후 실제 Credential·제공자 호출, 공통 전체+팀 5개 이상+LLM 3회·bench·임계값 경계 검증 필요 | 오현님 실제 노드/연결선·보고서·측정·미해결 요청, 원민님 최종 회귀 근거 |
 
 ### P0-2 확인 기록 · 2026-11-04
 
@@ -88,6 +88,13 @@
 - 로컬 확인: `python3 tools/retrieval_check.py workflows/oke-support-11.json cases/support-replay.json --node-container day65-n8n-n8n-1` 13/13. 합성 첫 miss는 C04 Mock 1회와 T-552532/duplicate=false, 같은 입력의 hit fixture는 C04 Mock 0회와 같은 ID/duplicate=true를 확인했다. 타인·충돌·처리중·장애·잘못된 캐시·긴급 재전송·캐시 답변 전화번호 가림을 포함한다. P1-3 14/14, 보완 9/9, P1-2 20/20도 최신 번호판에서 재확인했다.
 - 제한: 첫 결과를 실제로 저장하거나 동시 요청을 원자적으로 잠그는 내부 API가 아직 없다. `fixtures/replay-results.json`은 저장 결과를 흉내 낸 별도 입력이며 13/13은 순차·동시·프로세스 재시작 후 티켓 1건의 증거가 아니다. 지혜님 `fdcd265` 브랜치에는 제안된 내부 result 조회/저장 경로가 없다. FastAPI 소유권·DB UNIQUE·원민님 C04/C05 멱등을 실제 연결 후 각각 시험해야 한다. 공식 80일차 `flow.py`, 프로젝트 n8n 게시·Webhook·실제 저장은 미실행이다.
 
+### P1-5 실제 HTTP 연결 준비 1단계 · 2026-11-05
+
+- `oke-support-11.json`을 보존하고 `oke-support-12.json`에 직원 목록 GET, C03 POST, 기존 티켓 GET, C04 POST HTTP Request 노드 4개를 추가했다. 각각 X-Api-Key 또는 X-Team-Key의 n8n Header Auth Credential 참조만 사용한다. `SERVICE_MODE=practice|app`일 때 실제 HTTP·Agent 분기를 선택하고, 값이 없거나 잘못되면 직원 확인에서 안전하게 종료한다. 로컬 검사기는 가짜 `SERVICE_MODE=mock`을 주입해 이전 Mock 경로를 확인한다.
+- 실제 응답 어댑터는 fullResponse의 statusCode/body를 기존 직원·검색·티켓·이관 상태로 옮긴다. 검색 200 빈 결과와 503, 기존 티켓 403·404·timeout, C04 alerts_down·tickets_down·전송 실패를 분리한다. 요청 오류/티켓 ID 없음은 HTTP를 건너뛰는 IF 경로로 처리한다. HTTP 노드는 response/fullResponse·neverError·continueRegularOutput·리다이렉트 차단을 설정하고 자동 재시도는 두지 않았다. 초기 timeout은 직원/티켓 2초, 검색 4초, 이관 5초다.
+- 로컬 확인: `python3 tools/http_adapter_check.py --node-container day65-n8n-n8n-1`에서 합성 HTTP 어댑터 12/12가 일치했다. 이전 `support-replay.json` 13/13을 `12`의 Mock 분기에서 재검사했다. 이 검사는 HTTP 전송이나 n8n 노드 실행을 하지 않는다. 실제 직원 GET 응답 형식, Header Auth Credential 매핑, 네트워크, 시간 초과, C03·C04 실제 상태 코드는 아직 미확인이다.
+- 다음 연결: 지혜님 result 조회·저장 계약/소유권, 유빈님 C03 실제 응답, 원민님 C04 실제 응답을 대상으로 사람이 프로젝트 n8n에 Credential을 바인딩하고 단일 번호판을 import·test한다. 실제 답변 품질 임계값은 측정 전이며 `12`의 실제 Agent 경로도 자동 답변을 허용하지 않는다. 공식 80일차 `flow.py`, 공통 전체·팀 사례·bench는 미실행이다.
+
 P2 선택 고도화는 필수 P1-5 완료 뒤 [TODO](TODO.md)의 후순위를 따른다.
 
 P0-2의 이관 분기는 P0-3 전에는 Mock이며 티켓 생성 완료가 아니다. P1까지도 Mock 결과와 실제 서비스 결과를 별도 열로 기록한다. 새 정책 승인이 필요한 adapter를 제외한 Agent/검색/이관/출력 작업은 계속 진행한다.
@@ -108,7 +115,7 @@ python3 -m json.tool workflows/oke-support-02.json > /dev/null
 현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. P1-1~P1-2 번호판은 `tools/retrieval_check.py`로 검사한다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support-11.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-12.json
 ```
 
 연결 검토 항목:
@@ -132,7 +139,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support-11.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support-11.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-12.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

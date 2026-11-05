@@ -91,6 +91,13 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 - 지혜님 `fdcd265`에는 DH-CHG-02의 내부 결과 조회·저장 API가 없으므로 이 결과는 영속 저장/원자 중복 방지 시험이 아니다. 실제 연결 전 requester 검증, question/attempt/context 지문, 완료/처리중/충돌 상태, 저장 ACK와 API 경로를 지혜님·오현님이 확정해야 한다. 현 로컬 Mock의 충돌 HTTP400/invalid_request 및 처리중·장애 안전 응답은 임시 판정이다.
 - 원민님·오현님께는 재사용 응답의 ticket_id/priority 동일성과 duplicate=true 표시를 DH-CHG-04 및 원본 WF-09 판정과 대조 요청한다. 캐시 hit의 duplicate 표시는 저장 원본을 바꾸지 않는 로컬 제안이다. 순차·동시·재시작 후 실제 티켓 1건은 원민 C04/C05와 백엔드 DB를 연결해 검증해야 한다.
 
+## P1-5 HTTP 연결 준비 1단계 인계 · 2026-11-05
+
+- 최신 번호판 `workflows/oke-support-12.json`에 직원 GET `/employees`, C03 POST `/webhook/oke-search`, 본인 티켓 GET `/tickets/{id}?requester={검증된 이름}`, C04 POST `/webhook/oke-handoff` 경로를 추가했다. `SERVICE_MODE=practice|app`에서만 해당 경로를 선택하며 누락·오류 설정은 직원 확인에서 안전하게 종료한다. 실제 Credential 값은 JSON에 없다.
+- 지혜님/오현님: 프로젝트 n8n의 `SERVICE_MODE`, `DATA_API_URL`, X-Api-Key Header Auth Credential과 직원 6명 응답의 `{items:[{name,dept}]}` 형식, 본인 티켓 조회 200/403/404·장애 응답을 확인 부탁드린다. 실제 응답 형식이 다르면 어댑터를 조정해야 한다. DH-CHG-02의 결과 조회·저장 API는 이 번호판에도 연결되지 않았다.
+- 유빈님: C03의 X-Team-Key Credential, 200 빈 근거·503 상태와 본문을 확인 부탁드린다. 원민님: C04의 X-Team-Key Credential, 신규/중복·alerts_down·tickets_down 응답을 확인 부탁드린다. 동일 request_id의 실제 저장 멱등은 C04/DB와 함께 별도 시험이 필요하다.
+- 합성 HTTP 어댑터 검사 12/12와 최신 번호판의 로컬 Mock 사례 56/56(13+14+9+20)을 확인했다. 이 수치는 실제 HTTP·n8n 실행이나 공식 `flow.py` 결과가 아니다. 사람이 Credential을 연결하고 프로젝트 n8n에서 한 버전만 게시·시험한 실행 ID/마스킹 결과를 받아야 실제 연결 완료로 기록한다. 실제 Agent 답변 품질 임계값도 미확정이라 자동 답변 검증 완료로 표시하지 않는다.
+
 ## DH-CHG-05 · 단계별 워크플로우 JSON 보존과 게시 대상
 
 - 연결: C09. 2026-11-04 사용자 요청에 따라 P0-1 원본은 `workflows/oke-support.json`으로 복원하고 P0-2는 `workflows/oke-support-02.json`에 보존했다. 원격의 P0-2 수정 이력은 강제 삭제하지 않고 새 커밋에서 파일 배치를 바로잡는다.

@@ -33,7 +33,8 @@ for (const test of data.tests) {
     const inputValue = value;
     const items = vm.runInNewContext('(function(){' + nodes[name].parameters.jsCode + '})()', {
       $input: {first: () => ({json: inputValue})},
-      $: nodeName => ({first: () => ({json: outputs[nodeName]})})
+      $: nodeName => ({first: () => ({json: outputs[nodeName]})}),
+      $env: {SERVICE_MODE: 'mock', DATA_API_URL: 'http://data-api:8800'}
     }, {timeout: 1000});
     if (!Array.isArray(items) || items.length !== 1 || !items[0].json) throw Error(test.id + ': invalid ' + name);
     value = items[0].json;
@@ -70,7 +71,8 @@ for (const test of data.tests) {
   const execute = (name, value, allItems) => {
     const items = vm.runInNewContext('(function(){' + nodes[name].parameters.jsCode + '})()', {
       $input: {first: () => ({json: value}), all: () => allItems.map(json => ({json}))},
-      $: nodeName => ({first: () => ({json: outputs[nodeName]})})
+      $: nodeName => ({first: () => ({json: outputs[nodeName]})}),
+      $env: {SERVICE_MODE: 'mock', DATA_API_URL: 'http://data-api:8800'}
     }, {timeout: 1000});
     if (!Array.isArray(items) || items.length !== 1 || !items[0].json) throw Error(test.id + ': invalid ' + name);
     let result = items[0].json;
@@ -212,6 +214,7 @@ def check(flow):
     has_verification = "N13 Prepare writer" in names
     has_urgent = "N07 Route urgent" in names
     has_replay = "N05 Replay MOCK" in names
+    has_http = "N03 Get employees HTTP" in names
     if any(name in names for name in TICKET_CHAIN) and not has_ticket:
         raise ValueError("incomplete ticket lookup chain")
     expected_next = "N11 Collect retrieval" if has_merge else "N10 Build ticket lookup" if has_ticket else "N20 Prepare handoff"
@@ -219,6 +222,8 @@ def check(flow):
         raise ValueError("search normalization connection changed")
     if has_ticket:
         for source, target in zip(TICKET_CHAIN[:-1], TICKET_CHAIN[1:]):
+            if has_http and source == "N10 Build ticket lookup":
+                target = "N10 Ticket mode"
             if flow["connections"].get(source, {}).get("main") != [[{"node": target, "type": "main", "index": 0}]]:
                 raise ValueError(f"ticket lookup connection changed: {source}")
         target = "N11 Collect retrieval" if has_merge else "N20 Prepare handoff"
@@ -229,7 +234,7 @@ def check(flow):
         if not all(name in names for name in ("N11 Join retrieval", "N12 Evidence gate")):
             raise ValueError("incomplete retrieval merge")
         if flow["connections"].get("N08 Build search input", {}).get("main") != [[
-            {"node": "N09 Mock C03", "type": "main", "index": 0},
+            {"node": "N09 Search mode" if has_http else "N09 Mock C03", "type": "main", "index": 0},
             {"node": "N10 Build ticket lookup", "type": "main", "index": 0}]]:
             raise ValueError("retrieval branches changed")
         for source, target in (("N11 Collect retrieval", "N11 Join retrieval"),
@@ -297,8 +302,53 @@ def check(flow):
             if flow["connections"].get(model, {}).get("ai_languageModel") != [[
                 {"node": agent, "type": "ai_languageModel", "index": 0}]]:
                 raise ValueError(f"{model} not linked to its Agent")
-    if any(node["type"] == "n8n-nodes-base.httpRequest" for node in nodes):
-        raise ValueError("this local Mock snapshot must not send HTTP requests")
+    http_nodes = [node for node in nodes if node["type"] == "n8n-nodes-base.httpRequest"]
+    if has_http:
+        expected_http = {
+            "N03 Get employees HTTP": ("GET", 2000),
+            "N09 C03 HTTP": ("POST", 4000),
+            "N10 Own ticket HTTP": ("GET", 2000),
+            "N20 C04 HTTP": ("POST", 5000),
+        }
+        if {node["name"] for node in http_nodes} != set(expected_http):
+            raise ValueError("P1-5 HTTP node set incomplete")
+        for node in http_nodes:
+            method, timeout = expected_http[node["name"]]
+            p = node["parameters"]
+            options = p.get("options", {})
+            response = options.get("response", {}).get("response", {})
+            if (p.get("method") != method or options.get("timeout") != timeout or
+                    p.get("authentication") != "genericCredentialType" or
+                    p.get("genericAuthType") != "httpHeaderAuth" or
+                    not node.get("credentials", {}).get("httpHeaderAuth") or
+                    not response.get("fullResponse") or not response.get("neverError") or
+                    node.get("onError") != "continueRegularOutput"):
+                raise ValueError(f"P1-5 HTTP settings invalid: {node['name']}")
+        for source, target in (("N02 Normalize input", "N03 Employee mode"),
+                               ("N03 Get employees HTTP", "N03 Capture employee"),
+                               ("N03 Capture employee", "N04 Injection rules"),
+                               ("N09 C03 HTTP", "N09 Capture C03"),
+                               ("N09 Capture C03", "N09 Normalize search"),
+                               ("N10 Build ticket lookup", "N10 Ticket mode"),
+                               ("N10 Own ticket HTTP", "N10 Capture ticket"),
+                               ("N10 Capture ticket", "N10 Normalize ticket"),
+                               ("N20 C04 HTTP", "N20 Capture C04"),
+                               ("N20 Capture C04", "N20 Map handoff")):
+            if flow["connections"].get(source, {}).get("main") != [[
+                {"node": target, "type": "main", "index": 0}]]:
+                raise ValueError(f"P1-5 HTTP connection changed: {source}")
+        expected_gates = {
+            "N03 Employee mode": ("N03 Get employees HTTP", "N03 Validate employee MOCK"),
+            "N09 Search mode": ("N09 C03 HTTP", "N09 Mock C03"),
+            "N10 Ticket mode": ("N10 Own ticket HTTP", "N10 Mock ticket"),
+            "N20 Handoff mode": ("N20 C04 HTTP", "N20 Mock C04"),
+        }
+        for source, targets in expected_gates.items():
+            actual = flow["connections"].get(source, {}).get("main", [])
+            if tuple(branch[0]["node"] for branch in actual if len(branch) == 1) != targets:
+                raise ValueError(f"P1-5 HTTP gate changed: {source}")
+    elif http_nodes:
+        raise ValueError("unexpected HTTP node in Mock snapshot")
     return True
 
 

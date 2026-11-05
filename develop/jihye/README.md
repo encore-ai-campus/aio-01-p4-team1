@@ -12,8 +12,8 @@
 | P0-3 | 전용 PostgreSQL 컨테이너·비밀 설정·접속·Alembic 기반 준비, 실제 DB 시험5개 통과. vector는 가용하지만 아직 활성화하지 않음 |
 | 인증·계정 | P1-1 로그인·세션·비밀번호 변경·관리자 계정 발급/회수 구현 및 로컬 PostgreSQL HTTP 통합 확인. VM 로그인은 미확인 |
 | 문의·support | P1-2 문의 선저장·본인 목록·C02 어댑터 구현 및 로컬 PostgreSQL+MockTransport 확인. 실제 n8n 미호출 |
-| 업무 처리 | P1-3 C05 티켓·알림·DLQ 로컬 PostgreSQL 저장과 practice 어댑터 확인. 팀 n8n/data-api 실연결은 미확인 |
-| 현재 | P0-7·P1-1~3 로컬 구현·전용 DB 검증 완료. revision 0005. frontend/n8n/VM 통합 미실행 |
+| 업무 처리 | P1-3 C05 로컬 저장 검증 완료. 원민님이 별도 로컬 Ubuntu에서 n8n→FastAPI→PostgreSQL 15개 그룹 통과를 보고함(직접 재실행 아님). 실제 data-api·전체 C04·팀 VM 미확인 |
+| 현재 | P0-7·P1-1~3 로컬 구현 완료. P1-4 web-flow 및 전용 DB/backend 재시작 유지 확인. 백업/복원·frontend·RAG 실문서·VM 통합 미완료 |
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 

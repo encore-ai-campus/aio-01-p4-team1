@@ -26,7 +26,7 @@ P0-4 갱신(2026-11-05): 전용 검증 DB에 `0002 (head)`를 적용해 vector �
 | --- | --- | --- |
 | C01 | 수언님·오현님 | H01·03·05 핵심(세션 쿠키·관리자 목록·assignee=employees.id·최후 관리자 보호) 공통 반영 완료, H02 세부 제안 유지·실연결 미실행 |
 | C02 | 다혁님·오현님 | 시간 예산·503/504 확정. 응답 캐시/상태·추가 오류코드 등 H04 세부와 H03 nullable 타입은 미확정, 실제 연결 미실행 |
-| C05 | 원민님·오현님 | 요청7/7 적합 및 event_key 경계 회신 수신. H07 팀장 승인 적용해 P1-3 로컬 저장·ACK 구현과 전용 DB 검증 완료. 공통 반영 커밋·workflow/live data-api 실연결은 미확인 |
+| C05 | 원민님·오현님 | P1-3 로컬 구현 `ec6a735`. 원민님이 로컬 Ubuntu n8n→FastAPI→PostgreSQL 15개 그룹 통과를 보고함(`6896952`, push 전; 직접 재실행 아님). 실제 data-api·전체 C04·팀 VM·공통 문서 반영은 미확인 |
 | C06 | 유빈님 | P0-3 실제 DB 접속·vector 가용성 확인. DDL·활성화·grants·실제 색인은 P0-4~5 이후. data-api 응답/인증 및 청크 상태의 DB 저장 필요 여부 추가 확인 |
 | C07 | 오현님·영향받는 담당 | 전용 Compose DB 기동·health·접속·Alembic 기반 확인. 기존 서비스 미변경·호스트 DB포트 미공개. backend/전체Compose/VM은 미실행 |
 
@@ -75,7 +75,7 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 
 ## JH-H07 · C05 알림 ACK·DLQ 상태 명문화 검토
 
-**현재 상태: 사용자 전달로 팀장 승인 및 원민님 세부 회신 수신, P1-3 로컬 구현·전용 PostgreSQL 검증 완료.** 공통 API 문서의 명문화 커밋과 원민 workflow/app 실제 연결은 아직 확인되지 않았다. 아래 ‘미확정’ 표기는 승인 전 당시 검토 이력으로 읽는다.
+**현재 상태: 사용자 전달로 팀장 승인 및 원민님 세부 회신 수신, P1-3 로컬 구현·전용 PostgreSQL 검증 완료. 원민님이 별도 로컬 Ubuntu에서 app C05 HTTP 통합 15개 그룹 통과를 추가 보고했다.** 해당 실행 커밋은 `6896952` push 전이라고 전달받았으며 직접 checkout/재실행하지 않았다. 공통 API 문서 명문화, live practice data-api, 전체 C04 및 팀 VM 연결은 미확인이다. 아래 ‘미확정’ 표기는 승인 전 당시 검토 이력으로 읽는다.
 
 - 출처: 사용자가 전달한 원민님 회신. 대조 대상4bbbf49, 요청 표본7/7 적합(티켓3·알림2·DLQ2). 직접 상대코드 조회/재실행은 하지 않았다.
 - 발견: StoredResponse는 duplicate를 직렬화하지 않아 원민님이 중복알림 성공을 확인하지 못하고 alerts_down으로 판정할 수 있다. DLQ의 현재로컬200과 원민SPEC 신규201 기대가 다르며 공통API§5는DLQ상태코드를 명시하지 않았다.
@@ -85,8 +85,8 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 - ACK 판정: 신규 `{"stored":1,"count":N,"duplicate":false}`, 기존 키 확인 `{"stored":0,"count":N,"duplicate":true}`만 해당 저장 결과로 인정한다. cumulative count만으로 성공을 추정하지 않는다. DLQ는 승인 기준 HTTP200이며 저장 ACK를 확인한다.
 - 상대 검토 결과: 원민님은 해당 내용을 검토 8개 그룹에서 통과했다고 회신했다. 회신자료는 `develop/wonmin/Doc/ALERT-NO-KEY-REVIEW.md`, 커밋 `31e3fa0`이다. 직접 해당 시험을 재실행한 결과가 아니다.
 - P1-3 지혜님 결과: app 응답 모델에 duplicate를 명시하고, app PostgreSQL에서 event_key 없음/신규/동일키/동시 요청과 count를 확인했다. FastAPI HTTP 경로로 tickets 신규201/중복200, alerts ACK와 DLQ200도 확인했다. practice 응답 호환은 HTTP MockTransport로만 확인했다. 전체 222개 시험 통과·기존 경고1건. 상세는 [IMP-PLAN P1-3 실제 기록](IMP-PLAN.md#p1-3-실제-기록--2026-11-05)에 있다. 이는 원민 workflow나 live practice data-api 실연결 결과가 아니다.
-- 다음 반영: 오현님 공통계약 명문화 커밋을 확인한다. 그 뒤 원민님 workflow에서 app C05 실제 HTTP 신규/동일 키/동시 요청·부분 실패를 재시험한다. 공통 반영 및 workflow 실연결은 현재 미확인이다.
-- 남은 확인: 오현님 공통 API 명문화 커밋, 원민 workflow→app C05 실연결, live practice data-api 응답/인증. 승인된 ACK 의미로 P1-3 로컬 구현을 막지 않았다.
+- 원민님 최신 보고(사용자 전달, `6896952`, push 전): 지혜님 `ec6a735` 병합·재배포 뒤 로컬 Ubuntu의 전용 시험 DB/직원 fixture에서 n8n→FastAPI→PostgreSQL 15개 그룹 통과. 신규201/중복200, 동시8회 티켓·알림 각1건, duplicate/event_key 생략·null, DLQ200, 부분실패·복구, DB 재시작 유지를 보고했다. 실제 data-api, 전체 C04, 팀 VM과 공통 C05 문서 반영은 미완료라고 보고받았다. 직접 재실행한 증거가 아니다.
+- 남은 확인: 오현님 공통 API 명문화 커밋, 원민님 보고의 재현 가능한 자료(push 또는 보고서), live practice data-api, 전체 C04와 팀 VM. 승인된 ACK 의미로 P1-3 로컬 구현을 막지 않았다.
 
 ## P0-3 인계·확인·공유 · 2026-11-05
 

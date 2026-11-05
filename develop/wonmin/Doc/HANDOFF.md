@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+최신 C05 실제 검증(2026-11-05): [실제 backend·DB·n8n app 결과와 지혜님 요청](C05-LIVE-RESULT.md). 지혜4fdc313·다혁859e3af는 최신, 유빈1b0c3b5 새3커밋을 병합했다. 실제 저장 API33회 중 누락키3회401/나머지30회501, 시험 DB tickets/alerts/dlq 모두0→0이었다. StoredResponse duplicate도 여전히 제거된다. 지혜님 내부키 대조·실제 저장·duplicate 응답·직원 seed 구현 후 원민이 동일 조건으로 재시험한다. 이번 결과는 저장 검증 차단이며 동시성/영속성 통과가 아니다.
+
 현재 재배포(2026-11-05): [팀 소스 n8n·Compose 반영](TEAM-REDEPLOY-RESULT.md). 지원13·검색·색인·이관·errors가 목록에 표시되고 index 실행35 Succeeded를 확인했다. 실제 PG48 통과·0004 적용. 본체는 identity_unavailable, 검색은503, 실제 저장 API는501로 남아 해당 담당자의 후속 연결이 필요하다.
 
 팀 소스 병합(2026-11-05): [다혁·유빈·지혜 브랜치 병합 기록](TEAM-MERGE-RESULT.md). feat/wonmin-p0에 세 소스를 충돌 없이 병합하고 원민89·유빈171·지혜110·다혁 adapter12 통과를 확인했다. 지혜 DB48개는 skip이다. main/submission 및 실행 중 서비스는 변경하지 않았다.

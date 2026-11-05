@@ -1,5 +1,7 @@
 # 원민님 · TODO
 
+최신 C05 확인(2026-11-05): [실제 저장 시험](C05-LIVE-RESULT.md). 실제 API33회·DB 전후·n8n app 경로를 확인했으나 저장 API501로 차단됐다. C05 실제 저장/동시성/티켓 보존/영속성 체크는 완료로 바꾸지 않는다. 지혜님 실제 구현 후 재시험이 필요하다.
+
 2026-11-05 실환경 갱신: [Ubuntu 결과](UBUNTU-INTEGRATION-RESULT.md). 아래 기존 단계 체크와 별도로 실제 완료 범위를 구분한다.
 
 - [x] 로컬 Ubuntu Compose 기동·실제 errors ID 부모 연결·자동 Error Trigger 정상/부분/전체 수습 확인

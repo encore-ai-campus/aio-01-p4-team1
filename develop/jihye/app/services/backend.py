@@ -1,4 +1,4 @@
-"""P1-1 database operations. Unimplemented business routes remain fail-closed."""
+"""Database-backed services for authentication, inquiry and P1-3 operations."""
 
 import anyio
 from fastapi import HTTPException
@@ -10,6 +10,8 @@ from app.services.accounts import (AccountError, account_items, create_account,
                                    employee_items, reset_password, update_active)
 from app.services.auth import LoginError, authenticate, change_password, logout
 from app.services.inquiries import ask_support, my_requests
+from app.services.alerts import create_alert, create_dlq, list_admin_alerts
+from app.services.tickets import create_ticket, list_admin_tickets, update_admin_ticket
 
 
 class DatabaseBackend:
@@ -33,6 +35,18 @@ class DatabaseBackend:
             raise HTTPException(503) from None
 
     def _execute_sync(self, operation, body, principal, entity_id, session_id):
+        if operation == "create_ticket":
+            return create_ticket(self.settings, body)
+        if operation == "create_alert":
+            return create_alert(self.settings, body)
+        if operation == "create_dlq":
+            return create_dlq(self.settings, body)
+        if operation == "tickets":
+            return list_admin_tickets(self.settings)
+        if operation == "update_ticket":
+            return update_admin_ticket(self.settings, ticket_id=entity_id, body=body)
+        if operation == "alerts":
+            return list_admin_alerts(self.settings)
         if not self.settings.database_url:
             raise HTTPException(503)
         if operation == "my_requests":

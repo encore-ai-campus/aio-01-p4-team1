@@ -16,8 +16,13 @@ class AlertCreate(ContractModel):
 
 
 class StoredResponse(ContractModel):
-    stored: Annotated[int, Field(ge=0)]
-    count: Annotated[int, Field(ge=0)]
+    stored: Annotated[int, Field(ge=0, strict=True)]
+    count: Annotated[int, Field(ge=0, strict=True)]
+
+
+class AlertStoredResponse(StoredResponse):
+    """App-mode ACK distinguishes a new alert from an event_key replay."""
+    duplicate: bool
 
 
 class AlertView(ContractModel):

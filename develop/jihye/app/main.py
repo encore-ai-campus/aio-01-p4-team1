@@ -25,7 +25,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         schema = original_openapi()
         schema["info"]["description"] = (
             "세션 인증과 관리자 계정 관리는 PostgreSQL에 연결됩니다. "
-            "문의·티켓·알림 업무 처리는 단계별로 연결 중이며 일부는 501을 반환합니다. "
+            "문의·티켓·알림·DLQ 처리는 단계별 API 계약과 선택된 저장 모드를 따릅니다. "
             "InquiryView/TicketView 및 security 세부 타입은 H03 초안입니다."
         )
         for path in schema["paths"].values():

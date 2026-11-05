@@ -2,7 +2,7 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: P0-1~7, P1-1~2 로컬 구현·검증 기록 완료.** C02 실제 n8n 호출, C05 저장, VM·화면 통합은 미확인이다. 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
+**전체 상태: P0-1~7, P1-1~3 로컬 구현·검증 기록 완료.** C02 실제 n8n 호출, 원민 workflow의 app 저장 연결, live practice data-api, VM·화면 통합은 미확인이다. 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
@@ -25,7 +25,7 @@
 | P0-7 | DB/head/vector·backend 기반, FE 제공 여부 확인 | 이미지/Compose/backend readiness. 프론트가 없으면 DB/backend까지만 판정 | 수언 프록시·오현 실행법 |
 | P1-1 | 직원/계정/세션 테이블·첫 관리자 | 실제 인증/회수·비밀번호·관리자 보호 경계. 추가 제안과 확정 정책 구분 | 수언 실제 쿠키/화면 시험 |
 | P1-2 | 인증·inquiries·support Mock, 실제 연결 때 제공자 준비 | 소유권→선저장→짧은 거래 종료→HTTP→검증/저장. 공통400·timeout·재시도0 확인 | 다혁 C02·수언 본인 목록 |
-| P1-3 | tickets/alerts/dlq·내부 인증·모드, H07 현재 상태 대조 | 저장·동시성·부분 실패·기본DLQ 구현. 미승인 ACK 확장 금지 | 원민 C05의 실제 ACK/건수 |
+| P1-3 | tickets/alerts/dlq·내부 인증·모드, H07 팀장 승인과 원민 회신 적용 | app 저장·practice 어댑터·동시성·부분 실패·DLQ 구현 | 원민 workflow의 app C05 실제 HTTP 재시험 |
 | P1-4 | 제공자·격리 시험 DB·공식 키트/관측 대상 확보 | 실연결·재시작·별도DB 백업/복원·재색인/반복/측정. Mock을 실측으로 집계하지 않음 | 유빈 복원검색·원민 보고서·오현 제출 |
 
 각 단계의 파일·명령은 아래 기존 계획에 있다. 전제 미충족은 실제 실패/미실행으로 기록하고, 정상·오류·권한·경계 증거 없이 체크하지 않는다.
@@ -205,11 +205,22 @@
 
 ## P1-3 · 티켓·알림·관리자 처리와 실패 거래
 
-- [ ] 연결 SPEC: BE-03·04, C05.
-- 생성 예정: `app/services/tickets.py`, `alerts.py`, `storage_mode.py`, `app/repositories/tickets.py`, `alerts.py`; tickets/alerts 라우터; `tests/integration/test_ticket_idempotency.py`, `tests/test_storage_mode.py`.
-- 작업: 내부 X-Api-Key와 세션을 분리하고 요청 직원 확인·문의 연결·T-번호 발급·UNIQUE 충돌 회수를 구현한다. 알림 거래를 분리하고 app/practice 한 대상만 호출한다. DLQ는 공통 반영된 POST /dlq 계약으로 서비스·repository·시험을 연결한다. H07의 알림 duplicate 확장과 DLQ200 명문화 상태는 별도 확인하며, 미확정 확장 없이 가능한 기본 저장은 구현한다.
-- 확인 예정: `uv run pytest tests/integration/test_ticket_idempotency.py tests/test_storage_mode.py -q`. 동일 key 동시2회→티켓1건·같은ID·신규201/중복200, 타인 key403, 내부키401, 티켓 commit 뒤 알림 실패에도 티켓 유지, 관리자 수정/직원403/없는 티켓404를 확인한다.
-- 넘길 결과: 원민님에게 실제 저장 결과·재시도/중복·장애 경계·실제 관측 대상과 DLQ 저장 결과와 ACK 미해결 세부. 상대로부터 실제 확인이 없으면 연결 완료로 표시하지 않는다.
+- [x] 연결 SPEC: BE-03·04, C05.
+- 생성/수정: `app/services/tickets.py`, `alerts.py`, `storage_mode.py`, `app/clients/practice_store.py`, repositories; 내부키 dependency와 alerts response schema/route; `tests/integration/test_ticket_idempotency.py`, `tests/test_ticket_storage.py`, 기존 API/권한 시험.
+- 작업: 내부 X-Api-Key와 세션을 분리하고 요청 직원 확인·문의 연결·T-번호 발급·UNIQUE 충돌 회수를 구현한다. 알림은 독립 거래로 저장하고 `SERVICE_MODE`에 따라 app PostgreSQL 또는 practice data-api 중 한 곳만 쓴다. 티켓은 신규201/중복200, H07 승인에 따라 app 알림은 신규 `stored=1,duplicate=false`, 기존 event_key `stored=0,duplicate=true`를 반환한다. event_key 생략/null은 항상 신규 저장한다. practice의 기존 신규 ACK에서 duplicate 누락은 호환한다. DLQ는 승인 기준 HTTP200과 실제 저장 ACK를 확인한다.
+- 실제 확인은 아래 P1-3 실행 기록에 적는다. 남은 연결 검증은 원민 workflow→app C05 HTTP와 practice live data-api이며, 로컬 Mock/전용 DB 시험과 분리한다.
+- 넘길 결과: 원민님에게 app 실제 HTTP 저장·ACK·동시성·부분 실패 결과를 Mock/data-api 결과와 구분해 전달한다. 원민님 workflow의 app 연결 재시험과 오현님 공통 계약 반영은 별도이며, 확인 전 연결 완료로 표시하지 않는다.
+
+### P1-3 실제 기록 · 2026-11-05
+
+- 예제 구조: FastAPI route → service → repository/DB 거래 분리를 사용했다. 예제의 임의 테이블·자동 생성·메모리 저장은 쓰지 않고, 기존 `app` DDL의 `request_key`·`event_key` 고유 제약과 T-2001 시퀀스를 사용했다. 내부 인증은 직원 세션과 분리된 `X-Api-Key`다.
+- 변경 파일은 모두 `develop/jihye/` 아래다: C05 서비스·repository·practice HTTP adapter·저장 모드, 내부키 검사, AlertStoredResponse/OpenAPI, API/통합 시험, HANDOFF·SPEC·README·이 계획을 갱신했다. Alembic 변경은 없다. P0-5의 0005 DB를 사용했다.
+- 티켓은 제공 직원 확인 후 저장하고, 같은 key 경쟁은 UNIQUE 충돌 뒤 기존 소유자를 다시 확인해 동일 ID를 반환한다. 기존 inquiry가 같은 key/직원이면 연결하고 다른 직원이면403이다. 관리자 목록/수정은 세션 admin 전용이며 IT 직원만 assignee가 된다. 생략한 assignee/reply는 유지, assignee null은 해제다.
+- 알림 저장은 티켓과 별도 거래다. app의 event_key 없는 요청은 매번 새 행, 신규 key는 stored=1/duplicate=false, 이미 저장된 key는 stored=0/duplicate=true다. count는 실제 전체 누적 수이며 독립적인 성공 근거로 쓰지 않는다. practice 어댑터는 신규 응답의 duplicate 생략만 호환한다. practice는 `DATA_API_URL`/`DATA_API_KEY` 설정 대상에만 전달하며 app DB에 이중 저장하지 않는다.
+- DLQ는 request_id null을 보존해 저장하고 HTTP200 StoredResponse를 반환한다. safe_payload·reason·알림 message의 이메일/전화/일반 자격증명 패턴을 저장 전에 가린다. API 오류/예외 본문은 응답에 반사하지 않는다.
+- 로컬 practice HTTP MockTransport와 FastAPI→PostgreSQL API 통합을 포함한 `uv run python deploy/check_db.py --all`: **222 passed, 기존 경고1건, 종료0**. 확인 내용: 잘못된/맞는 내부키, 신규201·중복200, DB 같은 티켓 1건·동일 ID, 동시 티켓/알림, event_key 생략·동일키 ACK/count, inquiry 연결, 타인 소유403, 알림 실패 후 티켓 보존, DLQ HTTP200·민감값 마스킹, 관리자 IT assignee/해제·비IT 거절. check_db 출력에서 전용 Compose PostgreSQL Healthy를 확인했다.
+- 알려진 경계: practice adapter의 응답·인증은 MockTransport만 확인했고 실제 data-api를 호출하지 않았다. n8n/wonmin workflow·팀 VM·프론트 연결도 미호출이다. practice 모드 관리자 목록/수정은 확인된 data-api 읽기 계약이 없어 503으로 fail-closed 한다. 공통 API 문서의 duplicate 필드 명문화 커밋도 아직 확인하지 않았다.
+- 다음 연결: 원민님 workflow에서 app FastAPI의 `/tickets`·`/alerts`·`/dlq`에 실제 HTTP를 보내 신규/동일 event_key/동시 ACK와 부분 실패를 재시험한다. 오현님은 공통 C05 명문화 커밋을 반영한다. 이후 P1-4에서 VM/화면/C02/C04 전체 연결, 재시작·백업복원·공통 평가를 확인한다. 팀 VM 배포는 수행하지 않았다.
 
 ## P1-4 · 실연결·재시작·측정·인계
 

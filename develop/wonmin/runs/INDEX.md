@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+현재 P1-4 일부 실행: [새 ID3회·기능 실패 포함](llm-fresh-app-20261105.json), [TM-03 이관 fresh bench5회](bench-fresh-app-20261105.json), [증거 정합성·기능 실패 분리](p1-4-evidence-audit-20261105.json), [준비물/실제 기존본체차단](p1-4-readiness-20261105.json), [Python20 회귀](p1-4-regression-20261105.json), [해석·재현·인계](../Doc/P1-4-PARTIAL-RESULT.md). 고유3사례·9회차/HTTP12회 중 TM-02 3회 실패(대상만 질문), TM-03/06 각3회 통과. 별도bench는 실제모델5회·p50=0.771119/p95=0.849413초. 실제 data-api/공식키트/정상근거답변bench/팀VM은 미완료다.
+
 현재 본체 C04→C05 app 시험: [기존 본체 identity_unavailable 차단](c04-app-preflight-20261105.json), [최초 긴급 JSON형식 실패](c04-app-integration-20261105T103935Z.json), [JSON 출력 설정 보완 후13그룹](c04-app-integration-20261105T104124Z.json), [원인·게시·복구·소스해시](c04-app-final-state-20261105.json), [Node113/Python11](c04-app-regression-20261105.json), [해석·재현·후속 인계](../Doc/C04-APP-INTEGRATION-RESULT.md). 직원은 계약 fixture, triage는 실제 qwen, C04/C05/PG는 실제다. 최종실행 PG 티켓10→16/알림19→26/DLQ9→11·기본DB0→0, 기존workflow보존·프록시복구. 실제data-api/C03검색성공/기존티켓/팀VM/공식평가 통과로 쓰지 않는다.
 
 현재 P1-3 실제 app 수습: [자동 Error Trigger·HTTP·SQL 10그룹](errors-app-integration-20261105T102508Z.json), [실제 신규/중복·DLQ ACK와 throw 제거 확인](errors-app-acks-20261105.json), [관련 Node24개](errors-app-regression-20261105.json), [범위·재현·다음 업무](../Doc/ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 발화는5조건이며 자기재진입·중복재처리·ID누락은별도인증probe다. 시험 DB 티켓8→8/알림13→17/DLQ4→9, 기본DB0→0. 기존workflow보존·시험웹훅404·프록시정상복구. 아래 과거미실행/501기록과구별한다.

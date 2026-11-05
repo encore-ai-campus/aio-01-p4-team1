@@ -1,0 +1,27 @@
+{
+  "scope": "offline consistency only; not official evaluation or independent proof of live API/DB",
+  "reports": [
+    {
+      "report": "llm-fresh-app-20261105.json",
+      "sha256": "3e98b1a0ef7a5284747ae60d05c6365a5685f1a59801817b7857d98273bdb960",
+      "integrity_errors": [],
+      "functional_passed": false,
+      "attempts": 12,
+      "failed_attempts": 3,
+      "unique_round_keys": 9,
+      "actual_llm_executions": 12
+    },
+    {
+      "report": "bench-fresh-app-20261105.json",
+      "sha256": "aef168dc4736b3eb26df3bfbf926881595e9afe5a5f53c5efeee0200852437a4",
+      "integrity_errors": [],
+      "functional_passed": true,
+      "attempts": 5,
+      "failed_attempts": 0,
+      "unique_round_keys": 5,
+      "actual_llm_executions": 5
+    }
+  ],
+  "integrity_passed": true,
+  "all_functional_passed": false
+}

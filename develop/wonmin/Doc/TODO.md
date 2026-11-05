@@ -1,5 +1,7 @@
 # 원민님 · TODO
 
+현재 P1-4 일부(2026-11-05): [독립반복·bench 결과](P1-4-PARTIAL-RESULT.md). fresh 실행기·증거 대조 도구 구현, Python20개 통과. 실제 모델17회 실행(3사례3회=12호출 + TM-03 bench5호출), TM-02 기대불일치3건 보존. 실제 data-api/공식80키트 경로를 요청했으며 기존 본체는 identity_unavailable이다. P1-4 전체완료로 처리하지 않는다.
+
 현재 C04→C05(2026-11-05): [직원 fixture·실제 로컬 LLM·실제 C05 저장 13개 그룹](C04-APP-INTEGRATION-RESULT.md). 정상·긴급·중복·부분/전체 실패·동시2회 확인. 기존 본체의 실제 data-api 미설정 차단과 긴급 JSON 형식 실패를 별도 기록했다. 시험 사본만 JSON 모드를 보완했으며 실제 신원/기존 티켓·C03·팀 VM/공식 평가는 미완료다.
 
 현재 오류 수습(2026-11-05): [실제 app Error Trigger 결과](ERRORS-APP-INTEGRATION-RESULT.md). 자동 발화 5조건과 별도 메타데이터/재진입 probe 등 10개 그룹 통과. 실제 app 알림/DLQ 수습 재시험은 완료했다. 팀 본체 전체·실제 data-api·공통/공식 키트·팀 VM 검증은 남아 있다.
@@ -52,6 +54,8 @@
 - [x] P1-3 oke-errors Error Trigger·독립 알림/DLQ 로컬 구현·Mock 검증
 - [ ] P1-3 부모 errorWorkflow 실제ID 연결·자동 오류 발화·수습/복구 증거
 - [ ] P1-3 실제 app 인증/권한·DB/동시성·재시작 영속성 통합
+- [x] P1-4 fresh 반복/증거 도구 구현·app3사례 독립3회 및 이관5회 bench 기록 (기능 실패 포함)
+- [ ] TM-02 질문3항목 누락 담당자 보완 후 동일 조건3회 재시험
 - [ ] P1-4 필수 시험·공통·팀·반복·bench·실패 재시험·동시성 확인
 - [ ] P1-5 필수 VM 회귀·시연·제출 자료
 

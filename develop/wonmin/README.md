@@ -1,5 +1,7 @@
 # 원민님 · 이관·오류 수습·시험
 
+현재 P1-4 일부(2026-11-05): [독립3회·이관 bench·기대 불일치](Doc/P1-4-PARTIAL-RESULT.md). TM-02/03/06의 app 변형을 새 ID로3회씩 실행했다. TM-02는 오류/발생시점 질문 누락으로3회 모두 실패, TM-03/06은각3회 통과. 이관 경로5회 bench p50=0.771초·p95=0.849초. 실제 data-api/공식80키트 미확보로 전체평가는 대기다. 기대를 줄이지 않았고 상대 정본/기존workflow는 수정하지 않았다.
+
 현재 C04→C05 app 연결(2026-11-05): [본체 실제 HTTP·저장 시험](Doc/C04-APP-INTEGRATION-RESULT.md). 다혁bb2fa1f·실제 로컬 LLM→C04→지혜ec6a735/PG의 13개 그룹 통과. 직원은 명시적 fixture이며 원래 본체는 실제 data-api 미설정으로 identity_unavailable이다. 긴급 분류의 코드 블록 출력 실패를 보존하고 시험 사본의 JSON 출력 설정으로 재시험했다. [시험용 본체](http://127.0.0.1:15678/workflow/wmc0417676ce1ea)는 게시 중이다. 실제 신원 제공자·C03/기존 티켓·팀 VM/공식 평가는 남아 있다.
 
 현재 오류 수습(2026-11-05): [oke-errors 실제 app 저장 결과](Doc/ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 Error Trigger 5조건 포함 10개 시험 그룹·관련 Node24개 통과. 알림/DLQ 독립 저장·부분/전체 실패·복구, 중복 ACK와 재진입 차단을 확인했다. 임시 부모/probe는 게시 해제하고 프록시를 복구했다. 다음은 본체 C04→handoff→C05 전체 app 연결이다.

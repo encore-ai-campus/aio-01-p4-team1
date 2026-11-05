@@ -1,0 +1,17 @@
+{
+  "list_response": {"docs": [
+    {"name":"mock-public","access_level":"all"},
+    {"name":"mock-empty","access_level":"all"},
+    {"name":"mock-duplicate","access_level":"all"},
+    {"name":"mock-duplicate","access_level":"all"},
+    {"name":"mock-unknown"},
+    {"name":"mock-it","access_level":"it"}
+  ]},
+  "document_responses": {
+    "mock-public":{"name":"mock-public","title":"합성 공개 문서","text":"서문\r\n## 점검\r\n합성 점검 내용\r\n```\r\n## 코드 내부\r\n```\r\n"},
+    "mock-empty":{"name":"mock-empty","title":"빈 문서","text":" "},
+    "mock-duplicate":{"name":"mock-duplicate","title":"중복 문서","text":"합성 내용"},
+    "mock-unknown":{"name":"mock-unknown","title":"미확인 문서","text":"조사 전용 합성 내용"},
+    "mock-it":{"name":"mock-it","title":"합성 제한 제목","text":"## 합성 제한 절\n합성 제한 내용"}
+  }
+}

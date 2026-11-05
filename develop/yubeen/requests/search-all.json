@@ -1,0 +1,9 @@
+{
+  "request_id": "mock-search-all-001",
+  "query": "VPN 연결 점검",
+  "type": "network",
+  "access_levels": [
+    "all"
+  ],
+  "top_k": 3
+}

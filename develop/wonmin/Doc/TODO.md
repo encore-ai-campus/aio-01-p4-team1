@@ -1,5 +1,7 @@
 # 원민님 · TODO
 
+현재 C05 상태(2026-11-05): [ec6a735 실제 app 연결 15개 그룹 통과](C05-APP-INTEGRATION-RESULT.md). 티켓/알림 순차·동시8회·권한 거절, 키 없음/null, DLQ200, 부분 실패·복구 및 PG 재시작 영속성을 확인했다. 전용 app DB/직원 fixture 범위이며 아래 1902a2b/501 기록은 과거 상태다. 본체 C04 전체 연결·실제 data-api·팀 VM·공식 키트는 남아 있다.
+
 지혜1902a2b 재확인(2026-11-05): [backend 최신 배포·C05 결과](C05-LIVE-1902a2b-RESULT.md). 직원 seed/관리자 CLI 구현과 전체180개 통과는 확인했다. 실제 C05는 여전히501이므로 저장·동시성·보존·영속성은 미완료로 유지한다.
 
 최신 C05 확인(2026-11-05): [실제 저장 시험](C05-LIVE-RESULT.md). 실제 API33회·DB 전후·n8n app 경로를 확인했으나 저장 API501로 차단됐다. C05 실제 저장/동시성/티켓 보존/영속성 체크는 완료로 바꾸지 않는다. 지혜님 실제 구현 후 재시험이 필요하다.
@@ -9,7 +11,8 @@
 - [x] 로컬 Ubuntu Compose 기동·실제 errors ID 부모 연결·자동 Error Trigger 정상/부분/전체 수습 확인
 - [x] 로컬 Ollama 실제 HTTP 호출·PostgreSQL 통합 45개·원민 회귀 89개 확인
 - [x] 오류 시험 부모 정상 코드/인증 복원·게시 해제 및 일반 경로 복구
-- [ ] 지혜님 실제 C05 API→DB 저장·인증·duplicate 응답·순차/동시·영속성 확인 (현재 API 501)
+- [x] 지혜 ec6a735 실제 C05 API→DB 저장·키 인증·중복·순차/동시·영속성 확인 (로컬 Ubuntu 전용 app DB/직원 fixture, 15개 그룹)
+- [ ] 실제 data-api 직원/권한·본체 C04 전체 app 연결·팀 VM 및 Error Trigger app 저장 전체 재시험
 - [ ] 다혁님 본체의 실제 C04/업무 LLM 연결·공식 키트·LLM3회·공용 VM 회귀
 
 읽는 순서: [README](../README.md) → 이 문서 → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md). 변경 제안은 [HANDOFF](HANDOFF.md)에만 기록한다.

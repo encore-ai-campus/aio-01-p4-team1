@@ -1,0 +1,28 @@
+{
+  "workflow": {
+    "id": "wmc05livecf8ca714f5",
+    "name": "wonmin-c05-app-real",
+    "active": 1
+  },
+  "health_http_status": {
+    "15678": 200,
+    "18000": 200,
+    "18001": 200
+  },
+  "proxy_fault_plan_empty": true,
+  "canonical_n8n_mode": "practice",
+  "running_services": [
+    "wonmin-p13-lab-backend-1",
+    "wonmin-p13-lab-c05-backend-1",
+    "wonmin-p13-lab-c05-proxy-1",
+    "wonmin-p13-lab-mock-store-1",
+    "wonmin-p13-lab-n8n-1",
+    "wonmin-p13-lab-postgres-1",
+    "wonmin-p13-lab-rag-search-1"
+  ],
+  "source_hashes": {
+    "tools/c05-fault-proxy.py": "29312dd210033c43977723b53d334739662c5b66fd9cbf063dfc5dbea9127e78",
+    "tools/test-c05-app-integration.py": "7e7ac5706f3bfbd95af14958ee9bd1bd22c73ee8b09754718df7f28745e7270e",
+    "workflows/oke-handoff.json": "1037df70a0358cb0ca42f99b96c321c57d9ac8890c57e3734c28767e53c3e77e"
+  }
+}

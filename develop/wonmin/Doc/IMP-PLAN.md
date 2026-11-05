@@ -1,5 +1,7 @@
 # 원민님 · IMP-PLAN
 
+현재 실행 근거(2026-11-05): [ec6a735 C05 실제 app 연동](C05-APP-INTEGRATION-RESULT.md). 로컬 Ubuntu에서 실제 n8n·backend·PG 15개 시험 그룹을 통과했다. 전용 app DB의 직원 fixture로 수행했으며, 아래 초기 계획의 미실행 표기는 당시 기록이다. 공식 키트·실제 data-api·본체 전체/팀 VM 및 Error Trigger app 저장 전체 재시험은 별도다.
+
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 계획 순서로 진행한다. 계약 변경은 [HANDOFF](HANDOFF.md)에만 제안하고 공통 기준 그대로의 작업은 바로 시작한다.
 
 > 2026-11-04 P0 입력 파일·정적 확인 완료. 키트 반입 및 서비스 시험은 대기다. P1-1은 로컬 구현·Mock 40개 검증 완료, 실제 n8n/저장 연결은 대기다. P1-2 로컬 구현·HTTP Mock 검증도 완료했고 실제 n8n·C05 연결은 대기다. P1-3 errors 로컬 구현·Mock 검증도 완료했으며 실제 부모연결·자동발화·app통합은 대기다. P1-4 이후는 구현 예정이다. 상세 증거는 ../runs/INDEX.md 참조.

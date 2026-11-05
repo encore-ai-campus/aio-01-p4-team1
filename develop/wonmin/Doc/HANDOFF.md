@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+지혜 ec6a735 후속 연결(2026-11-05): [원민 workflow→실제 app 저장 결과](C05-APP-INTEGRATION-RESULT.md). 15개 시험 그룹 통과: 신규/중복·동시8회 티켓/알림 각1건, event_key 없음/null 매번 신규, DLQ200, 부분 실패 시 티켓 유지·독립 sink, PG 재시작 보존. 전용 DB/직원 fixture이며 실제 data-api/팀 VM은 미확인이다. 지혜님께 테스트 Settings의 internal_api_key=None 명시(환경키 상속 시 1개 실패; pytest 자식만 키 제거 후222통과)를 제안한다. 오현님께 origin/main41644de의 C05 예시에 duplicate·DLQ200 명시 후속 커밋을 요청한다(최근 해당 파일 변경 db14b79). 상대 확인/공통 반영 완료로 처리하지 않는다. 아래 501 기록은 과거 결과다.
+
 다혁 WF-12 요청 보완(2026-11-05): [원인·수정·검증·n8n 반영](WF12-ALIGNMENT-RESULT.md). 사용자 요청의 공통 cases/team.json 및 원민 사본 TM-05를 sources=[]로 갱신하고 보안 규정 색인 조건을 제거했다. 다혁 b975286 병합·pin/Git blob 출처 일치·미병합 거절 보완, Node97/Python3 및 다혁 adapter12/retrieval9 통과. 로컬 n8n은 N22만 갱신하고 Credential/모델/설정 보존을 확인했다. 오현님께 docs/EVALUATION-GUIDE.md WF-12의 이전 근거 문구 정리를 인계한다. 전체 WF-12 HTTP·실제 ACK는 data-api 연결 후 확인이 필요하다.
 
 지혜 후속1902a2b 확인(2026-11-05): [최신 배포에서 C05 재시험](C05-LIVE-1902a2b-RESULT.md). 새 직원 seed/관리자 CLI를 병합·backend 재빌드했고 전체180개/원민89개가 통과했다. 실제 C05는33회 중401×3/501×30, DB0→0으로 계속 차단된다. 지혜 README에도 키 검증/저장 미구현으로 기록돼 있다. 실제 C05 구현 커밋·브랜치 확인 및 해당 구현 반영이 필요하다.

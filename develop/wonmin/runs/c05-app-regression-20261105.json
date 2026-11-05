@@ -1,0 +1,39 @@
+{
+  "scope": "own Node regression and Python deployment/fault-proxy HTTP tests; not official flow.py",
+  "commands": [
+    "node --test",
+    "python3 -m unittest discover -s develop/wonmin/tests -p test_*.py -v"
+  ],
+  "results": {
+    "node": {
+      "passed": 97,
+      "failed": 0,
+      "output_tail": [
+        "ℹ tests 97",
+        "ℹ suites 0",
+        "ℹ pass 97",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 6439.75525"
+      ],
+      "stdout_sha256": "8fb29bade3af54ae68f3d15b856036c83eefd9eddc86070bf1cc1aa20c0af626"
+    },
+    "python": {
+      "passed": 8,
+      "failed": 0,
+      "output_tail": [
+        "test_pinned_source_is_not_replaced_by_a_dirty_working_file (test_prepare_team_deploy.PrepareTeamDeployTests.test_pinned_source_is_not_replaced_by_a_dirty_working_file) ... ok",
+        "test_unmerged_dahyeok_pin_is_rejected_before_creating_import_files (test_prepare_team_deploy.PrepareTeamDeployTests.test_unmerged_dahyeok_pin_is_rejected_before_creating_import_files) ... ok",
+        "test_updating_the_pin_materializes_the_new_committed_behavior (test_prepare_team_deploy.PrepareTeamDeployTests.test_updating_the_pin_materializes_the_new_committed_behavior) ... ok",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 8 tests in 3.065s",
+        "",
+        "OK"
+      ],
+      "stdout_sha256": "5e6eb033e6ec8328269d45ef7aa4bbaea117838ba433a66853238ca632d39c1a"
+    }
+  }
+}

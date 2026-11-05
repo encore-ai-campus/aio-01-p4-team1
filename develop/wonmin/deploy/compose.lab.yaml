@@ -16,7 +16,7 @@ services:
       retries: 30
   backend:
     build:
-      context: ../.runtime/peer-jihye-4fdc313
+      context: ../.runtime/peer-jihye-1902a2b
       dockerfile: ../../deploy/Backend.lab.Dockerfile
     environment:
       DATABASE_URL: postgresql+psycopg://wonmin_lab:${LAB_DB_PASSWORD}@postgres:5432/wonmin_integration

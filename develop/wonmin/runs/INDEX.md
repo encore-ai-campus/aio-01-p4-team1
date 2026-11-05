@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+지혜1902a2b 후속 실측: [전체 backend180](jihye-1902a2b-full-20261105T055426Z.json), [실제 C05 재시험](c05-live-20261105T055450Z.json), [판정/다음 연결](../Doc/C05-LIVE-1902a2b-RESULT.md). 최신 backend를 실제 교체하고 새CLI/bootstrap 파일까지 해시 대조했다. 전체180 및 원민89 통과와 실제 C05저장 미구현(401×3/501×30·DB0→0)을 구분한다.
+
 최신 C05 실제 저장 검증: [c05-live-20261105T053604Z.json](c05-live-20261105T053604Z.json), [해석·지혜님 후속 요청](../Doc/C05-LIVE-RESULT.md). 실제 backend33회(401×3/501×30), 시험 접두사 DB0→0, 별도 n8n app 응답 tickets_down 및 시험 workflow 게시 해제. 저장 미구현으로 차단됐으며 동시8건 호출 자체를 중복 처리 성공으로 표시하지 않는다. 유빈 최신3커밋 병합 후 원민89/유빈172 회귀 통과.
 
 현재 팀 소스 재배포(2026-11-05): [배포/PG48](team-redeploy-20261105T045828Z.json), [최종 HTTP·RAG 도달·index 실행35](team-http-check-20261105T051103Z.json), [브라우저 확인·제약·다음 연결](../Doc/TEAM-REDEPLOY-RESULT.md). 팀 workflow5개 UI 표시,4개 게시/index 수동 Mock 성공. 직원 API/실제 저장/임베딩은 미연결로 업무 통합 성공과 구분한다.

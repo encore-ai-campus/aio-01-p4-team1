@@ -37,7 +37,10 @@ def main():
     headers = {'X-Api-Key': values['INTERNAL_API_KEY']}
     report = {'scope': 'real Jihye HTTP backend + actual PostgreSQL, not the practice Mock',
               'stamp': stamp, 'test_prefix': prefix, 'groups': {}, 'storage_verified': False}
-    relative = ['app/api/deps.py', 'app/api/routes/tickets.py', 'app/api/routes/alerts.py', 'app/schemas/alerts.py']
+    relative = ['app/api/deps.py', 'app/api/routes/tickets.py', 'app/api/routes/alerts.py', 'app/schemas/alerts.py',
+                'app/cli.py', 'app/services/bootstrap.py']
+    report['backend_source_commit'] = json.loads(lab.compose('exec', '-T', 'backend', 'uv', 'run', 'python', '-c',
+        'import json;from pathlib import Path;print(Path(".deployment-source.json").read_text())'))['commit']
     script = 'import hashlib,json;from pathlib import Path;print(json.dumps({p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in ' + repr(relative) + '}))'
     report['deployed_source_hashes'] = json.loads(lab.compose('exec', '-T', 'backend', 'uv', 'run', 'python', '-c', script))
     assert all(hashlib.sha256((ROOT / 'develop/jihye' / p).read_bytes()).hexdigest() == h

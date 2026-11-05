@@ -11,7 +11,7 @@ import uuid
 
 OWN = Path(__file__).resolve().parents[1]
 ROOT = OWN.parents[1]
-SOURCES = {'jihye': '4fdc3136c1cf643a094bef4bbb9fc872be444571',
+SOURCES = {'jihye': '1902a2b14d6d3a21f80519ffe4a91565b26abb4c',
            'yubeen': '95ef45f5914b5f2e35e7bd8d94b4f94281d5df49',
            'dahyeok': '859e3afb10a13baed6f9a0ea0477c4470577c8db'}
 

@@ -16,7 +16,7 @@ services:
       retries: 30
   backend:
     build:
-      context: ../.runtime/peer-jihye
+      context: ../.runtime/peer-jihye-4fdc313
       dockerfile: ../../deploy/Backend.lab.Dockerfile
     environment:
       DATABASE_URL: postgresql+psycopg://wonmin_lab:${LAB_DB_PASSWORD}@postgres:5432/wonmin_integration
@@ -38,7 +38,10 @@ services:
     ports:
       - 127.0.0.1:18800:8800
   n8n:
-    image: n8nio/n8n@sha256:8602f5dfacbe2c931eeafd010de0e68182310e9f309921e780ab69182e92b3ae
+    image: wonmin-n8n-lab:2.46.6-python
+    build:
+      context: .
+      dockerfile: N8n.lab.Dockerfile
     environment:
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?required}
       N8N_BLOCK_ENV_ACCESS_IN_NODE: 'false'
@@ -46,11 +49,14 @@ services:
       N8N_DIAGNOSTICS_ENABLED: 'false'
       N8N_PERSONALIZATION_ENABLED: 'false'
       N8N_VERSION_NOTIFICATIONS_ENABLED: 'false'
+      NODES_EXCLUDE: '["n8n-nodes-base.localFileTrigger"]'
       SERVICE_MODE: practice
       WONMIN_PRACTICE_STORE_URL: http://mock-store:8800
       WONMIN_APP_STORE_URL: http://backend:8000
       LOCAL_LLM_BASE_URL: http://host.orb.internal:11434
       LOCAL_LLM_MODEL: qwen2.5-coder:latest
+      DATA_API_URL: ${LAB_DATA_API_URL:-http://data-api:8800}
+      SEARCH_SERVICE_URL: http://rag-search:8765/webhook/oke-search
     ports:
       - 127.0.0.1:15678:5678
     extra_hosts:
@@ -58,9 +64,19 @@ services:
     volumes:
       - n8n_data:/home/node/.n8n
       - ../.runtime/n8n-import:/fixtures/private:ro
+      - ../.runtime/peer-yubeen-95ef45f:/opt/oke-rag:ro
     depends_on:
       - mock-store
       - backend
+      - rag-search
+  rag-search:
+    image: wonmin-rag-lab:95ef45f
+    build:
+      context: ../.runtime/peer-yubeen-95ef45f
+      dockerfile: ../../deploy/Rag.lab.Dockerfile
+    environment:
+      SEARCH_TEAM_KEY: ${N8N_WEBHOOK_KEY:?required}
+      SEARCH_MODE: live
 volumes:
   postgres_data:
   n8n_data:

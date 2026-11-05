@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+현재 팀 소스 재배포(2026-11-05): [배포/PG48](team-redeploy-20261105T045828Z.json), [최종 HTTP·RAG 도달·index 실행35](team-http-check-20261105T051103Z.json), [브라우저 확인·제약·다음 연결](../Doc/TEAM-REDEPLOY-RESULT.md). 팀 workflow5개 UI 표시,4개 게시/index 수동 Mock 성공. 직원 API/실제 저장/임베딩은 미연결로 업무 통합 성공과 구분한다.
+
 최종 Ubuntu 실환경(2026-11-05): [실제 자동 오류 5조건](ubuntu-errors-matrix.json), [최종 복구·Ollama·PG45](ubuntu-final-restoration.json), [해석·재현·다음 연결](../Doc/UBUNTU-INTEGRATION-RESULT.md). 전용 Mock 4조건의 자동 Error Trigger 수습을 확인했고 실제 backend 조건은 501로 저장 실패다. 매트릭스 종료 시 준비 지연으로 복구 확인이 중단된 사실과 이후 별도 복구 성공을 구분했다. 일반 handoff와 errors 연결 유지, 오류 시험 부모 비활성/404, 로컬 모델 HTTP200, 원민 회귀89 통과. 아래 미실행 표기는 이전 시점 결과다.
 
 지혜님 질의 ACK 검토: [alert-no-key-practice-review.json](alert-no-key-practice-review.json), [회신 기준](../Doc/ALERT-NO-KEY-REVIEW.md). key 없음/null·keyed 순차/동시·practice 같은티켓2회·오류부모ID 없음2회·레거시ACK 소비자행렬8그룹 확인. 실제data-api/PG/n8n은 미실행이다.

@@ -31,9 +31,10 @@ def metadata(kind, ids):
 const {DatabaseSync}=require('node:sqlite');
 const db=new DatabaseSync('/home/node/.n8n/database.sqlite',{readOnly:true});
 const ids=JSON.parse(process.argv[1]),kind=process.argv[2];
-if(kind==='workflows') console.log(JSON.stringify(db.prepare('SELECT id,name,active,settings,activeVersionId FROM workflow_entity WHERE id IN (?,?,?,?)').all(...Object.values(ids))));
+const marks=Object.values(ids).map(()=>'?').join(',');
+if(kind==='workflows') console.log(JSON.stringify(db.prepare(`SELECT id,name,active,settings,activeVersionId FROM workflow_entity WHERE id IN (${marks})`).all(...Object.values(ids))));
 else {
- const rows=db.prepare('SELECT e.id,e.workflowId,e.status,e.mode,e.startedAt,e.stoppedAt,d.data FROM execution_entity e LEFT JOIN execution_data d ON d.executionId=e.id WHERE e.workflowId IN (?,?,?,?) ORDER BY e.id').all(...Object.values(ids));
+ const rows=db.prepare(`SELECT e.id,e.workflowId,e.status,e.mode,e.startedAt,e.stoppedAt,d.data FROM execution_entity e LEFT JOIN execution_data d ON d.executionId=e.id WHERE e.workflowId IN (${marks}) ORDER BY e.id`).all(...Object.values(ids));
  let parse;try{parse=require('/usr/local/lib/node_modules/n8n/node_modules/flatted').parse}catch{}
  console.log(JSON.stringify(rows.map(r=>{
    let data={};try{data=parse?parse(r.data):JSON.parse(r.data)}catch{}

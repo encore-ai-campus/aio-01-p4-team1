@@ -98,6 +98,36 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 - 유빈님: C03의 X-Team-Key Credential, 200 빈 근거·503 상태와 본문을 확인 부탁드린다. 원민님: C04의 X-Team-Key Credential, 신규/중복·alerts_down·tickets_down 응답을 확인 부탁드린다. 동일 request_id의 실제 저장 멱등은 C04/DB와 함께 별도 시험이 필요하다.
 - 합성 HTTP 어댑터 검사 12/12와 최신 번호판의 로컬 Mock 사례 56/56(13+14+9+20)을 확인했다. 이 수치는 실제 HTTP·n8n 실행이나 공식 `flow.py` 결과가 아니다. 사람이 Credential을 연결하고 프로젝트 n8n에서 한 버전만 게시·시험한 실행 ID/마스킹 결과를 받아야 실제 연결 완료로 기록한다. 실제 Agent 답변 품질 임계값도 미확정이라 자동 답변 검증 완료로 표시하지 않는다.
 
+## P1-5 로컬 n8n 실제 실행과 버그 수정 · 2026-11-05
+
+- 실행 위치: 개인 로컬 n8n 2.42.6(`SERVICE_MODE=practice`, `DATA_API_URL=http://data-api:8800`, `N8N_BLOCK_ENV_ACCESS_IN_NODE=false`), 제공 data-api, triage Agent는 로컬 OpenAI Credential(gpt-4.1-mini). 팀 VM·프로젝트 n8n 결과가 아니다. 로컬 Header Auth 키는 n8n Credential에만 두고 저장소에 넣지 않았다. `oke-search`·`oke-handoff`는 아직 없어 C03/C04는 404였다.
+- `oke-support-12.json` 실행에서 찾은 버그를 `oke-support-13.json`에 수정했다(12는 원본 보존):
+  1. N03 Capture employee: 제공 data-api `/employees`는 `{employees:[{name,dept}]}`인데 `{items:[...]}`만 받아 정상 직원도 `직원 정보를 확인하지 못해`로 끝났다. 두 형식을 모두 받도록 고쳤다.
+  2. N01 Support webhook: `webhookId`가 없어 CLI import 시 `/webhook/oke-support`가 아닌 `{workflowId}/n01 support webhook/oke-support`로 등록됐다. 고정 webhookId를 넣었다. 편집기 import는 자동 부여되어 영향이 없었다.
+  3. N06 Triage Agent 프롬프트: 실제 LLM이 "VPN이 계속 끊겨요. 어떻게 해야 하나요?"를 `needs_action=true`로 바로 이관하고, 증상이 적힌 질문에도 보완 질문을 했다. needs_action은 IT팀 조치 요청에만, missing은 대상조차 모르는 질문에만 쓰도록 Mock 기준과 맞췄다.
+  4. N06 Parse triage: LLM이 `처리 상태`·`증상` 등 정해지지 않은 missing을 내 T-ID 상태 문의가 보완 질문으로 갔다. 허용 3개(`접속 대상`·`오류 메시지`·`발생 시점`)만 남기고 ticket_id가 있으면 missing을 비운다.
+  5. N07 Route triage: 정해지지 않은 missing 문구가 "오류을 알려주세요"로 조사가 틀렸다. `'값' 정보를 알려주세요.`로 바꿨다.
+- 로컬 검사(12·13 동일): `http_adapter_check.py` 12/12, `retrieval_check.py` failures 14/14·replay 13/13·review-fixes 9/9·verification 20/20, ticket-lookup 6/6. 검사기는 `--node-container`로 n8n 컨테이너의 Node.js를 사용했다.
+- 단계별 사례 파일 적용 범위: 이전 단계용 파일은 해당 단계 번호판의 기대값이며 12·13에는 적용하지 않는다. 기대값은 바꾸지 않았다.
+  - `support-input`(P0-1)은 `flow.py test-local`로 `oke-support.json` 6/6. 12·13에서는 P0-1의 `not_implemented` 기대 때문에 4/6이다.
+  - `support-triage`·`support-handoff`(P0-2·P0-3)는 `flow.py` 형식이라 `retrieval_check.py`에서 TypeError가 난다. `flow.py test-local`로 02 triage 9/9, 03 handoff 17/17이다.
+  - `support-retrieval`·`support-search`(P1-1)는 07에서 21/21·7/7이다. 08부터 writer·verifier가 추가되어 근거 found가 `자동 답변`으로 가므로 P1-1의 `low_confidence` 이관 기대 3건(R03·R21·S04)이 맞지 않는다. 같은 경로는 `support-verification`(P12-01·02)·`support-review-fixes`가 현재 기대로 검사한다.
+  - 12·13의 적용 검사는 위 adapter와 failures·replay·review-fixes·verification·ticket-lookup이며 모두 통과했다.
+- 13 실제 실행(execution 1553~1577, 25건 모두 success, `requests/*.json`에 `-l12`를 붙인 ID):
+  - 인증: 키 없음·틀린 키 403.
+  - 입력: 빈 질문·501자·미등록 직원 HTTP400 `question_required`/`too_long`/`unknown_user`.
+  - 주입: `차단`, Agent 0회. 타인 T-1002: 티켓 조회 forbidden, `권한 없음`, 상태 미노출.
+  - 보완: clarify-1·2·context `보완 질문`, clarify-3(attempt 3) `담당자 이관`.
+  - 나머지 16건: triage 후 C03 404 → search_unavailable → C04 404 → `ticket:null`과 "접수 결과를 확인할 수 없습니다" 응답. 접수 완료로 표시하지 않았다. 본인 T-1002 조회 ok 3건은 `masked:2`.
+- 미확인: C03 실제 근거, writer·verifier 실제 실행(검색 통과 0건이라 미실행), 티켓 생성·중복(WF-09), LLM 장애(`llm-down`은 장애 주입 없이 정상 호출됨), 긴급 알림, 답변 품질 임계값. triage는 LLM이라 반복 실행 결과가 달라질 수 있어 3회 반복 측정이 남았다.
+- 다음: 유빈님 `oke-search.json`, 원민님 `oke-handoff.json`을 로컬 n8n에 import해 13으로 같은 요청을 재실행한 뒤 Mock 제거판(14)을 만든다. 지혜님께는 제공 data-api `/employees`가 `employees` 키라는 점을 공유하고, FastAPI 쪽 형식이 `items`로 유지되는지 확인을 부탁드린다.
+
+## 워크플로우 설계서 공통 반영 요청 · 2026-11-05
+
+- 담당 원고: `Doc/WORKFLOW-DESIGN-DRAFT.md` 1~8절과 `Doc/SUBMISSION-NOTES.md`. 오현님이 소유한 `docs/WORKFLOW-DESIGN.md`의 기존 “구현 예정” 설명을 실제 번호판·노드·로컬 검증 상태와 대조해 반영해 주시기 바란다.
+- 이번 요청은 문서 취합이며 C02/C03/C04 계약 변경 요청이 아니다. `12`는 Git 반영본, `13`은 로컬 미커밋 수정본이므로 최종 게시 버전 확인 뒤 상태·실행 ID를 갱신해야 한다. 유빈님·원민님·지혜님 담당 절은 각자의 실제 실행 근거가 필요하다.
+- 영향: 설계서의 노드 수·연결선·Mock/실제 경계와 제출용 `oke-support.json` 버전 표시. 공식 평가 통과나 팀 VM 배포 완료로 표시하지 않는다.
+
 ## DH-CHG-05 · 단계별 워크플로우 JSON 보존과 게시 대상
 
 - 연결: C09. 2026-11-04 사용자 요청에 따라 P0-1 원본은 `workflows/oke-support.json`으로 복원하고 P0-2는 `workflows/oke-support-02.json`에 보존했다. 원격의 P0-2 수정 이력은 강제 삭제하지 않고 새 커밋에서 파일 배치를 바로잡는다.

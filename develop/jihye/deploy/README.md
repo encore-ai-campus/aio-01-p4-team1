@@ -75,6 +75,65 @@ SERVICE_MODE 하나가 상대 n8n Credential/URL까지 자동 변경한다고 �
 
 ## VM 인계 · 오현님 수행
 
+### P0-6 직원 seed·첫 관리자 인계
+
+CLI는 구현됐지만 VM에서는 미실행이다. 먼저 확인된 원본 응답이 `{employees:[{name,dept,...}]}`와 맞는지 대조한다. 다른 구조는 추측 변환하지 않는다. `DATA_API_URL`, `DATA_API_KEY`와 확인된 인증 헤더 이름을 명령 전용 `DATA_API_EMPLOYEES_AUTH_HEADER`에 주입한다. 이는 새 공통 인증 계약이 아니라 확인 전 임의 헤더 전송을 막는 구현 설정이다. 프록시 인증 등 현재 어댑터로 표현할 수 없는 계약이면 검토 후 수정한다.
+
+VM 대상과 비밀 주입이 준비된 뒤 `develop/jihye`에서 아래 순서로 수행한다. DB URL은 마이그레이션과 구분한 적절한 업무 DML 계정으로 주입하고 원문을 출력하지 않는다. DB revision `0004`를 먼저 확인한다.
+
+```bash
+uv run python -m app.cli seed-employees
+uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> --login-id <선택한 ID>
+```
+
+첫 명령 뒤 이름/부서6명을 확인하고 두 번째 명령을 실행한다. 두 번째는 `BOOTSTRAP_ADMIN_PASSWORD`와 `SESSION_SECRET`을 실행 환경에 주입해야 한다. 암호는 명령 인자로 받지 않으며 성공 출력은 ok/created뿐이다. 같은 대상 재실행은 created=0이며 기존 해시/역할을 보존한다. 다른 계정이 존재하는 환경의 복구 도구로 쓰지 않는다. 완료 뒤 일회성 BOOTSTRAP_ADMIN_PASSWORD를 제거한다. 로그인/첫 변경과 나머지5명 발급은 P1-1에서 연결한다. 테스트용 합성 계정을 VM에 복사하지 않는다.
+
+### P0-5 RAG 실통합 인계 · 적용 전 준비
+
+사용자가 전달한 팀장 로드맵은 팀 VM에서 RAG DB와 Python 서비스를 연결하는 방향이다. **현재 실제 확인은 로컬 DB `0004 (head)`까지이며 VM 적용은 미실행**이다. 아래는 VM 적용용 절차로, 실행 결과가 아니다. P0-6 seed·관리자 생성과 P0-7 전체 backend/frontend 배포 완료를 뜻하지 않는다.
+
+인계 대상은 본인 폴더의 잠금 의존성, `migrations/versions/0001`~`0004`, `app/db/models/`, 마이그레이션 환경 및 실제 검사 기록이다. 로컬 검증은 PostgreSQL16.15/vector0.8.6·전체158개 통과·기존 경고1건이다. 로컬 DB 볼륨이나 private `deploy/.env`를 VM에 복사하지 않는다. 적용할 커밋은 실제 commit/push 후 기록하고 VM checkout과 대조한다.
+
+#### 적용 전 오현님과 확인할 사항
+
+- 사용할 VM DB·현재 revision·기존 데이터/역할 유무, 적용 담당과 시점. 기존 DB이면 백업·복구 경로를 먼저 확인한다. 로컬 Compose 검증 도구는 VM 공용 DB 관리 도구가 아니므로 그대로 실행 대상으로 바꾸지 않는다.
+- 마이그레이션 실행 계정의 확장·스키마·역할 생성/GRANT 권한. `0001`은 빈 대상에 확장과 스키마를 생성하므로 이미 객체가 있는 DB에 무조건 적용하거나 `stamp`로 적용했다고 처리하지 않는다.
+- 색인·검색 LOGIN 계정 생성 담당, 각 NOLOGIN 역할 연결과 비밀 주입 방법. 기존 동일 이름 역할에 과도한 권한이 있는지도 확인한다. `0004`는 기존 역할을 초기화하거나 암호를 설정하지 않는다.
+- VM Python 실행 위치와 DB 접근 경로, Python 검색 서비스의 내부 주소 및 n8n 접근 경로. DB 포트를 외부 공개한다고 가정하지 않는다.
+- 실제 원본 문서의 최종 목록·권한과 OpenAI 사용 승인. 유빈님 최신 회신은 8개이며 이전16개와 범위 차이는 오현님 확인 전 임의 확정하지 않는다.
+
+#### DB 적용 순서 · VM에서 담당자가 수행
+
+작업 위치는 체크아웃한 저장소의 `develop/jihye`다. 마이그레이션용 `DATABASE_URL`은 비밀 관리에서 환경에 주입하고 출력하지 않는다. 이 URL은 SQLAlchemy용 `postgresql+psycopg` 드라이버를 사용한다.
+
+```bash
+uv sync --dev --locked
+uv run alembic -c migrations/alembic.ini history
+uv run alembic -c migrations/alembic.ini current
+uv run alembic -c migrations/alembic.ini upgrade 0004
+uv run alembic -c migrations/alembic.ini current
+```
+
+적용 후 기대 revision은 `0004`다. vector 확장, app의 업무 테이블7개와 rag의 documents/chunks, `vector(3072)`, all/it CHECK·0이상 chunk_no·고유/FK 제약과 인덱스를 카탈로그에서 확인한다. 동일 upgrade 재실행의 무변경도 확인한다. 기존 DB에 시험 데이터를 넣거나 downgrade를 수행하는 대신 합의된 격리 시험 범위를 사용한다. 실패 시 마지막 성공 revision과 비밀을 제거한 원인을 기록하고 재적용 방법을 판단한다.
+
+#### 접속과 설정 인계
+
+| 실행 주체 | 접속 대상과 필요한 설정 | 권한 |
+| --- | --- | --- |
+| Python 색인 | 별도 실행 환경의 `DATABASE_URL`, `OPENAI_API_KEY` | 로그인 계정에 `oke_rag_index` 연결: rag DML·필요 시퀀스 |
+| Python 검색 HTTP 서비스 | 별도 실행 환경의 `DATABASE_URL`, `OPENAI_API_KEY`, `SEARCH_TEAM_KEY`, `SEARCH_MODE`, `SEARCH_HOST`, `SEARCH_PORT` | 로그인 계정에 `oke_rag_search` 연결: rag SELECT |
+| n8n oke-search | `SEARCH_SERVICE_URL`과 서비스 인증 설정 | Python 검색 HTTP 호출. DB 직접 접속 없음 |
+
+위 변수 이름과 실행 구조는 사용자가 전달한 유빈님 회신 기준이며 실제 VM 설정은 미확인이다. psycopg 직접 접속의 URL 형식은 SQLAlchemy용 URL과 다를 수 있으므로 각 프로그램이 요구하는 형식으로 주입한다. 색인/검색은 각각 다른 계정 값을 같은 `DATABASE_URL` 이름으로 사용할 수 있다. 암호·키·전체 URL을 채팅·보고서에 기재하지 않고 승인된 비밀 전달 경로를 사용한다.
+
+#### 유빈님과 확인할 순서와 남길 결과
+
+1. 실제 색인·검색 로그인 계정으로 접속하고, 색인 DML·시퀀스 허용 및 검색 쓰기/DDL 거절을 확인한다. 로컬 NOLOGIN 역할 ACL 시험과 구분한다.
+2. 합성 문서의 저장·3072차원·metadata 보존과 all/all+it 사전 필터 검색을 확인한다. 테스트 데이터 정리 범위를 정하고 기존 문서를 건드리지 않는다.
+3. 승인된 원본을 유빈님 프로그램으로 청킹·임베딩·적재한다. 문서 수·누락/거절·실패를 실제 성공 수와 분리한다.
+4. Python 검색 서비스→n8n C03→본체 연결 및 권한별 HTTP 시험을 담당자들과 수행한다. C03 경로·직원 권한 전달은 유빈님/다혁님/오현님 확정 결과를 따른다.
+5. 적용 커밋, 실행 환경·담당·시각, revision/확장 버전, 역할별 허용/거절, 합성/실제 원본 시험, 실패와 미실행을 개인 IMP-PLAN/HANDOFF에 기록한다. 팀 VM 운영 결과와 공통 설계서 반영은 오현님이 관리한다.
+
 지혜님은 검증한 이미지/의존성 버전·실행 위치·필수 변수 이름·health 경로·schema head·seed/최초 관리자/재실행 조건·SERVICE_MODE·프록시 조건·백업/복원 확인 자료를 전달한다. 오현님은 실제 비밀 등록→DB 준비→마이그레이션→bootstrap 필요 여부 판단→backend/frontend→준비 상태→회귀 순서로 진행한다.
 
 기존 DB 변경 전 백업, 복원 연습은 별도 DB로 계획한다. 재색인은 유빈님 oke-index로 하며 업무 DB 복구와 구별한다. 마이그레이션 실패 시 바로 volume을 삭제하지 않고 head/로그·백업 기준으로 복구 또는 새 수정 revision을 판단한다.

@@ -2,10 +2,12 @@ import secrets
 from datetime import datetime, timezone
 
 import pytest
+from fastapi import Request
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from app.api.deps import get_current_user
+from app.core.config import Settings
 from app.main import create_app
 from app.schemas.auth import ChangePasswordRequest, LoginRequest, UserSummary
 from app.schemas.support import AskRequest
@@ -49,16 +51,17 @@ def test_openapi_matches_current_contract():
 
 
 def test_unimplemented_endpoints_do_not_claim_success():
-    with TestClient(create_app()) as client:
+    with TestClient(create_app(Settings(_env_file=None, database_url=None,
+                                       session_secret=secrets.token_urlsafe(24)))) as client:
         response = client.post("/api/auth/login", json={
             "login_id": "fixture", "password": secrets.token_urlsafe(20),
         })
-        assert response.status_code == 501
-        assert response.json()["error"]["code"] == "not_implemented"
+        assert response.status_code == 503
+        assert response.json()["error"]["code"] == "service_unavailable"
         assert "set-cookie" not in response.headers
         assert client.get("/api/auth/me").status_code == 401
         client.cookies.set("oke_session", secrets.token_urlsafe(20))
-        assert client.get("/api/auth/me").status_code == 501
+        assert client.get("/api/auth/me").status_code == 503
         assert client.post("/tickets", json={}).status_code == 401
         assert client.post("/tickets", json={}, headers={"X-Api-Key": secrets.token_urlsafe(20)}).status_code == 501
 
@@ -124,7 +127,11 @@ def test_admin_guard_and_password_change_boundary(contract_harness):
 def test_all_route_signatures_with_fixture_services(contract_harness):
     application, client, backend, user = contract_harness
     admin = UserSummary(id=2, name="김민지", dept="IT팀", role="admin", must_change_password=False)
-    application.dependency_overrides[get_current_user] = lambda: admin
+    def authenticated_admin(request: Request):
+        request.state.auth_session_id = 27
+        return admin
+
+    application.dependency_overrides[get_current_user] = authenticated_admin
     now = datetime.now(timezone.utc)
     password = secrets.token_urlsafe(20) + "aA1!"
     account = {**admin.model_dump(), "employee_id": 5, "login_id": "fixture", "is_active": True,
@@ -133,7 +140,7 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
               "title": "합성 문의", "category": "network", "priority": "normal", "status": "open",
               "assignee": None, "reply": None, "created_at": now, "updated_at": now}
     backend.results.update(
-        login={"user": account}, logout={"ok": True},
+        login={"user": account, "_token": "fixture-only-token"}, logout={"ok": True},
         change_password={"ok": True, "must_change_password": False},
         employees={"items": [{"id": 5, "name": admin.name, "dept": admin.dept, "user_id": 2}]},
         users={"items": [account]}, create_user=account, update_user=account,
@@ -166,11 +173,13 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
                             "reason": "fixture", "safe_payload": {}}, 200),
     ]
     for method, path, body, expected in cases:
-        response = client.request(method, path, json=body)
+        response = client.request(method, path, json=body) if body is not None else client.request(method, path)
         assert response.status_code == expected, (path, response.text)
         for secret in [password, account["password_hash"], account["token_hash"]]:
             assert secret not in response.text
-        assert "set-cookie" not in response.headers  # fixture does not implement sessions
+        if path == "/api/auth/login":
+            assert "oke_session=" in response.headers.get("set-cookie", "")
+            assert "fixture-only-token" not in response.text
 
 
 def test_password_validation_errors_are_safe(contract_harness):

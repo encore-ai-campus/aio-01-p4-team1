@@ -185,11 +185,13 @@
 
 ## P1-1 · 세션·관리자 발급·권한
 
-- [ ] 연결 SPEC: BE-01, C01.
+- [x] 연결 SPEC: BE-01, C01.
 - 생성/수정 예정: `app/services/auth.py`, `accounts.py`, `app/repositories/users.py`, `sessions.py`, auth/users 라우터·deps·security; `tests/test_auth_permissions.py`, `tests/integration/test_accounts.py`.
 - 작업: 로그인/로그아웃/me/암호 변경과 관리자 생성/비활성화/초기화를 연결한다. 모든 보호 경로에 활성 계정·역할 검사를 적용한다. SPEC 현재 기준의 세션·첫 변경·회수·비밀번호·관리자 보호를 구현한다. HANDOFF에 남은 추가 정책과 DTO 세부만 초안으로 분리한다. 기본401/403·응답 비밀 제거는 바로 구현한다.
-- 확인 예정: `uv run pytest tests/test_auth_permissions.py tests/integration/test_accounts.py -q`. 직원403·미로그인401·로그아웃 토큰 재사용401·비IT admin 불가·제공직원만 발급·계정 중복을 확인한다. 확정된 정책의 첫 변경/만료/초기화/비활성화 경계도 확인한다. 첫 관리자 변경 후 나머지5명 발급해 admin2/employee4인지 확인한다.
-- 넘길 결과: 수언님에게 실제 로그인/첫 변경/계정 발급 응답·쿠키 조건·화면 오류. 오현님에게 미반영 정책과 실제 검증 범위.
+- 구현: `app/services/auth.py`, `accounts.py`, users/sessions repositories 및 DB backend를 연결했다. 로그인은 활성 계정만 허용하고 일반화된401을 반환한다. 난수 세션 원문은 HttpOnly·SameSite=Lax·Path=/·8시간 쿠키로만 전달하고 HMAC-SHA256 해시만 `app.sessions`에 저장한다. 요청마다 만료·회수·활성 계정을 확인한다. 로그아웃·비밀번호 변경·관리자 초기화·비활성화는 해당 사용자의 세션을 회수한다. `SESSION_SECRET`/DB 미설정은 안전하게503이다.
+- 비밀번호·권한: Argon2id, 12자·문자 3종·본인 이름/login_id 포함 금지를 적용했다. 첫 로그인 사용자는 `me`/암호 변경/로그아웃 외 보호 작업을403으로 막는다. IT팀 부서와 role을 함께 검사하고 role은 계정 발급 시 부서에서 결정한다. 직원 목록·계정 응답에는 해시·비밀번호·세션 토큰을 포함하지 않는다. 본인/최후 활성 IT 관리자 비활성화는409로 거절한다. 계정 동시 변경은 bootstrap과 같은 advisory lock으로 직렬화한다.
+- 실제 확인: `uv run python deploy/check_db.py --all` 종료0, **197 passed, 1 warning**. 기존 Starlette/httpx 폐기 예정 경고1건. 새 P1-1 검사에는 쿠키 속성·토큰 응답 미노출·첫 변경 제한·비IT admin 거절 단위 확인과 격리 PostgreSQL HTTP 시험이 포함된다. 실 DB에서 로그인, 관리자 계정목록·발급, 직원403, 임시 암호 변경과 기존 쿠키 무효화, 로그아웃 후 재사용401, 세션 해시 저장을 확인했다. 합성 데이터와 시험 거래를 정리해 테스트 뒤 업무 행이 남지 않도록 했다.
+- 미확인/다음: 실제 VM 로그인·SESSION_SECRET 주입·실제 직원 seed 및 첫 관리자 자격으로 화면 시험은 미실행이다. P0-6 bootstrap으로 실제 직원6명과 첫 admin이 VM에 준비된 뒤 로그인/첫 변경 및 나머지5명 발급을 수언님 화면과 대조한다. 수언님에게 쿠키·로그인·계정 발급 응답을 전달하고, 오현님에게 로컬 DB 검증과 VM 미검증 범위를 전달한다. C05 저장 API·문의/티켓/알림 업무 저장은 P1-3 이후 범위다.
 
 ## P1-2 · 문의 선저장·support 어댑터·본인 조회
 

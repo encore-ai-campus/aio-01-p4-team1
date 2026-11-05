@@ -10,8 +10,9 @@
 | P0-2 | 웹14 operation(13경로)·내부3 API 모델·라우터·OpenAPI·시험 전용 Mock 구현 |
 | P0-2 보완 | 2026-11-05 context 최대2,000자 누락과 개인 문서 기준 정리. 전체100개 통과·경고1건 |
 | P0-3 | 전용 PostgreSQL 컨테이너·비밀 설정·접속·Alembic 기반 준비, 실제 DB 시험5개 통과. vector는 가용하지만 아직 활성화하지 않음 |
-| 실제 기능 | 로그인·세션/내부키 검증·DB 저장·n8n/data-api 연결 미구현/미검증 |
-| 현재 | P0-7 로컬 backend/DB 기동·readiness·중지/회복 검증 완료. 현재 revision0005. frontend/n8n/data-api/VM 통합 미실행. 다음 단계 P1-1 |
+| 인증·계정 | P1-1 로그인·세션·비밀번호 변경·관리자 계정 발급/회수 구현 및 로컬 PostgreSQL HTTP 통합 확인. VM 로그인은 미확인 |
+| 업무 처리 | 문의·티켓·알림 저장, n8n/data-api 연결은 후속 P1 단계. C05 저장은 미구현 |
+| 현재 | P0-7 로컬 backend/DB readiness와 P1-1 인증·계정 동작 확인 완료. DB revision 0005. frontend/n8n/data-api/VM 통합 미실행 |
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
@@ -38,15 +39,15 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 - `GET /health/live` → `200 {"status":"ok"}`. `/health/ready`는 DB·revision·pgvector 전제200/503이며 scope=database다. 로컬 backend 컨테이너는127.0.0.1:18000에서 실제 확인했다. 기동은 [deploy 안내](deploy/README.md)의 P0-7 절을 따른다.
-- `/docs`·`/openapi.json` 또는 `app.main.create_app().openapi()`로 계약을 볼 수 있다. 실제 업무 미구현은501, 보호 경로의 쿠키/키 누락은401, 임의 쿠키/키를 넣어도501이다. 실행 서버에 Mock 성공 기능은 없다.
+- `/docs`·`/openapi.json` 또는 `app.main.create_app().openapi()`로 계약을 볼 수 있다. 로그인·계정 관리는 DB와 `SESSION_SECRET`이 필요하며 미설정/접속 실패는503이다. 문의·티켓·알림 업무 처리는 후속 단계라 미구현은501이다. 실행 서버에 Mock 성공 기능은 없다.
 - Mock은 `tests/conftest.py`의 dependency override·HTTPX MockTransport에만 있다. 정상5 route·400 codes·계정/저장 예시는 해당 시험 파일에 있다. 실제 서비스 경계는 `app/api/deps.py`다.
 - 환경변수 이름은 `app/core/config.py`에서 읽고 `.env`는 자동으로 읽지 않는다. 기본 SERVICE_MODE=app이며 app/practice만 허용하지만 실제 저장 전환은 아직 없다. DB/키 없이 골격 기동 가능하며 실제 기능은 사용 경계에서 설정을 필수 검사해야 한다. 비밀값은 문서·응답·로그에 남기지 않는다.
 
 ## 지금 적용할 기준과 미확정 구분
 
 - 질문trim1~500자, ID1~64자, attempt 엄격한 정수≥1, context 최대2,000자. context는 생략/null·빈 문자열 호환을 유지하며 trim/절단하지 않는다.
-- 공개 가입 없음·관리자 발급·세션 신원. 쿠키는 oke_session/HttpOnly/SameSite=Lax/Path=/·기본8시간. 첫 변경 제한·회수·본인/최후 관리자 보호는 확정이며 실제 구현은P1-1이다.
-- 비밀번호12자·문자3종은 모델 검사, 본인 이름/로그인ID 포함 금지는 실제 서비스에서 연결한다. 이력·잠금·외부OTP는P2다.
+- 공개 가입 없음·관리자 발급·세션 신원. 쿠키는 oke_session/HttpOnly/SameSite=Lax/Path=/·기본8시간이다. 첫 변경 제한·회수·본인/최후 관리자 보호는 P1-1 구현 및 격리 PostgreSQL HTTP 시험에서 확인했다. VM 화면 연동은 미실행이다.
+- 비밀번호12자·문자3종·본인 이름/login_id 포함 금지를 P1-1 서비스에서 적용한다. 이력·잠금·외부OTP는P2다.
 - support 연결3초·전체30초·자동 재시도0은 확정 초기 예산이며 실측 성과가 아니다. 응답 추가 필드·reason/timings·공통400 codes를 보존한다.
 - PostgreSQL app/rag·vector3072·text-embedding-3-large·정확cosine/top_k3·assignee=IT직원 employees.id는 확정이다. 실제 DB는 P0-3~5 예정.
 - H03 목록 DTO·patch 생략/null·Security nullable 세부와 추가 오류코드 등은 초안이다. 알림 ACK duplicate 유지·DLQ200은 사용자 전달 팀장 승인 수신 상태이며 공통 반영 커밋 확인·모델 보완은 별도다. 이번 P0-3에서는 응답 모델을 변경하지 않았다. data-api 문서 조회의 실제 구조·인증은 미확인이다.

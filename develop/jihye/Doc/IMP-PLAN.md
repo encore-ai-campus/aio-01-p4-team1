@@ -146,12 +146,20 @@
 
 ## P0-6 · 직원 seed와 첫 관리자
 
-- [ ] 연결 SPEC: BE-01·05, C01/C07.
+- [x] 연결 SPEC: BE-01·05, C01/C07. Mock 수집・전용 DB 검증 완료, 실제 원본/VM 실행은 미실행.
 - 생성 예정: `app/clients/data_api.py`, `app/cli.py`, `app/services/bootstrap.py`, `app/core/security.py`, `tests/test_bootstrap.py`, `tests/integration/test_bootstrap_db.py`.
 - 작업: SPEC 6절의 원본6명 대조→직원만 적재→명시한 IT팀 직원의 첫 계정 생성 순으로 만든다. GET /employees를 Mock으로 먼저 확인한다. bootstrap은 BOOTSTRAP_ADMIN_PASSWORD만 읽고 기존 계정 해시/역할을 덮어쓰지 않는다. 명령 이름은 아래와 같이 구현한다.
 - 확인 예정: `uv run pytest tests/test_bootstrap.py tests/integration/test_bootstrap_db.py -q`. 정상6명, 누락/추가/부서불일치, 비IT bootstrap 거절, 암호 누락, 재실행 생성0건·기존 해시 유지, 비밀번호 미출력을 확인한다.
 - 실제 seed 예정 명령: `uv run python -m app.cli seed-employees` 후 직원6명 확인. 이어 `uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> --login-id <선택한 ID>`를 실행하는 인터페이스다. `<…>`는 비밀을 제외한 선택값으로 치환하고 암호 인자는 만들지 않는다.
 - 넘길 결과: 오현님에게 최초1회/재실행 조건과 일회성 암호 제거 절차. 나머지5명 발급은 P1-1 관리자 API에서 수행한다. 세션·비밀번호 P0/P1 규정·최후 관리자 보호는 SPEC 현재 기준을 적용하고 추가 운영 제안만 구분한다.
+
+### P0-6 실제 기록 · 2026-11-05
+
+- 구현: 직원 수집 클라이언트·bootstrap 서비스·CLI·Argon2id 보안 모듈과 테스트를 추가했다. 서버 시작과 공개 API에서 자동 seed/계정 생성은 하지 않는다. 정확한6명/부서를 검증하고 누락·추가·중복·부서 변경·기존 DB 불일치를 거절한다. seed는 직원만 적재한다.
+- 원본 경계: 지원 형태는 Mock `{employees:[{name,dept,...}]}`이며 실제 응답 확인이 아니다. 실제 인증을 추정하지 않고 `DATA_API_EMPLOYEES_AUTH_HEADER`에 확인된 헤더 이름을 명시하도록 했다. DATA_API_URL/KEY와 해당 명령 전용 설정이 없으면 실행을 거절한다. 실제 data-api 호출은 미실행이다.
+- 관리자: seed 완료·지정 IT직원·빈 계정 집합에서만 첫 admin을 만든다. BOOTSTRAP_ADMIN_PASSWORD/SESSION_SECRET 누락은 DB 작업 전 실패한다. 12자/3종/본인 이름·login_id 포함 금지와 Argon2id를 적용했다. 동일 활성 관리자 재실행은 생성0건·해시/역할 보존, 다른 기존 계정은 복구/승격하지 않고 거절한다. 동일 advisory 거래 잠금으로 seed/bootstrap을 직렬화했으며 동시 실행 자체의 시험은 미실행이다.
+- 실제 검사: `uv run python deploy/check_db.py --all` 종료0, **180 passed, 1 warning in 12.36s**. 새22개는 단위/가짜HTTP16개와 실제 PostgreSQL6개다. 원본 불일치·HTTP/형식 오류·필수비밀·오류의 비밀값 비노출·암호 검증·적재/재실행·관리자 경계·해시 보존을 확인했다. 기존 Starlette/httpx 경고1건 유지. 실제 DB 검사는 rollback으로 상시 직원/계정을 만들지 않았다.
+- 다음: 실제 employees 응답/인증과 VM DB가 확인된 뒤 seed→6명 대조→지정 IT직원 bootstrap→첫 관리자1명 확인 순으로 적용하고 일회성 암호를 비밀 저장소에서 제거한다. 로그인/세션/첫 변경/나머지 계정 발급은 P1-1, 배포/readiness는 P0-7이다. VM 적용·외부 전송·commit/push는 수행하지 않았다.
 
 ## P0-7 · backend 이미지·준비 상태·배포 묶음
 

@@ -18,7 +18,17 @@ class EvaluationTests(unittest.TestCase):
     def result(self):
         return evaluate(self.cases,3,self.bundle)['methods']['section']
     def test_hit(self):
-        x=self.result();self.assertEqual(x['hit_at_3']['numerator'],3);self.assertEqual(x['evidence_coverage']['value'],1)
+        x=self.result();self.assertEqual(x['hit_at_3']['numerator'],3);self.assertEqual(x['mrr']['value'],1);self.assertEqual(x['evidence_coverage']['value'],1)
+    def test_mrr_second_rank_and_failure(self):
+        other={'doc':'other','section':'s','text':'other','score':.8}
+        for r in self.bundle['records'].values():
+            r['response']['evidence'].insert(0,other)
+        r=self.bundle['records']['section:F1:2']
+        r.update(http_status=503,response={'ok':False,'evidence':[],'reason':'search_unavailable'})
+        x=self.result()
+        self.assertEqual(x['mrr']['numerator'],1)
+        self.assertEqual(x['mrr']['denominator'],3)
+        self.assertEqual(x['mrr']['value'],1/3)
     def test_section_miss(self):
         self.cases['questions'][0]['expected_section']='other';self.assertEqual(self.result()['section_hit_at_3']['value'],0)
     def test_doc_miss(self):

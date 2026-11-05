@@ -3,7 +3,7 @@
 ## 오늘 완료한 일
 
 - main에 팀 공통 워크플로우·설계 문서와 팀 사례를 통합하고, 유빈 C03 권한 계약 및 지혜 P1-1 로그인·세션, P1-2 문의 저장/C02 변경을 반영했다. 원민 `90f02aa`는 통째로 병합하지 않고 담당 소유의 handoff/errors 시험 도구·사례·검토 자료만 선별했다.
-- main 최신 통합 커밋은 `952f704`. VM도 `952f704`까지 동기화됐고 n8n 재시작 후 support/search/handoff/errors가 활성 상태였다. PostgreSQL은 healthy, Alembic `0005`다. 배포 스모크는 끝나지 않았으며 이 사실은 VM 통합 성공으로 확대하지 않는다.
+- 최초 DAY80 통합 기준은 `952f704`였다. 후속 `unified-vm-finish-2` 통합 커밋 `3e0f701`을 main에 푸시하고 VM도 같은 커밋까지 fast-forward했다. 아래 VM 결과는 `3e0f701`에서 별도로 수행한 관측이며 최초 스냅샷과 구분한다.
 - 팀 진행 체크는 **23/41 = 56.1%**다. 이는 역할 단계 수를 균등 합산한 지표로 Mock·로컬 완료를 포함하며 VM 성공률이나 공식 시나리오 통과율이 아니다.
 
 ## 팀원별 진행과 근거
@@ -31,13 +31,24 @@
 
 공식 8교시 체크리스트는 별도로 7개 항목을 본다: WORKFLOW-DESIGN 1~4절 제출, RAG-ARCHITECTURE 1~2절과 실측, 팀 VM 라이브, 400·주입 차단, WF-08/WF-13 본인·타인, common 14개 실측, DAY80 커밋과 강사 피드백. 설계서 1~4절은 main에 있지만 RAG 실측과 VM 시연·입력차단·본인/타인 증거·common 실측은 미확인/미실행이었다. 이 문서는 제출 준비를 위한 당일 기록이며 강사 검토·승인으로 표시하지 않는다.
 
-사용자가 전달한 7교시 피드백 요지는 다음 실행 근거를 요구한다: 실문서 DB 검색을 한 경로로 실제 연결, 실제 색인 건수·청크 길이·권한 검색 결과 기록, `security-incident`와 인증 계약 정렬, 같은 VM에서 정상 문의와 이관의 근거를 남긴다. 현재 확인값은 RAG 0/0 및 C03 HTTP 000/reset이므로 해당 요구는 아직 충족되지 않았다. 공식 체크리스트 항목과 7교시 피드백을 서로 대체하지 않는다.
+사용자가 전달한 7교시 피드백 요지는 다음 실행 근거를 요구한다: 실문서 DB 검색을 한 경로로 실제 연결, 실제 색인 건수·청크 길이·권한 검색 결과 기록, `security-incident`와 인증 계약 정렬, 같은 VM에서 정상 문의와 이관의 근거를 남긴다. 최초 `952f704` 스냅샷의 RAG 0/0 및 C03 HTTP 000/reset 이후, `3e0f701`에서 색인 8문서/33청크와 일반·IT 검색을 검증했다. 정상 지원 문의는 실제 triage 뒤 `low_confidence` 안전 이관 및 C04 저장으로 끝났고 자동 답변 품질은 미측정이다. 공식 common 14개와 본인/타인 인증 검증은 아직 미완료다. 공식 체크리스트 항목과 7교시 피드백을 서로 대체하지 않는다.
+
+## 후속 VM 통합 결과 · `3e0f701`
+
+- 변경 커밋 `3e0f701`을 `github/main`에 푸시하고 VM `main`에 반영했다. VM mode는 backend/n8n/runners 모두 `app`; PostgreSQL named volume과 n8n 데이터/암호화 키는 유지했다. Compose config 검증 후 backend, FE, RAG search를 순차 빌드했다. n8n에 typed credential 4종을 용도별로 연결하고 기존 OpenAI credential을 재사용해 support/search/handoff/errors를 stable ID로 import/publish했다. index workflow는 수동 실행이라 비활성이다.
+- 공식 CLI `seed-employees` 결과 `created=6`; DB employees=6, users=0이다. 최초 관리자 선택은 김민지/minji.admin 또는 정우성/woosung.admin 중 관제 답변 대기라 계정은 만들지 않았다.
+- RAG manifest는 read-only 원본 8개와 SHA-256을 검증했다. access level은 승인된 기준대로 일반 문서 7개=`all`, `security-incident` 1개=`it`. 실색인 HTTP 200, indexed=8, rejected=0, failed=0, 청크=33; DB 실측 `rag.documents/chunks=8/33`이다. 색인/검색 LOGIN은 각각 최소권한 그룹만 상속한다.
+- 검색서비스 직접 요청: 일반 `all` 접근으로 비밀번호 정책 3개 근거, HTTP 200; IT 접근으로 보안사고 문서 근거 포함, HTTP 200. n8n `/webhook/oke-search`에서도 일반 문서 근거 3개와 HTTP 200을 확인했다. 점수 threshold/hit@3 품질 승인은 아직 없다.
+- n8n `/webhook/oke-handoff` 요청 `vm-fin2-handoff-20261105-01`은 C04 저장 `T-2001`, HTTP 200, alert 성공. 동일 요청을 다시 보내 같은 `T-2001`과 `duplicate=true`를 확인했다. 정상 지원 요청 `vm-fin2-support-20261105-01`은 HTTP 200, `low_confidence` 이관, 실제 `T-2002` 저장; 응답 근거는 비어 있어 자동답변 PASS로 보지 않았다. 빈 질문은 HTTP 400/question_required. 주입 입력은 HTTP 200이지만 `route=차단`, `reason=prompt_injection`, ticket=null로 정책 차단됐다. 현재 워크플로우 계약은 입력 검증 400과 차단 응답 200을 구분한다.
+- PostgreSQL을 재시작한 뒤 healthy, backend readiness 200, FE `/login` 200을 재확인했다. 이후 DB counts는 employees=6/users=0/tickets=2/alerts=3/DLQ=1, RAG=8/33이었고 `T-2001` 및 `all=7,it=1`가 유지됐다. 총 메모리 2646 MiB 중 available 1344 MiB, disk free 41 GiB, 주요 컨테이너 OOM=false다.
+- 공개 FE는 아직 접근되지 않는다: `https://aio-t1.isitsoft.kr/` 502, 외부 `:5678/healthz` 200, `:3000/login` timeout. VM 내 80/443 reverse proxy/listener/config가 없어 FE 공개 라우팅은 ingress 담당 설정이 남았다. 내부 포트 바인딩을 외부 연결 성공으로 보지 않는다.
+- 공식 `Last3Mon/79/tools/flow.py`의 check는 팀 root source의 배포 credential placeholder와 course 전용 `openAiCourse0001` ID 기대 때문에 오류를 냈다. VM에서 실제 credential은 용도별로 import했고 n8n C03/C04 실호출은 성공했다. runner `http()`는 Authorization header를 전송하지 않아 credential 인증이 필요한 custom team cases 실행은 부적절했다. 공식 common 14개 case file은 수업 경로에서 찾지 못해 실행하지 않았다.
 
 ## 막힘과 DAY 81 첫 우선순위
 
-1. 검색 서비스가 없고 n8n과의 Docker 네트워크, URL(`/search`와 `/webhook/oke-search`)이 정렬되지 않아 실제 C03 요청이 reset된다. 실행 위치·서비스 bind·접근 경로를 담당자와 확정하고 실제 HTTP 응답을 확보한다.
-2. 실제 원본 문서의 권한 근거와 검색용 설정이 확인되기 전에는 색인하지 않는다. 확인 후 문서 수·청크 수·길이 분포·일반/IT 권한 결과를 기록한다.
-3. `practice` 응답과 `app` PostgreSQL 영속 저장을 구분한다. C05 앱 저장이 구현·검증되지 않았으므로 티켓 응답만으로 저장 완료를 주장하지 않는다.
-4. 동일 VM에서 정상 검색/답변과 이관을 각각 재현해 실행 식별자·HTTP·응답·근거를 보존한다. 이어 빈 입력·미등록 사용자 400, 주입 차단, WF-08/WF-13 및 공식 common 14개를 실제 키트와 확인한다.
+1. FE 외부 주소의 502/3000 timeout을 해결할 기존 ingress 라우팅 설정이 필요하다.
+2. 첫 IT 관리자 선택 답변 후 bootstrap·첫 비밀번호 변경·logout/relogin, 본인/타인 403 및 admin 권한 시험을 진행한다.
+3. 실제 검색은 성공했지만 응답 품질 threshold와 청크 길이 분포는 승인/측정되지 않았다. 일반 C03 근거 검색, LLM 자동 답변 품질, 안전 이관을 별도로 검증한다.
+4. 공식 common 14개 file은 현재 수업 트리에서 찾지 못했다. `flow.py`가 auth header를 보내지 않는 제한을 해결할 공식 지원 절차 또는 인증을 갖춘 시험 harness가 필요하며 기대값을 바꾸지 않는다.
 
 세부 근거와 버전 경계는 [실행 결과서](../EXECUTION-RESULT.md), [워크플로우 설계](../WORKFLOW-DESIGN.md), [RAG 설계](../RAG-ARCHITECTURE.md), `develop/{jihye,dahyeok,yubeen,wonmin}/Doc/`의 단계 결과·HANDOFF 및 main 커밋 기록을 따른다.

@@ -18,8 +18,8 @@
 | 비밀번호 | 최소12자·대소문자/숫자/특수문자 중3종·본인 이름/로그인ID 포함 금지. 이력·잠금·외부OTP는 P2 | P0-2 길이/조합 검사, 신원 기반 검사는 P1-1 예정 | API §8, ADR-001 §2 |
 | 관리자 | 제공 IT직원만 admin, 본인·마지막 활성 관리자 비활성화 거절. 충돌409(또는400 안내) | P0-6 bootstrap·P1-1 예정 | API §2·8, DB §3 |
 | 시간 예산 | 브라우저35초, backend→support 연결3초·전체30초·자동 재시도0. 조회2초·search4초·handoff5초; 티켓 최대2회·각1초, 알림/DLQ 각1회·0.6초 | P1-2/3·연결 실측 예정. 성능 달성 결과 아님 | API §8, 워크플로우 §4~5 |
-| 업무 저장 | app7테이블, request_key·ticket_id UNIQUE, T-2001~. 알림 실패가 commit한 티켓을 취소하지 않음 | P0-4·P1-3 예정 | DB §3, 워크플로우 §7 |
-| 알림·DLQ | POST /dlq와 alerts.event_key는 확정. /alerts HTTP200 stored/count. 알림 duplicate 유지·DLQ200은 사용자 전달 팀장 승인 수신, 공통 명문화 커밋 미확인 | P0-2 모델의 확장 보완 별도, 실제 저장 P1-3. 이번 P0-3 모델 변경 없음 | API §5, HANDOFF H07 |
+| 업무 저장 | app7테이블, request_key·ticket_id UNIQUE, T-2001~. 알림 실패가 commit한 티켓을 취소하지 않음 | P0-4 DDL·P1-3 로컬 구현/전용 DB 확인 완료, 팀 workflow 실연결은 P1-4 | DB §3, 워크플로우 §7 |
+| 알림·DLQ | POST /dlq와 alerts.event_key는 확정. 알림 HTTP200 신규 stored=1/duplicate=false, 기존 key stored=0/duplicate=true. event_key 생략/null은 매번 신규. DLQ HTTP200 저장 ACK. practice 신규 ACK의 duplicate 생략은 consumer 호환 | 팀장 승인·원민 회신 수신, P1-3 app 로컬 DB 구현/확인 완료. 공통 명문화 커밋·practice live 연결 미확인 | API §5, HANDOFF H07 |
 | RAG | documents/chunks, vector(3072), text-embedding-3-large, all/it, cosine 정확검색·score=1-distance·top_k3 | P0-3 접속/가용성 확인, DDL·활성화/권한은P0-4~5 예정. 쿼리/색인은 유빈님 | DB §4, RAG §3~4 |
 | RAG 거래·복구 | 문서 교체 한 거래, 갱신 실패 시 이전 성공본 유지. 권한 축소/삭제는 이전 공개 청크 차단. named volume과 별도 백업·복원 구분 | P0-5 연결 대조·P1-4 실제 확인 예정 | RAG §4~5 |
 
@@ -31,7 +31,7 @@
 - Security는 공통 필드 blocked_by/reason/masked를 유지한다. 현재 nullable 허용 등 세부 타입의 호환성은 다혁님과 대조한다.
 - H04의 처리 중 응답·상태 전이·오류 request_id 필드·응답 캐시 세부는 제안이다. 같은 키 본문 충돌 거절과 타인 소유권 검사는 확정이므로 대기시키지 않는다. 캐시 응답이 WF-09의 재요청 duplicate=true 판정과 충돌하지 않도록 다혁님·원민님과 확인한다.
 - H05의 비어 있지 않은 계정 집합에서 관리자 부재 복구 같은 운영 세부는 별도 검토다. 본인/최후 관리자 보호는 이미 확정이다.
-- H07 알림 전용 duplicate ACK 확장·DLQ200은 사용자 전달로 팀장 승인을 수신했다. 공통 문서 명문화 커밋은 미확인이고 이번 P0-3에는 모델 보완을 포함하지 않는다. 승인·공통 반영·모델 반영·실제 저장 확인을 각각 기록한다.
+- H07 알림 전용 duplicate ACK 확장·DLQ200은 팀장 승인과 원민 회신을 사용자 전달로 수신했고 P1-3 app 로컬 DB 구현/시험에 반영했다. event_key 생략은 매번 신규 저장이고 count 단독은 ACK가 아니다. practice의 기존 신규 ACK에서 duplicate 누락은 consumer가 호환하지만 app 응답은 duplicate를 명시한다. 공통 문서 명문화 커밋·live practice 및 workflow 연결은 별개로 확인한다.
 
 ### 기준 상세
 
@@ -125,8 +125,8 @@ HTTP200 support 응답 모델 예시(측정값이 아닌 Mock 입력):
 | 경로 / 모델 | 입력 | 예상 출력 | 오류·통과 기준 |
 | --- | --- | --- | --- |
 | POST /tickets / TicketCreate→TicketCreated | X-Api-Key, `{"key":"web-vpn-001","title":"VPN 연결 점검","requester":"박서연","category":"network","priority":"normal"}` | 신규201 `{"ticket_id":"T-2001","duplicate":false}`, 재시도200 같은ID·duplicate=true | 키 누락/오류401·쓰기0. key 빈값/65자·없는직원·priority 부정값400, 세부 오류코드만 초안. 소유자 불일치403·기존 티켓 미노출 |
-| POST /alerts / AlertCreate→StoredResponse | X-Api-Key, `{"workflow":"oke-handoff","node":"ticket","message":"티켓 저장을 확인해 주세요","severity":"high"}`, 선택 `ticket_id`(외부 T-번호), 선택 `event_key` | 200 `{"stored":1,"count":1}` (중복 `event_key`는 `stored:0` 또는 중복 억제). count는 실제 누적 수 | 쿠키만 보낸 내부 호출401, 필수값 누락400. 외부 ticket_id→app.tickets PK 변환, 티켓 실패면 null로 저장 |
-| POST /dlq / DlqCreate→StoredResponse | X-Api-Key, `{"request_id":"web-vpn-001","workflow":"oke-handoff","node":"Create Ticket","reason":"tickets_down","safe_payload":{"stage":"ticket"}}`, 선택 `execution_ref` | 현재 로컬200 `{"stored":1,"count":1}` (공통 상태 명문화는H07 대기) | 쿠키만 보낸 내부 호출401, 필수값 누락400, 개인정보·비밀값 원문 제외 |
+| POST /alerts / AlertCreate→AlertStoredResponse | X-Api-Key, `{"workflow":"oke-handoff","node":"ticket","message":"티켓 저장을 확인해 주세요","severity":"high"}`, 선택 `ticket_id`(외부 T-번호), 선택 `event_key` | 200 신규 `{"stored":1,"count":N,"duplicate":false}`; 기존 event_key `{"stored":0,"count":N,"duplicate":true}`. key 생략/null은 매번 신규 저장. count는 단독 ACK가 아님 | 쿠키만 보낸 내부 호출401, 필수값 누락400. 외부 ticket_id→app.tickets PK 변환, 미존재 티켓은 거절. 티켓 거래와 알림 거래 분리 |
+| POST /dlq / DlqCreate→StoredResponse | X-Api-Key, `{"request_id":"web-vpn-001","workflow":"oke-handoff","node":"Create Ticket","reason":"tickets_down","safe_payload":{"stage":"ticket"}}`, 선택 `execution_ref` | HTTP200, 저장 확인 `{"stored":1,"count":N}` | 쿠키만 보낸 내부 호출401, 필수값 누락400, 개인정보·비밀값 원문 저장 전 마스킹. 공통 명문화는 H07 |
 
 - DB UNIQUE 제약과 하나의 거래로 티켓 발급/문의 연결을 묶는다. 충돌 시 rollback 후 기존 request_key 소유자를 검사해 같은 직원에게만 반환한다. 시퀀스의 번호 공백은 허용하되 번호를 재사용하지 않는다.
 - 일반 웹 요청은 inquiries를 먼저 저장하고 같은 request_key의 티켓은 inquiry_id에 연결한다. 직접 웹훅 시험 요청은 inquiry_id=null을 허용한다. SQL 트랜잭션을 n8n HTTP 호출 동안 잡아 두지 않는다.

@@ -1,5 +1,6 @@
 """Cookie authentication and the scoped internal-key boundary for backend APIs."""
 
+import hmac
 from typing import Annotated, Protocol
 
 from fastapi import Depends, HTTPException, Request, Security
@@ -63,11 +64,14 @@ def require_admin(user: Annotated[UserSummary, Depends(require_employee)]) -> Us
     return user
 
 
-def require_internal_key(key: Annotated[str | None, Security(internal_key)]) -> None:
-    if not key:
+def require_internal_key(request: Request,
+                         key: Annotated[str | None, Security(internal_key)]) -> None:
+    # The dependency reads only the configured server secret; it never reflects either value.
+    configured = request.app.state.settings.internal_api_key
+    if configured is None or not configured.get_secret_value():
+        raise HTTPException(503)
+    if not key or not hmac.compare_digest(key, configured.get_secret_value()):
         raise HTTPException(401)
-    # Verification against configured credentials is not implemented in P0-2.
-    raise HTTPException(501)
 
 
 Backend = Annotated[ContractBackend, Depends(get_backend)]

@@ -48,6 +48,7 @@ def test_openapi_matches_current_contract():
     assert paths["/api/admin/users"]["post"]["responses"]["201"]
     assert "anyOf" in paths["/api/ask"]["post"]["responses"]["400"]["content"]["application/json"]["schema"]
     assert schema["components"]["schemas"]["LoginRequest"]["properties"]["password"]["writeOnly"]
+    assert "duplicate" in schema["components"]["schemas"]["AlertStoredResponse"]["properties"]
 
 
 def test_unimplemented_endpoints_do_not_claim_success():
@@ -62,8 +63,8 @@ def test_unimplemented_endpoints_do_not_claim_success():
         assert client.get("/api/auth/me").status_code == 401
         client.cookies.set("oke_session", secrets.token_urlsafe(20))
         assert client.get("/api/auth/me").status_code == 503
-        assert client.post("/tickets", json={}).status_code == 401
-        assert client.post("/tickets", json={}, headers={"X-Api-Key": secrets.token_urlsafe(20)}).status_code == 501
+        assert client.post("/tickets", json={}).status_code == 503
+        assert client.post("/tickets", json={}, headers={"X-Api-Key": secrets.token_urlsafe(20)}).status_code == 503
 
 
 def test_password_models_do_not_serialize_plaintext():
@@ -151,7 +152,7 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
         alerts={"items": [{"id": 1, "ticket_id": None, "workflow": "fixture", "node": "fixture",
                            "message": "합성 안내", "severity": "high", "created_at": now}]},
         create_ticket={"ticket_id": "T-2001", "duplicate": False},
-        create_alert={"stored": 1, "count": 1}, create_dlq={"stored": 1, "count": 1},
+        create_alert={"stored": 1, "count": 1, "duplicate": False}, create_dlq={"stored": 1, "count": 1},
     )
     cases = [
         ("post", "/api/auth/login", {"login_id": "fixture", "password": password}, 200),
@@ -180,6 +181,18 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
         if path == "/api/auth/login":
             assert "oke_session=" in response.headers.get("set-cookie", "")
             assert "fixture-only-token" not in response.text
+
+
+def test_ticket_ack_controls_new_and_duplicate_http_status(contract_harness):
+    _, client, backend, _ = contract_harness
+    payload = {"key": "req-fixture", "title": "문의", "requester": "박서연",
+               "category": "network", "priority": "normal"}
+    backend.results["create_ticket"] = {"ticket_id": "T-2001", "duplicate": False}
+    first = client.post("/tickets", json=payload, headers={"X-Api-Key": "mock-only"})
+    assert first.status_code == 201
+    backend.results["create_ticket"] = {"ticket_id": "T-2001", "duplicate": True}
+    again = client.post("/tickets", json=payload, headers={"X-Api-Key": "mock-only"})
+    assert again.status_code == 200
 
 
 def test_password_validation_errors_are_safe(contract_harness):

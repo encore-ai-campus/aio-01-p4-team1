@@ -70,6 +70,14 @@ def test_non_it_admin_claim_is_not_authorized(contract_harness):
     assert backend.operations == []
 
 
+def test_employee_cannot_read_or_modify_admin_tickets(contract_harness):
+    _, client, backend, _ = contract_harness
+    client.cookies.set("oke_session", "fixture")
+    assert client.get("/api/admin/tickets").status_code == 403
+    assert client.patch("/api/admin/tickets/1", json={"status": "resolved"}).status_code == 403
+    assert backend.operations == []
+
+
 def test_unconfigured_session_secret_fails_closed():
     app = create_app(Settings(_env_file=None, database_url=None, session_secret=None))
     with TestClient(app) as client:

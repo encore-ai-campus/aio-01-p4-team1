@@ -958,8 +958,7 @@
       "parameters": {
         "method": "GET",
         "url": "={{ String($env.DATA_API_URL || 'http://data-api:8800').replace(/\\/$/, '') + '/employees' }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "options": {
           "timeout": 2000,
           "redirect": {
@@ -974,12 +973,6 @@
               "responseFormat": "json"
             }
           }
-        }
-      },
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
-          "name": "SUPPORT_DATA_API_X_API_KEY"
         }
       },
       "onError": "continueRegularOutput"
@@ -1125,8 +1118,7 @@
       "parameters": {
         "method": "GET",
         "url": "={{ $json.lookup_request.url }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "options": {
           "timeout": 2000,
           "redirect": {
@@ -1141,12 +1133,6 @@
               "responseFormat": "json"
             }
           }
-        }
-      },
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
-          "name": "SUPPORT_DATA_API_X_API_KEY"
         }
       },
       "onError": "continueRegularOutput"

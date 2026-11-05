@@ -251,3 +251,11 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 상대 확인이 오면 요청ID·상대 HANDOFF 링크·검토 내용·오현님 공통 반영 커밋/절·관련 SPEC/계획 변경·실제 연결 입력/출력/증거를 구분해 덧붙인다. 현재 전 항목에 확인 근거와 반영 커밋은 없다.
 
 실제 버그는 실행 위치/버전·마스킹한 재현 입력·기대/실제 결과·로그·영향을 전달한다. 상대 파일을 대신 수정하지 않는다. 절차는 [COORDINATION](../../../docs/COORDINATION.md), 기준은 [API](../../../docs/API-CONTRACT.md)·[DB](../../../docs/DATA-AND-DB.md)를 따른다.
+
+## VM 원본 직원 API 무인증 경로 정합화 · 2026-11-05
+
+`main@0bea958` 통합 Compose VM에서 실제 data-api 내부 고정 origin `http://data-api:8800`을 확인했다. `/employees`는 인증 헤더 없이 HTTP 200과 기존 adapter가 검증하는 정확한 6명 계약을 반환했다. 같은 서비스의 `/docs` 목록/상세도 인증 헤더 없이 200, 정확히 8개 원본과 일치했다. 비밀값이나 원문 직원 데이터를 로그/보고에 출력하지 않았다.
+
+기존 `app.cli seed-employees`가 API key/header를 항상 강제해 검증된 내부 no-auth source를 사용할 수 없었다. 통합 변경으로 `DATA_API_EMPLOYEES_NO_AUTH=true`일 때만 `http://data-api:8800` origin을 허용하고 key/header를 하나라도 함께 설정하면 실패하도록 제한한다. 일반 인증 모드는 기존 key+명시 header 경로 그대로 유지한다. seed는 계속 `fetch_employees`의 원본 6명 검증과 `seed_employees` 서비스 함수를 사용하며 직접 SQL·직원값 변경은 하지 않는다. `tests/test_bootstrap.py`: 18 passed, 1 기존 경고.
+
+VM `.env.backend`에는 이 고정 origin no-auth flag만 추가한 뒤 official CLI를 실행할 계획이다. 첫 관리자 이름/login ID는 정책상 미고정이며 controller 답변 대기 중이다. 선택 후 기존 `bootstrap_admin`만 사용하고 비밀번호는 VM mode 600 인계 경로에만 둔다. bootstrap 완료와 로그인·첫 비밀번호 변경을 별도 실측한다.

@@ -188,3 +188,11 @@ RAG 담당 코드·평가/복구 도구·워크플로우 검사·통합 제출 �
 - flow.py check: oke-index/oke-search 각각 오류0·경고1(수동 트리거에 Webhook 없음 / IF typeVersion2). 정적 검사이며 n8n push/test는 미실행이다. git diff --check 통과.
 - 외부 의존성: 지혜님 마이그레이션/최소권한 계정·실제 GRANT, 리드 문서별 권한표·원본 버전 및 정답표 승인, VM 환경/네트워크/Credential·실제 비용 승인, 본체의 실제 writer/verifier 근거 관측이다.
 - RAG 범위에서 계획한 남은 코드 구현은 없다. 외부 승인·실제 환경 시험 후 발견되는 차이는 후속 보완 대상이다. 코드 READY, 실제 문서 적재/VM 검증 BLOCKED_EXTERNAL. 커밋·푸시는 하지 않았다.
+
+## VM 실원본 접근·권한 manifest 인계 · 2026-11-05
+
+`main@0bea958` VM 내부의 read-only course data-api에서 `/docs` 및 8개 `/docs/{name}` 요청이 인증 헤더 없이 HTTP 200을 반환했다. 목록은 공통 기대 8종과 정확히 일치했고 각 상세의 정규화 text는 기존 원본 파일과 일치했다. API `access_level` 메타데이터는 목록/상세 모두 없었다. source 파일의 SHA-256은 manifest에 기록했다. 이메일·전화 패턴은 0건이며 문서 원문은 보고서에 복사하지 않았다.
+
+`docs/DATA-AND-DB.md` §4와 공통 평가 §1의 확정 fallback을 적용했다: 8개 standard policy 중 `security-incident=it`, 나머지 7개는 `all`. 임의 threshold/정답표 기반 승격은 하지 않았다. `develop/yubeen/rag-permissions.json`은 기존 `rag_load.build_snapshot` 요구 형식과 일치하며, indexer에는 원본 docs를 read-only mount한다. `tests/test_rag_prepare.py`: 34 passed. 실제 OpenAI 색인/검색 결과 및 chunk 수는 아직 실행 후 기입한다.
+
+`rag_prepare inventory --source api --allow-network --no-auth`는 운영자가 명시한 무인증 모드로 제한했다. 이 모드는 `DATA_API_URL`이 `http://data-api:8800`과 정확히 일치하고 `DATA_API_KEY`가 없을 때만 허용하며 인증 헤더를 보내지 않는다. 일반 API-key 모드는 유지한다.

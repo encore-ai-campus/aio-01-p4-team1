@@ -6,5 +6,6 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt \
     && groupadd --gid 10002 rag && useradd --uid 10002 --gid 10002 --no-create-home rag
 COPY --chown=10002:10002 tools /app/develop/yubeen/tools
 COPY --chown=10002:10002 config /app/develop/yubeen/config
+COPY --chown=10002:10002 rag-permissions.json /app/develop/yubeen/rag-permissions.json
 USER 10002:10002
 EXPOSE 8765 8766

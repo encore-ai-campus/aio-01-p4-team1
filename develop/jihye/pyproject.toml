@@ -1,0 +1,25 @@
+[project]
+name = "okepong-backend"
+version = "0.1.0"
+description = "오케퐁 업무 API"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "uvicorn>=0.34,<1",
+    "sqlalchemy>=2.0,<3",
+    "psycopg[binary]>=3.2,<4",
+    "alembic>=1.14,<2",
+    "pgvector>=0.3,<1",
+    "httpx>=0.28,<1",
+    "argon2-cffi>=23.1,<26",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["integration: requires the isolated P0 PostgreSQL and OKE_RUN_DB_TESTS=1"]

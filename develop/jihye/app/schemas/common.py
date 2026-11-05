@@ -1,4 +1,4 @@
-"""Shared constraints; business request/response models follow in P0-2."""
+"""Shared request constraints and response envelopes."""
 
 from typing import Annotated, Generic, Literal, TypeVar
 
@@ -11,6 +11,7 @@ RequestId = Annotated[
     str, StringConstraints(strict=True, min_length=1, max_length=64, pattern=r"\S")
 ]
 Attempt = Annotated[int, Field(strict=True, ge=1)]
+Context = Annotated[str, StringConstraints(strict=True, max_length=2000)]
 EntityId = Annotated[int, Field(strict=True, ge=1)]
 NonEmpty = Annotated[str, StringConstraints(strict=True, min_length=1, pattern=r"\S")]
 Priority = Literal["normal", "high"]

@@ -1,79 +1,63 @@
-# 지혜님 · 로그인·업무 API·DB·실행 환경
+# 지혜님 · 백엔드·DB·실행 환경
 
-**목표:** 화면·워크플로우가 같은 신원·저장 규칙과 실행 환경을 사용하게 한다. 작업 폴더는 develop/jihye. P0-1 골격과 P0-2 계약 모델·라우터·Mock 검증을 완료했으며 실제 업무 기능·DB·외부 연결은 미구현이다.
+화면·워크플로우가 같은 신원·저장 규칙으로 연결되도록 FastAPI와 PostgreSQL 기반을 담당한다. 작업 위치는 저장소의 `develop/jihye/`이며 다른 담당·루트 공통 파일은 읽기만 한다.
 
-<img src="../../docs/images/planned/flow-backend.svg" width="680" alt="백엔드와 저장 연결 설계">
+## 현재 상태와 다음 작업
 
-## 내가 만들 것
+| 항목 | 현재 상태 |
+| --- | --- |
+| P0-1 | FastAPI 골격·설정·liveness·공통 입력 타입 구현. 실제 로컬 HTTP liveness 확인 |
+| P0-2 | 웹14 operation(13경로)·내부3 API 모델·라우터·OpenAPI·시험 전용 Mock 구현 |
+| P0-2 보완 | 2026-11-05 context 최대2,000자 누락과 개인 문서 기준 정리. 전체100개 통과·경고1건 |
+| 실제 기능 | 로그인·세션/내부키 검증·DB 저장·n8n/data-api 연결 미구현/미검증 |
+| 다음 | 보완 커밋 기준 팀원 인계·회신 확인, 다음 지정 구현은 P0-3 DB 실행 기반 |
 
-- 로그인·세션·첫 변경·관리자 계정 발급과 직원/관리자 권한 검사.
-- 문의 선저장·support 호출·내 문의·관리자 티켓/알림 API.
-- /tickets·/alerts·/dlq, 멱등·부분 실패·소유권.
-- app/rag 마이그레이션·직원 seed·첫 관리자·pgvector·Compose·API 명세와 실행법.
+지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
-## 현재 단계 · P0-2 완료, 다음 P0-3
+## 문서별로 찾을 내용
 
-저장소 루트에서 `cd develop/jihye` 후 실행한다. P0-1~2는 DB/n8n 없이 골격·입력/오류·계약 형식을 확인했다. 다음 지정 작업은 [IMP-PLAN P0-3](Doc/IMP-PLAN.md)의 DB 실행 기반이며, P0-3~5 DB 기반을 준비한 뒤 유빈님·원민님과 실제 연결을 확인한다.
+| 문서 | 확인할 것 |
+| --- | --- |
+| [AGENTS](AGENTS.md) | 파일 소유권·단계 범위·검증과 전달 기록 규칙 |
+| [TODO](Doc/TODO.md) | 백엔드/DB의 목적·필수 작업·후순위 |
+| [SPEC](Doc/SPEC.md) | 입력/출력·인증·시간 예산·저장·DB·완료 기준. 확정과 제안 구분 |
+| [IMP-PLAN](Doc/IMP-PLAN.md) | 단계별 전제·파일·명령·완료·인계와 실제 실행 이력 |
+| [HANDOFF](Doc/HANDOFF.md) | 현재 상대 회신·계약 변경 제안·인계 자료와 과거 이력 |
+| [마이그레이션](migrations/README.md) | 업무/rag 테이블·DDL 순서·접속 권한·검증·복구 |
+| [배포](deploy/README.md) | Compose·서비스/모드·프록시·준비 상태·VM 인계 |
 
-### P0-2 실행·확인 (2026-11-04)
+## 설치·실행·현재 응답
+
+Python3.12 이상과 uv를 사용한다. 작업 디렉터리는 항상 `develop/jihye`다.
 
 ```bash
-uv run pytest tests/test_api_models.py tests/test_support_contract.py -q
+uv sync --dev --locked
 uv run pytest -q
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-`/docs`·`/openapi.json`에 웹14개·내부3개 업무 API의 요청/응답 시그니처와 `/health/live`를 제공한다. OpenAPI는 `app.main.create_app().openapi()`로도 생성할 수 있다. 웹은 `oke_session` 쿠키, 내부 저장은 `X-Api-Key` 인증 경계로 표시한다. 실제 세션/키 검증·업무 서비스가 없으므로 로그인 등은501, 보호 API의 쿠키/키 누락은401이며 임의 쿠키/키를 넣어도501이다. 실행 서버에서 Mock 성공·계정 발급·DB 저장·n8n 호출은 제공하지 않는다.
+- `GET /health/live` → `200 {"status":"ok"}`. P0-1 실제 소켓 확인은18000에서 수행했다. DB readiness는 P0-7 예정이며 현재 제공하지 않는다.
+- `/docs`·`/openapi.json` 또는 `app.main.create_app().openapi()`로 계약을 볼 수 있다. 실제 업무 미구현은501, 보호 경로의 쿠키/키 누락은401, 임의 쿠키/키를 넣어도501이다. 실행 서버에 Mock 성공 기능은 없다.
+- Mock은 `tests/conftest.py`의 dependency override·HTTPX MockTransport에만 있다. 정상5 route·400 codes·계정/저장 예시는 해당 시험 파일에 있다. 실제 서비스 경계는 `app/api/deps.py`다.
+- 환경변수 이름은 `app/core/config.py`에서 읽고 `.env`는 자동으로 읽지 않는다. 기본 SERVICE_MODE=app이며 app/practice만 허용하지만 실제 저장 전환은 아직 없다. DB/키 없이 골격 기동 가능하며 실제 기능은 사용 경계에서 설정을 필수 검사해야 한다. 비밀값은 문서·응답·로그에 남기지 않는다.
 
-Mock은 `tests/conftest.py`의 dependency override·HTTPX MockTransport에만 있다. 후속 구현이 연결할 경계는 `app/api/deps.py`의 `ContractBackend`·신원/내부 인증 dependency다. 성공 응답 모델에서 계정 해시를 제외하고, 비밀번호 요청 필드는 SecretStr로 보관하며 repr·직렬화에서 제외한다. 새 비밀번호의12자·문자3종 형식은 검사하지만 본인 이름/로그인ID 포함 여부는 실제 계정을 사용하는 P1 서비스에서 검사해야 한다.
+## 지금 적용할 기준과 미확정 구분
 
-웹 입력의 미지 필드는 H03의 거절 정책이 미확정이므로 무시한다. 입력한 user/dept/role/channel은 신원으로 사용하지 않는다. support 응답의 추가 필드·선택 reason/timings는 보존한다. 공통400 codes 본문 전달을 위한 예외·핸들러와 응답ID 검증 함수를 제공하며, HTTP 호출·세션→user 변환은 현재 시험 fixture에서만 검증한다. 실제 support 어댑터는 P1-2다.
+- 질문trim1~500자, ID1~64자, attempt 엄격한 정수≥1, context 최대2,000자. context는 생략/null·빈 문자열 호환을 유지하며 trim/절단하지 않는다.
+- 공개 가입 없음·관리자 발급·세션 신원. 쿠키는 oke_session/HttpOnly/SameSite=Lax/Path=/·기본8시간. 첫 변경 제한·회수·본인/최후 관리자 보호는 확정이며 실제 구현은P1-1이다.
+- 비밀번호12자·문자3종은 모델 검사, 본인 이름/로그인ID 포함 금지는 실제 서비스에서 연결한다. 이력·잠금·외부OTP는P2다.
+- support 연결3초·전체30초·자동 재시도0은 확정 초기 예산이며 실측 성과가 아니다. 응답 추가 필드·reason/timings·공통400 codes를 보존한다.
+- PostgreSQL app/rag·vector3072·text-embedding-3-large·정확cosine/top_k3·assignee=IT직원 employees.id는 확정이다. 실제 DB는 P0-3~5 예정.
+- H03 목록 DTO·patch 생략/null·Security nullable 세부와 추가 오류코드 등은 초안이다. 알림 ACK duplicate 확장·DLQ200 명문화는 H07 공통 반영 대기다. data-api 문서 조회의 실제 구조·인증은 미확인이다.
 
-InquiryView/TicketView/AlertView의 목록 단건 외형, Security 세부 타입, ticket patch 생략/null 해석은 H03 초안이며 상대 합의로 취급하지 않는다. 계정 생성201·관리자 계정/직원 목록·`assignee=employees.id`·`POST /dlq`·`alerts.event_key`는 최신 공통 계약을 적용했다. 세부 오류 코드·추가 정책을 공통 확정처럼 배포하지 않는다.
+## 팀원 인계와 다음 연결
 
-최종 전체 시험은 **75 passed, 경고1건**(P0-1 30개+P0-2 45개)이다. HTTPX TestClient 폐기 예정 경고는 유지된다. 상세 결과와 후속 연결은 [IMP-PLAN](Doc/IMP-PLAN.md)·[HANDOFF](Doc/HANDOFF.md)에 기록했다. 실제 API/DB/n8n·VM·원격 브랜치 검증은 수행하지 않았다.
+[HANDOFF 현재 인계 패키지](Doc/HANDOFF.md#현재-인계-패키지--2026-11-05)에 상대별 파일·예시·확인할 내용을 정리했다. 기존 P0-2 커밋은4bbbf49이며 보완 커밋은 생성 후 공유 기준으로 갱신한다.
 
-### P0-1 실행·확인 (2026-11-04)
+수언님은 웹 모델/화면, 다혁님은 C02 요청/응답, 원민님은 C05 저장 ACK를 대조한다. 유빈님은 DB 준비 후 rag 저장·검색을 연결하며 오현님은 공통 반영·VM 배포·최종 취합을 맡는다. 원민님 요청 표본7/7과 유빈님 회신은 사용자가 전달한 결과이고 이번 보완의 재확인·실연결 증거가 아니다. 외부 전송은 하지 않았다.
 
-작업 디렉터리는 저장소의 `develop/jihye`이며 Python 3.12 이상과 uv를 사용한다.
+## 검증 이력과 참고 예제
 
-```bash
-uv sync --dev --locked
-uv run pytest tests/test_contract_basics.py -q
-uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
+최신 시험은 **100 passed, 경고1건**이다. 기존 P0-1~2의75개에 context 회귀25개를 추가했다. 기존 Starlette TestClient의 HTTPX 사용 폐기 예정 경고가 남는다. 설치 버전·과거30/75개 결과·초기 실패와 재확인·최신 명령은 [IMP-PLAN 실제 기록](Doc/IMP-PLAN.md)에 보존한다. 자체 pytest 수는 공통14종·최종 LLM3회 반복 시험 수와 구분한다.
 
-별도 터미널에서 `curl --fail http://127.0.0.1:8000/health/live`로 프로세스 상태를 확인한다. 응답은 `{"status":"ok"}`다. P0-1 당시 실제 소켓 검증은 포트 충돌을 피하려고 18000에서 수행했다. OpenAPI는 `/openapi.json`, 문서 UI는 `/docs`다. P0-1 당시에는 `/health/live`만 등록되어 있었으며 P0-2에서 위 계약 경로를 추가했다.
-
-공통 환경변수 이름은 `app/core/config.py`에서 읽는다. `SERVICE_MODE`는 기본 `app`이며 `app`/`practice`만 허용한다. P0-1에서는 DB·외부 키 없이 시작하며 모드에 따른 저장 동작은 아직 없다. `.env`는 자동으로 읽지 않으므로 실제 설정은 프로세스 환경으로 주입한다. DB URL·키·세션 비밀·bootstrap 암호는 repr와 직렬화에서 제외한다. 후속 서비스가 구현될 때 필요한 설정을 사용 경계에서 필수 검사해야 한다.
-
-검증 결과는 **30 passed, 경고 1건**이다. Starlette TestClient의 HTTPX 사용에 대한 폐기 예정 경고이며 HTTPX는 support 클라이언트용으로 유지한다. 설치 버전·오류 예시·소켓 제한과 재확인 내역은 [P0-1 실행 기록](Doc/IMP-PLAN.md#p0-1-실제-기록--2026-11-04)에 남겼다. 로그인·권한·업무 API·DB readiness·n8n 연결·VM 배포는 미실행이다.
-
-## 정해진 것과 내가 정할 것
-
-| 구분 | 적용·결정 |
-| --- | --- |
-| 확정 | FastAPI·Pydantic, PostgreSQL app/rag·pgvector3072, 관리자 발급·쿠키, assignee는 IT 직원 employees.id |
-| 담당자 결정 | 내부 코드 구조·의존성 버전·물리 마이그레이션. 목록 DTO·처리 중/충돌 응답 세부는 수언님/다혁님과 계약 확인, DB 사용 변경은 유빈님, 저장 ACK는 원민님과 확인 |
-| 선택 고도화 | 추가 모니터링·세밀한 인증 고도화·추가 성능 최적화는 필수 뒤 |
-
-## 바로 볼 예제
-
-[FastAPI 앱](../../docs/references/qnaweb/src-be/app/main.py.example) · [모델](../../docs/references/qnaweb/src-be/app/models.py.example) · [Q&A 라우터](../../docs/references/qnaweb/src-be/app/routers/qna.py.example) · [Compose](../../docs/references/qnaweb/docker/compose/docker-compose.yml.example)
-
-라우터·저장·컨테이너 구성을 참고한다. create_all·자동 샘플 시드 대신 Alembic·명시적 bootstrap, 10명/InfluxDB/JWT 예제 대신 우리 6명·app/rag·세션 규칙을 적용한다. [적용표](../../docs/references/README.md).
-
-## 누구에게 받고 무엇을 넘기나
-
-- 수언님에게 요청/응답 명세·실행 주소·오류 예시, 유빈님에게 rag DDL·권한·접속법, 원민님에게 저장 API·관측법을 먼저 넘긴다.
-- 다혁님과 공통 요청/응답·시간 예산을 확인한다. 오현님에게 Compose·마이그레이션·seed·기동·회귀 절차와 실제 결과를 넘긴다.
-- 완료 기준: 빈 환경에서 재현 가능한 실행, 권한 거절·같은 키 티켓1건·재시작 유지, 화면과 워크플로우의 실제 연결. 비밀값을 문서에 넣지 않는다.
-- 보고: 변경 파일 / 확인 명령·입력 / 기대와 실제 / 미해결·다음 상대. 실제 API 명세는 구현된 OpenAPI와 맞춰 제공한다.
-
-## 내 CLI 첫 요청
-
-    내 README·AGENTS·공통 API/DB를 읽고 IMP-PLAN P0-1만 구현해.
-    예제에서 참고할 구조와 우리 기준의 차이를 먼저 말해.
-    develop/jihye 밖은 수정하지 말고 실제 확인 결과·다음 연결을 보고해.
-
-상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [마이그레이션](migrations/README.md) · [배포](deploy/README.md) · [HANDOFF](Doc/HANDOFF.md).
+[앱 예제](../../docs/references/qnaweb/src-be/app/main.py.example)·[모델](../../docs/references/qnaweb/src-be/app/models.py.example)·[라우터](../../docs/references/qnaweb/src-be/app/routers/qna.py.example)·[Compose](../../docs/references/qnaweb/docker/compose/docker-compose.yml.example)에서는 계층 분리만 참고한다. create_all/자동시드·JWT·InfluxDB·10명 예제 대신 Alembic/명시적bootstrap·세션·app/rag·제공6명 기준을 적용한다. 예제의 존재가 실제 기능 완료를 뜻하지 않는다.

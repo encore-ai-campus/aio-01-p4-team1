@@ -2,6 +2,15 @@
 
 [IMP-PLAN P0](../Doc/IMP-PLAN.md)에서 단계별로 작성한다. 이 문서는 배포 작업의 상세 조건이다. **아래 파일·명령·상태는 구현 예정이며 실행 결과가 아니다.** 실제 팀 VM 배포와 환경값 등록은 오현님이 담당한다.
 
+## 현재 상태와 단계별 전제
+
+2026-11-05 현재 설치된 로컬 API 골격·OpenAPI·Mock 시험은 P0-1~2 범위에서 확인했다. 아래 Compose·Dockerfile·DB/readiness·VM 절차는 아직 구현/실행하지 않았다. 현재 확정 주소·모드·인증·시간 예산은 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)을 따른다.
+
+- P0-3: Docker/Compose·pgvector 이미지 확보와 본인 전용 DB 비밀 설정이 전제다. postgres 부분·volume·healthcheck·DB 접속·Alembic 기반만 구현하고 테이블/전체 서비스는 후속으로 둔다.
+- P0-7: DB 마이그레이션·확장 준비 뒤 backend 이미지·readiness를 확인한다. frontend가 없으면 타인 파일을 만들지 않고 DB/backend 확인 범위로 기록한다.
+- P1-4: 실제 제공자·키트·격리 검증 환경이 준비된 뒤 통합·재시작·백업/복원을 확인한다. 실제 환경/키 전달과 팀 VM 반영은 오현님이 관리한다.
+- SERVICE_MODE 설정, n8n Credential/URL, fault/reset/ops 관측 대상은 각각 확인한다. 기본 app/practice 선택만으로 전체 호출 대상이 바뀌었다고 판정하지 않는다.
+
 ## 만들 파일과 기준
 
 | 예정 파일 | 내용·확인 |

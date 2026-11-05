@@ -2,19 +2,73 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md)을 기준으로 바로 개발한다. 이 파일은 **공통 기준의 누락 정책/변경 제안과 연결 검토·전달 결과**를 기록한다. 기존 기준을 적용하기 위한 사전 승인 목록이 아니다.
 
-작성일: 2026-11-03. 아래 제안은 문서에 기록한 상태다. 외부 메시지 전송·상대 검토·동의·공통 반영·실연결을 수행하지 않았다. 상대는 자기 HANDOFF에 확인을 남기고 공통 문서는 오현님이 반영한다. 답변 없음은 채택이 아니다. 다른 역할 문서의 미검토400/409·assignee 식별값 등도 채택하지 않는다.
+초안 작성: 2026-11-03. 현재 상태 갱신: 2026-11-05. 현재 적용 기준은 SPEC 1절, 작업 범위는 IMP-PLAN을 따른다. 사용자에게 전달받은 상대 회신·로컬 검증·공통 문서 반영·실연결은 구분한다. 에이전트의 외부 메시지 전송은 없으며, 답변 없음은 동의가 아니다. 아래 과거 제안의 당시 상태는 현재 기준을 덮어쓰지 않는다.
 
 ## 연결과 상태
 
 | 연결 | 검토 상대 | 상태 |
 | --- | --- | --- |
 | C01 | 수언님·오현님 | H01·03·05 핵심(세션 쿠키·관리자 목록·assignee=employees.id·최후 관리자 보호) 공통 반영 완료, H02 세부 제안 유지·실연결 미실행 |
-| C02 | 다혁님·오현님 | H04 및 H03 support 세부 형식 제안, 실연결 미실행 |
-| C05 | 원민님·오현님 | H06(`POST /dlq`, `alerts.event_key`) 공통 반영 완료, H03 세부 오류 제안·실연결 미실행 |
-| C06 | 유빈님 | P0-1 전달 문서 기준 DB 매핑 검토 완료, 현재 변경 제안 없음. 실제 API 응답·인증·DB 저장 및 상대 최종 확인은 미확인 |
+| C02 | 다혁님·오현님 | 시간 예산·503/504 확정. 응답 캐시/상태·추가 오류코드 등 H04 세부와 H03 nullable 타입은 미확정, 실제 연결 미실행 |
+| C05 | 원민님·오현님 | 사용자 전달 회신상4bbbf49 요청 표본7/7 적합. H06 기본 계약 확정. H07 알림 ACK 확장/DLQ200 명문화 제안 대기, 실제 저장/동시성 미확인 |
+| C06 | 유빈님 | 문서 기준 DB 매핑 검토 및 이를 반영했다는 상대 회신을 사용자에게 전달받음. 실제 API 응답/인증·DB 저장 미확인, complete/partial/rejected의 DB 저장 필요 여부 추가 확인 |
 | C07 | 오현님·영향받는 담당 | 기본 서비스명/포트/`BACKEND_ORIGIN` 공통 반영 완료, 실제 설치/기동 미실행 |
 
-아래 ‘H01’ 표기는 JH-H01의 축약이다. 제안과 무관한 P0 골격·기본 모델·공통 스키마·Mock 작업은 계속한다. 정책에 의존하는 외부 응답/추가 DB 변경은 공통 반영 전 확정 구현·배포로 취급하지 않는다.
+## 현재 확정 기준과 옛 제안의 관계
+
+로컬 공통 기준 대조 커밋은db14b79이며 [SPEC 1절](SPEC.md#1-적용할-기준--새로-선정하지-않음)에 구현용 기준을 모았다. 공통 원문은 읽기만 했고 원격 최신 조회는 하지 않았다.
+
+| 과거 항목 | 현재 기준 | 남은 제안 |
+| --- | --- | --- |
+| H01 | 쿠키 oke_session/HttpOnly/SameSite=Lax/Path=/·8시간, 첫 변경 제한·세션 회수 확정 | 새 세션 재발급·Origin 검사 등 추가 운영 세부. 옛 Path=/api는 적용하지 않음 |
+| H02 |12자·3종·본인 이름/로그인ID 포함 금지는P0/P1, 이력·잠금·외부OTP는P2 | 옛 회사명 금지·90일·이력/잠금 컬럼을 필수 스키마에 추가하지 않음 |
+| H03 | 계정 생성201·목록·직원ID·assignee·context최대2000 확정 | 목록 DTO·patch 생략/null·추가 입력 거절/코드·Security nullable 세부 |
+| H04 | 연결3초·전체30초·재시도0, 장애503/504·같은키 본문 충돌 거절 확정 | 처리중 응답·상태·캐시/복구·추가 오류 필드. 캐시와WF-09 duplicate 판정은 대조 필요 |
+| H05 | 본인/마지막 활성 관리자 비활성화 거절 확정 | 관리자 부재 계정집합 복구 등 추가 운영 세부 |
+| H06 | POST /dlq·alerts.event_key 확정 | DLQ 기본 API 구현을 승인 대기로 남기지 않음. ACK 세부는H07 |
+
+## 현재 인계 패키지 · 2026-11-05
+
+기준 구현 커밋은4bbbf49이고 context 보완은 현재 로컬 변경이다. 보완 커밋 생성 후 그 해시와 아래 파일을 함께 공유한다. 아래는 전달 가능한 자료를 정리한 것이며, 실제 메시지 전송이나 이번 보완에 대한 상대 확인은 수행하지 않았다.
+
+| 대상 | 전달 파일·내용 | 확인 요청 / 현재 경계 |
+| --- | --- | --- |
+| 수언 C01 | `/openapi.json`·`/docs`, `tests/test_api_models.py`의 웹14개 요청/응답 | 목록 단건·관리자 답변/상태가 내 문의에 표시되는 DTO·patch 의미 대조. 실제 로그인/저장501, Mock은tests 내부 |
+| 다혁 C02 | `app/schemas/support.py`, `tests/conftest.py`, `tests/test_support_contract.py` | fixture 신원→user·web 채널·5 route·400codes·context≤2000·nullable security 대조. 실제세션/HTTP는P1 |
+| 원민 C05 | `app/schemas/tickets.py`·`alerts.py`, `tests/test_api_models.py`, 아래 저장 예시 | 기존요청7/7 회신 수신. 알림duplicate·DLQ상태 명문화는H07, 신규/중복/동시·부분실패는 실제DB 후 확인 |
+| 유빈 C06 | SPEC DB기준, migrations/README와 IMP-PLAN P0-3~5 | 원본 API구조/인증 미확인. DB준비 뒤head·3072차원·grants·거래/복원검증 공유. 현재는DDL/DB없음 |
+| 오현 C07/C09 | 본 계획/실행기록·H07·DAY80 반영안 | data-api 키트/인증 설정 위치·공통ACK 반영 요청. 비밀값은 문서로 전달하지 않음 |
+
+세션→user 예시(시험 fixture): 웹 요청 `{"question":"문의","request_id":"req-fixture"}`와 fixture 직원 박서연을 `{"request_id":"req-fixture","user":"박서연","question":"문의","channel":"web","attempt":1}`로 변환한다. 화면이 넣은 이름/부서/역할은 사용하지 않는다. 실제 로그인 세션 구현 증거가 아니다.
+
+공통 정상 fixture는 `tests/conftest.py`의 support_payload를 사용한다. 필수request_id/route/answer/sources/ticket/agents/security를 모두 포함하고, 시험에서5 route·선택reason/timings·추가필드 보존과 `{"codes":["question_required"]}`400 전달을 확인한다. 티켓 번호는 합성값이며 접수 사실이 아니다.
+
+저장 API 예시(모두 시험용 형식, 인증 키 값은 포함하지 않음):
+
+```json
+{"key":"req-fixture","title":"합성 문의","requester":"박서연","category":"network","priority":"normal"}
+```
+
+위 `/tickets` 신규 응답은201 `{"ticket_id":"T-2001","duplicate":false}`, 중복은200과 같은ticket_id·duplicate=true다. priority는 응답에 없어도 원민님이 원래 값을 유지한다.
+
+```json
+{"workflow":"oke-handoff","node":"ticket","message":"합성 저장 확인","severity":"high","event_key":"evt-fixture"}
+```
+
+위 `/alerts`의 현재 공통 응답은200 `{"stored":1,"count":1}`다. 아래H07의 duplicate 확장은 아직 적용하지 않았다. `/dlq`는 request_id 키 필수·null 허용, workflow/node/reason/safe_payload 필수·execution_ref 선택이며 현재 로컬200+StoredResponse다. safe_payload는 비밀/개인정보 제거가 필요하고 실제 저장 검사는P1이다.
+
+## JH-H07 · C05 알림 ACK·DLQ 상태 명문화 검토
+
+- 출처: 사용자가 전달한 원민님 회신. 대조 대상4bbbf49, 요청 표본7/7 적합(티켓3·알림2·DLQ2). 직접 상대코드 조회/재실행은 하지 않았다.
+- 발견: StoredResponse는 duplicate를 직렬화하지 않아 원민님이 중복알림 성공을 확인하지 못하고 alerts_down으로 판정할 수 있다. DLQ의 현재로컬200과 원민SPEC 신규201 기대가 다르며 공통API§5는DLQ상태코드를 명시하지 않았다.
+- 검토 의견/제안: 알림 전용 AlertStoredResponse로 분리해 duplicate:bool=False를 추가하고, DLQ는HTTP200+저장ACK검증으로 명문화하는 방향. 모델기본값이 중복확인 증거는 아니며 실제DB가 같은event_key의 기존저장을 확인할 때만duplicate=true다.
+- ACK 제안: 신규 `{"stored":1,"count":5,"duplicate":false}`, 같은event_key기존저장 `{"stored":0,"count":5,"duplicate":true}`를 alerted=true로 해석. 누적count만으로 성공추정 금지. event_key없는요청·동일키변경본문·practice저장소ACK호환성은 함께 확인해야 한다.
+- 반영 상대/순서: 원민님·지혜님 C05검토 → 오현님 공통계약 명시 → 지혜님 P0-2모델/Mock 보완 및 P1-3실제저장 → 원민SPEC/신규·동일키·동시 재시험. 공식공통반영·실연결은 미확인이다. 현재모델/코드는 확장하지 않았다.
+- 차단 범위: ACK확장에 의존하는 성공판정만 미확정이다. P0-3~5확정DB기반과 기본DLQ구현은 이 제안 때문에 중단하지 않는다.
+
+## 과거 제안 이력 · JH-H01~06
+
+아래는 원문 이력을 보존한 것이다. 당시의 ‘미채택/미정’·수치·경로는 현재 적용 지시가 아니며 위 현재표와 SPEC을 우선한다. H01은 Path=/로, H02는 공통P0/P1·P2구분으로, H03 context는확정2000자로 정정한다. 별도 공통 반영 커밋을 확인한 경우만 해당 근거로 추가한다.
 
 ## JH-H01 · 세션·쿠키·첫 변경 제한
 
@@ -74,6 +128,8 @@
 - 검토 상대/반영 요청: 원민님(입력/중복/재처리·실제 관측), 오현님(API C05/모드 반영 완료). 실제 연결은 미실행 상태다.
 
 ## 후속 기록과 버그 전달
+
+> 아래2026-11-04 기록은 작성 당시 상태를 보존한다. 이후4bbbf49 커밋 생성·상대 회신 수신·2026-11-05 context 보완은 상단 현재표 및 IMP-PLAN 최신 보완 기록을 따른다. 당시 ‘미커밋/미확정/상대 확인 없음’을 현재 상태로 재사용하지 않는다.
 
 ### 2026-11-04 · C09 · DAY80 2절 지혜님 진행 내역 반영 요청
 

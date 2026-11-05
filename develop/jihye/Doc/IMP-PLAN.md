@@ -6,6 +6,30 @@
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
+## 현재 작업 순서와 전제 조건 · 2026-11-05
+
+현재 적용 기준은 [SPEC 1절](SPEC.md#1-적용할-기준--새로-선정하지-않음), 변경/상대 회신은 [HANDOFF](HANDOFF.md)의 현재 상태를 따른다. 공통 원문 출처는 SPEC에 남겨두며, 옛 실행 기록의 ‘미확정’ 설명은 작성 당시 이력으로만 읽는다.
+
+1. **P0-2 보완:** 기존4bbbf49에서 빠진 context2,000자 제약과 시험을 추가한다. DB·외부 키·팀원 서비스는 필요하지 않다.
+2. **개인 문서 정리:** SPEC에 확정 기준을 모으고 옛 제안/실행 이력을 구분한다. P0-3 이후는 계획 정리만 하며 이번에 구현하지 않는다.
+3. **팀원 인계:** OpenAPI·fixture·저장 요청 예시와 미확정 항목을 HANDOFF에서 제공한다. 실제 공유 기준 커밋은 보완 커밋 생성 후 갱신한다. 문서 작성과 외부 전송·상대 확인을 구분한다.
+4. **다음 지정 단계 P0-3:** 아래 단계 전제 충족 후 DB 실행 기반만 구현한다. 알림 ACK 확장 협의가 미완료여도 확정된 DB 기반 작업은 진행 가능하다.
+
+| 단계 | 시작 전제 | 해당 단계 범위·완료 판정 | 다음 인계 |
+| --- | --- | --- | --- |
+| P0-2 보완 | 기존 모델·fixture 및 설치된 Python/uv, SPEC의 확정 입력 기준 | 아래 보완 파일/시험으로 제약·OpenAPI·미호출 검증. 실제 인증/HTTP/저장은 제외 | 수언/다혁/원민 모델 대조 |
+| P0-3 | Docker/Compose·이미지 확보 가능, 본인 전용 검증 DB 비밀 설정·네트워크 준비 | postgres 부분·Alembic 기반·접속/인증 거절만. health와 schema 준비 구분, 업무/rag 테이블 생성은P0-4~5 | 유빈/오현 확장 가용성·접속 기반 |
+| P0-4 | P0-3 접속 성공, migration 계정 권한 | vector/app/rag 및 업무 테이블·고유키·T시퀀스 적용/재실행. 계정seed 제외 | 원민 제약·nullable inquiry |
+| P0-5 | 기본 스키마·관리 접속·DB 역할 준비 | rag 테이블·3072차원·최소 권한·가상 벡터 시험. 실제 문서 품질은 유빈 담당 | 유빈 DDL/head·색인/검색 권한 |
+| P0-6 | 마이그레이션·직원 원본/Mock·bootstrap 전용 비밀값 | 직원6명·첫 관리자1명·재실행 덮어쓰기 없음. 실제 로그인은P1-1 | 오현 최초 기동/암호 제거 |
+| P0-7 | DB/head/vector·backend 기반, FE 제공 여부 확인 | 이미지/Compose/backend readiness. 프론트가 없으면 DB/backend까지만 판정 | 수언 프록시·오현 실행법 |
+| P1-1 | 직원/계정/세션 테이블·첫 관리자 | 실제 인증/회수·비밀번호·관리자 보호 경계. 추가 제안과 확정 정책 구분 | 수언 실제 쿠키/화면 시험 |
+| P1-2 | 인증·inquiries·support Mock, 실제 연결 때 제공자 준비 | 소유권→선저장→짧은 거래 종료→HTTP→검증/저장. 공통400·timeout·재시도0 확인 | 다혁 C02·수언 본인 목록 |
+| P1-3 | tickets/alerts/dlq·내부 인증·모드, H07 현재 상태 대조 | 저장·동시성·부분 실패·기본DLQ 구현. 미승인 ACK 확장 금지 | 원민 C05의 실제 ACK/건수 |
+| P1-4 | 제공자·격리 시험 DB·공식 키트/관측 대상 확보 | 실연결·재시작·별도DB 백업/복원·재색인/반복/측정. Mock을 실측으로 집계하지 않음 | 유빈 복원검색·원민 보고서·오현 제출 |
+
+각 단계의 파일·명령은 아래 기존 계획에 있다. 전제 미충족은 실제 실패/미실행으로 기록하고, 정상·오류·권한·경계 증거 없이 체크하지 않는다.
+
 ## P0-1 · FastAPI 골격과 공통 검증 타입부터
 
 - [x] 연결 SPEC: BE-02·05, C01/C07의 P0-1 범위만 확인. 전체 요구 완료를 뜻하지 않음.
@@ -31,10 +55,12 @@
 - [x] 연결 SPEC: BE-01~04, C01/C02/C05의 P0-2 모델·시그니처·Mock 범위만 확인. 실제 업무 기능 완료는 아님.
 - 생성 예정: `app/schemas/auth.py`, `users.py`, `support.py`, `inquiries.py`, `tickets.py`, `alerts.py`; `app/api/deps.py`; `app/api/routes/auth.py`, `users.py`, `ask.py`, `requests.py`, `tickets.py`, `alerts.py`; `tests/test_api_models.py`, `tests/test_support_contract.py`, `tests/conftest.py`.
 - 작업: SPEC 3~5절 모델과 라우터 시그니처를 연결한다. 응답에서 비밀 필드를 제외하고 support의 reason/timings와 추가 응답 필드를 보존한다. 미구현 라우터를 성공 응답으로 위장하지 않는다. Mock은 tests 안의 HTTP transport/fixture로 만들며 다른 역할의 워크플로우를 복제하지 않는다.
-- 확인 예정: `uv run pytest tests/test_api_models.py tests/test_support_contract.py -q`. 12개 웹 경로·2개 내부 경로의 모델을 검증하고 정상5 route·400 codes passthrough·요청ID 불일치/잘못된 응답 검출·원문 암호 미직렬화를 확인한다. OpenAPI는 `app.openapi()` 결과를 시험에서 검사하고 외부 호출을 하지 않는다.
+- 확인 예정: `uv run pytest tests/test_api_models.py tests/test_support_contract.py -q`. 웹14 operation(13개 경로)·내부3개 API의 모델을 검증하고 정상5 route·400 codes passthrough·요청ID 불일치/잘못된 응답 검출·원문 암호 미직렬화를 확인한다. OpenAPI는 `app.openapi()` 결과를 시험에서 검사하고 외부 호출을 하지 않는다.
 - 넘길 결과: 수언님에게 확정 계약 필드의 OpenAPI/예시, 다혁님에게 세션→user 변환 입력과 공통 응답 fixture, 원민님에게 /tickets·/alerts 예시. H03/04의 미확정 세부는 ‘제안’으로 함께 표시하며 실제 연결 확인으로 쓰지 않는다.
 
 ### P0-2 실제 기록 · 2026-11-04
+
+> 보존한 과거 실행 기록이다. 이때 빠진 context 상한과 미확정 분류 오류는 아래2026-11-05 보완 기록으로 정정한다. 당시75개 통과 결과 자체를 변경하지 않는다.
 
 - 작업 디렉터리: `develop/jihye`. BE-01~04 / C01·C02·C05의 계약 모델·Mock만 구현. 예제의 APIRouter/Depends/response_model 계층을 참고하고 우리 세션·공통 응답 전체 보존·내부 키 경계를 적용했다. DB·워크플로우·실제 서비스는 생성/호출하지 않았다.
 - 생성 파일: `app/schemas/{auth,users,support,inquiries,tickets,alerts}.py`, `app/api/deps.py`, `app/api/routes/{auth,users,ask,requests,tickets,alerts}.py`, `tests/conftest.py`, `tests/test_api_models.py`, `tests/test_support_contract.py`. 수정: `app/main.py`, `app/api/errors.py`, `app/schemas/common.py`, `tests/test_contract_basics.py` 및 본인 README·SPEC·TODO·IMP-PLAN·HANDOFF. 의존성 추가 없음.
@@ -47,6 +73,18 @@
 - 미확정: H03 목록 DTO·Security 세부 타입·patch 의미는 초안. 미지 입력 필드는 무시하며400 거절 정책은 채택하지 않았다. context2000자 제한·필드별 오류코드도 추가하지 않았다. 새 비밀번호12자·3종은 모델 검사, 본인 이름/로그인ID 포함 검사는 P1 서비스에서 연결해야 한다. support 응답 미유효를 성공으로 반환하지 않는 시험은 있으나 저장소 미구현이라 DB 저장 실패 검증은 아니다.
 - 다음: 수언님은 `/openapi.json`과 시험의 요청/응답 예시로 화면 Mock 개발 가능. 다혁님은 `SupportRequest/Response` 및 tests fixture의5 route/400 예시를 대조. 원민님은 `/tickets`·`/alerts`·`/dlq` 요청/응답 모델 확인 가능. 실제 저장·멱등·개인정보 마스킹·키 검증·외부 호출은 P1, DB 기반은 다음 P0-3~5다. 유빈님 data-api 응답/인증 및 C06 실저장은 이번에 확인하지 않았다. 상대 확인·메시지 전송·VM 배포·n8n push/test 없음.
 - 최종 검사: `git diff --check` 종료0. `git status --short`로 수정·미추적 경로가 모두 `develop/jihye/` 내부임을 확인했고 `git diff --cached --name-only`는 빈 결과였다. 커밋·push는 수행하지 않았다.
+
+### P0-2 보완 · 2026-11-05
+
+- [x] 기존 모델·공통 확정 기준의 누락 보완 및 개인 문서 정리. P0-3 이후 구현은 하지 않음.
+- 전제/입출력: SPEC의 context 최대2,000자 기준, 기존 nullable/생략 호환 유지. DB/n8n·실제 비밀값 불필요. UTF-8 byte 수가 아닌 문자열 문자 수로 검사하고 trim/절단하지 않는다.
+- 수정: `app/schemas/common.py`의 Context 타입, `app/schemas/support.py`의 AskRequest/SupportRequest, `tests/test_support_contract.py`. 문서: README·AGENTS·TODO·SPEC·본 계획·HANDOFF·migrations/README·deploy/README.
+- 변경 전 결함: 평가§3.1에 상한이 있지만 두 모델이 context2,001자를 수락했고 개인 문서는 미확정으로 오기했다. 공통 계약 변경 없이 개인 구현/문서를 바로잡았다.
+- 실제 명령: `uv run pytest -q`(develop/jihye), 종료0, **100 passed, 1 warning in 7.78s**. 기존75개+context 회귀25개. 기존 Starlette TestClient의 HTTPX 폐기 예정 경고1건 유지.
+- 확인: 두 모델에서 빈 문자열/공백/한글2,000자/생략/null 수락,2,001자 및 잘못된 타입 거절. 웹2000자→Mock에 그대로 전달, 초과/잘못된 타입400·서비스/HTTP호출0, 웹 응답에 입력 미포함, AskRequest OpenAPI 및 SupportRequest JSON Schema의 maxLength2000 확인. 실제 세션·네트워크·DB 시험은 없음.
+- 문서 정리: 공통 대조기준db14b79와 현재 적용표, 확정/구현 상태 분리, 단계 전제·완료·인계, 수동 백업/복원 확인, 원민7/7 회신 및 미확정 H07 기록. 과거 제안/시험은 보존했다. 문서 치환 준비 중 문자열 대조2회가 실패했으나 각 사전 검사 단계에서 종료되어 해당 명령은 파일을 쓰지 않았고 수정 후 정상 적용했다. 시험 실패는 없음.
+- 넘길 결과: HANDOFF의 현재 인계 패키지·요청/응답 예시를 보완 커밋과 함께 공유한다. 아직 보완 커밋·push·외부 메시지 전송 없음. 원민7/7은 기존4bbbf49에 대한 전달받은 회신이며 이번 변경에 대한 상대 재확인은 아님.
+- 최종 확인: 개인 문서8개의 로컬 링크87개 대상 파일 존재 확인(누락0), `git diff --check` 종료0. 변경11개 파일은 모두 develop/jihye 내부이고 staging 없음. 공통/상대 파일 수정·DB 기동·실제 API 호출·P0-3 구현은 하지 않았다.
 
 ## P0-3 · DB 컨테이너와 마이그레이션 실행 기반
 
@@ -79,7 +117,7 @@
 - 작업: SPEC 6절의 원본6명 대조→직원만 적재→명시한 IT팀 직원의 첫 계정 생성 순으로 만든다. GET /employees를 Mock으로 먼저 확인한다. bootstrap은 BOOTSTRAP_ADMIN_PASSWORD만 읽고 기존 계정 해시/역할을 덮어쓰지 않는다. 명령 이름은 아래와 같이 구현한다.
 - 확인 예정: `uv run pytest tests/test_bootstrap.py tests/integration/test_bootstrap_db.py -q`. 정상6명, 누락/추가/부서불일치, 비IT bootstrap 거절, 암호 누락, 재실행 생성0건·기존 해시 유지, 비밀번호 미출력을 확인한다.
 - 실제 seed 예정 명령: `uv run python -m app.cli seed-employees` 후 직원6명 확인. 이어 `uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> --login-id <선택한 ID>`를 실행하는 인터페이스다. `<…>`는 비밀을 제외한 선택값으로 치환하고 암호 인자는 만들지 않는다.
-- 넘길 결과: 오현님에게 최초1회/재실행 조건과 일회성 암호 제거 절차. 나머지5명 발급은 P1-1 관리자 API에서 수행한다. 세션·비밀번호 규정·최후 관리자 보호는 H01·02·05 미확정 상태를 구분한다.
+- 넘길 결과: 오현님에게 최초1회/재실행 조건과 일회성 암호 제거 절차. 나머지5명 발급은 P1-1 관리자 API에서 수행한다. 세션·비밀번호 P0/P1 규정·최후 관리자 보호는 SPEC 현재 기준을 적용하고 추가 운영 제안만 구분한다.
 
 ## P0-7 · backend 이미지·준비 상태·배포 묶음
 
@@ -93,7 +131,7 @@
 
 - [ ] 연결 SPEC: BE-01, C01.
 - 생성/수정 예정: `app/services/auth.py`, `accounts.py`, `app/repositories/users.py`, `sessions.py`, auth/users 라우터·deps·security; `tests/test_auth_permissions.py`, `tests/integration/test_accounts.py`.
-- 작업: 로그인/로그아웃/me/암호 변경과 관리자 생성/비활성화/초기화를 연결한다. 모든 보호 경로에 활성 계정·역할 검사를 적용한다. 미확정 H01·02·03·05는 초안 모델/정책 분리로 준비하고 공통 반영 전 외부 동작으로 확정하지 않는다. 기본401/403·응답 비밀 제거는 바로 구현한다.
+- 작업: 로그인/로그아웃/me/암호 변경과 관리자 생성/비활성화/초기화를 연결한다. 모든 보호 경로에 활성 계정·역할 검사를 적용한다. SPEC 현재 기준의 세션·첫 변경·회수·비밀번호·관리자 보호를 구현한다. HANDOFF에 남은 추가 정책과 DTO 세부만 초안으로 분리한다. 기본401/403·응답 비밀 제거는 바로 구현한다.
 - 확인 예정: `uv run pytest tests/test_auth_permissions.py tests/integration/test_accounts.py -q`. 직원403·미로그인401·로그아웃 토큰 재사용401·비IT admin 불가·제공직원만 발급·계정 중복을 확인한다. 확정된 정책의 첫 변경/만료/초기화/비활성화 경계도 확인한다. 첫 관리자 변경 후 나머지5명 발급해 admin2/employee4인지 확인한다.
 - 넘길 결과: 수언님에게 실제 로그인/첫 변경/계정 발급 응답·쿠키 조건·화면 오류. 오현님에게 미반영 정책과 실제 검증 범위.
 
@@ -103,21 +141,22 @@
 - 생성 예정: `app/services/inquiries.py`, `app/repositories/inquiries.py`, `app/clients/support.py`; ask/requests 라우터; `tests/test_ask_adapter.py`, `tests/integration/test_request_ownership.py`.
 - 작업: 서버 신원→공통 user, 문의 선저장→짧은 거래 종료→support 호출→검증된 응답 저장 순서로 만든다. 동일 키는 소유권부터 검사하고 원문 입력의 변조 재사용/실행중 재시도는 H04 검토 결과로 처리한다. DB 거래를 HTTP 대기 동안 유지하지 않는다.
 - 확인 예정: `uv run pytest tests/test_ask_adapter.py tests/integration/test_request_ownership.py -q`. 두 직원의 타인 request_id403·결과 미노출·support 미호출, 본인 목록 분리, 입력400, 공통400 codes,5 route와 reason/timings 보존을 확인한다. timeout/잘못된 JSON은 Mock으로 검증하고 실제 서비스와 구분한다.
-- 넘길 결과: 다혁님에게 실제 수신 페이로드·응답 보존/오류 결과, 수언님에게 본인 문의/재시도 사용법. H04 수치가 미확정이면 시간 목표 통과를 쓰지 않는다.
+- 넘길 결과: 다혁님에게 실제 수신 페이로드·응답 보존/오류 결과, 수언님에게 본인 문의/재시도 사용법. 연결3초·전체30초·재시도0의 초기 예산을 적용하되 실측 없이 시간 목표 통과로 쓰지 않는다.
 
 ## P1-3 · 티켓·알림·관리자 처리와 실패 거래
 
 - [ ] 연결 SPEC: BE-03·04, C05.
 - 생성 예정: `app/services/tickets.py`, `alerts.py`, `storage_mode.py`, `app/repositories/tickets.py`, `alerts.py`; tickets/alerts 라우터; `tests/integration/test_ticket_idempotency.py`, `tests/test_storage_mode.py`.
-- 작업: 내부 X-Api-Key와 세션을 분리하고 요청 직원 확인·문의 연결·T-번호 발급·UNIQUE 충돌 회수를 구현한다. 알림 거래를 분리하고 app/practice 한 대상만 호출한다. DLQ는 H06 채택/공통 반영 후 해당 API/테스트를 연결하며 그 전에는 테이블 준비로만 기록한다.
+- 작업: 내부 X-Api-Key와 세션을 분리하고 요청 직원 확인·문의 연결·T-번호 발급·UNIQUE 충돌 회수를 구현한다. 알림 거래를 분리하고 app/practice 한 대상만 호출한다. DLQ는 공통 반영된 POST /dlq 계약으로 서비스·repository·시험을 연결한다. H07의 알림 duplicate 확장과 DLQ200 명문화 상태는 별도 확인하며, 미확정 확장 없이 가능한 기본 저장은 구현한다.
 - 확인 예정: `uv run pytest tests/integration/test_ticket_idempotency.py tests/test_storage_mode.py -q`. 동일 key 동시2회→티켓1건·같은ID·신규201/중복200, 타인 key403, 내부키401, 티켓 commit 뒤 알림 실패에도 티켓 유지, 관리자 수정/직원403/없는 티켓404를 확인한다.
-- 넘길 결과: 원민님에게 실제 저장 결과·재시도/중복·장애 경계·실제 관측 대상과 DLQ 미해결 상태. 상대로부터 실제 확인이 없으면 연결 완료로 표시하지 않는다.
+- 넘길 결과: 원민님에게 실제 저장 결과·재시도/중복·장애 경계·실제 관측 대상과 DLQ 저장 결과와 ACK 미해결 세부. 상대로부터 실제 확인이 없으면 연결 완료로 표시하지 않는다.
 
 ## P1-4 · 실연결·재시작·측정·인계
 
 - [ ] 연결 SPEC: BE-01~07, C01/C02/C05/C06/C07/C08/C09.
-- 생성 예정: `tests/integration/test_persistence.py`, `tests/integration/test_web_flow.py`; 실제 실행 후 `Doc/SUBMISSION-NOTES.md`. 상대 코드/워크플로우·공통 사례 기대값은 수정하지 않는다.
+- 생성 예정: `tests/integration/test_persistence.py`, `tests/integration/test_web_flow.py`, `tests/integration/test_backup_restore.py`; 실제 실행 후 `Doc/SUBMISSION-NOTES.md`. 상대 코드/워크플로우·공통 사례 기대값은 수정하지 않는다.
 - 확인 예정: `uv run pytest tests/integration/test_persistence.py tests/integration/test_web_flow.py -q`, volume 유지 postgres/backend 재시작 후 revision·문의/티켓·RAG 청크/검색 재확인. frontend→FastAPI→동일support, handoff→같은 저장대상, 유빈님 실제 색인/재색인을 각각 확인한다.
+- 백업/복원 확인 예정: `tests/integration/test_backup_restore.py`에서 별도 검증 DB의 백업을 다른 격리 DB에 복원하고 revision·관계·행 수·해시를 대조한다. 유빈님이 복원 후 권한별 검색을 확인한다. named volume 유지 재시작과 별개이며 공유/운영 DB를 덮어쓰지 않는다. 자동 백업 주기·RPO/RTO는 이번 필수 범위에 확정하지 않는다.
 - 측정: SPEC 8절대로 품질·지연 원자료를 수집한다. 개발 호출 예산과 최종 검증을 구분한다. 최종 제출용 LLM 시나리오는 **3회 반복(`--repeat 3`)**하고 회차별 실패도 보고한다. 처리시간 측정은 최대5회 표본과 계산 방법을 남긴다. n8n push/test와 팀 VM 실행은 담당 사람이 수행한다.
 - 넘길 결과: 각 상대에게 실제 입출력·Mock 여부·실패/재시험 보고서, 오현님에게 검증한 명령/버전/head·재시작/복구·정책 미반영·미실행을 전달한다. 설계/결과 취합은 본인 SUBMISSION-NOTES를 통해 하고 공통 docs는 직접 고치지 않는다.
 

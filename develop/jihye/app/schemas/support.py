@@ -2,7 +2,7 @@ from typing import Annotated, Literal
 
 from pydantic import ConfigDict, Field
 
-from app.schemas.common import Attempt, ContractModel, NonEmpty, Priority, Question, RequestId
+from app.schemas.common import Attempt, Context, ContractModel, NonEmpty, Priority, Question, RequestId
 
 FiniteNumber = Annotated[float, Field(allow_inf_nan=False)]
 Milliseconds = Annotated[float, Field(allow_inf_nan=False, ge=0)]
@@ -12,7 +12,7 @@ class AskRequest(ContractModel):
     question: Question
     request_id: RequestId | None = None
     attempt: Attempt = 1
-    context: str | None = None
+    context: Context | None = None
 
 
 class SupportRequest(ContractModel):
@@ -21,7 +21,7 @@ class SupportRequest(ContractModel):
     question: Question
     channel: Literal["web"] = "web"
     attempt: Attempt = 1
-    context: str | None = None
+    context: Context | None = None
 
 
 class ExtensibleResponse(ContractModel):

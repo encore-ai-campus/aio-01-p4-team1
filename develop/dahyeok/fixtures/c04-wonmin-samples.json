@@ -1,0 +1,57 @@
+{
+  "purpose": "원민님 feat/wonmin-p0의 P1-1 입력/응답 형식에 맞춘 합성 C04 표본. 실제 호출 아님.",
+  "results": {
+    "normal": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2101",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      }
+    },
+    "duplicate": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2101",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      }
+    },
+    "alerts_down": {
+      "status": 200,
+      "body": {
+        "ok": false,
+        "ticket": {
+          "ticket_id": "T-2101",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "reason": "alerts_down",
+        "alerted": false,
+        "dlq": false
+      }
+    },
+    "tickets_down": {
+      "status": 503,
+      "body": {
+        "ok": false,
+        "ticket": null,
+        "reason": "tickets_down",
+        "alerted": false,
+        "dlq": false
+      }
+    }
+  }
+}

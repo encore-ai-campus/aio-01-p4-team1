@@ -1,0 +1,21 @@
+{
+  "purpose": "P1-1 자기 접수 조회 합성 응답. 상태·연락처는 실제 제공 티켓 자료가 아니다.",
+  "results": {
+    "own_ok": {
+      "status": 200,
+      "body": {
+        "ticket_id": "T-1002",
+        "status": "처리 중",
+        "note": "합성 처리 메모",
+        "contact": { "phone": "TEST_PHONE", "email": "TEST_EMAIL" }
+      }
+    },
+    "other_forbidden": {
+      "status": 403,
+      "body": { "error": "forbidden", "contact": "SHOULD_NOT_LEAK" }
+    },
+    "not_found": { "status": 404, "body": { "error": "not_found" } },
+    "unavailable": { "status": 503, "body": { "error": "unavailable" } },
+    "timeout": { "status": 0, "transport_error": "timeout" }
+  }
+}

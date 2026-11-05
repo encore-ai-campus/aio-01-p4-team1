@@ -1,0 +1,66 @@
+{
+  "purpose": "P1-1 C03 합성 응답. 실제 규정 검색 결과나 측정 점수가 아니다.",
+  "results": {
+    "empty": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "evidence": [],
+        "reason": "no_evidence"
+      }
+    },
+    "found": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "접속 오류",
+            "text": "합성 검색 근거",
+            "score": 0.82
+          }
+        ],
+        "reason": null
+      }
+    },
+    "unavailable": {
+      "status": 503,
+      "body": {
+        "ok": false,
+        "evidence": [],
+        "reason": "search_unavailable"
+      }
+    },
+    "invalid_score": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "접속 오류",
+            "text": "합성 검색 근거",
+            "score": "0.82"
+          }
+        ],
+        "reason": null
+      }
+    },
+    "found_contact": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "접속 오류",
+            "text": "합성 검색 근거. 문의는 support@example.invalid로 보내세요.",
+            "score": 0.82
+          }
+        ],
+        "reason": null
+      }
+    }
+  }
+}

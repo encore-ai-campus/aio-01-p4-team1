@@ -1,6 +1,6 @@
 # 유빈님 · 단계별 구현 계획
 
-[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 요구 ID의 상세 기대는 SPEC에, 공통 기준 보완 제안은 [HANDOFF](HANDOFF.md)에 있다. **모든 단계는 미실행이다. 지금 생성된 것은 작업 지시 Markdown뿐이다.** 아래 코드·JSON·설정·결과 문서는 구현할 때 생성할 예정이며 현재 존재하는 파일 링크로 표시하지 않는다.
+[README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → 이 문서 순서로 읽는다. 요구 ID의 상세 기대는 SPEC에, 공통 기준 보완 제안은 [HANDOFF](HANDOFF.md)에 있다. **P0-1 로컬 Mock 구현·검증 기록은 INDEX-RESULT.md에 있다. 실제 원본 확인과 P0-2 이후 단계는 미실행이다.** 아래 코드·JSON·설정·결과 문서는 구현할 때 생성할 예정이며 현재 존재하는 파일 링크로 표시하지 않는다.
 
 ## 작업 위치와 단계 운영
 

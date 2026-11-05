@@ -9,7 +9,7 @@
 | 연결 | 상대 | 현재 상태 |
 | --- | --- | --- |
 | C03 | 다혁님 | 아래 H-Y01·04 제안 기록, 상대 검토·공통 반영·실제 연결 미확인 |
-| C06 | 지혜님 | 아래 H-Y02·03 제안 기록, 마이그레이션/복구 실제 확인 미실행 |
+| C06 | 지혜님 | P0-1 DB 컬럼 설계 매핑 검토 회신 수신(아래 최신 기록), 실제 API·인증/DB 저장 검증 미완료. H-Y02·03 제안의 승인·반영과는 별개 |
 | C08 | 원민님 | 권한·품질·복구 시험안 작성, 실제 시험 미실행 |
 | C09 | 오현님 | 공통 보완 제안 기록, 반영 여부 미확인 |
 
@@ -60,3 +60,92 @@
 각 제안 아래에 `검토자·날짜 / 상대 HANDOFF 링크 / 검토 의견 / 수정된 제안 / 오현님 공통 반영 문서·절·커밋 / 내 SPEC 반영 / 실제 연결 확인 입력·HTTP·보고서 / 남은 문제`를 추가한다. 검토 기록이 없으면 제안 상태를 유지한다. 상대 HANDOFF는 링크로 읽기만 한다.
 
 실제 버그가 확인되면 `증상 / 재현 입력 / 기대·실제 / 환경·버전 / 마스킹한 로그 / 영향 / 소유자`를 추가한다. 지금은 실제 버그를 재현하거나 협의를 완료한 기록이 아니다.
+
+## P0-2 준비 결과 · 2026-11-04 · 전달 전
+
+상태: 로컬 구현·Mock 검증. 외부 전달/상대 검토/공통 반영/실제 연동 모두 없음. 공통 계약 변경 요청은 없다.
+
+- 기준 정합성 주의: SPEC RAG-01·02와 H-Y02의 이전 설명은 권한 매핑을 미확정으로 적었지만, 현재 DATA-AND-DB 4절·RAG-ARCHITECTURE 1절에는 메타데이터 부재 시 일반 8종 all 매핑이 명시되어 있다. 공통 규칙을 바꾸지 않고 P0-1의 확정 키 매핑을 보존했다. 관리자 문서의 구체 식별자·관리 매핑표는 여전히 미확인이다. 이 요청에서 권한 정책 변경은 수행하지 않았다.
+- P1-1: tools/rag_prepare.py의 chunk_document 반환 필드와 metadata 표본, Doc/CHUNK-COMPARISON.md를 준비했다. section/overlap=0, p0-2-v1, LF 전체 text 원문 범위, 제목+절+LF 접두어, content=향후 임베딩 입력, UTF-8 SHA-256이다. 빈 절은 분석 보존/청크 제외, 8000바이트 초과는 보수적 검토 거절로 기록한다. 토크나이저 기반 최종 한도 확인은 미실행이며 모델 한도 변경을 뜻하지 않는다. 실제 원본/설정 확정 후 지혜님 기존 DB 컬럼과 매핑할 필요가 있다. DDL/DB/임베딩/워크플로우는 구현하지 않았다.
+- 다혁님(C03): requests/search-all.json·search-it.json과 cases/rag-search.json의 F01~F03 정상200/빈200/장애503 예시를 준비했다. 전부 합성 예시이고 실제 검색 성공 기록이 아니다. F04의 입력 거절 상세 형식은 H-Y01 제안 상태이며 검색 미실행/권한 확대 금지만 기대한다.
+- 원민님(C08): Q01~16 초안 및 all/all+it 요청 쌍, F01~04의 고정된 합성 기대를 준비했다. 실제 원문 정답은 고정하지 않았다. Q01~11 원문 대조 전 초안, Q12~13 답 근거 없음, Q14~16 질문/기대 원문 미생성·미실행이다. 검색 결과를 이유로 기대값을 바꾸지 않으며 검증 후 원본 해시·근거·변경 이력으로 새 버전을 고정한다.
+- 오현님(C09): 공통 설계서에 취합 가능한 Mock 청킹 비교 자료는 준비했다. 실제 8종/관리자 문서·품질·시간 자료로 제출할 수는 없다. 실제 응답·인증·권한 출처 확인이 남아 있다.
+
+증거 경로: Doc/CHUNK-COMPARISON.md, Doc/SEARCH-EVAL.md, cases/rag-search.json, tests/test_chunking.py. 상대 동의로 처리하지 않는다. commit/push/PR 생성은 이번 요청에서 수행하지 않는다.
+
+## P0-2 결함 보완 인계 준비 · 2026-11-04 · 전달 전
+
+- 상태: 평가 P1 3건·P2 2건의 로컬 보완. 기존 실행 이력은 보존한다. 실제 팀원 전달·상대 확인·공통 반영 없음.
+- P1-1: 기존 청크 매핑·설정에 방식별 complete/partial/rejected, chunk_coverage(실제 생성 범위), excluded_ranges(의도적 빈 절/공백 제외), rejected_ranges(길이 초과), coverage_accounting(전체 범위 장부)을 추가했다. coverage_with_exclusions=true를 색인할 원문 전체 보존으로 해석하면 안 된다. 완전 성공·부분 생성·거절의 건수/길이 통계를 분리했다. partial/rejected를 전체 색인 성공으로 소비하지 않아야 한다. 실제 DB/임베딩 저장은 구현하지 않았다.
+- 다혁님(C03): 기존 F01~04와 정상·빈·장애 예시 유지. F05~10에 동점·일반 입력 오류·DB/임베딩/시간 초과·관리자 주장을 추가했다. 원인별 장애는 공통 503/search_unavailable 유지, 미확정 입력 오류 세부 형식은 null/제안 상태다. 실제 검색 검증은 아니다.
+- 원민님(C08): all/all+it 요청 쌍, Q01~16 미확정 정답표와 버전 이력, 10개 기능 사례를 준비했다. 정확한 한글/이모지 300/301 경계와 혼합 긴 절 부분 거절을 회귀에 추가했다. 실제 관리자 문서 양성 시험은 미실행이다.
+- 안전 실행: 실제 API는 --allow-network를 명시한 승인 후 실행에 한정한다. 기본 CLI 및 기본 collect_api 호출은 api_network_not_authorized로 전송 전에 차단된다. 주입된 가짜 전송은 실제 API 호출이 아니므로 계속 사용한다. 키/URL은 차단 오류에 넣지 않는다.
+- 정합성 주의: 기존 SPEC/H-Y02와 공통 권한 매핑 설명 차이는 그대로이며 이번 보완에서 권한 정책·공통 계약은 변경하지 않았다. 실제 원본·관리자 문서·정답 확정·검색 품질은 미검증이다.
+
+결과: Doc/P0-2-RESULT.md 최신 절, Doc/CHUNK-COMPARISON.md, Doc/SEARCH-EVAL.md, cases/rag-search.json. commit/push/merge/P1-1 작업은 수행하지 않았다.
+
+
+## C06 · P0-1 DB 매핑 검토 회신 수신 · 2026-11-04
+
+- 수신 근거: 사용자가 지혜님에게 받은 P0-1 산출물 검토 회신을 이 대화에서 전달함. 아래는 전달받은 검토 결과의 기록이며, 에이전트가 지혜님에게 직접 연락하거나 실제 API/DB를 실행한 결과가 아니다. 회신 원문 링크·상대 커밋·별도 수신 일시는 제공되지 않았다.
+- 검토 결과: 문서 식별자·권한·원문 해시는 기존 `rag.documents.doc_key`·`access_level`·`source_hash` 컬럼에 **설계상 매핑 가능**하다. 현재 확인된 범위에서는 DB 구조 변경이 불필요하다. 확장·DDL·마이그레이션·접속 권한의 구현/실행 완료를 의미하지 않는다.
+- 저장 원본 주의: 마스킹된 `Doc/SOURCE-MANIFEST.md`는 검토·추적용 대장이며 **실제 저장 원본으로 사용할 수 없다**. 실제 저장에는 원문과 확인된 권한·원문 해시를 연결한 데이터가 필요하다.
+- 후속 준비: 실제 저장·연결에 사용할 청크 본문·번호·해시·임베딩은 후속 단계에서 준비·검증해야 한다. 현재 P0-2의 합성 청크/해시와 Mock 테스트는 실제 저장 원본 또는 임베딩 준비 완료를 뜻하지 않는다.
+- 미확인: 실제 data-api 응답 구조와 `X-Api-Key` 인증은 미확인이다. 실제 DB 저장 및 통합 테스트는 미실행이다.
+
+| 확인 대상 | 상태 | 범위 |
+| --- | --- | --- |
+| DB 컬럼 설계 매핑 | 검토 완료 | 지혜님 회신 기준, P0-1 식별자·권한·원문 해시의 기존 컬럼 매핑 |
+| 실제 API·인증 검증 | 미완료 | 실제 응답 구조·X-Api-Key 인증 미확인 |
+| 실제 DB 저장 검증 | 미완료 | 실제 저장 및 통합 테스트 미실행 |
+
+참고: 지혜님의 P0-1 FastAPI 구현 결과는 연결 담당자의 참고 사항으로만 취급한다. 이번에 구체 구현 결과나 실행 증거가 추가로 제공된 것은 아니므로 지혜님 작업·완료 상태를 독립 검증하거나 변경하지 않았다. 상대 폴더·공통 계약도 수정하지 않았다.
+
+이 회신은 DB 설계 매핑에 한정된다. H-Y02·H-Y03 제안 승인, 실제 권한 출처 확정, 공통 반영 커밋, 실제 API/DB 연결 완료로 해석하지 않는다. 기존 기록과 현재 P0-2 변경사항은 보존한다. commit·push는 수행하지 않는다.
+
+## C06 · P1-1 Mock 색인 준비 · 2026-11-04 · 검토 요청 준비
+
+기존 P0-1 DB 매핑 검토 완료와 실제 저장 미완료 상태는 유지한다. 이번에는 기존 rag 두 테이블의 DML 매핑 및 주입형 색인 엔진을 구현했으며 실제 접속/저장/임베딩/n8n 실행은 하지 않았다. 상대 검토·동의·외부 전달 없음.
+
+- 지혜님: 실제 rag 마이그레이션/확장 vector(3072), FK/고유키/metadata/updated_at, vector_dims, 색인 계정 권한 및 전용 autocommit=false 연결을 확인할 필요가 있다. UPSERT→청크 DELETE→INSERT가 연결 하나의 한 거래로 수행되는 DML 어댑터를 준비했다. 새 DDL/함수/컬럼은 요구하지 않는다. 실제 rollback·연결 단절·재실행 확인은 미실행이다.
+- 권한 축소: 공통 계약의 공개 청크 잔존 금지에 따라 all→it 확인 시 공개 청크를 제거하고 검토 전 저장을 중단하는 보수적 경로를 준비했다. 실패 때 공개 청크 중지의 실제 효과와 검색 중지 운영을 확인해야 한다. H-Y03의 다른 제안을 승인으로 처리하지 않으며 예약 갱신·삭제 동기화·복구 운영은 구현하지 않았다.
+- 실행 환경: workflows/oke-index.json은 비활성 수동 Mock 래퍼다. Python 공통 엔진을 고정 /opt/oke-rag 경로에서 호출하므로 n8n 버전의 Execute Command 지원/허용, Python·담당 코드 배치, 실제 원본·임베딩 어댑터·DB 연결 및 Credential 배치 확인이 필요하다. 이 파일을 운영 색인 완료 워크플로우로 취급하지 않는다. 공통 Compose는 수정하지 않았다.
+- 원민님: 정상4/거절1 → 재실행 건너뜀4/거절1, 임베딩 중간 실패 보존·DB 더블 롤백·재시도·권한 경계 Mock 검사 준비. 실제 DB/본체 통합 시험은 미실행이다.
+- P1-2 인계: chunk content/hash/metadata와 설정 지문 매핑은 준비됐으나 실제 성공 색인 ID는 아직 없다. oke-search 또는 권한 SQL 검색은 이번 범위에서 구현하지 않았다.
+
+근거: tools/rag_index.py, tools/rag_verify.py, config/rag-settings.json, tests/test_indexing.py, Doc/INDEX-RESULT.md 최신 P1-1 절. 80일차 flow.py 키트 부재로 공식 check 미실행이며 로컬 JSON/그래프 검사만 수행한다. commit/push/merge는 수행하지 않는다.
+
+## C06 · P1-1 안전성 결함 보완 후 확인 요청 · 2026-11-04 · 전달 전
+
+기존 검토/실행 이력은 보존한다. 지적된 권한 축소 누락·동시 재공개·검증 성공 오판·Mock/DB 중지 불일치·rollback 실패는 Mock/DB-API 더블에서 보완했다. 전체108개 테스트가 통과했으며 실제 PostgreSQL/API/임베딩/n8n은 미실행이다. 상대 동의·공통 반영·외부 메시지 전송 없음.
+
+지혜님 확인 사항:
+
+1. 기존 테이블·updated_at·metadata·FK/고유키/vector(3072)와 현재 버전 지문 매핑이 실제로 맞는지. 새 DDL/컬럼/마이그레이션은 작성하지 않았다.
+2. PostgreSQL의 pg_advisory_xact_lock(hashtextextended(...)) 사용 가능 여부, 실제 격리 수준, SELECT FOR UPDATE와 동일 트랜잭션 내 비교·UPDATE/INSERT/청크 교체의 원자성. 모든 색인 쓰기 경로의 동일 문서 잠금 규약 준수가 필요하다. 외부 직접 청크 변경·deadlock·잠금 대기·실패 재실행은 실제 시험이 필요하다.
+3. 소유권을 이전한 전용 autocommit=false 연결을 사용한다. SQL 실패/rollback 실패/commit ACK 불명확을 구분하고, 후자의 두 경우 close·재사용 차단한다. 풀/공유 연결은 직접 지원하지 않으며 실제 물리 연결 폐기/대여 해제 규약을 담당자가 확인해야 한다. 불명확한 커밋은 이전 상태 보존 성공으로 처리하지 않는다.
+4. all→it 확인 시 본문/제목 오류와 별개로 같은 문서 ID를 유지하며 it/빈 청크 상태로 중지한다. 이후 동일 입력이나 all 입력도 자동 재개하지 않는다. 중지/재개 권한·승인·실제 원본 재확인 조건은 미결정이며 이번에 임의 확정하지 않았다. 청크 없는 기존 행은 보수적으로 검토 대상으로 막는다.
+5. 중지 DML 실패·결과 불명확 시 실제 검색을 중단하는 운영 수습이 필요하다. 엔진의 failed 보고만으로 공개 데이터 미노출을 보장하지 않는다. 실제 검색 중지·복구·재개 확인은 배포 전 담당자 합의와 통합 시험이 필요하다.
+
+원민님 전달 준비: 빈 본문/잘못된 제목의 권한 축소, 충돌·미확인 권한 불변, 중지 실패, 중지 후 ID 보존·재실행 거절, 두 스레드 경합과 저장 전 CAS, 임베딩 전체 실패 종료1, rollback 실패·commit 불명확 연결 폐기, 기존 정상/건너뜀/부분 실패 보존. 근거는 tests/test_indexing.py의 SafetyDefectRegressionTests·TransactionFailureRegressionTests·AdditionalTransactionTests 및 Doc/INDEX-RESULT.md 최신 절이다.
+
+실제 저장/성공 색인 ID·API/인증·규정/관리자 원본 확인은 미완료다. P1-2 구현은 시작하지 않았으며 commit/push/merge는 하지 않는다.
+
+## 실제 검색·본체 연결을 위한 전달 사항 · 미전달
+
+- 지혜님(C06): P0-5 적용 revision/head, vector 확장 버전·활성화, `rag.documents`/`rag.chunks` 카탈로그·3072차원/모델 제약, 검색 전용 계정 SELECT 권한과 읽기 전용 접속 방식(비밀값 제외), 실제 16개 문서의 출처·권한·해시·문서/청크 건수 및 Mock 구분 증거를 부탁한다. 현재 체크아웃에는 migration README만 있어 직접 확인하지 못했다. 별도 격리 DB와 검색 계정으로 SQL 실행계획·권한 선필터를 확인해야 한다.
+- 다혁님(C03): 계약은 `POST /webhook/oke-search`, `X-Team-Key`, `request_id/query/type/access_levels/top_k=3` 요청, 정상 `200/{ok:true,evidence:[{doc,section,text,score}],reason:null}`, 빈 후보 `200/no_evidence`, 장애 `503/search_unavailable`이다. 현재 n8n `oke-search`는 합성 Mock이며 실제 호출 가능한 검색 서비스 URL은 없다. 본체의 직원 부서 조회가 만든 `access_levels`를 검색 서비스까지 변조 불가능하게 전달하는 경계, 내부 HTTP 서비스 소유자·배포 주소·인증·timeout, 본체 LLM 입력의 IT 근거 누출 관측 방법을 확인해 달라. 권한 출처가 확정되기 전 IT 양성 검색은 비활성이다. 알려진 팀 VM n8n 주소를 검색 API 주소로 간주하지 않는다.
+- 오현님(통합): 실제 원본 16개와 관리자 문서 제공/권한 기준, 유료 임베딩 호출 및 색인 비용 승인, 팀 VM 배포 경계와 필요한 환경 주입 방식·시연 담당 확인이 필요하다. 공통 문서 수정은 리드 담당이다.
+- 원민님(C08): 격리 DB에서 일반/IT/위조/빈 결과/장애 및 본체 LLM 입력 관측을 준비하고, 정답표·두 청킹 색인·관측자료가 확보되기 전 P1-3 실제 품질 수치를 확정하지 말아 달라.
+
+현재 상태는 제공자·SQL 어댑터의 Fake 테스트 가능 수준이다. 실제 DB·OpenAI·n8n HTTP·팀 VM 검증 및 외부 메시지 전송은 수행하지 않았다.
+
+## C03 실제 HTTP 연결 준비 · DB 수신 전 · 미전달
+
+`tools/search_http.py`는 독립 HTTP 서비스다. `SEARCH_TEAM_KEY`가 있어야 시작하며 `SEARCH_MODE=live`만 허용한다. 실행은 `cd develop/yubeen && python3 tools/search_http.py --host 127.0.0.1 --port 8765`이다. n8n에서 접근할 실제 host/port는 배포 담당자가 결정하고 네트워크에서 검증해야 한다. `DATABASE_URL`, `OPENAI_API_KEY`가 없으면 인증된 정상 요청도 503/search_unavailable이다. Python `psycopg` 설치와 접근 가능한 검색 전용 DB 계정이 필요하다. 모델/차원은 `config/rag-settings.json`의 text-embedding-3-large/3072로 고정한다. 예시 변수명은 `search.env.example`에 있으며 값은 비워 두었다.
+
+지혜님에게 받을 것: P0-5 migration head 및 `CREATE EXTENSION vector` 확인, `rag.documents`/`rag.chunks` 컬럼·권한·3072차원 확인, 검색 전용 SELECT 계정의 비밀 전달 경로, 격리 DB 접속 방식, 실제 원본·청크 수와 권한·해시 확인 결과. 수신 뒤 격리 DB에서 read-only SELECT로 `SELECT extname FROM pg_extension WHERE extname='vector'`, `SELECT count(*) FROM rag.documents`, `SELECT count(*) FROM rag.chunks`를 실행하고 schema/권한을 확인한다. 실제 임베딩 키는 승인된 비밀 경로로 주입하고 저장소/로그에 쓰지 않는다.
+
+검증 순서: (1) 격리 DB 및 키 설정 뒤 위 서비스 실행, (2) `POST http://127.0.0.1:8765/webhook/oke-search`에 X-Team-Key와 C03 JSON `request_id/query/type/access_levels:["all"]/top_k:3`을 전송해 일반 검색 200/빈 결과/503을 분리 확인, (3) `all,it` 위조 요청이 400이고 임베딩·DB에 닿지 않는지 확인, (4) 검증된 IT 권한 전달 계약을 다혁님·지혜님·오현님과 확정한 뒤에만 IT 양성 검색을 구현·시험, (5) n8n에서 `SEARCH_SERVICE_URL` 전체 내부 URL과 HTTP Header Auth Credential을 설정하고 비활성 `oke-search.json`을 import/test하여 200·빈200·503 및 인증·오류 분기 확인, (6) 다혁님 본체에서 C03 호출/503 이관/근거 비노출을 시험, (7) 로컬 결과 후 팀 VM에서 네트워크·Credential·시간 예산·실제 원본 권한을 별도 확인한다. 현재 (1)~(7)의 실제 DB/VM 단계는 미실행이다.
+
+다혁님에게 전달할 것: C03 경로와 응답은 유지된다. n8n 워크플로우는 실제 HTTP 서비스 호출 준비 상태이나 비활성이고 URL/Credential/n8n import 검증 전이다. `X-Team-Key`는 서비스 인증일 뿐 직원 IT 신원 근거가 아니므로 현재 `all`만 검색한다. 본체가 `all,it`를 보내도 400으로 차단한다. 직원 세션/부서 검증에서 검색 서비스까지 위변조 없이 권한을 전달하는 계약은 미확정이며 공통 계약 변경은 리드 반영이 필요하다. 기존 합성 Mock은 `tests/fixtures/oke-search-mock.json`의 테스트 자료로만 보존했다.

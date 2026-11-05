@@ -43,8 +43,8 @@ def test_registered_models_and_a_single_revision_chain():
     assert set(Base.metadata.tables) == {f"app.{table}" for table in (
         "employees", "users", "sessions", "inquiries", "tickets", "alerts", "dlq")} | {"rag.documents", "rag.chunks"}
     script = ScriptDirectory.from_config(Config("migrations/alembic.ini"))
-    assert script.get_heads() == ["0004"]
-    assert [rev.revision for rev in script.walk_revisions()] == ["0004", "0003", "0002", "0001"]
+    assert script.get_heads() == ["0005"]
+    assert [rev.revision for rev in script.walk_revisions()] == ["0005", "0004", "0003", "0002", "0001"]
 
 
 def test_db_check_redacts_subprocess_failures(monkeypatch, capsys):

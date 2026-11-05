@@ -4,6 +4,8 @@
 
 ## 현재 범위와 전제
 
+P0-7 갱신: 현재 로컬 revision은 `0005`다. 새 `0005_readiness_grant.py`는 업무 런타임 oke_app에 public.alembic_version SELECT만 부여한다. 테이블/확장 변경 권한은 주지 않는다. 이전0004를 수정하지 않았으며 현재 코드의 readiness 검증 및 VM 적용에는0005까지 포함한다. 직원 bootstrap·RAG 실제원본 적재와 구분한다.
+
 P0-6 갱신: 직원 seed·첫 관리자 CLI를 구현했으며 DDL revision은 `0004`를 유지한다. 거래 rollback 기반 실제 PostgreSQL 검증은 완료했지만 상시 직원/계정 적재와 실제 원본/VM 실행은 미실행이다. 실행 순서·필수 설정은 [배포 안내](../deploy/README.md)의 P0-6 인계를 따른다. seed는 revision에서 실행하지 않는다.
 
 P0-5 갱신(2026-11-05): 아래 P0-4 설명은 당시 상태다. 현재 전용 검증 DB에 `0003→0004`를 적용해 `rag.documents/chunks`, `vector(3072)`, 두 조회 인덱스와 비밀번호 없는 NOLOGIN 그룹 역할 `oke_app/oke_rag_index/oke_rag_search`의 ACL을 확인했다. 현재 head는 `0004`이며 실제 검증 결과는 IMP-PLAN P0-5 기록을 따른다. 런타임 LOGIN 자격증명/비밀은 이 DDL에 포함하지 않았고 오현님 비밀 설정과 실제 서비스 연결 시 확인한다.

@@ -1,9 +1,35 @@
 name: oke-jihye-p0
 
 services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/backend.Dockerfile
+    image: oke-jihye-backend:p0-7
+    env_file:
+      - path: ${BACKEND_ENV_FILE:-.env.backend}
+        required: false
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=8).close()"]
+      interval: 10s
+      timeout: 9s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
   postgres:
     # Installed image digest; runtime versions are recorded after verification.
     image: pgvector/pgvector:pg16@sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
       POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
@@ -18,7 +44,7 @@ services:
       retries: 20
       start_period: 5s
     restart: unless-stopped
-    # No host port. backend/postgres:5432 communication uses the private network.
+    # backend/postgres:5432 communication uses the private network.
 
 volumes:
   postgres_data:

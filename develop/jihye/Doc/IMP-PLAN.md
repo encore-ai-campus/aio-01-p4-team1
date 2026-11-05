@@ -2,7 +2,7 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: P0-1~2 및 P0-3 실행 기반·DB 접속 검증 완료. P0-4 이후의 테이블·확장 활성화·업무 저장·배포는 미실행.** 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
+**전체 상태: P0-1~7, P1-1~2 로컬 구현·검증 기록 완료.** C02 실제 n8n 호출, C05 저장, VM·화면 통합은 미확인이다. 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
@@ -155,6 +155,8 @@
 
 ### P0-6 실제 기록 · 2026-11-05
 
+- 재확인 기록: 기존 P0-6 구현을 요청 문서와 다시 대조한 뒤 `uv run python deploy/check_db.py --all`을 재실행했다. 종료0, **180 passed, 1 warning in 10.53s**. 기존 Starlette/httpx 경고1건이며 원본 API·VM 실행 결과는 아니다. 코드 추가 수정 없이 재확인했고, 기록 전 저장소 전체 `git status --short`와 `git diff --name-only`는 빈 결과였다. 이번 기록 수정은 `develop/jihye/Doc/IMP-PLAN.md`에만 한정한다. 다음 구현은 P0-7, P0-6의 실제 원본/VM seed·첫 관리자 적용은 오현님 환경 확인 후 별도로 연결한다.
+
 - 구현: 직원 수집 클라이언트·bootstrap 서비스·CLI·Argon2id 보안 모듈과 테스트를 추가했다. 서버 시작과 공개 API에서 자동 seed/계정 생성은 하지 않는다. 정확한6명/부서를 검증하고 누락·추가·중복·부서 변경·기존 DB 불일치를 거절한다. seed는 직원만 적재한다.
 - 원본 경계: 지원 형태는 Mock `{employees:[{name,dept,...}]}`이며 실제 응답 확인이 아니다. 실제 인증을 추정하지 않고 `DATA_API_EMPLOYEES_AUTH_HEADER`에 확인된 헤더 이름을 명시하도록 했다. DATA_API_URL/KEY와 해당 명령 전용 설정이 없으면 실행을 거절한다. 실제 data-api 호출은 미실행이다.
 - 관리자: seed 완료·지정 IT직원·빈 계정 집합에서만 첫 admin을 만든다. BOOTSTRAP_ADMIN_PASSWORD/SESSION_SECRET 누락은 DB 작업 전 실패한다. 12자/3종/본인 이름·login_id 포함 금지와 Argon2id를 적용했다. 동일 활성 관리자 재실행은 생성0건·해시/역할 보존, 다른 기존 계정은 복구/승격하지 않고 거절한다. 동일 advisory 거래 잠금으로 seed/bootstrap을 직렬화했으며 동시 실행 자체의 시험은 미실행이다.
@@ -163,27 +165,43 @@
 
 ## P0-7 · backend 이미지·준비 상태·배포 묶음
 
-- [ ] 연결 SPEC: BE-05·06, C07.
+- [x] 연결 SPEC: BE-05·06, C07. 전용 로컬 DB/backend 빌드·기동·readiness 확인. frontend/실제 n8n·data-api/VM 전체 연결은 미실행.
 - 생성 예정: `deploy/backend.Dockerfile`, `deploy/.dockerignore`; `deploy/compose.yaml`의 backend/frontend/n8n/data-api 연결; `app/api/routes/health.py` 준비 상태 확장; `tests/integration/test_readiness.py`.
 - 작업: [deploy 안내](../deploy/README.md)의 컨테이너/로컬 포트·build context·비밀 제외·프로세스/DB 준비 상태를 적용한다. backend는 본인 폴더를 context로 사용한다. frontend Dockerfile·프록시는 수언님 소유이며 아직 없으면 DB/backend까지만 확인한다. n8n/data-api 기존 환경 재사용 여부·실제 모드를 기록한다.
 - 확인 예정: `docker compose --env-file deploy/.env -f deploy/compose.yaml build backend`, DB 적용 후 `up -d backend`, `curl --fail http://127.0.0.1:8000/health/ready`, `uv run pytest tests/integration/test_readiness.py -q`. DB 중단/미적용 revision/vector 누락을 준비 완료로 표시하지 않고 오류에 비밀값을 노출하지 않는지 확인한다. 전체 웹/AI 기능 완료 확인은 P1이다.
 - 넘길 결과: 오현님에게 검증한 설치/기동/마이그레이션/seed/health 순서·버전·모드·서비스 대상·남은 의존성. 배포나 VM 회귀를 완료했다고 기록하지 않는다.
 
+### P0-7 실제 기록 · 2026-11-05
+
+- 범위: 예제에서 이미지/health 구조만 참고하고 자동 create_all/seed는 사용하지 않았다. 기존 Doc/IMP-PLAN 재확인 기록 변경을 보존했다. frontend 폴더에 빌드 파일이 없어 본 계획의 허용 범위인 DB/backend까지 구현했다. 기존 n8n/data-api 컨테이너는 실행 중이나 네트워크 연결·Credential·워크플로우는 이번에 변경/실호출하지 않았다.
+- 파일: `deploy/backend.Dockerfile`, Dockerfile 전용 ignore와 deploy/.dockerignore, uv.lock에서 내보낸 `requirements.lock`, Compose backend, 전용 로컬 계정 준비 도구 `init_backend_env.py`, `app/services/readiness.py`, health 라우터와 tests/integration/test_readiness.py. 마이그레이션 계정을 런타임에 쓰지 않기 위해 `0005_readiness_grant.py`에서 oke_app에 public.alembic_version SELECT만 추가했다. 기존 적용 revision은 덮어쓰지 않았다. 실제 로컬 revision은0005다.
+- 준비 확인: readiness는 DB 접속·현재 코드의 단일 head·vector 확장 및 embedding vector(3072)를 검사해200/503을 반환한다. scope=database로 한정하며 n8n/data-api/로그인 기능 완료를 의미하지 않는다. liveness는 DB와 독립이다. 설정/DB 오류의 URL·암호·예외 원문을 응답하지 않는다.
+- 빌드: Python3.12 slim 기존 digest를 사용하고 uv.lock의 고정 의존성으로 `docker compose --env-file deploy/.env -f deploy/compose.yaml build backend` 성공. uv export 최초 sandbox 실행은 캐시 쓰기 제한으로 실패한 뒤 허용 재실행으로 성공했다. 빌드 시 pip root 경고는 설치 단계이며 실제 실행은 UID10001이다.
+- 런타임: 전용 DB에 LOGIN `oke_backend_login`과 oke_app 연결을 생성했다. 비밀값은 Git 제외·권한600의 deploy/.env.backend에만 저장했다. migration 관리자 URL과 분리했고 실제 컨테이너의 current_user·역할 생성 권한 없음·비밀파일/호스트.venv 미포함을 확인했다. 이 도구는 전용 로컬 DB용이며 VM에는 관리자가 별도 계정/비밀을 준비한다.
+- 실제 HTTP: 기본8000 노출 시 Docker 포트 연결 오류로 종료1. 다른 서비스 변경 없이 `BACKEND_PORT=18000`으로 재기동해 backend/postgres healthy를 확인했다. ready200 → 전용 DB 중지 후 ready503·live200 → 같은 volume으로 DB 재기동 후 ready200을 확인했다. 현재 로컬127.0.0.1:18000이고 기본 설정은8000이다. 기존 서비스는 변경하지 않았다.
+- 검사: `uv run python deploy/check_db.py --all` 최종 종료0, **188 passed, 1 warning in 7.70s**. 새readiness8개와 기존180개다. 기존 OpenAPI/health 시험이 readiness 미존재를 기대해 최초2개 실패, 그 뒤 DB 환경변수 상속으로1개 실패했다. 새경로/설정없음 조건을 명시해 수정 후 재시험했다. revision/vector 누락·차원 불일치는 가짜DB 응답, 접속/권한·중지/회복은 실제 전용DB/HTTP 결과로 구분한다. Starlette/httpx 기존경고1건 유지.
+- 다음: 오현님께0005 포함 적용순서·이미지/환경 이름·runtime 계정 분리·health 범위를 인계한다. 유빈님 DB LOGIN·실원본/임베딩과 다혁님 C03/C04 네트워크는 VM 준비 후 담당자와 연결한다. 수언님 frontend 파일은 소유자 준비 뒤 프록시로 연결한다. 다음 지정 구현은 P1-1이며 실제VM·로그인·AI통합·공식flow.py 완료로 처리하지 않는다. commit/push/외부전송 없음.
+- 최종 확인: 이미지 재빌드 성공 후 같은188개를 재실행해 종료0·188 passed/1 warning in 6.45s를 확인했다. 저장소 전체 변경 경로가 develop/jihye 내부이고 private DB URL/암호가 변경 파일에 없음을 값 출력 없이 검사했다. deploy/.env.backend는 Git 제외·권한600이며 이번 검증용 LOGIN은 해당 로컬 DB에만 준비했다. 다른 역할/실행 환경의 자격증명 준비 완료를 뜻하지 않는다.
+
 ## P1-1 · 세션·관리자 발급·권한
 
-- [ ] 연결 SPEC: BE-01, C01.
+- [x] 연결 SPEC: BE-01, C01.
 - 생성/수정 예정: `app/services/auth.py`, `accounts.py`, `app/repositories/users.py`, `sessions.py`, auth/users 라우터·deps·security; `tests/test_auth_permissions.py`, `tests/integration/test_accounts.py`.
 - 작업: 로그인/로그아웃/me/암호 변경과 관리자 생성/비활성화/초기화를 연결한다. 모든 보호 경로에 활성 계정·역할 검사를 적용한다. SPEC 현재 기준의 세션·첫 변경·회수·비밀번호·관리자 보호를 구현한다. HANDOFF에 남은 추가 정책과 DTO 세부만 초안으로 분리한다. 기본401/403·응답 비밀 제거는 바로 구현한다.
-- 확인 예정: `uv run pytest tests/test_auth_permissions.py tests/integration/test_accounts.py -q`. 직원403·미로그인401·로그아웃 토큰 재사용401·비IT admin 불가·제공직원만 발급·계정 중복을 확인한다. 확정된 정책의 첫 변경/만료/초기화/비활성화 경계도 확인한다. 첫 관리자 변경 후 나머지5명 발급해 admin2/employee4인지 확인한다.
-- 넘길 결과: 수언님에게 실제 로그인/첫 변경/계정 발급 응답·쿠키 조건·화면 오류. 오현님에게 미반영 정책과 실제 검증 범위.
+- 구현: `app/services/auth.py`, `accounts.py`, users/sessions repositories 및 DB backend를 연결했다. 로그인은 활성 계정만 허용하고 일반화된401을 반환한다. 난수 세션 원문은 HttpOnly·SameSite=Lax·Path=/·8시간 쿠키로만 전달하고 HMAC-SHA256 해시만 `app.sessions`에 저장한다. 요청마다 만료·회수·활성 계정을 확인한다. 로그아웃·비밀번호 변경·관리자 초기화·비활성화는 해당 사용자의 세션을 회수한다. `SESSION_SECRET`/DB 미설정은 안전하게503이다.
+- 비밀번호·권한: Argon2id, 12자·문자 3종·본인 이름/login_id 포함 금지를 적용했다. 첫 로그인 사용자는 `me`/암호 변경/로그아웃 외 보호 작업을403으로 막는다. IT팀 부서와 role을 함께 검사하고 role은 계정 발급 시 부서에서 결정한다. 직원 목록·계정 응답에는 해시·비밀번호·세션 토큰을 포함하지 않는다. 본인/최후 활성 IT 관리자 비활성화는409로 거절한다. 계정 동시 변경은 bootstrap과 같은 advisory lock으로 직렬화한다.
+- 실제 확인: `uv run python deploy/check_db.py --all` 종료0, **197 passed, 1 warning**. 기존 Starlette/httpx 폐기 예정 경고1건. 새 P1-1 검사에는 쿠키 속성·토큰 응답 미노출·첫 변경 제한·비IT admin 거절 단위 확인과 격리 PostgreSQL HTTP 시험이 포함된다. 실 DB에서 로그인, 관리자 계정목록·발급, 직원403, 임시 암호 변경과 기존 쿠키 무효화, 로그아웃 후 재사용401, 세션 해시 저장을 확인했다. 합성 데이터와 시험 거래를 정리해 테스트 뒤 업무 행이 남지 않도록 했다.
+- 미확인/다음: 실제 VM 로그인·SESSION_SECRET 주입·실제 직원 seed 및 첫 관리자 자격으로 화면 시험은 미실행이다. P0-6 bootstrap으로 실제 직원6명과 첫 admin이 VM에 준비된 뒤 로그인/첫 변경 및 나머지5명 발급을 수언님 화면과 대조한다. 수언님에게 쿠키·로그인·계정 발급 응답을 전달하고, 오현님에게 로컬 DB 검증과 VM 미검증 범위를 전달한다. C05 저장 API·문의/티켓/알림 업무 저장은 P1-3 이후 범위다.
 
 ## P1-2 · 문의 선저장·support 어댑터·본인 조회
 
-- [ ] 연결 SPEC: BE-02·03, C01/C02.
-- 생성 예정: `app/services/inquiries.py`, `app/repositories/inquiries.py`, `app/clients/support.py`; ask/requests 라우터; `tests/test_ask_adapter.py`, `tests/integration/test_request_ownership.py`.
+- [x] 연결 SPEC: BE-02·03, C01/C02.
+- 생성/수정: `app/services/inquiries.py`, `app/repositories/inquiries.py`, `app/clients/support.py`, DB backend, `tests/test_ask_adapter.py`, `tests/integration/test_request_ownership.py`.
 - 작업: 서버 신원→공통 user, 문의 선저장→짧은 거래 종료→support 호출→검증된 응답 저장 순서로 만든다. 동일 키는 소유권부터 검사하고 원문 입력의 변조 재사용/실행중 재시도는 H04 검토 결과로 처리한다. DB 거래를 HTTP 대기 동안 유지하지 않는다.
-- 확인 예정: `uv run pytest tests/test_ask_adapter.py tests/integration/test_request_ownership.py -q`. 두 직원의 타인 request_id403·결과 미노출·support 미호출, 본인 목록 분리, 입력400, 공통400 codes,5 route와 reason/timings 보존을 확인한다. timeout/잘못된 JSON은 Mock으로 검증하고 실제 서비스와 구분한다.
-- 넘길 결과: 다혁님에게 실제 수신 페이로드·응답 보존/오류 결과, 수언님에게 본인 문의/재시도 사용법. 연결3초·전체30초·재시도0의 초기 예산을 적용하되 실측 없이 시간 목표 통과로 쓰지 않는다.
+- 구현: `/api/ask`는 세션에서 확인된 계정의 DB 직원 이름만 C02 `user`로 보낸다. request_id 생략 시 UUID를 만들고, 문의를 먼저 commit한 뒤 HTTP 호출을 시작한다. C02 응답의 request_id·필수 필드·5개 route를 검증하고 reason/timings/추가 필드를 보존해 `result`에 저장한다. 문의 목록은 현재 세션 직원의 `requester_id`로 제한하고 created_at/id 내림차순으로 반환한다. DB 트랜잭션은 HTTP 대기 중 열어 두지 않는다.
+- 오류·재시도: request_id 타인 사용은 소유권 검사 우선403, 같은 ID의 question/attempt/context 변경은409다. C02 HTTP400의 `codes` 객체는 그대로 전달하고 문의 상태를 실패로 저장한다. 잘못된 JSON·응답 ID/필드·기타 HTTP 응답은 성공으로 저장하지 않고 안전한503, timeout은504다. 연결 timeout3초·HTTP 전체 deadline30초·자동 재시도0회를 적용한다. 같은 owner/같은 payload의 클라이언트 재요청은 같은 문의 행을 사용해 C02를 다시 호출한다. 이 동작은 확정된 완료 결과 캐시나 동시 실행 잠금으로 표시하지 않는다.
+- 확인: `uv run python deploy/check_db.py --all` 종료0, **208 passed, 1 warning**. 기존 Starlette/httpx 폐기 예정 경고1건. HTTPX MockTransport로 C02 헤더/페이로드, 공통400 passthrough, 5xx·timeout·잘못된 JSON·request_id 불일치·추가 필드 보존·재시도 없음 확인. 전용 PostgreSQL 실 HTTP 시험에서 C02 호출 중 별도 연결로 선저장 상태 조회, 완료 결과 저장, 다른 직원의 빈 목록, 타인 request_id403 및 support 미호출, 변경 본문409, 자동 ID, 입력400 무저장을 확인했다. 시험 데이터 정리 후 전체 회귀도 통과했다.
+- 미확정/다음: 실제 n8n `N8N_WEBHOOK_URL`·`N8N_WEBHOOK_KEY` 설정과 호출은 미실행이다. 결과 캐시·동시 같은 ID 처리·프로세스 재시작 뒤 `submitted` 복구는 HANDOFF H04 제안 상태로 남긴다. 다혁님/원민님과 WF-09 중복 ACK를 대조하고 오현님이 공통 계약을 확정하기 전에는 완료 응답 캐시를 추가하지 않는다. 수언님에게 저장된 본인 문의 응답과 웹의 재요청 입력(request_id 재사용) 형식을 전달한다. 티켓 DB 연결/C05는 P1-3이다.
 
 ## P1-3 · 티켓·알림·관리자 처리와 실패 거래
 

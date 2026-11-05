@@ -46,7 +46,7 @@ def contract_harness(support_payload):
                 return httpx.Response(self.http_status, content=self.raw_response)
             return httpx.Response(self.http_status, json=self.payload)
 
-        async def execute(self, operation, *, body=None, principal=None, entity_id=None):
+        async def execute(self, operation, *, body=None, principal=None, entity_id=None, session_id=None):
             self.operations.append((operation, body, principal, entity_id))
             if operation != "ask":
                 if operation not in self.results:

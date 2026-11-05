@@ -13,6 +13,32 @@
 
 ## P0-3 실제 실행 기반
 
+### P0-7 현재 실행 상태 · 2026-11-05
+
+전용 로컬 backend/postgres를 빌드·기동했다. backend는 UID10001/read-only 파일시스템·cap_drop ALL로 실행하며 host 기본8000을 loopback에만 공개한다. 실제 검증에서는8000 포트 연결 오류 후 `BACKEND_PORT=18000`을 사용했다. DB 포트는 여전히 외부 공개하지 않는다. 최신 revision은 `0005`이며 기존0004 이후 readiness용 public.alembic_version SELECT 권한만 oke_app에 추가했다. 새revision은 VM 인계에도 포함해야 한다.
+
+로컬 재현 순서(본인 전용 DB용):
+
+```bash
+uv run python deploy/check_db.py --alembic upgrade
+uv run python deploy/init_backend_env.py
+docker compose --env-file deploy/.env -f deploy/compose.yaml build backend
+BACKEND_PORT=18000 docker compose --env-file deploy/.env -f deploy/compose.yaml up -d --wait backend
+curl --fail http://127.0.0.1:18000/health/live
+curl --fail http://127.0.0.1:18000/health/ready
+uv run python deploy/check_db.py --all
+```
+
+init_backend_env.py는 기존 전용 DB 설정이 일치할 때만 로컬 LOGIN과 oke_app 역할 연결을 만들고 권한600·Git 제외의 `.env.backend`에 runtime DATABASE_URL과 SERVICE_MODE=app을 저장한다. 기존 파일은 덮어쓰지 않으며 파일 없이 같은 LOGIN이 이미 존재하는 경우 실패하고 수동 점검을 요구한다. migration URL/암호는 runtime에 주입하지 않는다. Compose는 `BACKEND_ENV_FILE`로 runtime 파일 위치를 바꿀 수 있으며 파일이 없으면 DB 미설정 readiness503이다. 환경 출력 전체를 공개하지 않는다.
+
+이미지의 의존성은 `uv export --frozen --no-dev --no-hashes --no-emit-project --output-file deploy/requirements.lock`으로 uv.lock에서 내보냈다. Dockerfile 전용 `backend.Dockerfile.dockerignore`가 실제 본인 폴더 build context에 적용되며 app/migrations/고정 requirements 외의 private env·호스트 .venv·문서를 제외한다. deploy/.dockerignore는 참고용이며 단독으로 루트 context를 차단한다고 간주하지 않는다. 패키지를 변경하면 uv.lock과 export를 함께 갱신한다.
+
+`/health/live`는 프로세스 생존200, `/health/ready`는 DB/revision/pgvector 전제200 또는503이다. 응답의 scope=database이며 n8n/data-api/웹 업무의 종단간 준비 상태가 아니다. 실제 전용 DB 중지 중 ready503/live200, 재기동 후ready200을 확인했다. 정상 응답 예시는 `{"status":"ready","reason":"ok","scope":"database","service_mode":"app"}`이다. 업무 API는 여전히 후속 P1 구현 전501이다.
+
+현재 frontend는 빌드 파일 미준비라 Compose 서비스를 임의 생성하지 않았다. 기존 n8n/day65와 data-api/day67은 별도 프로젝트에서 실행 중이며 이번에 재배포/연결하지 않았다. VM에서 오현님이 공용 네트워크·별칭과 연결 대상을 확정한 뒤 backend runtime 파일에 N8N_WEBHOOK_URL/KEY·DATA_API_URL/KEY 등을 주입한다. SERVICE_MODE만 바꿔 상대 Credential/관측대상이 자동 전환된다고 가정하지 않는다. 본체→검색은 담당자 회신의 n8n 내부 C03 경로를 따르되 실제 DNS/HTTP 연결은 별도 확인한다.
+
+VM에서는 로컬 계정 생성 도구를 사용하지 않고 관리자가 LOGIN/oke_app 연결과 비밀 파일을 준비한다. 적용 커밋을 확인한 backend 이미지에서, 일회성 마이그레이션 계정의 DATABASE_URL을 환경에 주입해 `python -m alembic -c migrations/alembic.ini upgrade 0005`를 수행한 뒤 runtime URL로 전환한다. 이미지에는 uv가 없으므로 컨테이너 내부는 `uv run` 대신 `python -m` 명령을 쓴다. 자동 seed/관리자 생성은 하지 않는다.
+
 P0-4 갱신(2026-11-05): 아래 P0-3 기록의 '테이블 없음'은 당시 상태다. 전용 DB에 `0001→0002`를 적용해 현재 `0002 (head)`와 업무 테이블 7개를 확인했다. `uv run python deploy/check_db.py --alembic current`, `--migrations`, `--all`로 재확인 가능하다. 실제 결과는 마이그레이션 검사40개·전체155개 통과, 기존 경고1건이다. RAG 테이블/권한과 업무 API 저장은 후속이다.
 
 실제 생성 파일은 compose.yaml의 postgres, compose.check.yaml의 검증 전용 db-check, init_db_env.py/check_db.py와 변수 이름만 있는 .env.example이다. 프로젝트 `oke-jihye-p0`는 기존 서비스와 별도 네트워크·named volume을 사용하며 DB 호스트 포트를 공개하지 않는다. 기존 n8n/data-api를 여기에 연결하지 않았다.

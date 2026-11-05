@@ -1,11 +1,11 @@
-"""Standalone C03 HTTP entry point. Only public search is authorized."""
+"""Standalone C03 HTTP entry point for authenticated support requests."""
 import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hmac
 import json
 import os
 
-from rag_search import OpenAIEmbeddingProvider, PgvectorSearchAdapter, search_with_adapters, unavailable
+from rag_search import OpenAIEmbeddingProvider, PgvectorSearchAdapter, search_with_adapters, unavailable, valid_levels
 
 
 def validate_request(body):
@@ -14,11 +14,13 @@ def validate_request(body):
     return (isinstance(body.get('request_id'), str) and 1 <= len(body['request_id']) <= 64
             and isinstance(body.get('query'), str) and bool(body['query'].strip())
             and isinstance(body.get('type'), str) and bool(body['type'].strip())
-            and body.get('access_levels') == ['all'] and type(body.get('top_k')) is int
+            and valid_levels(body.get('access_levels')) and type(body.get('top_k')) is int
             and body['top_k'] == 3)
 
 
 def live_search(body):
+    if not validate_request(body):
+        return unavailable()
     dsn = os.environ.get('DATABASE_URL')
     if not dsn or not os.environ.get('OPENAI_API_KEY'):
         return unavailable()
@@ -27,7 +29,7 @@ def live_search(body):
         with psycopg.connect(dsn, connect_timeout=3,
                              options='-c statement_timeout=3000 -c default_transaction_read_only=on',
                              autocommit=True) as connection:
-            return search_with_adapters(body['query'], ['all'], 3,
+            return search_with_adapters(body['query'], body['access_levels'], 3,
                                         OpenAIEmbeddingProvider(timeout=3),
                                         PgvectorSearchAdapter(connection))
     except Exception:
@@ -35,6 +37,7 @@ def live_search(body):
 
 
 def make_handler(search=live_search):
+    """Accept the support-owned access list only after X-Team-Key authentication."""
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_):
             pass  # Never log URLs, credentials, or question text.

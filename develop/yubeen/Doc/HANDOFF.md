@@ -149,3 +149,11 @@
 검증 순서: (1) 격리 DB 및 키 설정 뒤 위 서비스 실행, (2) `POST http://127.0.0.1:8765/webhook/oke-search`에 X-Team-Key와 C03 JSON `request_id/query/type/access_levels:["all"]/top_k:3`을 전송해 일반 검색 200/빈 결과/503을 분리 확인, (3) `all,it` 위조 요청이 400이고 임베딩·DB에 닿지 않는지 확인, (4) 검증된 IT 권한 전달 계약을 다혁님·지혜님·오현님과 확정한 뒤에만 IT 양성 검색을 구현·시험, (5) n8n에서 `SEARCH_SERVICE_URL` 전체 내부 URL과 HTTP Header Auth Credential을 설정하고 비활성 `oke-search.json`을 import/test하여 200·빈200·503 및 인증·오류 분기 확인, (6) 다혁님 본체에서 C03 호출/503 이관/근거 비노출을 시험, (7) 로컬 결과 후 팀 VM에서 네트워크·Credential·시간 예산·실제 원본 권한을 별도 확인한다. 현재 (1)~(7)의 실제 DB/VM 단계는 미실행이다.
 
 다혁님에게 전달할 것: C03 경로와 응답은 유지된다. n8n 워크플로우는 실제 HTTP 서비스 호출 준비 상태이나 비활성이고 URL/Credential/n8n import 검증 전이다. `X-Team-Key`는 서비스 인증일 뿐 직원 IT 신원 근거가 아니므로 현재 `all`만 검색한다. 본체가 `all,it`를 보내도 400으로 차단한다. 직원 세션/부서 검증에서 검색 서비스까지 위변조 없이 권한을 전달하는 계약은 미확정이며 공통 계약 변경은 리드 반영이 필요하다. 기존 합성 Mock은 `tests/fixtures/oke-search-mock.json`의 테스트 자료로만 보존했다.
+
+## C03 권한·HTTP 응답 계약 보완 · 2026-11-05 · 전달 전
+
+다혁님 요청에 따라 Python 검색 어댑터는 `['all','it']` SQL 선필터를 지원하도록 보완했다. 다만 HTTP 서비스의 기본 운영 설정에는 **검증된 직원 권한 제공자가 아직 없다**. 본문 `access_levels`, `role`, `is_admin`, `X-Team-Key`만으로 IT를 허용하지 않는다. 기본 서비스는 일반 `['all']` 요청만 실행하고 IT 형식 요청은 임베딩/DB 호출 전에 403/forbidden으로 거절한다. 서버 내부에 주입되는 `trusted_access_resolver(request_id)`는 본체의 인증된 직원 세션·부서/역할을 독립 조회해 승인할 때만 `['all','it']`를 반환해야 한다. 현재 실제 resolver와 본체 연동은 미구현·미확인이다. 테스트의 Fake resolver는 독립 조회 경계의 모양만 검증하며 request_id만 믿는 구현을 운영에 사용해서는 안 된다. 신뢰 가능한 조회 키·소유권·재시도 규칙은 다혁님·지혜님·오현님과 확정해야 한다.
+
+변경 전에는 Python 어댑터가 `all,it`를 503/search_unavailable로 반환했고 HTTP 입구는 400/invalid_request로 막았다. 변경 후 형식상 `all,it`는 허용하되 검증 실패는 403/forbidden이다. 400/invalid_request는 필드·목록 형식 오류, 401/unauthorized는 키 누락·불일치, 503/search_unavailable은 임베딩/DB 장애다. 정상/빈 후보는 기존 200 C03 형식을 유지한다. n8n Code 정규화는 하위 400/401/403을 같은 코드로 전달하며 503은 안전한 공통 장애로 반환한다. n8n Webhook 자체의 Header Auth 401 본문은 n8n 실제 버전에서 확인해야 하며 이 변경이 그 본문을 통제한다고 주장하지 않는다.
+
+현재 공식 `oke-search.json`은 비활성이다. 본체 호출 주소 `http://n8n:5678/webhook/oke-search`는 팀 내부 네트워크 계약이며 실제 VM 도달성·Credential·본체 직원 검증·pgvector 결과는 미검증이다. 오현님은 공통 API-CONTRACT 3절에 403/forbidden과 신뢰 경계, 400/401 세부 오류를 반영해야 한다. H-Y01의 옛 `invalid_input` 제안과 현재 `invalid_request` 구현 차이도 정리할 필요가 있다. 원민님은 일반/IT 양성·위조·권한 실패와 하위 503을 분리해 시험해야 한다. 상대 동의·공통 반영·실제 서비스 연결은 기록되지 않았다.

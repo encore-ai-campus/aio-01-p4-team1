@@ -33,7 +33,15 @@ class SearchAdapterTests(unittest.TestCase):
     def test_db_fault_closes_cursor(self):
         self.cursor.execute.side_effect=RuntimeError('private'); self.assertEqual(self.run_search(),s.unavailable()); self.cursor.close.assert_called_once()
     def test_it_blocked_before_provider(self):
-        self.assertEqual(s.dispatch('query',['all','it'],mode='adapter',adapter_enabled=True,embedder=self.embed,repository=self.repo),s.unavailable()); self.embed.assert_not_called()
+        self.assertEqual(s.dispatch('query',['all','it'],mode='adapter',adapter_enabled=True,embedder=self.embed,repository=self.repo),s.forbidden()); self.embed.assert_not_called()
+    def test_trusted_it_sql_filter_before_ranking(self):
+        result=s.dispatch('query',['all','it'],mode='adapter',adapter_enabled=True,
+                          trusted_access=True,embedder=self.embed,repository=self.repo)
+        self.assertEqual(result[0],200)
+        sql,params=self.cursor.execute.call_args.args
+        self.assertIn('WITH allowed AS MATERIALIZED',sql)
+        self.assertEqual(params[0],['all','it'])
+        self.assertEqual(params[-1],3)
     def test_no_mock_fallback(self):
         mock=Mock(); self.assertEqual(s.dispatch('q',['all'],mode='adapter',mock_search=mock),s.unavailable()); mock.assert_not_called()
     def test_unset_mode(self):
@@ -104,7 +112,7 @@ class ResponseBoundaryRegressionTests(unittest.TestCase):
     def test_it_blocks_all_dependencies(self):
         embed=Mock();repo=Mock();mock=Mock()
         for mode in ('mock','adapter'):
-            self.assertEqual(s.dispatch('q',['all','it'],mode=mode,adapter_enabled=True,embedder=embed,repository=repo,mock_search=mock),s.unavailable())
+            self.assertEqual(s.dispatch('q',['all','it'],mode=mode,adapter_enabled=True,embedder=embed,repository=repo,mock_search=mock),s.forbidden())
         embed.assert_not_called();repo.search.assert_not_called();mock.assert_not_called()
 
 

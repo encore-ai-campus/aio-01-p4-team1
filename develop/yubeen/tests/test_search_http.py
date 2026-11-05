@@ -17,12 +17,14 @@ import search_http
 class SearchHttpTests(unittest.TestCase):
     def setUp(self):
         self.fake_calls = []
-        def fake_search(body):
+        def fake_search(body, trusted_access):
             self.fake_calls.append(body)
             if body['query'] == 'fault':
                 raise RuntimeError('private DB password')
             rows = [] if body['query'] == 'empty' else [
                 {'doc': 'public', 'section': 's', 'text': 'safe', 'score': 0.7}]
+            if trusted_access:
+                rows.append({'doc': 'restricted', 'section': 's', 'text': 'it', 'score': 0.6})
             return 200, {'ok': True, 'evidence': rows,
                          'reason': None if rows else 'no_evidence'}
         self.env = patch.dict(os.environ, {'SEARCH_TEAM_KEY': 'fake-test-only'}, clear=True)
@@ -63,9 +65,32 @@ class SearchHttpTests(unittest.TestCase):
     def test_auth_input_and_it_spoof(self):
         self.assertEqual(self.send(self.body(), key='wrong')[0], 401)
         self.assertEqual(self.send(self.body(query=''))[0], 400)
-        self.assertEqual(self.send(self.body(access_levels=['all', 'it'], role='admin'))[0], 400)
+        self.assertEqual(self.send(self.body(access_levels=['all', 'it'], role='admin'))[0], 403)
         self.assertEqual(self.send(self.body(is_admin=True, access_levels=['it']))[0], 400)
         self.assertEqual(len(self.fake_calls), 0)
+
+    def test_missing_key_and_invalid_levels(self):
+        self.assertEqual(self.send(self.body(), key='')[0], 401)
+        for levels in ([], ['it'], ['all', 'unknown'], 'all'):
+            self.assertEqual(self.send(self.body(access_levels=levels))[0], 400)
+        self.assertEqual(self.fake_calls, [])
+
+    def test_trusted_resolver_allows_it_after_independent_lookup(self):
+        self.server.shutdown(); self.server.server_close(); self.thread.join()
+        # Fake server-owned lookup keyed by request_id; it ignores body claims.
+        resolver = lambda request_id: ['all', 'it'] if request_id == 'verified-it' else ['all']
+        self.server = ThreadingHTTPServer(('127.0.0.1', 0),
+            search_http.make_handler(lambda body, trusted: (
+                200, {'ok': True, 'evidence': [
+                    {'doc': 'public', 'section': 's', 'text': 'safe', 'score': 0.7},
+                    {'doc': 'restricted', 'section': 's', 'text': 'it', 'score': 0.6}],
+                    'reason': None}) if trusted else search_http.forbidden(),
+                trusted_access_resolver=resolver))
+        self.thread = Thread(target=self.server.serve_forever, daemon=True); self.thread.start()
+        self.assertEqual(self.send(self.body(request_id='unverified', access_levels=['all','it']))[0], 403)
+        status, result = self.send(self.body(request_id='verified-it', access_levels=['all','it']))
+        self.assertEqual(status, 200)
+        self.assertEqual([row['doc'] for row in result['evidence']], ['public', 'restricted'])
 
     def test_missing_live_config_is_unavailable(self):
         self.assertEqual(search_http.live_search(self.body()), search_http.unavailable())

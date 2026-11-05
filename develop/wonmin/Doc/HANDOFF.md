@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+팀 소스 병합(2026-11-05): [다혁·유빈·지혜 브랜치 병합 기록](TEAM-MERGE-RESULT.md). feat/wonmin-p0에 세 소스를 충돌 없이 병합하고 원민89·유빈171·지혜110·다혁 adapter12 통과를 확인했다. 지혜 DB48개는 skip이다. main/submission 및 실행 중 서비스는 변경하지 않았다.
+
 최종 실환경 확인(2026-11-05): [Ubuntu 실행·C05 후속 요청](UBUNTU-INTEGRATION-RESULT.md). errors=wmerr84aab85722를 원민 부모 실제 설정에 연결하고 자동 발화를 확인했다. 실제 Ollama 호출 및 PG 45개 통과. 지혜님 c6e42df backend의 /tickets·/alerts·/dlq는 각각 501이고 /health/ready는 404다. 지혜님 저장/인증·duplicate 응답 구현 후 실제 API→DB와 동시/영속성 재시험이 필요하다. 다혁님 업무 C04/LLM 연결·공용 VM은 이번 결과에 포함하지 않는다. 아래 기록은 각 단계 당시 상태다.
 
 지혜님 후속 질의(2026-11-05): [event_key 없음/null·practice ACK 회신 자료](ALERT-NO-KEY-REVIEW.md). key 없음은 매번 신규/duplicate=false, practice는 key를 보내지 않아 동일티켓 재요청에도 알림추가 가능. HTTP Mock과 실제data-api/PG 미확인을 구분했다.

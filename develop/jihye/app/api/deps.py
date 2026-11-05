@@ -1,12 +1,13 @@
-"""Fail-closed seams for P0-2. Real session/key verification and services follow in P1."""
+"""Cookie authentication and the scoped internal-key boundary for backend APIs."""
 
 from typing import Annotated, Protocol
 
-from fastapi import Depends, HTTPException, Security
+from fastapi import Depends, HTTPException, Request, Security
 from fastapi.security import APIKeyCookie, APIKeyHeader
 
 from app.schemas.auth import UserSummary
 from app.api.errors import PublicApiError
+from app.services.backend import DatabaseBackend
 
 session_cookie = APIKeyCookie(name="oke_session", auto_error=False)
 internal_key = APIKeyHeader(name="X-Api-Key", auto_error=False)
@@ -14,23 +15,40 @@ internal_key = APIKeyHeader(name="X-Api-Key", auto_error=False)
 
 class ContractBackend(Protocol):
     async def execute(self, operation: str, *, body: object = None,
-                      principal: UserSummary | None = None, entity_id: int | None = None) -> object: ...
+                      principal: UserSummary | None = None, entity_id: int | None = None,
+                      session_id: int | None = None) -> object: ...
 
 
-class UnavailableBackend:
-    async def execute(self, operation: str, **kwargs: object) -> object:
-        raise HTTPException(501)
+def get_backend(request: Request) -> ContractBackend:
+    return DatabaseBackend(request.app.state.settings)
 
 
-def get_backend() -> ContractBackend:
-    return UnavailableBackend()
-
-
-def get_current_user(token: Annotated[str | None, Security(session_cookie)]) -> UserSummary:
+def get_current_user(request: Request, token: Annotated[str | None, Security(session_cookie)]) -> UserSummary:
     if not token:
         raise HTTPException(401)
-    # A cookie's presence never constitutes authentication.
-    raise HTTPException(501)
+    settings = request.app.state.settings
+    if not settings.session_secret or not settings.session_secret.get_secret_value():
+        raise HTTPException(503)
+    from sqlalchemy.exc import SQLAlchemyError
+    from app.db.session import create_db_engine, create_session_factory
+    from app.db.session import DatabaseConfigurationError
+    engine = None
+    try:
+        engine = create_db_engine(settings)
+        with create_session_factory(engine).begin() as session:
+            from app.services.auth import load_current_user
+            result = load_current_user(session, token=token,
+                                       session_secret=settings.session_secret.get_secret_value())
+        if result is None:
+            raise HTTPException(401)
+        principal, session_id = result
+        request.state.auth_session_id = session_id
+        return UserSummary.model_validate(principal)
+    except (SQLAlchemyError, DatabaseConfigurationError):
+        raise HTTPException(503) from None
+    finally:
+        if engine is not None:
+            engine.dispose()
 
 
 def require_employee(user: Annotated[UserSummary, Depends(get_current_user)]) -> UserSummary:

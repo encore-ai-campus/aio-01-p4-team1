@@ -1,5 +1,9 @@
 """Password primitives shared by explicit bootstrap and future account services."""
 
+import hashlib
+import hmac
+import secrets
+
 from argon2 import PasswordHasher, Type
 from argon2.exceptions import InvalidHashError, VerificationError
 from pydantic import SecretStr
@@ -27,3 +31,11 @@ def verify_password(encoded: str, password: str) -> bool:
         return _hasher.verify(encoded, password)
     except (VerificationError, InvalidHashError):
         return False
+
+
+def new_session_token() -> str:
+    return secrets.token_urlsafe(32)
+
+
+def hash_session_token(token: str, secret: str) -> str:
+    return hmac.new(secret.encode(), token.encode(), hashlib.sha256).hexdigest()

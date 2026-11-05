@@ -2,6 +2,7 @@ name: day65-n8n
 
 services:
   sandbox-certs:
+    profiles: [tls-bootstrap]
     image: ghcr.io/n8n-io/n8n-sandbox-service-api:${N8N_SANDBOX_VERSION:?set from existing n8n env}
     user: '0:0'
     entrypoint: ['sh', '-c']
@@ -13,9 +14,6 @@ services:
     networks: [internal]
   sandbox-api:
     image: ghcr.io/n8n-io/n8n-sandbox-service-api:${N8N_SANDBOX_VERSION:?set from existing n8n env}
-    depends_on:
-      sandbox-certs:
-        condition: service_completed_successfully
     env_file:
       - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
         required: true
@@ -96,6 +94,7 @@ services:
     environment:
       N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
       N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: '15'
+      SERVICE_MODE: ${SERVICE_MODE:-practice}
     restart: unless-stopped
     networks: [internal]
   searxng:

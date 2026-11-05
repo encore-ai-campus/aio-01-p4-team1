@@ -1,5 +1,7 @@
 # C04 support → handoff 연결 확인 · 2026-11-04
 
+이 문서는9bda763/P0-2 당시 기록이다. 2026-11-05 최신aac0dbf의 요청 생성·응답 매핑 구현 및 로컬 경계 검증은 [C04-PAIR-REVIEW.md](C04-PAIR-REVIEW.md)를 따른다. 아래 원 관측은 보존한다.
+
 **다혁님 SPEC의 요청 표본은 원민 입력 검사에 적합하다. 최신 본체에는 C04 HTTP 호출·결과 매핑이 아직 없어 실제 연결 완료로 처리할 수 없다.**
 
 확인 대상은 fetch 후 `origin/feat/dahyeok-p0`의 `9bda7639aaeee3f6dca59f6aabd91e61fa05a847`이다. `oke-support.json`은 P0-1 보존본이고 최신 개발본은 `workflows/oke-support-02.json`(P0-2)이다. 두 버전의 웹훅 경로는 같아 동시에 게시하면 안 된다는 상대 README/HANDOFF를 확인했다. 이번에는 어떤 버전도 게시하지 않았다.

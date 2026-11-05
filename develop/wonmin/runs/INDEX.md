@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+최신 C04(2026-11-05): [c04-pair-aac0dbf-review.json](c04-pair-aac0dbf-review.json), [경계 연결 검토](../Doc/C04-PAIR-REVIEW.md). 최신08 요청 생성·응답 매핑과 원민 P1-1의 로컬17개 관측 일치. 실제 C04발신은 Mock이며 n8n·실제backend/DB는 미실행. 아래9bda763/P0-2는 과거 기록이다.
+
 C04 후속 검토: [c04-dahyeok-9bda763-review.json](c04-dahyeok-9bda763-review.json), [연결 대조 설명](../Doc/C04-CONNECTION-REVIEW.md). 최신 P0-2 로컬6건의 골격 상태 및 SPEC 표본1개 수신 적합 확인. C04 발신 노드·응답 mapper는 미구현이며 실제 연결 PASS가 아니다.
 
 C05 후속 검토: [c05-jihye-4bbbf49-review.json](c05-jihye-4bbbf49-review.json), [모델 대조 설명](../Doc/C05-MODEL-REVIEW.md). 실제 DTO 검증 7/7 적합, 중복 알림 응답 직렬화 불일치 1건이며 실제 API·DB/n8n 호출 결과는 아니다.

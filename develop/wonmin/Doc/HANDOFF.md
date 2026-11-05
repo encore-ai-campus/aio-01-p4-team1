@@ -1,6 +1,6 @@
 # 원민님 · 변경 제안·전달 기록
 
-최신 C04 검토: [C04-CONNECTION-REVIEW.md](C04-CONNECTION-REVIEW.md). 다혁님 `9bda763` 최신 개발본은 P0-2이며 C04 발신·응답 매핑 미구현. SPEC 표본 수신 적합과 로컬 6건 상태만 확인했고 실제 연결은 미실행이다.
+최신 C04 검토(2026-11-05): [C04-PAIR-REVIEW.md](C04-PAIR-REVIEW.md). 다혁님 `aac0dbf`의 최신08에서 C04 요청 생성·응답 매핑 구현 확인. 양쪽 실제 Code와 원민 JSON·HTTP Mock 경계 관측17건 일치. 발신은 아직 N20 Mock C04이며 n8n 실연결은 미실행이다. 아래9bda763 기록은 이전 시점이다.
 
 최신 C05 검토: [C05-MODEL-REVIEW.md](C05-MODEL-REVIEW.md). 지혜님 `4bbbf49` 실제 모델에 요청 표본 7/7 적합, 중복 알림 ACK의 duplicate 직렬화 불일치 1건 확인. 실제 API/인증/DB는 미실행이다.
 
@@ -125,3 +125,12 @@
 - 다혁님 후속 연결: 검증한 user→requester, ID 유지, title 마스킹·category/priority/reason, X-Team-Key Credential, 공통 초기 timeout5초·중첩 재시도0을 N20에 적용해야 한다. 정상 reason=null이면 본체 원래 이관 사유 유지, 실패 reason은 보존, 중복 ticket_id/priority/duplicate 보존이 필요하다.
 - WM-04: 상대 SPEC의 alerts_down 예시는 ok=true, 원민 임시 구현은 ok=false이며 둘 다 ticket 보존을 요구한다. 향후 mapper에서 ok=false만 보고 확인된 ticket을 폐기하지 않도록 정책 확인 필요. 현재 mapper가 없어 실제 본체 버그나 합의 완료로 판정하지 않았다.
 - 미확인/다음 상대: 다혁님 C04 실제 호출·매핑 구현, 오현님 게시 버전 선택·공식 키트·n8n 환경. 프로젝트 n8n 게시/웹훅/인증/Executions·저장소는 미실행이다. 다음 버전 제공 뒤 정상/중복/high/tickets_down/alerts_down/전송 실패를 실제 경로로 재확인한다. 본 기록은 외부 전송·상대 동의가 아니다.
+
+## C04 최신 재확인 · 2026-11-05 · 다혁님 aac0dbf
+
+- 변경 파일: Doc/C04-PAIR-REVIEW.md, tools/check-c04-pair.mjs, runs/c04-pair-aac0dbf-review.json 및 README/이전 검토/색인 링크. 양쪽 워크플로우·Mock 서버·공통 계약·다혁님 파일은 변경하지 않았다.
+- 참조: origin/feat/dahyeok-p0의 aac0dbf12e030ad7622fe3057654f866545c983b, 최신 workflows/oke-support-08.json. P0-3에서 N20이 추가되고07/08에 원민 부분실패 매핑이 반영됐다. 이전 'N20 미구현'은9bda763 당시의 기록이다.
+- 확인 방법/실제 결과: `node develop/wonmin/tools/check-c04-pair.mjs` 로컬 관측17/17 일치. 실제 Prepare Code의 요청을 원민 JSON 어댑터·HTTP Mock에 연결하고 응답을 실제 Map/Finalize/Output filter Code로 되돌려 확인했다. 정상·순차 중복·high·attempt3과 동시4건은 실제 C05 HTTP Mock 저장을 대조했다. 알림503은 Response 주입(티켓은 HTTP Mock 저장), 티켓503·설정 오류 및 schema/401/403/timeout·상대fixture는 합성 경계 검증이다. 모든17건을 실제 HTTP연결/공통 기능 통과로 세지 않는다.
+- 결과: 필수6필드 수신 적합, 같은 ID→key, 신규/중복 동일 ticket_id·false→true, high/urgent와 max_attempts 보존, 동시4건 티켓 증가1. ok=false/alerts_down에서도 기존 ticket을 Map와 최종 응답이 보존한다. 이전 WM-04의 해당 코드 매핑 우려는 현재 버전 로컬 범위에서 해소. C05 StoredResponse 중복 알림 ACK 불일치는 별도 미해결이다.
+- 실제 연결 경계: 현재 그래프는 Prepare→gate→N20 Mock C04→Map이며 HTTP Request 노드0개다. 이번 스크립트가 테스트 안에서 Mock 경계 결과를 공급한 것이고 소스 그래프를 실제 연결한 것이 아니다. 발신URL·X-Team-Key Credential·5초timeout·응답 envelope, 프로젝트 n8n/Header Auth/Executions와 실제backend·DB는 미확인이다.
+- 다음 상대: 다혁님 N20 실제HTTP 설정·mapper envelope, 지혜님 C05 실제키/저장/ACK, 오현님 번호판 선택·공식키트·전용 n8n 게시/사람 시험. 원민 P1-2 retry/DLQ·P1-3 errors는 미구현이다. 외부 메시지·상대 승인·공통 반영 완료로 쓰지 않는다.

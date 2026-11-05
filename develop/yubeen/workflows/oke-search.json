@@ -1,0 +1,67 @@
+{
+  "name": "oke-search",
+  "active": false,
+  "nodes": [
+    {
+      "id": "search-step1-webhook",
+      "name": "검색 요청 수신 (STEP 1 테스트 전용)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "oke-search-step1",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oke-search",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "notes": "비활성 테스트 전용. n8n 화면에서 Header Auth Credential의 Name=X-Team-Key, Value=비공개 키를 설정하고 이 노드에 연결해야 한다. 키와 Credential ID는 JSON에 넣지 않는다. 미연결 시 실행하지 말고 프로덕션 활성화하지 않는다."
+    },
+    {
+      "id": "search-step1-inspect",
+      "name": "요청 구조 확인 (STEP 1)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst isObject = body !== null && typeof body === 'object' && !Array.isArray(body);\nconst fields = ['request_id', 'query', 'type', 'access_levels', 'top_k'];\nconst received = {};\nfor (const field of fields) received[field] = isObject && Object.prototype.hasOwnProperty.call(body, field) ? body[field] : null;\nreturn [{ json: { step: 'P1-2 STEP 1', mock: true, diagnostic_only: true, body_is_object: isObject, received } }];"
+      },
+      "notes": "Webhook의 body에서 5개 필드만 추출한다. null은 미전달을 뜻하며 이 단계에서는 필드·권한·형식 검증을 하지 않는다. 테스트에는 비밀값과 관리자 문서 본문을 넣지 않는다."
+    },
+    {
+      "id": "search-step1-respond",
+      "name": "진단 응답 반환 (HTTP 200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [480, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "notes": "STEP 1 진단 JSON만 HTTP 200으로 반환한다. C03 검색 성공 응답이나 권한 확인 결과가 아니다."
+    }
+  ],
+  "connections": {
+    "검색 요청 수신 (STEP 1 테스트 전용)": {
+      "main": [[{"node": "요청 구조 확인 (STEP 1)", "type": "main", "index": 0}]]
+    },
+    "요청 구조 확인 (STEP 1)": {
+      "main": [[{"node": "진단 응답 반환 (HTTP 200)", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "meta": {
+    "phase": "P1-2 STEP 2 header authentication with STEP 1 diagnostics",
+    "realSearchVerified": false
+  }
+}

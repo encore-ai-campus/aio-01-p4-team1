@@ -9,7 +9,7 @@
 | 직원 FE | <https://aio-t1.isitsoft.kr/login> | 공개 로그인 페이지. 로그인 페이지가 열리는 것과 계정 로그인·업무 수행 성공은 별도다. |
 | FastAPI 공개 origin / prefix | `https://aio-t1.isitsoft.kr` / `/api` | FE의 `/api/:path*`가 FastAPI로 전달된다. 확인된 시험 경로: `GET https://aio-t1.isitsoft.kr/api/auth/me`. cookie가 없으면 401(로그인 필요). |
 | FastAPI 내부 origin | `http://backend:8000` | Compose 내부 service DNS만 사용한다. 팀원 PC에서 직접 접속할 수 있는 주소가 아니다. |
-| Swagger / OpenAPI | 외부 비지원 확인 | `/api/docs`, `/api/openapi.json`, `/docs`, `/openapi.json` 모두 404. FastAPI 기본 문서 경로는 내부 `backend:8000/docs`이나 외부 접속주소로 안내하지 않는다. |
+| Swagger / OpenAPI | <https://aio-t1.isitsoft.kr/docs> · <https://aio-t1.isitsoft.kr/openapi.json> | 공개 origin에서 Swagger UI와 OpenAPI JSON 제공. `/api/docs`, `/api/openapi.json`은 지원 주소가 아니다. API 실행에는 해당 세션/키가 별도로 필요하다. |
 | n8n UI / webhook origin | <https://aio-t1.isitsoft.kr:5678/> | 팀 VM의 기존 n8n 경로. 사용자에게 부여된 편집 권한과 workflow별 키는 팀장이 안전하게 인계한다. |
 | 웹 터미널 | <https://aio-t1.isitsoft.kr/ssh/> | 운영·배포 담당이 사용하는 VM 터미널. 팀원이 임의로 변경/재배포하지 않는다. |
 | VM 저장소 | `/home/toor/Aio-4pj-1team/` | VM의 배포 checkout. 팀원 개인 브랜치의 작업공간이 아니다. |
@@ -24,7 +24,9 @@
 | `GET https://aio-t1.isitsoft.kr/login` | 200 `text/html` | FE 로그인 HTML 응답 |
 | FE HTML에서 발견한 Next static JS asset (HEAD) | 200 `application/javascript` | 공개 정적 자산 전달 확인 |
 | `GET https://aio-t1.isitsoft.kr/api/auth/me` (cookie 없음) | 401 `application/json` | 인증 필요한 API의 정상 비로그인 응답; 로그인 성공 시험은 아님 |
-| `GET https://aio-t1.isitsoft.kr/api/docs`, `/api/openapi.json`, `/docs`, `/openapi.json` | 모두 404 | 공개 Swagger/OpenAPI route는 현재 제공되지 않음 |
+| `GET https://aio-t1.isitsoft.kr/docs` | 200 `text/html` | SwaggerUIBundle와 같은 origin의 `/openapi.json` 참조 확인 |
+| `GET https://aio-t1.isitsoft.kr/openapi.json` | 200 `application/json` | 유효 OpenAPI 3.1.0; 18개 paths, 인증·ask·티켓 경로 존재 |
+| `GET https://aio-t1.isitsoft.kr/api/docs`, `/api/openapi.json` | 404 | 이 prefix의 문서 경로는 추가하지 않음 |
 | `GET https://aio-t1.isitsoft.kr:5678/healthz` | 200 | 기존 n8n health route |
 
 ## 현재 VM 기준선
@@ -53,7 +55,7 @@
 - 현재 VM n8n owner 사용자는 1명이다. 정확한 owner email은 공개 저장소에 싣지 않고 로컬 private handoff에만 기록한다. 기존 n8n owner 비밀번호는 VM admin handoff에서 확인되지 않았으므로 팀장은 현 n8n 운영자에게 기존 로그인 정보를 비공개로 인계받아야 한다. 암호 추정·계정 reset은 하지 않는다.
 - 기존 VM `.env.admin-handoff`에 있던 관리자 임시 암호는 지정 관리자 전용 로컬 private handoff에 안전 복사했다. `must_change_password=true`는 유지한다. 해당 파일은 전체 팀과 공유하지 않는다.
 - 팀장용 로컬 비밀 인계 위치는 저장소 밖 `orchestrator/private/VM-TEAM-ACCESS.txt` (부모 디렉터리 mode 700, 파일 mode 600)다. 이 문서 경로는 인계 위치 안내일 뿐 공개 저장소에 값이나 파일을 추가하지 않는다. 팀원에게는 공유 admin 비밀번호 대신 개별 시험계정을 발급한 뒤 각자 안전하게 전달한다.
-- 공개 API는 `/api/auth/me` 외부 401을 확인했다. API 경로/스키마는 repo의 [API-CONTRACT](API-CONTRACT.md)와 versioned backend source를 따른다. 공개 Swagger/OpenAPI는 404이므로 지원 주소로 안내하지 않는다.
+- 공개 API는 `/api/auth/me` 외부 401을 확인했다. API 경로/스키마는 repo의 [API-CONTRACT](API-CONTRACT.md)와 versioned backend source를 따른다. Swagger UI는 <https://aio-t1.isitsoft.kr/docs>, 스키마는 <https://aio-t1.isitsoft.kr/openapi.json>을 사용한다. UI 열림과 인증 API 실행 권한은 별개다.
 
 ## 팀 작업 순서
 
@@ -91,3 +93,14 @@
 - 공식 14 case file/원본 hash, 공식 runner version, custom header authentication을 지원하는 명령/방법, run output 저장 위치.
 - 오늘 필수 VM 시험의 버전 pin·시간 slot·초기 행수·격리/fault 대상·복구 담당. 점수 threshold는 실제 측정/승인 전 임의 지정하지 않는다.
 - 유빈님의 RAG 주말 후속 인계와 담당 산출물. 이는 오늘의 WF-01/기타 필수 실측을 대체하거나 연기하지 않으며, 오늘 대체 측정 담당·마감은 별도 결정이 필요하다.
+
+## Swagger 공개 경로 추가
+
+검증 시각: 2026-11-06 10:24:37 KST.
+
+- TASK `vm-public-swagger-1`, FE 코드 `e7f5161`. 기존 `/api/:path*` rewrite를 유지하고 정확히 `/docs`, `/openapi.json`을 backend 기본 경로로 프록시했다. 공개 포트/ingress·backend·계정·DB·workflow는 바꾸지 않았다.
+- VM은 이전 repo `a3dd276`에서 ff-only로 FE 커밋을 받았고, `BACKEND_ORIGIN=http://backend:8000`으로 frontend만 build 및 `up -d --no-deps frontend` 했다. 기존 runtime `c1a4c8b`의 나머지 서비스와 FE 추가 커밋을 구분한다. 아래 최신 FE 관측은 위 1교시 baseline의 이후 기록이다.
+- 외부 curl로 docs200/Swagger HTML·schema URL, openapi200/유효 JSON·인증/ask/티켓 paths, login200/Next static JS200, no-cookie me401, n8n health200을 확인했다. 스키마 보안 유형은 cookie/header API key이며 OAuth callback은 필요하지 않아 추가하지 않았다.
+- POST/삭제/DB변경 시험·로그인/암호변경은 실행하지 않았다. Try it out의 성공은 인증/권한에 달려 있으며 이번 범위의 검증이 아니다.
+
+- 브라우저 렌더 확인을 시도했으나 CUA browser host unavailable로 탭을 만들 수 없었다. HTML/JSON의 외부 HTTP 검증은 통과했으며 시각적 렌더는 미확인이다.

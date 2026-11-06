@@ -18,7 +18,7 @@
 - **1교시 보고자료 작성 완료:** 오늘 기준·버전 경계·읽기 전용 VM 상태·공통시험 도구 제한·승인 기록을 정리하고 팀 사용 안내를 작성했다. **공통시험 출발점은 미완료**이며 공식 원본·실행 결과·raw가 없다.
 - **현재 VM readiness:** 관제 snapshot(2026-11-06 01:01 UTC / 10:01 KST, VM repo `a3dd276`)에서 Compose `oke` 컨테이너 9개가 실행 중, PostgreSQL revision `0005`, backend readiness `ready`/`app`, 내부 FE `/login` 200, 자원 RAM 2646 MiB total/1436 MiB available, swap 2965 MiB total/224 MiB used였다. PostgreSQL 행 수는 employees/users/tickets/alerts/DLQ `6/1/3/4/1`, RAG documents/chunks `8/33`. `minji.admin`은 활성 admin이며 `must_change_password=true`다. 해당 계정·비밀번호 상태는 변경하지 않았다.
 - **Workflow runtime:** SQLite 읽기 전용 metadata에서 `oke-support`, `oke-search`, `oke-handoff`, `oke-errors` 활성 4개, `oke-index` 비활성/manual 1개, credential 레코드 6개를 확인했다. 활성 version ID는 [VM 시험 안내](../VM-TEAM-TESTING.md)의 관측 표에 기록했다. 이 n8n 버전 ID들은 Git commit이 아니다.
-- **공개 경로 확인:** read-only curl에서 `http://aio-t1.isitsoft.kr/login` 301 → HTTPS 최종 200, FE HTML 200 및 Next static JS asset 200, no-cookie `https://aio-t1.isitsoft.kr/api/auth/me` 401, `https://aio-t1.isitsoft.kr:5678/healthz` 200을 확인했다. FastAPI 공개 origin/prefix는 `https://aio-t1.isitsoft.kr/api`; 내부 `http://backend:8000`은 팀원 PC 직접 주소가 아니다. `/api/docs`, `/api/openapi.json`, `/docs`, `/openapi.json`은 모두 404여서 Swagger/OpenAPI 공개 지원은 확인되지 않았다. 이전 문서의 외부 FE 502/3000 timeout은 당시 역사 관측이며 현재 외부 FE 미연결 상태로 쓰지 않는다. 로그인 페이지/401/health만으로 직원 로그인·질문·저장 완료를 주장하지 않는다.
+- **공개 경로 확인:** read-only curl에서 `http://aio-t1.isitsoft.kr/login` 301 → HTTPS 최종 200, FE HTML 200 및 Next static JS asset 200, no-cookie `https://aio-t1.isitsoft.kr/api/auth/me` 401, `https://aio-t1.isitsoft.kr:5678/healthz` 200을 확인했다. FastAPI 공개 origin/prefix는 `https://aio-t1.isitsoft.kr/api`; 내부 `http://backend:8000`은 팀원 PC 직접 주소가 아니다. 초기 확인에서는 `/api/docs`, `/api/openapi.json`, `/docs`, `/openapi.json`이 404였다. 아래 Swagger 후속 배포에서 `/docs`와 `/openapi.json`을 지원하도록 보완했다. 이전 문서의 외부 FE 502/3000 timeout은 당시 역사 관측이며 현재 외부 FE 미연결 상태로 쓰지 않는다. 로그인 페이지/401/health만으로 직원 로그인·질문·저장 완료를 주장하지 않는다.
 - **비밀 인계 분리:** 팀장 전용 기존 VM 관리자 인계는 저장소 밖 `orchestrator/private/VM-TEAM-ACCESS.txt`에 권한 600 파일/700 디렉터리로 보관한다. 공개 문서에는 주소와 절차만 남기며 이 파일은 팀 전체 공유물이 아니다. n8n owner 암호는 확보되지 않아 현재 운영자 인계가 필요하다.
 - **이 보고가 다루지 않는 완료 주장:** 공통 14 전체 실행, WF-01 자동답변/8초, 오늘 필수 실측, 4교시 중간 점검, 7회귀, 8교시 동결·발표는 완료되지 않았다. 주말은 기능 동결·최종 제출 후 이어질 RAG 후속 인계이며 오늘 필수 마감의 대체나 연기 승인이 아니다.
 
@@ -78,3 +78,7 @@
 - VM current snapshot은 관제 read-only 결과 `DAY81-VM-READONLY-SNAPSHOT.txt` (UTC 2026-11-06 01:01)에서 인용했다. VM 설정·서비스·계정·데이터를 변경하지 않았다.
 - 공개 FE 상태는 본 보고 작성 시점의 read-only HTTP 관측이다. 로그인 비밀정보를 사용하거나 로그인 시도하지 않았다.
 - 다음 교시에서 추가 관측이 생기면 시간과 배포 commit을 함께 적고, 과거 관측을 소급해 덮어쓰지 않는다.
+
+## 후속 작업 · Swagger 공개 경로
+
+2026-11-06T10:24:37.289524+09:00 · `vm-public-swagger-1`, FE 코드 `e7f5161`. frontend에 `/docs`와 `/openapi.json` rewrite만 추가해 공개 Swagger UI/JSON 스키마를 각각 HTTP200으로 확인했다. VM frontend만 재빌드/재생성했고 다른 OKE 서비스 ID/시작시각은 유지됐다. login/정적JS200, no-cookie me401, n8n health200 회귀 확인. 계정·업무 API·DB·workflow·외부포트/ingress 변경이나 업무 POST 시험은 하지 않았다. 정확한 주소와 한계는 [VM 사용 안내](../VM-TEAM-TESTING.md#swagger-공개-경로-추가)를 따른다.

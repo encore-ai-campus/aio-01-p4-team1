@@ -132,3 +132,11 @@ The public FE routing check and the controller VM snapshot above are separate ob
 ### 1교시 출발점 판정
 
 The 1교시 report material is prepared, but the official common-14 test starting point remains incomplete: the original case file and compatible official runner/authentication procedure have not been handed off. The 81-day checklist's other same-day required checks, including normal evidence-backed answer and its timing criterion, are not complete merely because the VM is healthy or retains 8/33 indexed records. Yubeen's RAG follow-up is scheduled for the weekend after feature freeze/final submission; that does not postpone today's required measurements. The team lead must decide whether to assign a same-day substitute and reserve a safe test window. No substitute owner or score threshold is invented here.
+
+## 10. DAY81 Swagger 공개 경로 · 2026-11-06T10:24:37.289524+09:00
+
+- TASK `vm-public-swagger-1`; FE source `e7f5161`, 이전 VM repo `a3dd276`/통합 runtime `c1a4c8b`와 구분. ff-only 후 frontend만 rebuild/up --no-deps. 나머지 8개 OKE 서비스 ID·StartedAt·image 동일.
+- `GET https://aio-t1.isitsoft.kr/docs`: 200 HTML/SwaggerUIBundle, schema URL `/openapi.json`.
+- `GET https://aio-t1.isitsoft.kr/openapi.json`: 200 JSON, OpenAPI 3.1.0, 18 paths; `/api/auth/login`, `/api/auth/me`, `/api/ask`, `/api/my-requests`, `/api/admin/tickets`, `/tickets` 존재.
+- 회귀: FE `/login`200, HTML에서 찾은 Next static JS200, cookie없는 `/api/auth/me`401, n8n `:5678/healthz`200. `/api/docs`·`/api/openapi.json`은404 유지.
+- 기존 cookie/header 인증을 바꾸지 않았다. 스키마 열람만 확인했으며 실제 업무 POST/삭제·계정/비밀번호·DB변경 시험을 수행하지 않았다. UI 접근200은 인증 API 무조건 성공/공통14 통과의 근거가 아니다.

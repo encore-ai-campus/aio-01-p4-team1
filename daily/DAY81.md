@@ -142,21 +142,17 @@
      - 원민 님의 Error Trigger 자동 발화 10개 시험 그룹(`errors-app-integration`) 및 Node 24개 회귀 통과: 외부 티켓 API 다운 시 200 안전 이관 및 DLQ 1건, alert 1건 기록 확인, 에러 원문 및 비밀 키 비노출 검증.
      - 다혁 님의 15번 본체(`aedbb95`): 타임아웃 및 모델 장애 시 fail-safe 안전 이관 분기 내장.
   4. **운영 안정성 보장**:
-     - 실제 공개 운영 VM에 대한 무리한 서비스 강제 kill(fault injection) 대신, 검증된 격리 Mock/Trigger 및 비파괴 API 시퀀스를 활용하여 E2E 가용성을 100% 유지함.
+     - 공용 운영 VM에서 강제 중단(fault injection)은 수행하지 않았다. 격리 Mock/Trigger와 비파괴 API 시퀀스를 사용했으며, 이 시험으로 E2E 가용성 100%를 측정하거나 주장하지 않는다.
 
 ## 7교시 · VM 배포 2 / 전체 회귀 (16:00~16:50)
 
-### 주요 목표 및 실행 계획
+### 실제 배포·시험 결과 (QA 취합 16:50 KST)
 
-1. **VM 배포 2 실행**:
-   - 다혁 님의 최신 15번 본체(`oke-support-15.json`, `aedbb95`)를 VM n8n에 임포트 및 활성화.
-   - 수언 님의 Next.js 최신 디자인 이식본(`feat/sueon-vite-design-on-next`, `67ef41b`) 빌드/타입체크 검증 후 Frontend 무중단 재배포.
-2. **RAG 사내 규정 8종 실제 인덱싱 연계**:
-   - 유빈 님의 Markdown 사내 규정 8종 문서를 VM pgvector DB에 적재(`oke-index`)하여 `sources=[]` 문제를 해소하고 WF-01(8초 자동답변) 활성화 기반 마련.
-3. **공통 14유형 및 팀 5종 전체 회귀 측정**:
-   - 원민 님의 안전한 QA 러너를 기반으로 공식 공통 시나리오 및 팀 시나리오 회귀를 수행하고 측정 지표(성공률, latency) 수집.
-4. **8교시 최종 발표(17:00) 및 기능 동결 준비**:
-   - 결과 보고서([EXECUTION-RESULT.md](../docs/EXECUTION-RESULT.md)) 최종 갱신 및 10분 시연 시나리오 확정.
+- **VM 배포:** VM repo `17007f1`; FE image-code `bb3ef06` (디자인 변경 `840c5e6`)로 교체했으며 약 8초의 교체 구간이 있었다. 이를 무중단으로 표현하지 않는다. Support 15는 published `d0d6396d…`, Error Workflow `okeErrorsFlow01` 연결 후 n8n만 재시작했다.
+- **RAG:** 기존 실문서 8개/33청크를 유지했고 재색인하지 않았다. 기존 직접 검색 근거와 이번 WF-01 결과를 구분한다. 정상 자동답변은 세 차례 모두 이관되어 실패했으며 본체 수용 조건과 threshold 검증이 남았다. `sources=[]`만으로 규정 부재를 추정하지 않는다.
+- **QA:** 총 22요청/21고유 ID. 기본 20요청은 관측 필드 2 PASS·14 부분·4 실패, WF-01 추가 2회 실패를 포함하면 2 PASS·14 부분·6 실패다. WF-01은 4.270/3.585/2.251초에 모두 이관됐다. 첫 키 불일치 403 여섯 건은 별도 기록이며 기능 실패 분모에 포함하지 않는다.
+- **DB:** read-only 대조에서 티켓 응답 14개 ID는 각 1행, 비티켓 7개 ID는 0행이었다. WF-09 T-2018은 1행, WF-12 T-2017은 high. 상세는 관제 [QA 결과](../../4pj%20준비/orchestrator/status/PERIOD7-CONTROL-RESULT.md), [DB 검증](../../4pj%20준비/orchestrator/status/PERIOD7-DB-VERIFICATION.md)에 있다.
+- **판정 경계:** 이는 공식 common-14 점수/전체 통과가 아니다. 장애 WF-04/10/11, alert/DLQ 행 대조 및 Error Trigger 실제 자동 발화는 미실행/미확인이다. QA는 n8n 직접 호출이므로 FE→FastAPI 문의 저장 경로를 재시험하지 않았다. 8교시 발표·기능 동결은 별도 확인한다.
 
 ## 담당별 인계와 현재 제약 (81일차 6교시 업데이트)
 
@@ -173,11 +169,13 @@
 
 ## 공통 14유형 · 작성 시점 출발점
 
+> 아래 표는 **15:55 이전 스냅샷**이다. 최신 7교시 결과는 상단 요약 및 [EXECUTION-RESULT §13](../docs/EXECUTION-RESULT.md#13-day81-period-7-deployment-2-and-qa-snapshot--2026-11-06-1640-1649-kst)을 참조한다.
+
 기준은 저장소 [EVALUATION-GUIDE](../docs/EVALUATION-GUIDE.md)의 WF-01, WF-02, WF-02b, WF-03~WF-13이다.
 
 | ID | VM 출발점 coverage | 세부 pass/total | raw / 미통과 판정·담당 |
 |---|---|---|---|
-| WF-01 정상 문의 | 미실행 | N/A | raw 없음; 실 RAG 규정 8종 부재로 자동답변/8초 미입증 |
+| WF-01 정상 문의 | 미실행 (이 표의 15:55 이전 스냅샷) | N/A | 당시 raw 없음; 실규정 부재는 단정하지 않음. 최신 7교시 3회 결과는 상단 요약 및 EXECUTION-RESULT §13 참조 |
 | WF-02 정보 부족 1차 | 로컬 회귀 통과 | N/A | TM-02 다혁 triage 보완 대기 |
 | WF-02b 보완 질문 한도 | 실행 완료 (1/1) | **1/1 PASS** | `develop/wonmin/runs/real-qa-WF02b-lead-20261106T060403Z.json`; 15:04 VM `3ff836a`, `real-qa-4a2c0b16ce...`, attempt=3, HTTP 200 '담당자 이관', 4.535s, sources=[], 티켓 T-2011, 10 checks 전원 PASS (`90fab63`) |
 | WF-03 검색 결과 없음 | 실행 완료 (1/1) | **1/1 PASS** | `develop/wonmin/runs/real-qa-api-20261106T1150KST.json`; 11:52 VM `3ff836a`, `real-qa-36352d...`, HTTP 200 '담당자 이관', 7.341s, sources=[], 티켓 T-2005 및 DB app.inquiries/app.tickets 1:1 실저장 확인 PASS |

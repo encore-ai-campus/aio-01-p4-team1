@@ -1,4 +1,4 @@
-# 팀 VM 사용·시험 안내 · 2026-11-06 기준
+# 팀 VM 사용·시험 안내 · 2026-11-06 11:55 KST 갱신
 
 이 문서는 현재 확인된 팀 VM 접속점과 시험 전 인계사항을 안내한다. 안내는 VM 배포나 서비스 변경을 허가하지 않는다.
 
@@ -29,7 +29,7 @@
 | `GET https://aio-t1.isitsoft.kr/api/docs`, `/api/openapi.json` | 404 | 이 prefix의 문서 경로는 추가하지 않음 |
 | `GET https://aio-t1.isitsoft.kr:5678/healthz` | 200 | 기존 n8n health route |
 
-## 현재 VM 기준선
+## 초기 VM 기준선 · 2026-11-06 10:01 KST snapshot
 
 읽기 전용 VM 관제 snapshot: 2026-11-06 01:01 UTC (10:01 KST), repository `a3dd276`; runtime 구현 커밋 `c1a4c8b`. Repo `main=997ea60`은 VM에 적용된 버전으로 간주하지 않는다.
 
@@ -51,9 +51,9 @@
 - n8n runtime workflow stable IDs는 위 표를 참조한다. 활성본을 덮어쓰거나 같은 ID의 새 workflow를 임의 생성·활성화하지 않는다. `oke-index` 수동 색인도 별도 예약 없이 실행하지 않는다.
 - VM에는 목적별 credential 6개 레코드가 보존되어 있다. 이전 runtime cleanup inventory의 구분은 OpenAI, team webhook, RAG search, RAG index, backend internal, legacy Header Auth account였다. 현재 snapshot은 레코드 수만 재확인했으므로 credential ID/값 및 각 노드 매핑을 본 문서에서 보증하지 않는다.
 - 팀장 또는 지정 관리자는 팀원에게 필요한 사용자 권한, workflow 실행 경로, 해당 용도의 자격 증명 사용 방법만 비공개로 인계한다. key/password/header value를 Git·이슈·채팅·보고서·화면 캡처에 붙이지 않는다. 여러 용도의 키를 이름이 비슷하다는 이유로 공유하지 않는다.
-- 현재 앱 사용자 계정은 `minji.admin` 한 개이며 `must_change_password=true`다. 이를 모든 팀원이 공유하는 계정으로 권장하지 않는다. 지정 관리자/팀장이 공식 절차로 첫 로그인·암호변경을 마친 뒤 관리 기능으로 팀원별 시험 계정과 역할을 발급하고, 각 팀원에게 초기 비밀번호를 비공개 전달해야 FE 인증 시험을 시작할 수 있다. 신규 계정 생성·암호 변경은 이번 작업에서 실행하지 않았다. 일반 직원 로그인 계정은 아직 없다.
+- 팀원은 개인 계정을 사용한다. `minji.admin`을 공유 계정으로 사용하지 않는다. 최신 계정 기준선은 아래 “FE/BE 배포 및 실제 QA 후속” 절을 참조한다. 계정 비밀번호는 GitHub에 공개하지 않고 팀장이 private handoff에서 필요한 팀원에게 개별 전달한다.
 - 현재 VM n8n owner 사용자는 1명이다. 정확한 owner email은 공개 저장소에 싣지 않고 로컬 private handoff에만 기록한다. 기존 n8n owner 비밀번호는 VM admin handoff에서 확인되지 않았으므로 팀장은 현 n8n 운영자에게 기존 로그인 정보를 비공개로 인계받아야 한다. 암호 추정·계정 reset은 하지 않는다.
-- 기존 VM `.env.admin-handoff`에 있던 관리자 임시 암호는 지정 관리자 전용 로컬 private handoff에 안전 복사했다. `must_change_password=true`는 유지한다. 해당 파일은 전체 팀과 공유하지 않는다.
+- 관리자/직원 비밀번호는 저장소 밖의 지정 private handoff에서만 전달한다. 계정 상태는 snapshot 시각과 후속 절의 시각을 구분해서 본다.
 - 팀장용 로컬 비밀 인계 위치는 저장소 밖 `orchestrator/private/VM-TEAM-ACCESS.txt` (부모 디렉터리 mode 700, 파일 mode 600)다. 이 문서 경로는 인계 위치 안내일 뿐 공개 저장소에 값이나 파일을 추가하지 않는다. 팀원에게는 공유 admin 비밀번호 대신 개별 시험계정을 발급한 뒤 각자 안전하게 전달한다.
 - 공개 API는 `/api/auth/me` 외부 401을 확인했다. API 경로/스키마는 repo의 [API-CONTRACT](API-CONTRACT.md)와 versioned backend source를 따른다. Swagger UI는 <https://aio-t1.isitsoft.kr/docs>, 스키마는 <https://aio-t1.isitsoft.kr/openapi.json>을 사용한다. UI 열림과 인증 API 실행 권한은 별개다.
 
@@ -104,3 +104,12 @@
 - POST/삭제/DB변경 시험·로그인/암호변경은 실행하지 않았다. Try it out의 성공은 인증/권한에 달려 있으며 이번 범위의 검증이 아니다.
 
 - 브라우저 렌더 확인을 시도했으나 CUA browser host unavailable로 탭을 만들 수 없었다. HTML/JSON의 외부 HTTP 검증은 통과했으며 시각적 렌더는 미확인이다.
+
+## FE/BE 배포 및 실제 QA 후속 · 2026-11-06 11:55 KST
+
+- main `99fff9c`에서 backend/frontend만 배포했고, FE guard 수정 `3ff836a`는 frontend만 추가 배포했다. 최종 VM repo는 `3ff836a`; backend/frontend healthy. n8n, runners, PostgreSQL, data-api, RAG search와 기존 volumes는 이 작업 중 재기동·변경하지 않았다. workflow 4개 active 및 index manual 상태를 유지했다.
+- 계정 metadata: `minji.admin` active admin / `must_change_password=false`; `teamtest.employee1` active employee / `must_change_password=false`. 직원 계정은 공식 roster entry에서 발급했고, 첫 암호 변경·재로그인·내 문의 200·admin API 403·로그아웃/세션 종료를 공식 API로 검증했다. 비밀은 팀장 전용 private handoff에만 있다.
+- 공개 read-only: `/login` 200, no-cookie `/api/auth/me` 401, `/docs` 200, `/openapi.json` 200, n8n `:5678/healthz` 200. FE 브라우저 시각/클릭 검증은 자동화 host unavailable로 미실행이다.
+- QA attempt 1, 고유 request ID `real-qa-36352d26c53e48eab65a42c4a0c5ec85`: API sequence `PASS_API_SEQUENCE`; route는 `담당자 이관`, elapsed 7.341초, sources는 빈 목록. 직원 문의 목록 및 로그아웃 후 재로그인 조회, admin 처리 상태/답변 재조회, 직원 admin API 403을 확인했다. 빈 sources이므로 C03 검색 또는 WF-01 정상 자동답변 성공으로 해석하지 않는다.
+- 별도 read-only PostgreSQL 대조에서 해당 request ID의 `app.inquiries` 1행, `app.tickets.request_key` 1행, `ticket_id=T-2005`; inquiry/ticket/requester 연결키 일치 및 상태 `in_progress`를 확인했다. 과거 전체 행수와의 차이는 동시 변경 가능성이 있어 이 QA 고유 키/연결행 외의 변화를 단정하지 않는다. 기존/타인 행 삭제·초기화는 하지 않았다.
+- 브라우저 화면, 정상 자동답변/8초 기준, RAG evidence 검색, 동일 request ID 중복 재요청, alert/DLQ 관계, 공식 common-14는 미실행이다.

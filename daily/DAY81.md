@@ -48,6 +48,20 @@
 
 2026-11-06 10:24 KST에 Swagger UI `/docs`와 `/openapi.json`이 각각 HTTP 200, OpenAPI 3.1.0·18 paths임을 확인했다. 같은 확인에서 `/login`과 정적 JS는 200, no-cookie `/api/auth/me`는 401, n8n health는 200이었다. 이는 공개 문서/라우팅 및 readiness 확인이며 인증된 로그인·업무 POST·WF-01·공통 14 통과는 아니다. 범위와 URL은 [VM 팀 사용·시험 안내](../docs/VM-TEAM-TESTING.md), FE 변경은 [e7f5161](https://github.com/hyunport/Aio-4pj-1team/commit/e7f5161), 실행 경계는 [실행 결과서](../docs/EXECUTION-RESULT.md)에 기록돼 있다. 브라우저 UI 시각 렌더링과 업무 시나리오는 별도 미확인이다.
 
+### 후속 보완 · 2026-11-06 11:52–11:55 KST · 교시 판정 소급 아님
+
+1·2교시의 당시 파악·통과 판정은 유지한다. 아래는 이후 완료된 배포/검증 보완이며, 앞선 교시를 소급 완료 처리하거나 공식 common-14/WF-01 PASS로 바꾸지 않는다.
+
+| 항목 | 후속 실제 근거 | 판정·한계 |
+|---|---|---|
+| 통합 코드 및 FE/BE 배포 | main `99fff9c`에 FE 실제 API 연결과 BE 소유 ticket 상태/답변 결합 반영. VM은 backend/frontend만 배포. 이후 forced-first-change admin guard 순서를 고친 FE-only `3ff836a`를 push하고 frontend만 재배포. typecheck/build 통과, BE `162 passed, 65 skipped`. | VM 최종 repo `3ff836a`; backend/frontend healthy. 나머지 서비스·볼륨/workflow는 이번 배포에서 변경하지 않았다. 브라우저 시각/클릭 검증은 미실행. |
+| 계정 준비 | 공식 API로 `minji.admin` 로그인/세션/logout 확인; 현재 `must_change_password=false`라 암호는 변경하지 않았다. 공식 직원 목록에서 미발급 비IT employee ID 1을 확인해 `teamtest.employee1`을 발급하고 첫 암호 변경/재로그인, 내 문의 200, admin endpoint 403, 로그아웃/세션 종료를 검증했다. | 두 계정 비밀은 저장소 밖 private handoff에만 있다. 첫 변경 필요 admin 화면 guard 결함은 FE `3ff836a`로 수정했으나 해당 강제 변경 화면의 실제 클릭은 미검증. |
+| 실제 attempt 1 이관·저장 | 11:52 KST 공개 HTTPS QA, `request_id=real-qa-36352d26c53e48eab65a42c4a0c5ec85`, attempt 1: API sequence PASS, `/api/ask` HTTP 200, `담당자 이관`, 7.341초, `sources=[]`. 직원 문의 조회/로그아웃·재로그인 후 조회, admin 처리 후 재조회, 직원 admin API 403 통과. 비밀 없는 raw: `develop/wonmin/runs/real-qa-api-20261106T1150KST.json`. | 안전 이관 및 저장/관리자 처리 API 경로만 확인. sources 빈 목록이므로 C03 실검색 또는 WF-01 근거 자동답변 PASS가 아니며, 8초 정상응답 판정에도 사용하지 않는다. |
+| request 단위 DB 대조 | 11:52:07 KST 독립 read-only PostgreSQL query: 해당 `app.inquiries` request_id 1행 및 `app.tickets.request_key` 1행, `T-2005`; inquiry/ticket 연결 ID와 requester employee ID 1, request key 일치, ticket `in_progress`, 저장 답변 일치. | 전체 행수 차이를 단건 근거로 사용하지 않았고, 고유 request key와 owner/link join만 대조했다. 기존/타인 row 삭제·초기화 없음. |
+| 공개 readiness 및 snapshot | 최종 배포 뒤 `/login` 200, no-cookie `/api/auth/me` 401, `/docs`·`/openapi.json` 200, n8n `:5678/healthz` 200. 배포 직후 전체 metadata count는 users/employees/inquiries/tickets/alerts=`2/6/2/4/5`. | count는 snapshot일 뿐 단건 귀속 증거가 아니다. 브라우저 시각·클릭 미확인. workflow/DB/n8n은 이번 FE/BE 범위에서 재기동하지 않았다. |
+
+상세 근거: [실행 결과서](../docs/EXECUTION-RESULT.md), [VM 팀 시험 안내](../docs/VM-TEAM-TESTING.md). FE HTML/API 확인은 인증된 브라우저 UI 시연과 다르다.
+
 ## 담당별 인계와 현재 제약
 
 | 담당 | 확인한 기준 | 다음 확인 |
@@ -59,7 +73,7 @@
 | 유빈님 · RAG | VM 기준선 8문서/33청크, 기존 검색 결과는 선행 보고에 기록. | 주말 RAG 후속으로 인계. 오늘 필수 실측은 별도이며 미정 대체 담당을 임의 지정하지 않는다. |
 | 원민님 · 안정성/시험 | 공식 common-14 원본/runner 지원 경계 미확보. | 원본·hash·runner 버전/인증 지원·실행 raw를 확보하고 pass/total·미실행·실패를 분리 기록한다. |
 
-인계 필요사항은 일반/IT 시험계정과 first-change 절차, n8n owner의 기존 접근(암호 추정/재설정 금지), workflow별 편집·Credential 권한, common-14 원본과 인증 지원 runner, 고정 시험 버전/시간창 및 상태변경 사례의 격리·복구 담당이다. `minji.admin`은 최초 비밀번호 변경 필요 상태이며 일반 직원 계정은 아직 발급되지 않았다. n8n 기존 owner 비밀번호는 확인되지 않았다. 이 보고에는 비밀번호·키·쿠키를 쓰지 않는다.
+남은 인계는 추가 팀원별 일반/IT 계정 필요 여부, n8n owner 기존 접근(암호 추정/재설정 금지), workflow별 편집·Credential 권한, common-14 원본과 공식 runner 인증지원, 고정 시험 버전/시간 및 상태변경 사례의 격리·복구 담당이다. 후속 기준에서 `minji.admin`과 `teamtest.employee1`은 active이며 `must_change_password=false`; 전체 팀 공유 계정은 아니다. n8n owner 암호는 확인되지 않았다. 비밀번호·키·쿠키는 보고서에 쓰지 않는다.
 
 ## 공통 14유형 · 작성 시점 출발점
 

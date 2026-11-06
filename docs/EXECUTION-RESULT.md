@@ -140,3 +140,23 @@ The 1교시 report material is prepared, but the official common-14 test startin
 - `GET https://aio-t1.isitsoft.kr/openapi.json`: 200 JSON, OpenAPI 3.1.0, 18 paths; `/api/auth/login`, `/api/auth/me`, `/api/ask`, `/api/my-requests`, `/api/admin/tickets`, `/tickets` 존재.
 - 회귀: FE `/login`200, HTML에서 찾은 Next static JS200, cookie없는 `/api/auth/me`401, n8n `:5678/healthz`200. `/api/docs`·`/api/openapi.json`은404 유지.
 - 기존 cookie/header 인증을 바꾸지 않았다. 스키마 열람만 확인했으며 실제 업무 POST/삭제·계정/비밀번호·DB변경 시험을 수행하지 않았다. UI 접근200은 인증 API 무조건 성공/공통14 통과의 근거가 아니다.
+
+## 11. FE/BE 통합 배포 및 실 API·DB 대조 · 2026-11-06 11:52–11:55 KST
+
+### 코드·배포 경계
+
+- FE/BE 통합 commit `99fff9c`를 GitHub main에 push했다. FE는 세션/역할 가드, 로그아웃/비밀번호 변경, 질문·내 문의 및 관리자 API 호출을 사용하고 UI fixture 경로를 제거했다. BE `/api/my-requests`는 인증 직원 소유 문의에 연결된 현재 티켓 상태/담당자 답변을 소유자·request key·inquiry 연결 조건으로 결합한다. `npm run typecheck`, `npm run build` 성공; BE `uv run pytest -q`: 162 passed, 65 skipped, 1 기존 deprecation warning. FE 빌드 성공은 브라우저 화면 통과와 구분한다.
+- VM은 `99fff9c`로 ff-only 동기화 후 `SERVICE_MODE=app`에서 backend/frontend만 build/up 했다. 두 컨테이너 healthy. workflow, n8n, RAG search/index, PostgreSQL, data-api 및 기존 볼륨은 변경하지 않았다.
+- 관리자 forced-first-change route guard의 순서 결함을 최소 수정한 FE-only commit `3ff836a`를 이후 push하고 frontend만 추가 배포했다. `npm run typecheck`·`npm run build` 재통과, frontend healthy. 이 수정의 로그인 암호변경 실제 화면 시연은 현재 관리자 계정이 이미 `must_change_password=false`여서 직접 검증하지 않았다.
+- 최종 배포 뒤 공개 GET: `/login` 200, no-cookie `/api/auth/me` 401, `/docs` 200, `/openapi.json` 200, 기존 n8n `:5678/healthz` 200. 브라우저 host unavailable로 시각·클릭 검증은 미실행이다.
+
+### 계정·단일 QA 실행
+
+- 공식 API 검증 후 metadata: `minji.admin` active admin / `must_change_password=false`; `teamtest.employee1` active employee / `must_change_password=false`. 직원 시험 계정은 공식 roster에서 미발급 ID를 확인해 발급했다. 공식 첫 비밀번호 변경, 재로그인, `/api/my-requests` 200, employee의 admin endpoint 403, logout/세션종료가 확인됐다. 비밀값은 저장소 밖 private handoff에만 둔다.
+- 공개 HTTPS QA runner의 고유 `request_id=real-qa-36352d26c53e48eab65a42c4a0c5ec85`, attempt 1, `default_vpn_attempt_1`: `POST /api/ask` HTTP 200, route `담당자 이관`, elapsed 7.341초, sources `[]`. 직원 문의 목록 조회, logout 후 재로그인 조회, admin 처리 PATCH 후 재조회, 직원의 관리자 경로 403가 확인되어 **안전 이관→실 DB 저장→관리자 처리→직원 재조회 API 경로만 PASS**다. 비밀 없는 raw JSON은 `develop/wonmin/runs/real-qa-api-20261106T1150KST.json`이다. 자동답변/검색 근거·8초 normal answer PASS는 아니다.
+- API 목록에서 신규 row를 유일하다고 단정하지 않고, 11:52:07 KST read-only PostgreSQL query로 해당 고유 키를 대조했다: `app.inquiries` request_id 1행, `app.tickets` request_key 1행, ticket `T-2005`; inquiry ID 3 ↔ ticket inquiry_id 3, requester employee ID 1 일치, request key 일치, status `in_progress`, PATCH 답변 일치. 상세 대조는 운영자 비밀 없는 별도 관제 기록에 있으며 raw question/답변 본문은 이 문서에 복제하지 않는다.
+- 배포 직후 전체 read-only count는 users/employees/inquiries/tickets/alerts=`2/6/2/4/5`였다. 이전 기준선과의 총량 차이는 동시 쓰기 가능성 때문에 이 시험의 row 근거로 사용하지 않았으며 기존·타인 row를 삭제/초기화하지 않았다.
+
+### 남은 미검증
+
+- Browser UI click/render, alert/DLQ와 중복 재요청, 본인/타인 API 대조, 재시작 영속성, 일반/IT 정상 문서검색, WF-01 자동답변 및 8초, 공식 common-14 suite는 미실행 또는 이 시험으로 입증되지 않았다. 안정 이관 API pass를 전체 업무/검색 품질 pass로 확대하지 않는다.

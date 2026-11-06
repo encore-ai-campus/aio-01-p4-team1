@@ -1,10 +1,12 @@
 # 지혜님 · 서버·DB·배포 작업 지시
 
-[IMP-PLAN P0](../Doc/IMP-PLAN.md)에서 단계별로 작성한다. 이 문서는 배포 작업의 상세 조건이다. **P0-3 실제 실행 절 외의 전체 배포 파일·명령은 후속 구현 예정이다.** 실제 팀 VM 배포와 환경값 등록은 오현님이 담당한다.
+[IMP-PLAN](../Doc/IMP-PLAN.md)의 DB/backend 실행 절차를 보완한다. **현재 상태 · 2026-11-06:** 로컬 backend·Compose·readiness는 P0-7에서 구현·검증됐고, 개인 migration head는 `0005`다. 재시작 유지와 별도 DB backup/restore를 확인했다. backup/restore 원본 RAG documents/chunks는 0건이라 실제 저장 벡터 복원은 미검증이다. 루트 [팀 VM 기록](../../../docs/VM-TEAM-TESTING.md)은 VM `0005`와 제한된 FE/BE API·DB 시험을 보고한다. 이는 문서 근거와 사용자가 제공한 VM 표본으로 구분하며 VM 배포·환경값 등록·시험 창은 오현님이 관리한다.
 
-## 현재 상태와 단계별 전제
+아래 P0 단계별 실행 절은 구현 당시 절차와 이력을 포함한다. `현재`, `예정`, `미실행` 문구가 포함된 날짜별 구간은 작성 당시 상태일 수 있으므로 상단 상태와 루트 VM 기록을 먼저 대조한다. 공유 VM에 적용·재기동·초기화 명령을 실행하지 않는다.
 
-2026-11-05 현재 P0-1~2와 P0-3 postgres Compose·실제 접속·Alembic 실행 기반을 확인했다. 아래 backend Dockerfile·readiness·전체 Compose·VM 절차는 아직 구현/실행하지 않았다. 현재 확정 주소·모드·인증·시간 예산은 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)을 따른다.
+## 단계별 전제 및 실행 이력
+
+P0-3 당시에는 postgres Compose·DB 접속·Alembic 기반을 확인하는 범위였다. 이후 P0-7에서 backend Dockerfile·readiness·로컬 Compose까지 구현했다. 현재 확정 주소·모드·인증·시간 예산은 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)을 따른다.
 
 - P0-3: Docker/Compose·pgvector 이미지 확보와 본인 전용 DB 비밀 설정이 전제다. postgres 부분·volume·healthcheck·DB 접속·Alembic 기반만 구현하고 테이블/전체 서비스는 후속으로 둔다.
 - P0-7: DB 마이그레이션·확장 준비 뒤 backend 이미지·readiness를 확인한다. frontend가 없으면 타인 파일을 만들지 않고 DB/backend 확인 범위로 기록한다.
@@ -13,7 +15,7 @@
 
 ## P0-3 실제 실행 기반
 
-### P0-7 현재 실행 상태 · 2026-11-05
+### P0-7 로컬 실행 기록 · 2026-11-05
 
 전용 로컬 backend/postgres를 빌드·기동했다. backend는 UID10001/read-only 파일시스템·cap_drop ALL로 실행하며 host 기본8000을 loopback에만 공개한다. 실제 검증에서는8000 포트 연결 오류 후 `BACKEND_PORT=18000`을 사용했다. DB 포트는 여전히 외부 공개하지 않는다. 최신 revision은 `0005`이며 기존0004 이후 readiness용 public.alembic_version SELECT 권한만 oke_app에 추가했다. 새revision은 VM 인계에도 포함해야 한다.
 
@@ -33,13 +35,13 @@ init_backend_env.py는 기존 전용 DB 설정이 일치할 때만 로컬 LOGIN�
 
 이미지의 의존성은 `uv export --frozen --no-dev --no-hashes --no-emit-project --output-file deploy/requirements.lock`으로 uv.lock에서 내보냈다. Dockerfile 전용 `backend.Dockerfile.dockerignore`가 실제 본인 폴더 build context에 적용되며 app/migrations/고정 requirements 외의 private env·호스트 .venv·문서를 제외한다. deploy/.dockerignore는 참고용이며 단독으로 루트 context를 차단한다고 간주하지 않는다. 패키지를 변경하면 uv.lock과 export를 함께 갱신한다.
 
-`/health/live`는 프로세스 생존200, `/health/ready`는 DB/revision/pgvector 전제200 또는503이다. 응답의 scope=database이며 n8n/data-api/웹 업무의 종단간 준비 상태가 아니다. 실제 전용 DB 중지 중 ready503/live200, 재기동 후ready200을 확인했다. 정상 응답 예시는 `{"status":"ready","reason":"ok","scope":"database","service_mode":"app"}`이다. 업무 API는 여전히 후속 P1 구현 전501이다.
+`/health/live`는 프로세스 생존200, `/health/ready`는 DB/revision/pgvector 전제200 또는503이다. 응답의 scope=database이며 n8n/data-api/웹 업무의 종단간 준비 상태가 아니다. 실제 전용 DB 중지 중 ready503/live200, 재기동 후ready200을 확인했다. 정상 응답 예시는 `{"status":"ready","reason":"ok","scope":"database","service_mode":"app"}`이다. 이 문단의 P0-7 당시 업무 API 501 설명은 작성 시점의 이력이며, 후속 P1 API 구현·VM의 제한된 API 확인과 구분한다.
 
-현재 frontend는 빌드 파일 미준비라 Compose 서비스를 임의 생성하지 않았다. 기존 n8n/day65와 data-api/day67은 별도 프로젝트에서 실행 중이며 이번에 재배포/연결하지 않았다. VM에서 오현님이 공용 네트워크·별칭과 연결 대상을 확정한 뒤 backend runtime 파일에 N8N_WEBHOOK_URL/KEY·DATA_API_URL/KEY 등을 주입한다. SERVICE_MODE만 바꿔 상대 Credential/관측대상이 자동 전환된다고 가정하지 않는다. 본체→검색은 담당자 회신의 n8n 내부 C03 경로를 따르되 실제 DNS/HTTP 연결은 별도 확인한다.
+P0-7 당시 frontend 빌드 파일이 준비되지 않아 로컬 Compose에 추가하지 않았다. 이후 VM의 FE/BE 배포와 공개 API 확인은 루트 VM 기록에 별도로 보고돼 있다. 현재 팀 VM 구성·네트워크·자격 증명을 이 로컬 실행 절차로 변경하지 않는다. SERVICE_MODE만 바꿔 상대 Credential/관측대상이 자동 전환된다고 가정하지 않는다.
 
-VM에서는 로컬 계정 생성 도구를 사용하지 않고 관리자가 LOGIN/oke_app 연결과 비밀 파일을 준비한다. 적용 커밋을 확인한 backend 이미지에서, 일회성 마이그레이션 계정의 DATABASE_URL을 환경에 주입해 `python -m alembic -c migrations/alembic.ini upgrade 0005`를 수행한 뒤 runtime URL로 전환한다. 이미지에는 uv가 없으므로 컨테이너 내부는 `uv run` 대신 `python -m` 명령을 쓴다. 자동 seed/관리자 생성은 하지 않는다.
+초기 VM 배포 절차는 관리자가 LOGIN/oke_app 연결과 비밀 파일을 준비하고, 적용 커밋의 backend 이미지에서 일회성 마이그레이션 계정으로 필요한 revision을 적용하는 방식이다. 루트 2026-11-06 VM snapshot은 현재 revision `0005`를 보고하므로 이 절차를 현재 VM에 그대로 다시 실행하지 않는다. 이미지에는 uv가 없으므로 컨테이너 내부는 `uv run` 대신 `python -m` 명령을 쓴다. 자동 seed/관리자 생성은 하지 않는다.
 
-P0-4 갱신(2026-11-05): 아래 P0-3 기록의 '테이블 없음'은 당시 상태다. 전용 DB에 `0001→0002`를 적용해 현재 `0002 (head)`와 업무 테이블 7개를 확인했다. `uv run python deploy/check_db.py --alembic current`, `--migrations`, `--all`로 재확인 가능하다. 실제 결과는 마이그레이션 검사40개·전체155개 통과, 기존 경고1건이다. RAG 테이블/권한과 업무 API 저장은 후속이다.
+P0-4 단계 기록(2026-11-05): 아래 P0-3 기록의 '테이블 없음'은 당시 상태다. 전용 DB에 `0001→0002`를 적용해 당시 `0002 (head)`와 업무 테이블 7개를 확인했다. 이후 P0-5/P0-7에서 로컬 head는 `0005`로 갱신됐다. 당시 명령·결과는 `uv run python deploy/check_db.py --alembic current`, `--migrations`, `--all`, 마이그레이션 검사40개·전체155개 통과·기존 경고1건이다. 단계별 세부는 IMP-PLAN을 참조한다.
 
 실제 생성 파일은 compose.yaml의 postgres, compose.check.yaml의 검증 전용 db-check, init_db_env.py/check_db.py와 변수 이름만 있는 .env.example이다. 프로젝트 `oke-jihye-p0`는 기존 서비스와 별도 네트워크·named volume을 사용하며 DB 호스트 포트를 공개하지 않는다. 기존 n8n/data-api를 여기에 연결하지 않았다.
 
@@ -58,7 +60,7 @@ uv run python deploy/check_db.py --all
 
 private deploy/.env는 권한600·Git 제외다. 처음 상세 traceback에 자동생성 검증용 암호가 노출되어 교체했고 출력 마스킹/짧은 traceback·보안 회귀를 추가했다. 실제 값이나 과거 값은 기록하지 않는다. 이 migration용 접속을 앱/RAG 런타임에 공유하지 않고 P0-5 최소 권한을 별도로 준비한다. DB 준비 상태·실패/재시험 원자료는 IMP-PLAN 실제 기록을 따른다.
 
-## 만들 파일과 기준
+## 초기 예정 파일과 기준 · 현재 구현 여부는 README/IMP-PLAN 참조
 
 | 예정 파일 | 내용·확인 |
 | --- | --- |
@@ -84,7 +86,7 @@ PostgreSQL은 pgvector 포함 이미지·named volume·healthcheck를 사용한�
 
 SERVICE_MODE 하나가 상대 n8n Credential/URL까지 자동 변경한다고 가정하지 않는다. 시작 전 FastAPI 설정과 n8n의 실제 호출 대상·fault/reset/ops 관측 대상을 대조해 원민님에게 넘긴다. 같은 티켓을 PostgreSQL과 data-api에 이중 생성하지 않는다. PostgreSQL 장애를 data-api로 몰래 우회해 성공으로 표시하지 않는다.
 
-## 구현 후 로컬 확인 순서 · 아직 실행하지 않음
+## 초기 구현 계획의 로컬 확인 순서 · 실제 단계 결과는 IMP-PLAN 참조
 
 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 실제 비밀 파일은 로컬에서만 `deploy/.env`로 준비하는 계획이다. 명령 출력에 환경값을 펼치는 config 출력은 피한다.
 
@@ -103,9 +105,9 @@ SERVICE_MODE 하나가 상대 n8n Credential/URL까지 자동 변경한다고 �
 
 ### P0-6 직원 seed·첫 관리자 인계
 
-CLI는 구현됐지만 VM에서는 미실행이다. 먼저 확인된 원본 응답이 `{employees:[{name,dept,...}]}`와 맞는지 대조한다. 다른 구조는 추측 변환하지 않는다. `DATA_API_URL`, `DATA_API_KEY`와 확인된 인증 헤더 이름을 명령 전용 `DATA_API_EMPLOYEES_AUTH_HEADER`에 주입한다. 이는 새 공통 인증 계약이 아니라 확인 전 임의 헤더 전송을 막는 구현 설정이다. 프록시 인증 등 현재 어댑터로 표현할 수 없는 계약이면 검토 후 수정한다.
+CLI는 구현됐다. 2026-11-05 VM 통합 기록에서 내부 `GET /employees`의 무인증 응답 구조가 CLI가 받는 6명 명단과 일치함은 확인됐지만, 그 결과만으로 CLI seed 실행이나 계정 bootstrap 완료를 뜻하지 않는다. 다른 응답 구조는 추측 변환하지 않는다. `DATA_API_EMPLOYEES_NO_AUTH=true`는 정확한 내부 URL과 키/헤더 미설정 조건에서만 사용한다. 다른 origin은 확인된 인증 설정을 요구한다.
 
-VM 대상과 비밀 주입이 준비된 뒤 `develop/jihye`에서 아래 순서로 수행한다. DB URL은 마이그레이션과 구분한 적절한 업무 DML 계정으로 주입하고 원문을 출력하지 않는다. DB revision `0004`를 먼저 확인한다.
+초기 적용 당시의 절차다. 현재 루트 VM 기록은 revision `0005`를 보고한다. VM에서 직원 seed/bootstrap을 수행하기 전 오현님과 대상·현재 직원/계정·권한·시험 창을 확인하고, 승인이 없는 seed/bootstrap은 실행하지 않는다. 격리 로컬 시험에서는 DB URL을 마이그레이션 계정과 구분한 업무 DML 계정으로 주입하고 원문을 출력하지 않는다.
 
 ```bash
 uv run python -m app.cli seed-employees
@@ -114,11 +116,11 @@ uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> -
 
 첫 명령 뒤 이름/부서6명을 확인하고 두 번째 명령을 실행한다. 두 번째는 `BOOTSTRAP_ADMIN_PASSWORD`와 `SESSION_SECRET`을 실행 환경에 주입해야 한다. 암호는 명령 인자로 받지 않으며 성공 출력은 ok/created뿐이다. 같은 대상 재실행은 created=0이며 기존 해시/역할을 보존한다. 다른 계정이 존재하는 환경의 복구 도구로 쓰지 않는다. 완료 뒤 일회성 BOOTSTRAP_ADMIN_PASSWORD를 제거한다. 로그인/첫 변경과 나머지5명 발급은 P1-1에서 연결한다. 테스트용 합성 계정을 VM에 복사하지 않는다.
 
-### P0-5 RAG 실통합 인계 · 적용 전 준비
+### P0-5 RAG 실통합 인계 · 과거 적용 절차와 현재 기준
 
-사용자가 전달한 팀장 로드맵은 팀 VM에서 RAG DB와 Python 서비스를 연결하는 방향이다. **현재 실제 확인은 로컬 DB `0004 (head)`까지이며 VM 적용은 미실행**이다. 아래는 VM 적용용 절차로, 실행 결과가 아니다. P0-6 seed·관리자 생성과 P0-7 전체 backend/frontend 배포 완료를 뜻하지 않는다.
+로컬 RAG DDL/권한 검증 당시의 head는 `0004`였고, P0-7에서 readiness grant인 `0005`가 추가됐다. 루트 2026-11-06 VM snapshot은 VM migration `0005`와 기존 RAG 8 documents/33 chunks를 보고한다. 이는 신규 색인·권한별 품질시험이나 백업 복원 검증을 뜻하지 않는다. 아래 절차를 실행하기 전에는 루트 VM 기록과 적용 대상의 현재 revision을 다시 확인한다. 기존 VM에 과거 `0004` 절차를 그대로 재실행하지 않는다.
 
-인계 대상은 본인 폴더의 잠금 의존성, `migrations/versions/0001`~`0004`, `app/db/models/`, 마이그레이션 환경 및 실제 검사 기록이다. 로컬 검증은 PostgreSQL16.15/vector0.8.6·전체158개 통과·기존 경고1건이다. 로컬 DB 볼륨이나 private `deploy/.env`를 VM에 복사하지 않는다. 적용할 커밋은 실제 commit/push 후 기록하고 VM checkout과 대조한다.
+인계 대상은 본인 폴더의 잠금 의존성, `migrations/versions/0001`~`0005`, `app/db/models/`, 마이그레이션 환경 및 실제 검사 기록이다. 로컬 P0-5 검증은 당시 PostgreSQL16.15/vector0.8.6·전체158개 통과·기존 경고1건이다. 로컬 DB 볼륨이나 private `deploy/.env`를 VM에 복사하지 않는다. 적용할 커밋은 실제 commit/push 후 기록하고 VM checkout과 대조한다.
 
 #### 적용 전 오현님과 확인할 사항
 
@@ -128,7 +130,7 @@ uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> -
 - VM Python 실행 위치와 DB 접근 경로, Python 검색 서비스의 내부 주소 및 n8n 접근 경로. DB 포트를 외부 공개한다고 가정하지 않는다.
 - 실제 원본 문서의 최종 목록·권한과 OpenAI 사용 승인. 유빈님 최신 회신은 8개이며 이전16개와 범위 차이는 오현님 확인 전 임의 확정하지 않는다.
 
-#### DB 적용 순서 · VM에서 담당자가 수행
+#### DB 적용 순서 · 새 격리 대상에서 승인 담당자가 수행
 
 작업 위치는 체크아웃한 저장소의 `develop/jihye`다. 마이그레이션용 `DATABASE_URL`은 비밀 관리에서 환경에 주입하고 출력하지 않는다. 이 URL은 SQLAlchemy용 `postgresql+psycopg` 드라이버를 사용한다.
 
@@ -136,11 +138,11 @@ uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> -
 uv sync --dev --locked
 uv run alembic -c migrations/alembic.ini history
 uv run alembic -c migrations/alembic.ini current
-uv run alembic -c migrations/alembic.ini upgrade 0004
+uv run alembic -c migrations/alembic.ini upgrade head
 uv run alembic -c migrations/alembic.ini current
 ```
 
-적용 후 기대 revision은 `0004`다. vector 확장, app의 업무 테이블7개와 rag의 documents/chunks, `vector(3072)`, all/it CHECK·0이상 chunk_no·고유/FK 제약과 인덱스를 카탈로그에서 확인한다. 동일 upgrade 재실행의 무변경도 확인한다. 기존 DB에 시험 데이터를 넣거나 downgrade를 수행하는 대신 합의된 격리 시험 범위를 사용한다. 실패 시 마지막 성공 revision과 비밀을 제거한 원인을 기록하고 재적용 방법을 판단한다.
+위 명령은 승인된 새 격리 대상에만 적용한다. 기존 VM에서는 revision과 대상 commit을 먼저 읽기 전용으로 대조한다. 현재 루트 VM 기록은 `0005`를 보고하므로, 공유 VM에 `upgrade head`를 임의 실행하지 않는다. 필요한 변경이 있으면 오현님이 백업·승인·작업 창을 정한 뒤 수행한다. 격리 대상 적용 후에는 실제 revision, vector 확장, app 업무 테이블, rag documents/chunks, `vector(3072)`, 권한·제약을 검사한다. 기존 DB에 시험 데이터를 넣거나 downgrade하지 않는다.
 
 #### 접속과 설정 인계
 
@@ -166,7 +168,25 @@ uv run alembic -c migrations/alembic.ini current
 
 VM 배포 후 공통 시험·LLM 반복·실제 runs 결과는 원민님과 오현님이 기록한다. n8n `push/test`는 사람이 수행한다. 80일차 키트가 준비된 뒤 그 키트 작업 디렉터리에서 `uv run tools/flow.py doctor`를 확인하는 계획이며, 현재 키트 준비나 ready를 확인했다고 쓰지 않는다.
 
+### 개인 DB backup/restore 확인 · 2026-11-06
+
+호스트 PATH에 PostgreSQL 클라이언트가 없으므로 개인 PostgreSQL 컨테이너 내부의 `pg_dump`/`pg_restore` 16.15를 쓰는 [명시 확인 runner](check_backup_restore.py)를 추가했다. `uv run python deploy/check_backup_restore.py --confirm-private-db`만 실행을 허용한다. 원본 `oke_jihye_p0` 및 migration owner/Compose URL을 검사하고, 비어 있는 `oke_jihye_p1_4_restore`가 이미 있으면 중단한다. custom-format 백업을 새 대상에 복원한 뒤 revision·확장 버전·app/rag 테이블별 행 수·문서/청크 해시·vector 차원·embedding 타입을 비교하고, runner가 만든 복원 DB와 임시 archive만 제거한다. 실행 상세·수치는 [IMP-PLAN](../Doc/IMP-PLAN.md)의 2026-11-06 기록을 따른다. 기존 전체 pytest 회귀는 이 runner로 대체되지 않는다.
+
 [전체 아키텍처](../../../docs/ARCHITECTURE.md) · [공통 API](../../../docs/API-CONTRACT.md) · [제출·시연](../../ohyun/SUBMISSION.md).
+
+## 로컬 전용 합성 업무 데이터
+
+`seed_local_mock.sql`은 로컬 통합 화면과 업무 API를 확인할 합성 업무 행을 명시적으로 넣는다. Alembic revision·앱 시작·Compose 기동에서는 자동 실행하지 않는다. 스크립트가 DB명 `oke_jihye_p0`, migration owner `oke_migration`, head `0005`, pgvector 설치를 검사하고, 다른 DB/계정에서는 트랜잭션을 거절한다. 기존 직원의 부서가 팀 고정 6명 명단과 다르면 중단한다.
+
+로컬 개인 Compose가 실행 중이고 migration `0005` 적용이 확인된 경우에만 `develop/jihye`에서 실행한다. `.env` 값이나 비밀번호를 명령에 직접 넣거나 출력하지 않는다.
+
+```bash
+docker compose --env-file deploy/.env -f deploy/compose.yaml exec -T postgres sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" psql -X -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < deploy/seed_local_mock.sql
+```
+
+이 SQL은 팀 고정 직원 6명, 합성 문의 3건, 티켓 2건, 알림 2건, DLQ 1건을 추가한다. `localmock-` 식별자를 사용하고 기존 같은 키 행은 덮어쓰지 않는다. 정확한 fixture가 이미 있으면 재실행해도 중복 생성하지 않으며, 같은 식별자에 다른 내용이 있으면 전체 거래가 취소된다. 출력의 행 수만으로 로그인·워크플로우·실제 API 연결이 확인된 것은 아니다.
+
+계정·세션은 만들지 않고 비밀번호도 포함하지 않는다. 로컬 로그인이 필요하면 기존 `seed-employees`와 `bootstrap-admin`/관리자 계정 발급 흐름을 별도로 사용한다. RAG documents/chunks는 넣지 않는다. 3072차원 0벡터는 화면/API seed로 사용하지 않으며, 검색 시험 데이터는 승인된 로컬 색인 절차나 검색 전용 fixture로 별도 준비해야 한다. 팀 VM, 공유/운영 DB, 실제 data-api와는 분리한다.
 
 ### VM data-api no-auth source verification · 2026-11-05
 

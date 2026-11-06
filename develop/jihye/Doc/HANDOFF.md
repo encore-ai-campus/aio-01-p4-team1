@@ -2,9 +2,33 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md)을 기준으로 바로 개발한다. 이 파일은 **공통 기준의 누락 정책/변경 제안과 연결 검토·전달 결과**를 기록한다. 기존 기준을 적용하기 위한 사전 승인 목록이 아니다.
 
-초안 작성: 2026-11-03. 현재 상태 갱신: 2026-11-05. 현재 적용 기준은 SPEC 1절, 작업 범위는 IMP-PLAN을 따른다. 사용자에게 전달받은 상대 회신·로컬 검증·공통 문서 반영·실연결은 구분한다. 에이전트의 외부 메시지 전송은 없으며, 답변 없음은 동의가 아니다. 아래 과거 제안의 당시 상태는 현재 기준을 덮어쓰지 않는다.
+초안 작성: 2026-11-03. 최신 상태 갱신: 2026-11-06. 현재 적용 기준은 SPEC 1절, 작업 범위는 IMP-PLAN을 따른다. 사용자에게 전달받은 상대 회신·로컬 검증·공통 문서 반영·실연결은 구분한다. 에이전트의 외부 메시지 전송은 없으며, 답변 없음은 동의가 아니다. 아래 과거 제안의 당시 상태는 현재 기준을 덮어쓰지 않는다.
 
 ## 연결과 상태
+
+### 현재 인계 상태 · 2026-11-06
+
+- 브랜치 `feat/jihye-p0`는 main을 `5bae594`로 병합한 상태다. VM 배포 커밋은 feature branch 커밋과 구분하며, 루트 [VM 시험 기록](../../../docs/VM-TEAM-TESTING.md)의 날짜·대상 버전을 근거로 사용한다.
+- 개인 P1-4 로컬 회귀 기록은 223 passed·2 skipped·warning 1건이다. 전용 DB 재시작 유지·C02 Mock 기반 web-flow·별도 로컬 DB backup/restore를 확인했다. backup/restore 기준과 한계는 아래 체크리스트다.
+- VM의 제한된 API/DB QA는 루트 보고서에 기록돼 있다: 인증 API 확인, 문의 요청의 안전 이관, 문의·티켓 저장, 관리자 처리 및 직원 재조회. 해당 요청은 `sources=[]`였으므로 정상 RAG 근거 검색/자동 답변으로 판정하지 않는다. 브라우저 시각/클릭, 동일 ID 중복, alert/DLQ, 공식 common-14도 미완료로 남긴다. 이는 지혜님 직접 실행 결과가 아니다.
+- 팀 VM snapshot 보고는 PostgreSQL migration `0005`와 RAG 8 documents/33 chunks를 기록한다. 이는 VM 문서의 snapshot 근거이며 이번 작업에서 VM DB·계정·서비스를 접속하거나 변경하지 않았다. 로컬 스키마/재시작/백업복원 시험과 분리한다.
+- C05의 알림 `duplicate` ACK 및 DLQ HTTP200은 공통 `API-CONTRACT.md`의 현재 기준에 반영된 것으로, 현재 병합 기준 `7afabdc`에서 확인했다. 로컬 P1-3 검증·원민님의 별도 로컬 15개 그룹 보고·팀 VM alert/DLQ 실검증은 각각 별도 근거다.
+- 로컬 합성 업무 seed는 `deploy/seed_local_mock.sql`로 구현해 개인 전용 DB에 적용했다. Alembic/앱 시작 자동 실행은 없으며, VM에 적용한 상태가 아니다. CI 백엔드/DB 자동 검사와 CD 자동 배포는 별도 미구현이며, CD는 오현님의 배포 권한·승인·복구 기준이 정해진 뒤 검토한다.
+
+이 절의 2026-11-06 상태가 아래 날짜별 VM 인계와 과거 P0/P1 기록보다 현재 요약으로 우선한다. 과거 실행 당시의 환경·미확인 상태는 이력으로 보존한다.
+
+### P1-4 별도 DB 백업·복원 진행표 · 2026-11-06
+
+- [x] 원본은 개인 전용 로컬 PostgreSQL DB `oke_jihye_p0`; 팀 VM 미사용.
+- [x] 호환 기반: 로컬 PostgreSQL 16.15·pgvector 0.8.6·migration `0005`. 사용자가 제공한 VM 표본은 PostgreSQL 16.15·pgvector 0.8.6과 `oke_rag_user`의 확인 대상 권한을 보였다. VM revision 조회는 해당 RAG 계정 권한으로 거절됐으므로 migration `0005`는 팀장 전달 기록을 출처로 구분한다.
+- [x] 로컬 원본에 합성 업무 fixture seed 적용: 직원 6·문의 3·티켓 2·알림 2·DLQ 1. RAG 문서·청크는 0이며 VM 데이터 복사 없음.
+- [x] `pg_dump`/`pg_restore` 16.15 사용. 호스트 PATH 대신 개인 PostgreSQL 컨테이너 안의 도구를 이용하는 명시 실행기를 추가했다.
+- [x] 같은 로컬 인스턴스에 빈 `oke_jihye_p1_4_restore`를 생성했다.
+- [x] `uv run python deploy/check_backup_restore.py --confirm-private-db`로 백업·복원 후 revision·테이블별 행 수·문서/청크 해시·벡터 차원 및 embedding column type을 비교했고 일치했다.
+- [x] 실행기가 임시 복원 DB와 archive를 정리했다. 별도 사후 조회에서 복원 DB 없음, 원본 revision `0005`와 행 수 `6|0|3|2|2|1|0|0`를 확인했다.
+- 한계: 원본 RAG documents/chunks가 0건이다. 해시·저장 벡터 차원 배열은 비어 있었고 실제 RAG row 복원은 확인하지 못했다. `vector(3072)` 스키마 타입은 원본/복원 일치. 기존 pytest backup/restore 및 전체 회귀 suite는 실행하지 않았다.
+
+별도 로컬 DB backup/restore는 완료했다. 남은 일은 실제 RAG documents/chunks가 준비된 환경에서 해시·벡터 복원을 확인하고, 별도 VM 통합·공통 평가를 진행하는 것이다. VM과 원본 로컬 DB는 백업/복원 과정에서 수정하지 않았다.
 
 ### 팀장 요청 · VM 0004 및 RAG 로그인 인계
 

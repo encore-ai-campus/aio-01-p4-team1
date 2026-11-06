@@ -1,27 +1,27 @@
 # 지혜님 · SPEC
 
-[TODO](TODO.md) → **SPEC** → [IMP-PLAN](IMP-PLAN.md). 요구 명세이며 단계별 실제 구현·시험 결과는 IMP-PLAN에 구분한다. P0-1~7·P1-1~3 구현/로컬 확인은 완료 기록이며 P1-4 통합은 진행 중이다. 실제 VM·frontend·RAG 원본/OpenAI·공식 평가 결과는 별도로 확인한다. 예시 ID·응답은 기대값이며 실행 결과가 아니다. 기준 적용은 바로 진행하고 변경/누락 정책만 [HANDOFF](HANDOFF.md)로 요청한다.
+[TODO](TODO.md) → **SPEC** → [IMP-PLAN](IMP-PLAN.md). 요구 명세이며 단계별 실제 구현·시험 결과는 IMP-PLAN에 구분한다. P0-1~7·P1-1~3의 로컬 확인은 기록 완료다. P1-4 로컬 재시작 유지·C02 Mock web-flow·별도 DB backup/restore는 확인했지만, 실제 RAG 문서/embedding이 없는 상태에서의 복원·검색, 정상 근거 답변을 포함한 전체 연결, 공식 공통 평가는 미완료다. 팀 VM에서 수행한 일부 인증·문의·티켓 API 확인은 루트 VM 기록을 출처로 표시하며 지혜님 직접 실행 결과로 취급하지 않는다. 예시 ID·응답은 기대값이며 실행 결과가 아니다. 기준 적용은 바로 진행하고 변경/누락 정책만 [HANDOFF](HANDOFF.md)로 요청한다.
 
 ## 1. 적용할 기준 · 새로 선정하지 않음
 
-### 현재 기준과 구현 상태 · 2026-11-05 대조
+### 현재 기준과 구현 상태 · 2026-11-06 대조
 
-개인 작업의 출발점은 본 SPEC과 IMP-PLAN이다. 아래 표는 지혜님이 필요한 공통 기준을 구현용으로 옮긴 것으로, 공통 계약을 새로 정하는 문서가 아니다. 로컬 공통 API·DB·평가·RAG 문서의 마지막 변경 커밋은 `db14b79`이며 원격 최신 조회는 하지 않았다. 해당 공통 문서가 바뀌면 이 절과 영향받는 계획을 대조한다. 과거 H 제안과 다른 경우 이 현재 기준을 사용한다.
+개인 작업의 출발점은 본 SPEC과 IMP-PLAN이다. 아래 표는 지혜님이 필요한 공통 기준을 구현용으로 옮긴 것으로, 공통 계약을 새로 정하는 문서가 아니다. 현재 브랜치에 병합된 공통 기준의 확인 커밋은 `7afabdc`다. 해당 공통 문서가 바뀌면 이 절과 영향받는 계획을 다시 대조한다. 과거 H 제안과 다른 경우 이 현재 기준을 사용한다.
 
 | 항목 | 현재 적용 기준 | 구현/확인 단계 | 출처 |
 | --- | --- | --- | --- |
 | 질문 입력 | question trim 후1~500자, request_id1~64자·비공백, attempt 엄격한 정수≥1·기본1 | P0-1~2 모델/Mock 확인 | API §1~2, 평가 §3.1 |
 | context | 문자열 최대2,000자. 생략/null 호환 유지, 빈 문자열 허용. 공백 보존·묵시적 절단 없음 | P0-2 보완·모델/Mock 확인. 실행 결과는 IMP-PLAN 기록 | 평가 §3.1; null/생략은 기존 모델 호환 |
-| 신원·API | 웹14 operation(13경로)·내부3 API. 화면 user/dept/role을 믿지 않고 세션에서 결정 | P0-2 모델, 실제 인증 P1-1·호출 P1-2 | API §1~2·5 |
-| 세션 | oke_session, HttpOnly, SameSite=Lax, Path=/, 기본8시간. DB에는 token_hash만 저장 | P0-4 테이블·P1-1 구현 예정 | API §8, DB §3 |
-| 첫 변경·회수 | 미변경은 me/change-password/logout만 허용, 나머지403 password_change_required. 변경·초기화·비활성화 시 기존 세션 폐기 | P1-1 예정; 현재 dependency의 fixture 경계만 시험 | API §8 |
-| 비밀번호 | 최소12자·대소문자/숫자/특수문자 중3종·본인 이름/로그인ID 포함 금지. 이력·잠금·외부OTP는 P2 | P0-2 길이/조합 검사, 신원 기반 검사는 P1-1 예정 | API §8, ADR-001 §2 |
-| 관리자 | 제공 IT직원만 admin, 본인·마지막 활성 관리자 비활성화 거절. 충돌409(또는400 안내) | P0-6 bootstrap·P1-1 예정 | API §2·8, DB §3 |
-| 시간 예산 | 브라우저35초, backend→support 연결3초·전체30초·자동 재시도0. 조회2초·search4초·handoff5초; 티켓 최대2회·각1초, 알림/DLQ 각1회·0.6초 | P1-2/3·연결 실측 예정. 성능 달성 결과 아님 | API §8, 워크플로우 §4~5 |
-| 업무 저장 | app7테이블, request_key·ticket_id UNIQUE, T-2001~. 알림 실패가 commit한 티켓을 취소하지 않음 | P0-4 DDL·P1-3 로컬 구현/전용 DB 확인 완료, 팀 workflow 실연결은 P1-4 | DB §3, 워크플로우 §7 |
-| 알림·DLQ | POST /dlq와 alerts.event_key는 확정. 알림 HTTP200 신규 stored=1/duplicate=false, 기존 key stored=0/duplicate=true. event_key 생략/null은 매번 신규. DLQ HTTP200 저장 ACK. practice 신규 ACK의 duplicate 생략은 consumer 호환 | 팀장 승인·원민 회신 수신, P1-3 app 로컬 DB 구현/확인 완료. 공통 명문화 커밋·practice live 연결 미확인 | API §5, HANDOFF H07 |
-| RAG | documents/chunks, vector(3072), text-embedding-3-large, all/it, cosine 정확검색·score=1-distance·top_k3 | P0-3 접속/가용성 확인, DDL·활성화/권한은P0-4~5 예정. 쿼리/색인은 유빈님 | DB §4, RAG §3~4 |
-| RAG 거래·복구 | 문서 교체 한 거래, 갱신 실패 시 이전 성공본 유지. 권한 축소/삭제는 이전 공개 청크 차단. named volume과 별도 백업·복원 구분 | P0-5 연결 대조·P1-4 실제 확인 예정 | RAG §4~5 |
+| 신원·API | 웹14 operation(13경로)·내부3 API. 화면 user/dept/role을 믿지 않고 세션에서 결정 | P0-2 모델, P1-1 인증 구현·로컬 PostgreSQL 시험 완료. VM API account checks는 루트 기록 참조 | API §1~2·5 |
+| 세션 | oke_session, HttpOnly, SameSite=Lax, Path=/, 기본8시간. DB에는 token_hash만 저장 | P0-4 테이블·P1-1 구현 및 격리 PostgreSQL HTTP 시험 완료. VM 인증 API 점검은 팀 VM 보고에 기록 | API §8, DB §3 |
+| 첫 변경·회수 | 미변경은 me/change-password/logout만 허용, 나머지403 password_change_required. 변경·초기화·비활성화 시 기존 세션 폐기 | P1-1 로컬 PostgreSQL 시험 완료. VM API 계정 확인 기록이 있으며 화면 상호작용은 별도 | API §8 |
+| 비밀번호 | 최소12자·대소문자/숫자/특수문자 중3종·본인 이름/로그인ID 포함 금지. 이력·잠금·외부OTP는 P2 | P1-1 서비스·격리 DB 시험 완료 | API §8, ADR-001 §2 |
+| 관리자 | 제공 IT직원만 admin, 본인·마지막 활성 관리자 비활성화 거절. 충돌409(또는400 안내) | P0-6 bootstrap·P1-1 구현/로컬 시험 완료. VM 관리자 API 시험은 루트 VM 기록 참조 | API §2·8, DB §3 |
+| 시간 예산 | 브라우저35초, backend→support 연결3초·전체30초·자동 재시도0. 조회2초·search4초·handoff5초; 티켓 최대2회·각1초, 알림/DLQ 각1회·0.6초 | 구현된 timeout 및 Mock/로컬 경계시험과 실측 성능을 구분. 정상 VM 자동답변의 8초 평가는 미확인 | API §8, 워크플로우 §4~5 |
+| 업무 저장 | app7테이블, request_key·ticket_id UNIQUE, T-2001~. 알림 실패가 commit한 티켓을 취소하지 않음 | P0-4 DDL·P1-3 로컬 저장 검증 완료. VM QA는 한 문의/티켓 연결과 관리자 처리 사례이며 전체 workflow/C05 장애 경계 검증은 아님 | DB §3, 워크플로우 §7 |
+| 알림·DLQ | POST /dlq와 alerts.event_key는 확정. 알림 HTTP200 신규 stored=1/duplicate=false, 기존 key stored=0/duplicate=true. event_key 생략/null은 매번 신규. DLQ HTTP200 저장 ACK. practice 신규 ACK의 duplicate 생략은 consumer 호환 | 공통 기준 `7afabdc`에 반영. P1-3 app 로컬 DB 시험 완료; VM alerts/DLQ 전체 실연결은 미확인 | API §5, HANDOFF H07 |
+| RAG | documents/chunks, vector(3072), text-embedding-3-large, all/it, cosine 정확검색·score=1-distance·top_k3 | 로컬 DDL·권한 시험 완료. VM snapshot의 8 documents/33 chunks는 기존 데이터 관측이지 신규 색인·품질시험이 아님. C03 정상 근거 답변은 미확인 | DB §4, RAG §3~4 |
+| RAG 거래·복구 | 문서 교체 한 거래, 갱신 실패 시 이전 성공본 유지. 권한 축소/삭제는 이전 공개 청크 차단. named volume과 별도 백업·복원 구분 | 로컬 별도 DB backup/restore 구조 비교는 확인. 원본 RAG rows가 0건이라 실제 vector 복원·복원 후 권한별 검색은 미실행. P1-4 잔여 | RAG §4~5 |
 
 출처: [API](../../../docs/API-CONTRACT.md), [DB](../../../docs/DATA-AND-DB.md), [평가](../../../docs/EVALUATION-GUIDE.md), [RAG](../../../docs/RAG-ARCHITECTURE.md), [워크플로우](../../../docs/WORKFLOW-DESIGN.md), [ADR](../../../docs/adr/ADR-001-project-decisions.md). 서비스별 인증은 구분한다: 웹=세션, support/search/handoff=X-Team-Key, FastAPI 내부 저장=X-Api-Key. 실제 data-api 읽기 응답/인증은 미확인으로 유지한다.
 
@@ -31,7 +31,7 @@
 - Security는 공통 필드 blocked_by/reason/masked를 유지한다. 현재 nullable 허용 등 세부 타입의 호환성은 다혁님과 대조한다.
 - H04의 처리 중 응답·상태 전이·오류 request_id 필드·응답 캐시 세부는 제안이다. 같은 키 본문 충돌 거절과 타인 소유권 검사는 확정이므로 대기시키지 않는다. 캐시 응답이 WF-09의 재요청 duplicate=true 판정과 충돌하지 않도록 다혁님·원민님과 확인한다.
 - H05의 비어 있지 않은 계정 집합에서 관리자 부재 복구 같은 운영 세부는 별도 검토다. 본인/최후 관리자 보호는 이미 확정이다.
-- H07 알림 전용 duplicate ACK 확장·DLQ200은 팀장 승인과 원민 회신을 사용자 전달로 수신했고 P1-3 app 로컬 DB 구현/시험에 반영했다. event_key 생략은 매번 신규 저장이고 count 단독은 ACK가 아니다. practice의 기존 신규 ACK에서 duplicate 누락은 consumer가 호환하지만 app 응답은 duplicate를 명시한다. 공통 문서 명문화 커밋·live practice 및 workflow 연결은 별개로 확인한다.
+- H07 알림 전용 duplicate ACK 확장·DLQ200은 공통 API 기준 `7afabdc`에 명문화됐고 P1-3 app 로컬 DB 구현/시험에 반영됐다. event_key 생략은 매번 신규 저장이고 count 단독은 ACK가 아니다. practice의 기존 신규 ACK에서 duplicate 누락은 consumer가 호환하지만 app 응답은 duplicate를 명시한다. live practice 및 VM workflow의 alert/DLQ 경계 연결은 별도 확인한다.
 
 ### 기준 상세
 

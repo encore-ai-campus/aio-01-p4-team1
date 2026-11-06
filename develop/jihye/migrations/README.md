@@ -2,17 +2,23 @@
 
 [IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 P0 단계에서 순서대로 생성·검증한다.
 
+## 현재 상태 · 2026-11-06
+
+개인 로컬 migration head는 `0005`이며, P1-4에서 합성 app/RAG fixture의 전용 DB 재시작 후 유지가 확인됐다. **별도 로컬 DB backup/restore도 2026-11-06 실행 완료했다.** PostgreSQL 컨테이너 내부의 `pg_dump`·`pg_restore` 16.15로 개인 DB를 별도 빈 `oke_jihye_p1_4_restore`에 복원하고 revision·확장 버전·테이블별 행 수·해시/벡터 구조를 대조한 뒤 임시 DB와 archive를 정리했다. 원본 RAG documents/chunks는 0건이므로 실제 문서·청크 해시와 저장 벡터 복원, 복원 후 권한별 검색은 미검증이다. 실행 근거는 [IMP-PLAN의 백업·복원 기록](../Doc/IMP-PLAN.md#p1-4-별도-db-백업복원-실행--2026-11-06)을 따른다.
+
+루트 [VM 시험 기록](../../../docs/VM-TEAM-TESTING.md)은 팀 VM migration `0005`와 RAG 8 documents/33 chunks를 snapshot으로 보고한다. 이는 위 로컬 백업·복원의 원본 데이터가 아니며 VM 데이터 복원 시험 결과도 아니다. 이 문서 갱신에서는 DB 시험을 재실행하거나 VM DB를 변경하지 않았다. 아래 P0-4/5 절은 해당 단계의 당시 실행 이력으로 읽는다.
+
 ## 현재 범위와 전제
 
 P0-7 갱신: 현재 로컬 revision은 `0005`다. 새 `0005_readiness_grant.py`는 업무 런타임 oke_app에 public.alembic_version SELECT만 부여한다. 테이블/확장 변경 권한은 주지 않는다. 이전0004를 수정하지 않았으며 현재 코드의 readiness 검증 및 VM 적용에는0005까지 포함한다. 직원 bootstrap·RAG 실제원본 적재와 구분한다.
 
-P0-6 갱신: 직원 seed·첫 관리자 CLI를 구현했으며 DDL revision은 `0004`를 유지한다. 거래 rollback 기반 실제 PostgreSQL 검증은 완료했지만 상시 직원/계정 적재와 실제 원본/VM 실행은 미실행이다. 실행 순서·필수 설정은 [배포 안내](../deploy/README.md)의 P0-6 인계를 따른다. seed는 revision에서 실행하지 않는다.
+P0-6 기록: 직원 seed·첫 관리자 CLI를 구현했으며 DDL revision은 `0004`를 유지한다. 당시 거래 rollback 기반 PostgreSQL 검증을 마쳤다. 이후 VM 내부 `GET /employees`의 응답 형태는 확인됐지만, 이 endpoint 관측만으로 CLI seed나 bootstrap 실행을 완료로 보지 않는다. 실행 순서·필수 설정은 [배포 안내](../deploy/README.md)의 P0-6 인계를 따른다. seed는 revision에서 실행하지 않는다.
 
-P0-5 갱신(2026-11-05): 아래 P0-4 설명은 당시 상태다. 현재 전용 검증 DB에 `0003→0004`를 적용해 `rag.documents/chunks`, `vector(3072)`, 두 조회 인덱스와 비밀번호 없는 NOLOGIN 그룹 역할 `oke_app/oke_rag_index/oke_rag_search`의 ACL을 확인했다. 현재 head는 `0004`이며 실제 검증 결과는 IMP-PLAN P0-5 기록을 따른다. 런타임 LOGIN 자격증명/비밀은 이 DDL에 포함하지 않았고 오현님 비밀 설정과 실제 서비스 연결 시 확인한다.
+P0-5 기록(2026-11-05): 아래 P0-4 설명은 당시 상태다. 전용 검증 DB에 `0003→0004`를 적용해 `rag.documents/chunks`, `vector(3072)`, 두 조회 인덱스와 비밀번호 없는 NOLOGIN 그룹 역할 `oke_app/oke_rag_index/oke_rag_search`의 ACL을 확인했다. 이 단계 당시 head는 `0004`였으며, P0-7의 `0005` 추가 후 로컬 최신 head는 `0005`다. 런타임 LOGIN 자격증명/비밀은 이 DDL에 포함하지 않았고 실제 서비스 권한은 별도 확인한다.
 
-2026-11-05 현재 전용 검증 DB에 P0-4 `0001→0002`를 적용해 vector 확장·app/rag 스키마·업무 테이블 7개를 확인했다. 개인 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 적용 기준과 공통 대조 커밋을 모았다. rag 테이블/권한은 P0-5다. 다른 환경에서 적용 전에는 권한·비밀 설정을 별도로 확인한다.
+P0-4 기록(2026-11-05): 전용 검증 DB에 `0001→0002`를 적용해 vector 확장·app/rag 스키마·업무 테이블 7개를 확인했다. 이 단계에서의 head는 `0002`였고 이후 P0-5·P0-7에서 `0005`로 갱신됐다. 개인 [SPEC 1절](../Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 적용 기준과 공통 대조 커밋을 모았다. 다른 환경에 적용하기 전에는 대상 revision·권한·비밀 설정을 별도로 확인한다.
 
-alembic.ini/env.py/script.py.mako와 Base/session factory 및 업무 모델을 생성했다. history/heads는 단일 체인·`0002 (head)`이고 전용 DB의 current도 `0002 (head)`다. env.py의 include_schemas/include_name은 app/rag만 autogenerate 대상으로 삼으며, public.alembic_version은 관리 이력용 예외 위치다. P0-5의 RAG 모델 등록은 후속 단계다.
+alembic.ini/env.py/script.py.mako와 Base/session factory 및 업무 모델을 생성했다. 현재 history/heads는 단일 체인·`0005 (head)`이고 개인 전용 DB의 최신 revision도 `0005`로 기록돼 있다. env.py의 include_schemas/include_name은 app/rag만 autogenerate 대상으로 삼으며, public.alembic_version은 관리 이력용 예외 위치다. 과거 P0-4 기록의 `0002 (head)`는 당시 revision이다.
 
 DB 접속은 환경변수 DATABASE_URL의 명시적 postgresql+psycopg 드라이버를 사용한다. 설정 누락/형식 오류는 접속 문자열 없이 실패하고, 실제 migration 명령도 SQLAlchemy 예외 원문을 출력하지 않는다. 기본 앱 시작 시 DB 접속/create_all/seed는 하지 않는다. P0-4 실제 DB 검사40개, 전체155개 통과·기존 경고1건이며 자세한 명령은 IMP-PLAN에 있다.
 
@@ -67,12 +73,12 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 - role 생성은 오현님이 제공하는 DB 관리 접속으로, 비밀번호는 비밀 입력으로 준비한다. 마이그레이션에는 비밀번호 리터럴을 쓰지 않는다. 역할이 없으면 grant 오류를 명확히 보고한다. 운영 URL은 각 프로세스의 DATABASE_URL 또는 n8n Credential에 넣고 문서/예제에는 이름만 둔다.
 - 검색 계정의 INSERT·DROP, 앱 계정의 rag DDL·확장 변경은 거절되어야 한다. 변경이 필요하면 C06 유빈님/C07 오현님에게 HANDOFF로 요청한다.
 
-## 구현 후 확인 순서 · 전부 미실행
+## 구현 후 확인 절차 · 단계별 실제 결과는 IMP-PLAN 참조
 
 작업 디렉터리는 저장소 기준 `develop/jihye`다. DATABASE_URL은 **개별 빈 검증 DB**를 가리키게 하고 공유/운영 DB에 downgrade를 실행하지 않는다.
 
 1. `uv run alembic -c migrations/alembic.ini heads`와 `history`로 순서·단일 head를 확인한다.
-2. `uv run alembic -c migrations/alembic.ini upgrade head` 후 `current`로0004 head를 확인한다. 동일 upgrade 재실행에서 추가 DDL/데이터 변경이 없어야 한다.
+2. `uv run alembic -c migrations/alembic.ini upgrade head` 후 `current`가 적용 코드의 단일 head인지 확인한다. 현재 로컬 코드는 `0005` head다. 동일 upgrade 재실행에서 추가 DDL/데이터 변경이 없어야 한다.
 3. `uv run pytest tests/integration/test_migrations.py -q`로 카탈로그 타입·NULL·기본값·FK·UNIQUE·인덱스·vector 확장/차원·권한을 검사할 예정이다. 이 파일은 본인 DB 검사 전용으로 구현한다.
 4. `uv run pytest tests/integration/test_persistence.py tests/integration/test_pgvector.py -q`로 본인 문의/티켓·일반/IT 테스트 문서·차원 거절·정확 검색을 확인한다. 테스트용 가상 벡터 결과를 실제 임베딩 품질로 보고하지 않는다.
 5. named volume을 유지한 postgres 재시작 전후 revision/행 수/키/벡터 차원·조회 결과를 비교한다. DB 재시작과 재색인은 별도 확인이다. 기본 절차에 volume 삭제를 넣지 않는다.

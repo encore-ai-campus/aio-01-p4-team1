@@ -2,18 +2,19 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**현재 상태: P0-1~7, P1-1~3 로컬 구현·검증 완료. P1-4 로컬 재시작 유지시험과 web-flow 회귀를 추가·확인 중이며 백업/복원·VM·화면·RAG 통합은 미완료다.** 원민님의 C05 15개 그룹 실연동은 로컬 전용 DB 결과로 전달받았으며 직접 재실행하지 않았다. 각 항목은 실행 주체와 환경을 구분해 기록한다.
+**현재 상태 · 2026-11-06:** P0-1~7·P1-1~3 로컬 구현·검증 기록 완료. P1-4 로컬 전체 회귀는 223 passed·2 skipped·warning 1건으로 기록됐고, 전용 DB 재시작·C02 Mock 기반 web-flow·별도 로컬 DB backup/restore를 각각 확인했다. backup/restore에서 RAG 문서·청크는 0건이라 실제 저장 벡터·문서 해시 복원은 검증되지 않았다. P1-4 전체 VM 연결은 정상 RAG 근거 답변·전체 C02/C03/C04/C05 장애 경계·공식 공통 평가가 남아 있다. VM의 제한된 로그인·문의·티켓 API는 [VM 시험 기록](../../../docs/VM-TEAM-TESTING.md)에 보고됐으나, 지혜님이 직접 재실행한 결과가 아니다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
-## 현재 작업 순서와 전제 조건 · 2026-11-05
+## 현재 작업 순서와 전제 조건 · 2026-11-06
 
 현재 적용 기준은 [SPEC 1절](SPEC.md#1-적용할-기준--새로-선정하지-않음), 변경/상대 회신은 [HANDOFF](HANDOFF.md)의 현재 상태를 따른다. 공통 원문 출처는 SPEC에 남겨두며, 옛 실행 기록의 ‘미확정’ 설명은 작성 당시 이력으로만 읽는다.
 
-1. **P0-2 보완:** 기존4bbbf49에서 빠진 context2,000자 제약과 시험을 추가한다. DB·외부 키·팀원 서비스는 필요하지 않다.
-2. **개인 문서 정리:** SPEC에 확정 기준을 모으고 옛 제안/실행 이력을 구분한다. P0-3 이후는 계획 정리만 하며 이번에 구현하지 않는다.
-3. **팀원 인계:** OpenAPI·fixture·저장 요청 예시와 미확정 항목을 HANDOFF에서 제공한다. 실제 공유 기준 커밋은 보완 커밋 생성 후 갱신한다. 문서 작성과 외부 전송·상대 확인을 구분한다.
-4. **이번 지정 단계 P0-3:** DB 실행 기반과 실제 접속 검증까지 완료했다. 아래 실제 기록을 따른다. 다음 지정 구현은 P0-4이며 RAG 테이블/권한은 P0-5다. C05 ACK 확장은 팀장 승인 수신 상태로, 공통 문서 반영과 모델 보완은 별도 연결 작업이다.
+1. **P1-4 로컬 backup/restore:** 2026-11-06 별도 폐기 DB에 opt-in 백업·복원·revision/행 수/해시/vector 타입 대조 후 임시 DB를 정리했다. RAG 문서·청크가 0건이므로 실제 문서/청크 해시와 저장 벡터 차원 보존은 미검증이다.
+2. **VM/공식 통합:** 루트 VM 보고와 담당자의 실제 결과를 기준으로 미확인 연결을 나눈다. 정상 RAG 근거 답변·동일 ID·alert/DLQ·8초 기준·공식 common-14는 오현님이 정한 배포 버전·시험 창·원본 키트가 준비된 범위에서 확인한다. 개인 브랜치 코드가 VM에 반영됐다고 간주하지 않는다.
+3. **로컬 업무 Mock seed:** `deploy/seed_local_mock.sql`로 분리 구현했고 개인 DB에 적용했다. 계정·비밀번호 및 가짜 RAG 벡터는 포함하지 않는다. CI/CD와 VM 배포에서는 실행하지 않는다.
+4. **CI:** 재현 가능한 로컬 절차가 안정된 뒤 백엔드 테스트와 임시 PostgreSQL/pgvector migration·핵심 DB 시험을 자동화한다. CI는 팀 VM이나 공유 데이터를 대상으로 하지 않는다.
+5. **CD:** 자동 VM 배포는 현재 미구현이며 오현님이 관리하는 배포 역할·승인·백업·복구 기준이 정해진 뒤 별도 범위로 결정한다. 자동 seed/bootstrap은 배포 단계에 포함하지 않는다.
 
 | 단계 | 시작 전제 | 해당 단계 범위·완료 판정 | 다음 인계 |
 | --- | --- | --- | --- |
@@ -224,7 +225,12 @@
 
 ## P1-4 · 실연결·재시작·측정·인계
 
-- [ ] 연결 SPEC: BE-01~07, C01/C02/C05/C06/C07/C08/C09.
+- [ ] **P1-4 전체 완료** · 연결 SPEC: BE-01~07, C01/C02/C05/C06/C07/C08/C09. 아래 local 항목 일부는 완료했지만 실제 화면/RAG/평가 연결이 남아 있어 전체 완료로 체크하지 않는다.
+- [x] 개인 PostgreSQL에서 backend·DB 재시작 유지와 C02 Mock 기반 web-flow 확인(223 passed·2 skipped·warning 1건 기록 및 별도 web-flow 1 passed).
+- [x] 별도 폐기 DB backup/restore 및 revision·테이블별 행 수·hash/vector 구조 비교. 실제 RAG documents/chunks는 0건이라 저장된 실제 embedding 복원은 미검증(2026-11-06 실행 기록 참조).
+- [ ] 실제 화면/browser→FastAPI와 C02/C03/C04/C05 전체 연결 경계, 정상 근거 응답 및 장애/복구를 실제 제공 환경에서 확인.
+- [ ] 승인된 RAG documents/chunks의 재시작·backup/restore 후 검색·권한 결과와 검색 품질/시간 측정.
+- [ ] 원본 공통 키트로 공식 공통 시나리오와 필요한 반복/bench 결과를 실행·인계.
 - 생성: `tests/integration/test_persistence.py`, `tests/integration/test_web_flow.py`, `tests/integration/test_backup_restore.py`, `deploy/check_persistence.py`, `Doc/SUBMISSION-NOTES.md`. 상대 코드/워크플로우·공통 사례 기대값은 수정하지 않는다.
 - 로컬 확인: `uv run python deploy/check_db.py --all`로 app/RAG 모델/API 회귀를 실행한다. `uv run python deploy/check_persistence.py --confirm-private-db`는 `deploy/.env`가 지정한 전용 `oke-jihye-p0`만 재시작하고 unique fixture로 app 업무행·RAG chunk/hash/vector 길이를 재확인한 뒤 삭제한다.
 - web-flow 시험은 세션 사용자→문의 선저장→C02 HTTP Mock→내 문의 조회→C05 티켓 연결을 실제 전용 PostgreSQL과 TestClient로 확인한다. 이 시험의 C02 구간은 Mock이며 frontend/browser나 n8n 실연결이 아니다.
@@ -245,6 +251,37 @@
 - 백업/복원은 **미실행**. 이 환경에 `pg_dump`/`pg_restore` 실행파일과 승인된 별도 빈 복원 DB가 준비되지 않았다. 팀 VM revision `0005`도 rag 계정에서 `alembic_version` 조회 권한이 거절되어 관리자 확인 대기다.
 - 외부 대기: 화면/frontend, 실제 C02/C03/C04, RAG 실문서/OpenAI, 공식 평가 키트와 LLM 3회 반복, 별도 DB 백업/복원. 오현님에게 `0005`/확장·색인/검색 LOGIN 분리·비밀 전달 경로와 공통 C05 문서 반영 확인이 필요하다.
 - 다음: backup target/tool을 격리 준비한 뒤 복원 검증, 유빈님이 VM 실문서 적재·검색 및 복원 후 권한 검색, 수언/다혁/원민/오현 제공자 연결 후 end-to-end·공통 평가를 수행한다. 공유 전용 정리는 `Doc/SUBMISSION-NOTES.md`다.
+
+### P1-4 상태 갱신 · 2026-11-06
+
+- 로컬 회귀 223 passed·2 skipped·warning 1건, PostgreSQL/backend 재시작 유지, DB 기반 web-flow 1 passed는 2026-11-05 당시 실행 결과다. C02 구간은 Mock이다. 별도 DB backup/restore는 2026-11-06 후속 기록에서 실행 완료했으며, RAG documents/chunks 0건으로 실제 저장 벡터 복원은 미검증이다.
+- VM 근거는 루트 `docs/VM-TEAM-TESTING.md`의 2026-11-06 FE/BE 통합 및 API/DB 대조 보고다. 팀 문서에는 로그인/계정 API 확인, 문의 API 요청의 안전 이관과 문의·티켓 저장, 관리자 상태/답변 처리 및 직원 재조회가 기록돼 있다. 해당 요청의 `sources=[]`이므로 정상 C03 근거 검색·자동 답변 통과로 보지 않는다. 이는 지혜님 직접 실행이 아니다.
+- 2026-11-05의 rag 계정 `alembic_version` SELECT 거절 기록은 당시 관측이다. 11-06 VM snapshot은 migration `0005`를 보고하지만 role별 이력 조회 권한은 다시 확인하지 않았으므로 권한 해결 완료로 처리하지 않는다.
+- VM 보고에서 제외된 검증은 FE 브라우저 시각/클릭, 동일 요청 ID 중복, alert/DLQ 연동 경계, 8초 정상답변 기준, 공식 common-14 실행이다. VM repo/runtime 버전은 루트 기록과 구분하고 현재 feature branch commit에 섞지 않는다.
+- P1-4 남은 작업은 화면과 실제 C02/C03/C04/C05 연결, 승인된 문서의 검색·복원 후 권한 확인, 공식 공통 평가다. 담당자 보고·VM 결과는 전달 출처와 직접 재실행을 구분해 반영한다.
+- 별도 로컬 업무 mock seed는 아래 2026-11-06 후속 기록으로 구현·개인 전용 DB 적용했다. CI 자동 검사와 CD 배포는 별도 잔여이며 VM에는 seed를 적용하지 않았다.
+
+### 로컬 합성 업무 seed 후속 · 2026-11-06
+
+- 근거/범위: README·TODO·SPEC·IMP-PLAN·HANDOFF, migrations/README·deploy/README와 공통 API/DB·팀 헌장을 확인했다. 개인 README의 P1-4 상태는 PostgreSQL 16.15, pgvector 0.8.6, revision `0005`; 팀 VM 버전/권한은 사용자 제공 터미널 표본 및 기존 팀 보고와 구분했다.
+- 변경: `deploy/seed_local_mock.sql`을 추가하고 deploy 안내에 실행·경계를 기록했다. migration/앱 기동에서 자동 실행하지 않는다. DB `oke_jihye_p0`, 사용자 `oke_migration`, Alembic `0005`, pgvector 존재가 아니면 트랜잭션을 거절한다. 기존 직원 부서 충돌과 같은 fixture key의 내용 충돌도 거절하며, 고정 prefix로 반복 실행 시 같은 합성 행을 추가하지 않는다.
+- 주입 내용: 팀 고정 직원 6명, 합성 문의 3건, 티켓 2건, 알림 2건, DLQ 1건. 계정·세션·비밀번호 및 RAG documents/chunks는 만들지 않는다. RAG 검색용 가짜 0벡터를 생성하지 않으며 실제 색인/검색 검증으로 집계하지 않는다.
+- 실제 실행: 작업 위치 `develop/jihye`. `docker exec -i oke-jihye-p0-postgres-1 ... psql < deploy/seed_local_mock.sql`로 개인 로컬 DB에 적용. 결과 `COMMIT`; 전체 직원 6, 합성 문의 3, 티켓 2, 알림 2, DLQ 1, RAG 문서 0·청크 0. VM에는 접속·변경하지 않았다.
+- 검증 경계: seed 실행 및 SQL 내부 guard/결과 행 수를 확인했다. 전체 pytest 회귀·브라우저 로그인·C02/C03/C04 실제 연결은 이번 작업에서 실행하지 않았다. 별도 backup/restore도 미실행이다.
+- 다음: 로그인 UI가 필요하면 기존 로컬 bootstrap-admin 및 관리자 발급을 별도 실행한다. RAG 검색 fixture는 유빈님 승인 색인/실제 임베딩 경로와 분리 협의한다. seed cleanup/reset은 아직 제공하지 않는다.
+
+### P1-4 별도 DB 백업·복원 실행 · 2026-11-06
+
+- [x] 원본이 팀 VM이 아닌 개인 전용 로컬 DB `oke_jihye_p0`인지 확인. Docker 컨테이너 `oke-jihye-p0-postgres-1`에서 직접 확인했으며 VM 접속·쓰기 없음.
+- [x] 호환 기반 확인: 로컬 PostgreSQL 16.15, pgvector 0.8.6, Alembic `0005`. 사용자가 제공한 VM 터미널 표본도 PostgreSQL 16.15·pgvector 0.8.6을 보였고, VM role의 RAG 조회/쓰기 권한 검사 결과는 모두 true였다. VM `alembic_version`은 RAG 계정 권한으로 조회 거절됐으며, `0005` 적용은 앞서 전달받은 팀장 보고와 구분한다.
+- [x] 원본에 로컬 mock fixture 적용: 직원 6, 문의 3, 티켓 2, 알림 2, DLQ 1, RAG documents/chunks 0. 이 fixture 적용은 [위 로컬 seed 기록](#로컬-합성-업무-seed-후속--2026-11-06)을 따른다.
+- [x] 백업 실행 도구 확인 및 사용: 호스트 PATH에는 없지만 PostgreSQL 컨테이너 안의 `pg_dump`·`pg_restore` 16.15를 사용하도록 `deploy/check_backup_restore.py`를 추가했다.
+- [x] 같은 인스턴스의 빈 `oke_jihye_p1_4_restore` 생성. 실행 전 해당 DB가 없음을 확인했다.
+- [x] `uv run python deploy/check_backup_restore.py --confirm-private-db`로 custom-format backup→`pg_restore --single-transaction` 실행.
+- [x] 원본/복원본 PostgreSQL·pgvector 버전, Alembic revision, app/rag 테이블별 행 수, 문서/청크 해시·`vector_dims` 결과, embedding column type을 대조. 결과 일치. 현재 RAG 문서·청크 0건이라 해시/저장 벡터 차원 배열은 빈 값이며 실제 RAG 데이터 복원은 검증하지 못했다. 스키마 타입 `vector(3072)`는 양쪽에서 일치.
+- [x] 임시 `oke_jihye_p1_4_restore` DB와 컨테이너 내 임시 archive 정리. 사후 조회에서 대상 DB 0개, 원본 revision `0005`·행 수 `6|0|3|2|2|1|0|0` 유지 확인.
+- 한계: 기존 pytest backup/restore 테스트와 전체 회귀 suite는 이번에 실행하지 않았다. 직접 실행한 것은 위 명시 opt-in local backup/restore runner다. 실제 VM·RAG 검색·OpenAI·C02/C03/C04 연결도 미실행이다.
+- 다음: 로컬 별도 DB backup/restore는 완료. 남은 P1-4 연결·공통 평가는 VM 배포 버전과 팀 시험 창에 맞춰 진행한다. 원본 로컬 DB와 VM은 수정하지 않았다.
 
 ## 단계별 실제 기록 방식
 

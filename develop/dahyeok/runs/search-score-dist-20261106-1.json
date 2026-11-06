@@ -1,0 +1,567 @@
+{
+  "measured_at": "2026-11-06T17:30:02+09:00",
+  "env": "local oke-local",
+  "endpoint": "n8n /webhook/oke-search",
+  "source_cases": "develop/yubeen/cases/rag-search.json (draft_not_frozen) + X01-X04 추가",
+  "rows": [
+    {
+      "id": "Q01",
+      "q": "비밀번호는 몇 자 이상이어야 하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "password-policy",
+      "http": 200,
+      "top1_doc": "password-policy",
+      "top1": 0.7094591923570861,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.7094591923570861,
+      "evidence": [
+        {
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "score": 0.7095
+        },
+        {
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "score": 0.536
+        },
+        {
+          "doc": "password-policy",
+          "section": "서문",
+          "score": 0.5221
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "q": "암호를 얼마나 자주 바꿔야 하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "password-policy",
+      "http": 200,
+      "top1_doc": "password-policy",
+      "top1": 0.58892216135659,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.58892216135659,
+      "evidence": [
+        {
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "score": 0.5889
+        },
+        {
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "score": 0.4731
+        },
+        {
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "score": 0.4724
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "q": "휴대폰을 바꿨더니 OTP가 안 떠요. 어떻게 하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "password-policy",
+      "http": 200,
+      "top1_doc": "password-policy",
+      "top1": 0.4874007117832553,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.4874007117832553,
+      "evidence": [
+        {
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "score": 0.4874
+        },
+        {
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "score": 0.3466
+        },
+        {
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금",
+          "score": 0.3204
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "q": "VPN 인증서가 만료되기 전에 어디서 다시 받나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "remote-work-vpn",
+      "http": 200,
+      "top1_doc": "remote-work-vpn",
+      "top1": 0.6060762763459713,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.6060762763459713,
+      "evidence": [
+        {
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서",
+          "score": 0.6061
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "score": 0.3725
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "score": 0.36
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "q": "카페 와이파이로 회사 시스템에 접속해도 되나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "remote-work-vpn",
+      "http": 200,
+      "top1_doc": "remote-work-vpn",
+      "top1": 0.5666497331891636,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.5666497331891636,
+      "evidence": [
+        {
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "score": 0.5666
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "score": 0.4046
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "score": 0.3917
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "q": "첨부 파일이 커서 메일로 안 보내져요.",
+      "levels": [
+        "all"
+      ],
+      "expected": "email-and-documents",
+      "http": 200,
+      "top1_doc": "email-and-documents",
+      "top1": 0.6063992722399598,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.6063992722399598,
+      "evidence": [
+        {
+          "doc": "email-and-documents",
+          "section": "2. 첨부 파일",
+          "score": 0.6064
+        },
+        {
+          "doc": "email-and-documents",
+          "section": "서문",
+          "score": 0.4133
+        },
+        {
+          "doc": "email-and-documents",
+          "section": "1. 메일함",
+          "score": 0.4121
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "q": "회사를 그만두면 노트북은 언제까지 반납하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "device-issue-return",
+      "http": 200,
+      "top1_doc": "device-issue-return",
+      "top1": 0.5279060237299735,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.5279060237299735,
+      "evidence": [
+        {
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "score": 0.5279
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "score": 0.5213
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "score": 0.4549
+        }
+      ]
+    },
+    {
+      "id": "Q08",
+      "q": "모르는 프로그램이 저절로 실행돼요. 먼저 무엇을 하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "security-incident",
+      "http": 200,
+      "top1_doc": "software-usage",
+      "top1": 0.2847576992876477,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "score": 0.2848
+        },
+        {
+          "doc": "software-usage",
+          "section": "서문",
+          "score": 0.2781
+        },
+        {
+          "doc": "software-usage",
+          "section": "2. 금지 사항",
+          "score": 0.2612
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "q": "고객 정보가 밖으로 유출된 것 같아요. 언제 누구에게 신고하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "privacy",
+      "http": 200,
+      "top1_doc": "privacy",
+      "top1": 0.5706503257759526,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.5706503257759526,
+      "evidence": [
+        {
+          "doc": "privacy",
+          "section": "3. 유출 대응",
+          "score": 0.5707
+        },
+        {
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "score": 0.3647
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "score": 0.3533
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "q": "생성형 AI에 고객 자료를 넣어도 되나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "software-usage",
+      "http": 200,
+      "top1_doc": "software-usage",
+      "top1": 0.5224963029521587,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.5224963029521587,
+      "evidence": [
+        {
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "score": 0.5225
+        },
+        {
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "score": 0.3735
+        },
+        {
+          "doc": "privacy",
+          "section": "서문",
+          "score": 0.3443
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "q": "회의실을 한 번에 얼마나 오래 예약할 수 있나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": "meeting-room",
+      "http": 200,
+      "top1_doc": "meeting-room",
+      "top1": 0.6405429366221085,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.6405429366221085,
+      "evidence": [
+        {
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "score": 0.6405
+        },
+        {
+          "doc": "meeting-room",
+          "section": "서문",
+          "score": 0.5534
+        },
+        {
+          "doc": "meeting-room",
+          "section": "2. 장비",
+          "score": 0.539
+        }
+      ]
+    },
+    {
+      "id": "Q12",
+      "q": "연차 휴가는 며칠인가요?",
+      "levels": [
+        "all"
+      ],
+      "expected": null,
+      "http": 200,
+      "top1_doc": "meeting-room",
+      "top1": 0.2723229519889483,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "score": 0.2723
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "score": 0.2327
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서",
+          "score": 0.2298
+        }
+      ]
+    },
+    {
+      "id": "Q13",
+      "q": "업무용 노트북의 정확한 CPU 모델은 무엇인가요?",
+      "levels": [
+        "all"
+      ],
+      "expected": null,
+      "http": 200,
+      "top1_doc": "device-issue-return",
+      "top1": 0.38309761464244574,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "score": 0.3831
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "score": 0.2761
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "서문",
+          "score": 0.266
+        }
+      ]
+    },
+    {
+      "id": "Q08-it",
+      "q": "모르는 프로그램이 저절로 실행돼요. 먼저 무엇을 하나요?",
+      "levels": [
+        "all",
+        "it"
+      ],
+      "expected": "security-incident",
+      "http": 200,
+      "top1_doc": "security-incident",
+      "top1": 0.37993729475453697,
+      "hit1": true,
+      "hit3": true,
+      "exp_score": 0.37993729475453697,
+      "evidence": [
+        {
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "score": 0.3799
+        },
+        {
+          "doc": "security-incident",
+          "section": "서문",
+          "score": 0.3145
+        },
+        {
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "score": 0.2848
+        }
+      ]
+    },
+    {
+      "id": "X01",
+      "q": "점심 메뉴 추천해 주세요",
+      "levels": [
+        "all"
+      ],
+      "expected": null,
+      "http": 200,
+      "top1_doc": "privacy",
+      "top1": 0.2482877384873281,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "privacy",
+          "section": "서문",
+          "score": 0.2483
+        },
+        {
+          "doc": "meeting-room",
+          "section": "서문",
+          "score": 0.2368
+        },
+        {
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "score": 0.226
+        }
+      ]
+    },
+    {
+      "id": "X02",
+      "q": "회사 주차장 위치가 어디인가요?",
+      "levels": [
+        "all"
+      ],
+      "expected": null,
+      "http": 200,
+      "top1_doc": "meeting-room",
+      "top1": 0.2834917745908969,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "meeting-room",
+          "section": "서문",
+          "score": 0.2835
+        },
+        {
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "score": 0.2812
+        },
+        {
+          "doc": "meeting-room",
+          "section": "2. 장비",
+          "score": 0.252
+        }
+      ]
+    },
+    {
+      "id": "X03",
+      "q": "출장비 정산은 어떻게 하나요?",
+      "levels": [
+        "all"
+      ],
+      "expected": null,
+      "http": 200,
+      "top1_doc": "device-issue-return",
+      "top1": 0.3318316440019464,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "score": 0.3318
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "서문",
+          "score": 0.3212
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "score": 0.2774
+        }
+      ]
+    },
+    {
+      "id": "X04",
+      "q": "오늘 날씨 어때요?",
+      "levels": [
+        "all"
+      ],
+      "expected": null,
+      "http": 200,
+      "top1_doc": "privacy",
+      "top1": 0.2351138341941822,
+      "hit1": false,
+      "hit3": false,
+      "exp_score": null,
+      "evidence": [
+        {
+          "doc": "privacy",
+          "section": "서문",
+          "score": 0.2351
+        },
+        {
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "score": 0.2236
+        },
+        {
+          "doc": "email-and-documents",
+          "section": "2. 첨부 파일",
+          "score": 0.2183
+        }
+      ]
+    }
+  ]
+}

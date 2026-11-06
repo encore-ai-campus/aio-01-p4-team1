@@ -1,6 +1,6 @@
 # 원민님 · TODO
 
-현재 [실제VM 재시험 결과](EXECUTION-RESULT.md): WF-02b API3/3·WF02 UI1회 관측. 이전 작업 결과5개 삭제 후 새 근거로 대체했다. 직접SQL·모델trace·공식전체suite·bench·대표로그3종·리허설은 미완료다.
+평가결과보고서는 사용자 요청으로 삭제했다. 보존된 실서비스 raw 관측: WF-02b API3/3·WF02 UI1회 관측. 이전 작업 결과5개 삭제 후 새 근거로 대체했다. 직접SQL·모델trace·공식전체suite·bench·대표로그3종·리허설은 미완료다.
 
 
 현재 P1-4 일부(2026-11-05): [독립반복·bench 결과](P1-4-PARTIAL-RESULT.md). fresh 실행기·증거 대조 도구 구현, Python20개 통과. 실제 모델17회 실행(3사례3회=12호출 + TM-03 bench5호출), TM-02 기대불일치3건 보존. 실제 data-api/공식80키트 경로를 요청했으며 기존 본체는 identity_unavailable이다. P1-4 전체완료로 처리하지 않는다.

@@ -1,6 +1,6 @@
 # 원민님 · 변경 제안·전달 기록
 
-실제 VM 재시험(2026-11-06): 이전1288823 결과5개 삭제·main3dc5f23 포함 확인. WF-02b API 새ID3회 모두PASS, T-2008/2009/2010, 4.828/1.729/1.649초. 직원재로그인·관리자PATCH·직원재조회10checks 매회통과. WF-02 실제브라우저1회 대상/오류/시점 모두표시·캡처저장. [docs 템플릿 기반 새 결과서](EXECUTION-RESULT.md), runs/vm-retest-*·vm-browser-* 참조. SQL/n8n trace/모델3회/공식14/팀5/bench미확인. 다음은WF02모델3회 및WF12복합·권한/장애·실제근거검증. 기대변경/VM재배포/fault/reset/기존행삭제 없음.
+실제 VM 재시험(2026-11-06): 이전1288823 결과5개 삭제·main3dc5f23 포함 확인. WF-02b API 새ID3회 모두PASS, T-2008/2009/2010, 4.828/1.729/1.649초. 직원재로그인·관리자PATCH·직원재조회10checks 매회통과. WF-02 실제브라우저1회 대상/오류/시점 모두표시·캡처저장. 평가결과보고서는 사용자 요청으로 삭제했다. runs/vm-retest-*·vm-browser-* 참조. SQL/n8n trace/모델3회/공식14/팀5/bench미확인. 다음은WF02모델3회 및WF12복합·권한/장애·실제근거검증. 기대변경/VM재배포/fault/reset/기존행삭제 없음.
 
 다혁님 C04 실제 app 연결(2026-11-05): [원인·13개 그룹·남은 연결](C04-APP-INTEGRATION-RESULT.md). 최신origin/feat/dahyeok-p0=bb2fa1f의 Git 원본으로 시험했고 C04 요청/매핑/B안·실제 C05 저장이 적합했다(직원 fixture, 실제 로컬 qwen). 최초긴급 실행103은 JSON 코드블록 출력→triage_invalid→normal 저장으로 실패했다. 시험 사본 N06 모델 responseFormat=json_object 후 실행111→112의 T-2012/high·사내망 안내·sources=[] 및 전체13그룹 통과. 다혁님 실제 배포 모델 설정 검토/재시험 요청, 정본/기존 workflow는 미수정이다. 지혜/오현님 실제 data-api 주소·키/기존 티켓 권한이 없어 원래 본체는 identity_unavailable로 남는다. 유빈님 C03=503도 확인해 실제 검색·WF12 기존 티켓·팀 VM/공식 평가와 구별한다. 이번 공유는 HANDOFF 기록이며 외부 전송/상대 확인 완료가 아니다.
 

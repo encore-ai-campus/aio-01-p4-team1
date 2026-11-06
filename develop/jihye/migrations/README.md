@@ -26,7 +26,7 @@ DB 접속은 환경변수 DATABASE_URL의 명시적 postgresql+psycopg 드라이
 
 ## 생성 순서
 
-| 순서 / 예정 파일 | 적용 작업 | 확인할 결과 |
+| 순서 / 파일 | 적용 작업 | 확인할 결과 |
 | --- | --- | --- |
 | 0: migrations/alembic.ini, env.py, script.py.mako; app/db/base.py·session.py·models/*.py | Alembic script_location을 migrations로 고정. models 메타데이터 import, include_schemas로 app/rag만 관리, URL은 DATABASE_URL에서 읽고 출력하지 않음 | 본인 폴더에서 history/heads가 단일 체인. 다른 스키마를 autogenerate 삭제 대상으로 포함하지 않음 |
 | 1: versions/0001_extensions_and_schemas.py | vector 확장, app/rag 스키마. 확장 권한은 마이그레이션 실행 계정으로만 수행 | pg_extension의 vector 버전, app/rag 존재, 빈 DB에서 시작 가능 |
@@ -79,7 +79,7 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 
 1. `uv run alembic -c migrations/alembic.ini heads`와 `history`로 순서·단일 head를 확인한다.
 2. `uv run alembic -c migrations/alembic.ini upgrade head` 후 `current`가 적용 코드의 단일 head인지 확인한다. 현재 로컬 코드는 `0005` head다. 동일 upgrade 재실행에서 추가 DDL/데이터 변경이 없어야 한다.
-3. `uv run pytest tests/integration/test_migrations.py -q`로 카탈로그 타입·NULL·기본값·FK·UNIQUE·인덱스·vector 확장/차원·권한을 검사할 예정이다. 이 파일은 본인 DB 검사 전용으로 구현한다.
+3. `tests/integration/test_migrations.py`로 카탈로그 타입·NULL·기본값·FK·UNIQUE·인덱스·vector 확장/차원·권한을 검사한다. P0-4의 전용 DB migration 검사 40개 통과 기록이 있으며 실제 실행 명령·대상은 IMP-PLAN을 따른다. 단순 파일 존재를 새 환경의 시험 통과로 취급하지 않는다.
 4. `uv run pytest tests/integration/test_persistence.py tests/integration/test_pgvector.py -q`로 본인 문의/티켓·일반/IT 테스트 문서·차원 거절·정확 검색을 확인한다. 테스트용 가상 벡터 결과를 실제 임베딩 품질로 보고하지 않는다.
 5. named volume을 유지한 postgres 재시작 전후 revision/행 수/키/벡터 차원·조회 결과를 비교한다. DB 재시작과 재색인은 별도 확인이다. 기본 절차에 volume 삭제를 넣지 않는다.
 6. rollback 검증은 폐기 가능한 DB에서만 revision 한 단계씩 내렸다 올려 의존 순서를 확인한다. 공유 데이터가 있는 적용 후 rollback은 사전 백업·복원 또는 새 수정 revision으로 오현님이 판단한다. 다운그레이드가 데이터를 복구해 준다고 쓰지 않는다.

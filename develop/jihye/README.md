@@ -10,13 +10,15 @@
 | P0-2 | 웹14 operation(13경로)·내부3 API 모델·라우터·OpenAPI·시험 전용 Mock 구현 |
 | P0-2 보완 | 2026-11-05 context 최대2,000자 누락과 개인 문서 기준 정리. 전체100개 통과·경고1건 |
 | DB·실행 환경 | P0-3~7 로컬 구현. Alembic `0005`까지 적용한 전용 DB와 backend readiness 확인 기록이 있음 |
-| 인증·계정 | P1-1 로컬 PostgreSQL HTTP 통합 확인. 11/06 팀 VM 보고에는 직원·관리자 인증 API 점검이 기록됨. 브라우저 화면 검증은 미완료 |
+| 인증·계정 | P1-1 로컬 PostgreSQL HTTP 통합 확인. 팀 VM 인증·관리자 처리·직원 재조회 API 보고가 있음. 사용자 제공 이준호 로그인·문의 화면 시험은 시작됐으며 관리자까지의 브라우저 전체 흐름은 미완료 |
 | 문의·support | P1-2 로컬 PostgreSQL+MockTransport 확인. 팀 VM QA에서는 이관 경로와 문의 저장이 확인됐지만 `sources=[]`여서 정상 RAG 답변 검증은 아님 |
 | 업무 처리 | P1-3 로컬 C05 저장 구현·검증. 원민님의 별도 로컬 n8n→FastAPI→PostgreSQL 15개 그룹 결과는 전달받은 보고임. VM QA는 티켓 저장·관리자 처리·직원 재조회 경로를 확인했으며 알림/DLQ 전체 시험은 별도 |
 | 현재 잔여 | P1-4 로컬 시험 223 passed·2 skipped·warning 1건 기록. DB 재시작·web-flow·별도 DB backup/restore는 확인했지만 원본 RAG 문서·청크가 0건이라 실제 벡터 복원은 미검증. 전체 VM 통합과 공식 공통 평가는 미완료 |
 | 별도 후속 | P1-4 잔여 확인 → 로컬 초기 설정 재현 → CI 실행 스크립트/Actions 예시 → CD workflow·설정·백업/검증/복구 인계 양식 준비. 현재 후속 산출물은 미착수이며 실제 루트 workflow 반영·Secrets/승인 설정·VM 배포는 오현님 담당 |
 
 상태 출처: 개인 P1-4 결과는 아래 IMP-PLAN 실행 기록, VM 결과는 [팀 VM 시험 기록](../../docs/VM-TEAM-TESTING.md)의 2026-11-06 보고다. VM 기록은 전달/문서 근거이며 이번 README 정리에서 직접 재실행한 결과가 아니다. 배포 커밋과 개인 작업 브랜치 커밋은 구분한다.
+
+최신 병합 기준은 main `5b7d597` → 작업 브랜치 merge `8b18ff1`이다. 7교시 공통 보고는 VM repo `17007f1`·본체 15번 게시와 WF-01 자동답변 3회 실패를 기록한다. 사용자 제공 화면/API 표본은 T-2012 접수, `route=담당자 이관`, `agents=[triage]`, `reason=low_confidence`, `sources=[]`다. 이 표본의 본체 버전·C03 실행 여부는 미확인이며 7교시 배포본과 같다고 가정하지 않는다. 상세 최신 요약은 [IMP-PLAN](Doc/IMP-PLAN.md)의 병합 후 상태 갱신을 따른다.
 
 지금 사용할 순서는 **README → IMP-PLAN의 지정 단계 → 연결된 SPEC**이다. 루트 AGENTS의 시작 전 필수 확인은 유지한다. [SPEC 1절](Doc/SPEC.md#1-적용할-기준--새로-선정하지-않음)에 담당 구현에 필요한 현재 기준·출처·대조 커밋을 모았다. 개인 계획이 작업 범위를 정하며 공통 계약 누락/오기는 정리한다. 공통 계약 자체를 바꾸려면 HANDOFF로 요청한다.
 
@@ -50,7 +52,7 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ## 지금 적용할 기준과 미확정 구분
 
 - 질문trim1~500자, ID1~64자, attempt 엄격한 정수≥1, context 최대2,000자. context는 생략/null·빈 문자열 호환을 유지하며 trim/절단하지 않는다.
-- 공개 가입 없음·관리자 발급·세션 신원. 쿠키는 oke_session/HttpOnly/SameSite=Lax/Path=/·기본8시간이다. 첫 변경 제한·회수·본인/최후 관리자 보호는 P1-1 로컬 PostgreSQL HTTP 시험에서 확인했다. 팀 VM의 인증 API 점검 기록은 있으나 브라우저 시각·클릭 검증은 미실행이다.
+- 공개 가입 없음·관리자 발급·세션 신원. 쿠키는 oke_session/HttpOnly/SameSite=Lax/Path=/·기본8시간이다. 첫 변경 제한·회수·본인/최후 관리자 보호는 P1-1 로컬 PostgreSQL HTTP 시험에서 확인했다. 팀 VM 인증 API 점검과 사용자 제공 이준호 문의 화면 표본이 있으며, 관리자까지의 브라우저 전체 흐름은 미완료다.
 - 비밀번호12자·문자3종·본인 이름/login_id 포함 금지를 P1-1 서비스에서 적용한다. 이력·잠금·외부OTP는P2다.
 - support 연결3초·전체30초·자동 재시도0은 확정 초기 예산이며 실측 성과가 아니다. 응답 추가 필드·reason/timings·공통400 codes를 보존한다.
 - PostgreSQL app/rag·vector3072·text-embedding-3-large·정확cosine/top_k3·assignee=IT직원 employees.id는 확정이다. 로컬 전용 DB는 migration `0005`까지 적용해 검증했고, VM의 `0005`·RAG 8 documents/33 chunks는 팀 VM 기록의 snapshot이다. VM RAG 재색인·권한별 전체 검색 품질 검증과 백업 복원 후 검색은 별도다.

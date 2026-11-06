@@ -261,6 +261,16 @@
 - P1-4 남은 작업은 화면과 실제 C02/C03/C04/C05 연결, 승인된 문서의 검색·복원 후 권한 확인, 공식 공통 평가다. 담당자 보고·VM 결과는 전달 출처와 직접 재실행을 구분해 반영한다.
 - 별도 로컬 업무 mock seed는 아래 2026-11-06 후속 기록으로 구현·개인 전용 DB 적용했다. CI 자동 검사와 CD 배포는 별도 잔여이며 VM에는 seed를 적용하지 않았다.
 
+### main 병합 후 상태 갱신 · 2026-11-06
+
+- 복구 기준: 사용자 커밋·원격 브랜치가 일치한 `1f0da4951435dbcebe83ce1613d6825feb8511d8`. 로컬 백업 브랜치 `backup/jihye-before-main-1f0da49`를 생성했다. 복원 요청 시 이 기준을 사용하고 이후 변경은 별도로 보존한다.
+- 최신 main `5b7d597`을 `feat/jihye-p0`에 `8b18ff1`로 병합했다. 충돌 없음. 병합 직후 백업과 HEAD의 `develop/jihye/` diff가 없고, main이 HEAD의 조상임을 확인했다. 공통/팀원 파일은 main 병합으로 반영했으며 이후 문서 편집은 개인 폴더에 제한한다.
+- 현재 VM 근거는 공통 EXECUTION-RESULT 12·13절과 DAY81 7교시 보고다. WF-02b의 직원·관리자 API 연계 10개 검사 통과가 보고됐다. 후속 VM repo `17007f1`, frontend image-code `bb3ef06`, 본체 15번 게시 및 오류 워크플로우 연결이 기록됐다. backend/DB/RAG 재배포를 뜻하지 않는다.
+- 7교시 QA는 n8n 직접 호출 22회/21개 ID의 부분 결과다. WF-01 정상답변은 3회 모두 이관으로 실패했다. 14개 티켓 응답 ID와 DB 각 1행, 7개 무티켓 ID와 DB 0행 대조가 보고됐다. 공식 common-14 전체, WF-04/10/11 장애, alert/DLQ 행 대조, 실제 Error Trigger 발화는 이 보고로 확인되지 않는다. FE→FastAPI 화면 시험의 대체 근거로 쓰지 않는다.
+- 사용자 직접 화면 시험(대화·캡처/API 표본 제공): 팀장 안내에 따라 이준호/영업팀으로 로그인하고 VPN 문의 제출. 문의 ID `de17b99e-0e8c-4d62-b190-95db11d72f22`, T-2012 접수, `route=담당자 이관`, `sources=[]`, `agents=[triage]`, `reason=low_confidence`, `timings=null`, `security.masked=0`. 에이전트 직접 브라우저 실행이 아니다. 본체 개정판·C03 호출·C04/C05 개별 ACK는 표본만으로 확정하지 않는다. 같은 문의를 다시 보내지 않고 실행 기록과 관리자 처리/직원 재조회를 대조한다.
+- VM에는 기존 8 documents/33 chunks와 과거 실제 색인·직접 C03 검색 보고가 있다. 로컬 백업 원본 0/0과 구별한다. 실제 RAG 행을 포함한 격리 복원·복원 후 검색/권한·품질/시간과 공식 평가 증거는 남아 있으므로 P1-4 전체 완료는 체크하지 않는다.
+- 이번 단계는 백업 ref 생성·main 병합·문서 정리와 Git 확인이다. DB·회귀·VM 시험을 재실행하거나 서비스 배포·push하지 않았다. 문서 갱신분은 별도 사용자 커밋 대상이다.
+
 ### 로컬 합성 업무 seed 후속 · 2026-11-06
 
 - 근거/범위: README·TODO·SPEC·IMP-PLAN·HANDOFF, migrations/README·deploy/README와 공통 API/DB·팀 헌장을 확인했다. 개인 README의 P1-4 상태는 PostgreSQL 16.15, pgvector 0.8.6, revision `0005`; 팀 VM 버전/권한은 사용자 제공 터미널 표본 및 기존 팀 보고와 구분했다.

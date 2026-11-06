@@ -8,9 +8,10 @@
 
 ### 현재 인계 상태 · 2026-11-06
 
-- 브랜치 `feat/jihye-p0`는 main을 `5bae594`로 병합한 상태다. VM 배포 커밋은 feature branch 커밋과 구분하며, 루트 [VM 시험 기록](../../../docs/VM-TEAM-TESTING.md)의 날짜·대상 버전을 근거로 사용한다.
+- 브랜치 `feat/jihye-p0`는 최신 main `5b7d597`을 `8b18ff1`로 병합했다. 복구 기준은 원격 본인 브랜치와 일치한 `1f0da49`, 백업 브랜치는 `backup/jihye-before-main-1f0da49`다. 충돌 없이 병합했고 병합 직후 개인 폴더 내용이 복구 기준과 동일함을 확인했다. 이전 `5bae594` 병합은 이력이다. VM 배포 커밋은 feature branch 커밋과 구분한다.
 - 개인 P1-4 로컬 회귀 기록은 223 passed·2 skipped·warning 1건이다. 전용 DB 재시작 유지·C02 Mock 기반 web-flow·별도 로컬 DB backup/restore를 확인했다. backup/restore 기준과 한계는 아래 체크리스트다.
-- VM의 제한된 API/DB QA는 루트 보고서에 기록돼 있다: 인증 API 확인, 문의 요청의 안전 이관, 문의·티켓 저장, 관리자 처리 및 직원 재조회. 해당 요청은 `sources=[]`였으므로 정상 RAG 근거 검색/자동 답변으로 판정하지 않는다. 브라우저 시각/클릭, 동일 ID 중복, alert/DLQ, 공식 common-14도 미완료로 남긴다. 이는 지혜님 직접 실행 결과가 아니다.
+- VM 공통 보고에는 인증·문의/티켓 저장·관리자 처리·직원 재조회 API와 WF-02b 통과가 기록돼 있다. 7교시에는 VM repo `17007f1`·본체 15번 게시, n8n 직접 QA와 티켓 행 대조가 추가됐다. 정상 자동답변은 3회 모두 실패했으며 공식 common-14·장애/alert/DLQ 전체 확인은 남는다. 각 보고는 지혜님 직접 재실행 결과가 아니다.
+- 사용자 제공 실제 화면/API 결과: 이준호/영업팀 로그인, VPN 문의, T-2012 접수, route=담당자 이관, sources=[], agents=[triage], reason=low_confidence. 관리자 화면 처리·직원 재조회는 이번 사용자 시험에서 아직 보고되지 않았다. 이 요청의 VM 본체 개정판과 C03 실행 여부는 미확인이며 에이전트 직접 실행으로 기록하지 않는다.
 - 팀 VM snapshot 보고는 PostgreSQL migration `0005`와 RAG 8 documents/33 chunks를 기록한다. 이는 VM 문서의 snapshot 근거이며 이번 작업에서 VM DB·계정·서비스를 접속하거나 변경하지 않았다. 로컬 스키마/재시작/백업복원 시험과 분리한다.
 - C05의 알림 `duplicate` ACK 및 DLQ HTTP200은 공통 `API-CONTRACT.md`의 현재 기준에 반영된 것으로, 현재 병합 기준 `7afabdc`에서 확인했다. 로컬 P1-3 검증·원민님의 별도 로컬 15개 그룹 보고·팀 VM alert/DLQ 실검증은 각각 별도 근거다.
 - 로컬 합성 업무 seed는 `deploy/seed_local_mock.sql`로 구현해 개인 전용 DB에 적용했다. Alembic/앱 시작 자동 실행은 없으며, VM에 적용한 상태가 아니다. CI 백엔드/DB 자동 검사와 CD 자동 배포는 별도 미구현이며, CD는 오현님의 배포 권한·승인·복구 기준이 정해진 뒤 검토한다.

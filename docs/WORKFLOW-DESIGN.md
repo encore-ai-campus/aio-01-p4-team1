@@ -1,6 +1,6 @@
 # 노코드 워크플로우 설계서 · 오케퐁
 
-> 상태: 설계 대상 JSON은 구현·게시되어 VM의 support/search/handoff/errors가 활성 상태이며, C03 검색과 C04 저장은 일부 확인됐다. 모든 설계 노드·페이로드 대조와 전체 회귀/common-14 시험은 완료되지 않았다. 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
+> 상태: 설계 대상 JSON은 구현·게시되어 VM 배포본(`3ff836a`)의 support/search/handoff/errors 4대 워크플로우가 활성 상태이며, 실제 VM 환경에서 WF-03(무근거 이관 및 T-2005 실저장)과 WF-02b(보완 한도 도달 및 T-2011 실저장) E2E 실측 검증을 완료했다. 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
 > 작성 책임: 다혁님. 원민님은 이관·오류, 지혜님은 인증·저장, 유빈님은 검색 자료를 제공한다. 공통 문서 편집·제출 취합은 오현님이 맡는다.
 
 [전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [데이터·DB](DATA-AND-DB.md) · [본체 상세 지침](../develop/dahyeok/Doc/SPEC.md). 필드·시간 예산은 최신 공통 계약이 우선이다.
@@ -136,11 +136,11 @@ LLM 장애도 안전한 이관 경로로 보낸다. 입구 인증 실패는 n8n�
 
 | 개발 원본 파일 | 트리거 | 담당자 | 상태 |
 | --- | --- | --- | --- |
-| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | 구현 예정 |
-| develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index | 유빈님 | 구현 예정 |
-| develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search | 유빈님 | 구현 예정 |
-| develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff | 원민님 | 구현 예정 |
-| develop/wonmin/workflows/oke-errors.json | Error Trigger | 원민님 | 구현 예정 |
+| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | VM 배포 및 활성 상태 (15번 최신 커밋 aedbb95) |
+| develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index | 유빈님 | VM 등록 완료 (수동 실행/색인 지원) |
+| develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search | 유빈님 | VM 배포 및 활성 상태 (C03 검색 연동) |
+| develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff | 원민님 | VM 배포 및 활성 상태 (C04 티켓/알림 연동) |
+| develop/wonmin/workflows/oke-errors.json | Error Trigger | 원민님 | VM 배포 및 활성 상태 (장애 수습/DLQ) |
 
 계획 노드 묶음: N01 Webhook → N02 입력 → N03 직원 → N04 주입 → N06 Triage → N07 분기 → N08 검색 입력 → N09 검색/N10 접수 → N11 Merge → N12 근거 검사 → N13 Writer → N14 Verifier → N15 판단 → N20 이관 → N22 최종 필터 → N23 Respond. 모든 요청이 전부 경유하는 것은 아니다. 상세 연결은 개인 SPEC에 따른다.
 

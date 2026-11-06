@@ -201,6 +201,18 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 - 팀 VM(조회만, 변경 없음): 08:27 재반영 후 oke-support(13과 동일)·handoff·errors는 Credential 연결됨. 실행 #8에서 본체 → C04(T-2001)까지 동작했다. oke-search는 main 루트 `workflows/oke-search.json`과 같아 `["all"]`만 허용(IT 400), 주소 `http://127.0.0.1:8765/search`(유빈님 서버는 `/webhook/oke-search`만 받음, 호스트 실행 예정이라 n8n의 127.0.0.1로는 닿지 않음), 인증 none이다. VM 설정은 리드 담당으로 전달했다.
 - 남은 본체 작업: 자동 답변 잠금(N12 점수 기준·N15) 해제는 실측 임계값 승인 후. `agents` 실제 실행 목록 반영.
 
+## 14: 자동 답변 잠금 구조와 agents 실제 실행 목록 · 2026-11-05
+
+- 파일: `workflows/oke-support-14.json`. `13`(`bb2fa1f`)을 보존하고 아래 변경만 14에 반영했다. 노드·연결선은 13과 같다(61노드). 로컬 시험 당시 이름은 13 사본(`okeSupport13LocA/B`)이었다.
+
+- N12 Evidence gate: 실제 모드 자동 답변 기준을 상수 `APPROVED_MIN_SCORE` 하나로 둔다. 현재 `null`이다. `threshold_mode`는 Mock이면 `mock`, 실제 모드에서 값이 있으면 `approved`, 없으면 `unset`이다. `unset`일 때는 기존처럼 Mock 기준 0.8로 writer·verifier를 실행해 관찰만 한다. 공통 환경변수 목록을 바꾸지 않으려고 env가 아닌 본체 상수로 두었다. 측정값이 승인되면 이 값만 바꾸면 된다.
+- N15 Decide answer: Mock 모드는 기존과 같이 Mock writer·verifier일 때만 허용한다. 실제 모드는 `threshold_mode=approved`이고 실제 writer·verifier가 통과할 때만 자동 답변한다. `unset`이면 기존 잠금과 동작이 같다.
+- N22 Finalize: `agents`를 실제 모드에서 실행된 단계로 만든다. triage, C03 또는 본인 조회가 실제로 실행되면 retriever, 실제 writer·verifier Agent가 실행되면 각각 writer·verifier. Mock 단계는 넣지 않는다(기존 Mock 사례의 `agents: []` 유지).
+- 확인: 로컬 Mock 검사 결과 동일(12/12, 14/14, 13/13, 9/9, 20/20, 6/6). 검색(합성 근거)·이관 연결 로컬 n8n:
+  - 저장소 버전(`null`, `okeSupport13LocA` execution 1699~1716, 모두 success): 일반·IT VPN은 기존대로 `low_confidence` 이관이고 agents `[triage, retriever, writer, verifier]`. 본인 T-1002 상태 안내, 식당 `no_evidence`, 타인 권한 없음, WF-12, 보완 질문(`[triage]`), 주입 차단(`[]`)이 기존과 같다.
+  - 임시 사본(`APPROVED_MIN_SCORE=0.8`, 커밋하지 않음, `okeSupport13LocB` execution 1717~1732): 일반·IT VPN이 `자동 답변`, sources `remote-work-vpn` 0.86, 새 티켓 0. 본인 T-1002는 writer 답으로 상태를 안내했다. 나머지 경로는 저장소 버전과 같다. 시험 후 로컬 n8n은 저장소 버전으로 되돌렸다.
+- 남은 일: 실제 pgvector 점수 분포 측정과 기준값 승인(유빈님·팀장님). 승인 후 `APPROVED_MIN_SCORE`만 바꾸고 WF-01·TM-01·12·13을 재시험한다. 합성 근거 0.86은 측정값이 아니다.
+
 ## 워크플로우 설계서 공통 반영 요청 · 2026-11-05
 
 - 담당 원고: `Doc/WORKFLOW-DESIGN-DRAFT.md` 1~8절과 `Doc/SUBMISSION-NOTES.md`. 오현님이 소유한 `docs/WORKFLOW-DESIGN.md`의 기존 “구현 예정” 설명을 실제 번호판·노드·로컬 검증 상태와 대조해 반영해 주시기 바란다.

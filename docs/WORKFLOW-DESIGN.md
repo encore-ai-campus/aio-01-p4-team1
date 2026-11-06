@@ -1,6 +1,6 @@
 # 노코드 워크플로우 설계서 · 오케퐁
 
-> 상태: 설계 대상 JSON은 구현·게시되어 VM 배포본(`3ff836a`)의 support/search/handoff/errors 4대 워크플로우가 활성 상태이며, 실제 VM 환경에서 WF-03(무근거 이관 및 T-2005 실저장)과 WF-02b(보완 한도 도달 및 T-2011 실저장) E2E 실측 검증을 완료했다. 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
+> 상태: 기존 VM 배포본(`3ff836a`)에서 support/search/handoff/errors 활성과 WF-03(T-2005 실저장)·WF-02b(T-2011 실저장) API E2E 실측이 확인됐다. 7교시 배포 2는 VM repo `17007f1`·FE `bb3ef06`(디자인 `840c5e6`)·15번 본체 published `d0d6396d…` 활성 반영을 별도로 확인했다. 과거 실측은 새 배포본 전체 회귀의 대체 근거가 아니며 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
 > 작성 책임: 다혁님. 원민님은 이관·오류, 지혜님은 인증·저장, 유빈님은 검색 자료를 제공한다. 공통 문서 편집·제출 취합은 오현님이 맡는다.
 
 [전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [데이터·DB](DATA-AND-DB.md) · [본체 상세 지침](../develop/dahyeok/Doc/SPEC.md). 필드·시간 예산은 최신 공통 계약이 우선이다.
@@ -20,7 +20,7 @@
 
 ```mermaid
 flowchart TD
-  USER(["👤 직원 질문 입력<br/>(POST /webhook/oke-support)"]) --> N01["🛡️ 1단계: 보안 & 관문 검사<br/>· 팀 키(X-Team-Key) 확인<br/>· 프롬프트 주입/악의적 공격 차단 (HTTP 400)"]
+  USER(["👤 직원 질문 입력<br/>(POST /webhook/oke-support)"]) --> N01["🛡️ 1단계: 보안 & 관문 검사<br/>· 팀 키(X-Team-Key) 확인<br/>· 입력 오류 HTTP 400 / 정책 주입 차단 HTTP 200·route=차단"]
   N01 -->|"정상 질문"| N02["🧠 2단계: 분류 (Triage LLM)<br/>질문 유형 및 긴급도 분류"]
 
   %% 긴급 분기
@@ -66,7 +66,7 @@ flowchart TD
 1. **정상 규정 질문 (예: VPN 오류):** 관문 통과 → Triage(네트워크) → RAG 검색(C03) → Writer/Verifier 답변 작성 → 해결 가이드 답변 반환
 2. **긴급/보안 사고 (예: 랜섬웨어/사내망 마비):** Triage(긴급) → Handoff(C04) 즉시 호출 → IT팀 긴급 티켓 발급 + 초동 조치 안내
 3. **정보 부족 (예: "인터넷 안 돼요"):** Triage(정보부족) → attempt 1~2회차면 보완 질문 반환 (3회차 이상 시 Handoff 이관)
-4. **보안 공격 (예: 주입 공격/권한 탈취):** 1단계 관문에서 LLM 호출 없이 즉시 거절 (HTTP 400)
+4. **보안 공격 (예: 주입 공격/권한 탈취):** 1단계 관문에서 LLM 호출 없이 즉시 차단 (기존 VM 관측: HTTP 200, route=`차단`; 입력 유효성 오류 HTTP 400과 구분)
 
 ## 1. 업무 시나리오
 
@@ -136,7 +136,7 @@ LLM 장애도 안전한 이관 경로로 보낸다. 입구 인증 실패는 n8n�
 
 | 개발 원본 파일 | 트리거 | 담당자 | 상태 |
 | --- | --- | --- | --- |
-| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | VM 배포 및 활성 상태 (15번 최신 커밋 aedbb95) |
+| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | 7교시 배포 2에서 15번 본체 반영·활성 확인 (VM repo `17007f1`, published version `d0d6396d…`, Error Workflow=`okeErrorsFlow01`); 전체 회귀 완료와 구분 |
 | develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index | 유빈님 | VM 등록 완료 (수동 실행/색인 지원) |
 | develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search | 유빈님 | VM 배포 및 활성 상태 (C03 검색 연동) |
 | develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff | 원민님 | VM 배포 및 활성 상태 (C04 티켓/알림 연동) |

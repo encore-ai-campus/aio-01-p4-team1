@@ -188,3 +188,30 @@ The 1교시 report material is prepared, but the official common-14 test startin
   10. `employee_latest_reply_visible`: true (직원 화면에서 최신 관리자 답변 확인)
 - **증적 자료**: `develop/wonmin/runs/real-qa-WF02b-lead-20261106T060403Z.json`, 실행 맥락 `real-qa-WF02b-lead-context-20261106T060403Z.json`
 - **판정**: **WF-02b 라이브 E2E 실측 통과 (PASS)**.
+
+## 13. DAY81 Period 7 deployment 2 and QA snapshot · 2026-11-06 16:40–16:49 KST
+
+### Version and deployment boundary
+
+- GitHub `main` and the VM repository are at `17007f1`. Selected changes: FE visual update from `67ef41b` as main commit `840c5e6`; support workflow 15 from `aedbb95` as `bb3ef06`; explicit support-to-error workflow link as `17007f1`.
+- The VM rebuilt and recreated **frontend only** from main `bb3ef06` (design commit `840c5e6`); the short recreate interval was about 8 seconds. Frontend returned healthy. No backend, RAG search, PostgreSQL, data-api, n8n, runner, or sandbox service was part of that scoped deployment.
+- n8n support uses stable ID `okeSupportFlow01`, published runtime version `d0d6396d-08f4-4b8a-8514-4e8473a6203d`, 61 nodes, and `settings.errorWorkflow=okeErrorsFlow01`. The active Error Trigger workflow remained ID `okeErrorsFlow01`, version `8bab332b-8ca5-44f7-98d7-c824a75dd803`, with one Error Trigger node. The six existing support Credential references were preserved by ID/name/type; credential values are not recorded. Runtime exported support JSON SHA-256: `5ee90ae3514028c4ba5b46b1fdc8752b1567a0598d9653d578d861590d52cb8a`.
+- n8n CLI reported that publication changes require a restart while n8n is running. Only `oke-n8n-1` was restarted; afterward health was HTTP 200, support and the existing search/handoff/errors workflows were active, and a production webhook POST without its auth header returned HTTP 403 (registration/authentication probe; the workflow did not execute). This was not an authenticated business-flow test.
+- Rollback export captured the prior active support version `ece576c6-9c22-4243-9d18-68ba93a7a167` before replacement. VM backup: `/home/toor/.local/share/oke-backups/oke-support-before-bb3ef06-20261106T072504+0000.json`, SHA-256 `d7b4ed81a87973442ad0905df415d0f3d2885a6d086512d88c1c350fb20b1ad8`, mode 600.
+
+### Read-only public and database evidence
+
+- After FE deployment: `/login` HTTP 200; a Next static CSS asset HTTP 200; no-cookie `/api/auth/me` HTTP 401; `/docs` HTTP 200 with Swagger UI; `/openapi.json` HTTP 200 with OpenAPI 3.1.0 and 18 paths; n8n `/healthz` HTTP 200. No login, ticket mutation, or authenticated workflow POST was run by the deployer.
+- Read-only PostgreSQL snapshot at 16:41:17 KST: `app.inquiries=13`, `app.tickets=12`, `app.alerts=14`, `rag.documents=8`, `rag.chunks=33`. The existing 8/33 RAG index was retained; no reindex or threshold change was performed.
+- QA row correlation is in `orchestrator/status/PERIOD7-DB-ROWS.txt`: among 19 unique request IDs, 12 each matched exactly one ticket row and 7 matched no ticket row. `T-2018` was one ticket for WF-09; `T-2017` was the high-priority WF-12 ticket. This is QA-owned row evidence, not a total-suite pass count.
+- The first six QA calls returned 403 because the private test harness key differed from the VM backend's webhook key; this does not establish a workflow feature failure. The server key/Credential was not changed. QA used the existing mode-600 private handoff file for a six-call retry; status/route/code matched the expected values for all six, while trace evidence remained incomplete.
+- Final QA snapshot collected at 16:50 KST: 22 requests / 21 unique IDs. The base 20 requests (19 IDs) recorded observed-field tally 2 pass, 14 partial, 4 fail; two additional WF-01 repeats bring the total tally to 2 pass / 14 partial / 6 fail. The first six authentication-mismatch 403 responses are retained separately and are not classified as feature failures.
+- WF-01 normal-answer repeats all handed off/failed: 4.270s, 3.585s, and 2.251s. No successful normal answer within 8 seconds was established.
+- PostgreSQL read-only correlation: 14 ticket-response IDs each matched exactly one ticket row (the original 12 plus T-2025 and T-2026); 7 no-ticket IDs matched zero rows. WF-09 T-2018 had one row; WF-12 T-2017 was high priority. Detailed evidence: `orchestrator/status/PERIOD7-DB-VERIFICATION.md` and `PERIOD7-DB-ROWS.txt`.
+- QA called n8n directly. This does not revalidate FE-to-FastAPI inquiry storage. Official common-14 coverage/score, WF-04/10/11 fault cases, alert/DLQ row verification, and actual Error Trigger auto-fire remain unverified. The 8-document/33-chunk RAG index was retained; no reindex or threshold change occurred. This is partial evidence, not a 7교시 completion claim.
+
+### Evidence and remaining boundary
+
+- The T-2011 raw/context records were selected from `90fab63`, scanned for secret/token/password, email, and phone content, and restored at the exact paths referenced by the DAY81 report. No credential value was included.
+- `sources=[]` remains an observed response field, not proof that the live VM lacked regulations; the database retained 8 documents/33 chunks and direct C03 search evidence exists. `test_recovery.py` is a Fake/MockStore test and is not a real PostgreSQL recovery pass.
+- Official 14-type and full five-team regression were not complete in this snapshot. QA continues against the fixed VM/runtime versions; no further deploy or workflow edits are part of this report update.

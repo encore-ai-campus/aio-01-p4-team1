@@ -36,4 +36,4 @@
 
 기존 계약대로 진행할 때 추가 사전 승인을 기다리지 않는다. 실제 연결 불일치와 정책 변경만 담당 상대와 검토하고 오현님이 공통 문서에 반영한다.
 
-수신 결과의 공식 원본: [DAY81](../../../docs/daily/DAY81.md) · [워크플로우 설계](../../../docs/WORKFLOW-DESIGN.md) · [RAG 설계](../../../docs/RAG-ARCHITECTURE.md) · [실행 결과](../../../docs/EXECUTION-RESULT.md).
+수신 결과의 공식 원본: [DAY81](../../../daily/DAY81.md) · [워크플로우 설계](../../../docs/WORKFLOW-DESIGN.md) · [RAG 설계](../../../docs/RAG-ARCHITECTURE.md) · [실행 결과](../../../docs/EXECUTION-RESULT.md).

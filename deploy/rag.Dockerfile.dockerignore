@@ -1,0 +1,10 @@
+.git
+Doc
+tests
+cases
+requests
+runs
+search.env
+search.env.*
+__pycache__
+*.pyc

@@ -5,7 +5,7 @@
 DB 구조는 [데이터·DB 기준](DATA-AND-DB.md), 역할·파일 소유권은 [팀 헌장](TEAM-CHARTER.md)을 따른다.
 
 화면은 FastAPI만 호출하고, FastAPI는 세션으로 신원을 확인해 같은 oke-support를 호출한다. n8n은 검색·답변·검증·이관을 처리한다.
-비밀값은 환경변수와 n8n Credential에만 둔다. 현재 구현·실행·시험은 진행 전이다.
+비밀값은 환경변수와 n8n Credential에만 둔다. 구현본은 VM에 배포되어 일부 readiness·C03 검색·C04 저장 확인을 마쳤다. 전체 계약 경로와 인증 사용자 흐름의 검증은 진행 중이며, 실제 범위와 한계는 [실행 결과](EXECUTION-RESULT.md)를 따른다. 이 문서는 API 필드와 응답 계약을 정의한다.
 
 ## 1. 공통 웹훅 · FastAPI ↔ support (C02)
 
@@ -82,14 +82,15 @@ Error Workflow는 예상 밖 실행 실패를 별도로 처리한다.
 | API | 요청 핵심 값 | 응답 핵심 값 | 저장 |
 | --- | --- | --- | --- |
 | `POST /tickets` | `key`(=`request_id`), `title`, `requester`, `category`, `priority` | `ticket_id`, `duplicate` | PostgreSQL 티켓 |
-| `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id`, `event_key` | `stored`, `count` | PostgreSQL 알림 |
+| `POST /alerts` | `workflow`, `node`, `message`, `severity`, 선택 `ticket_id`, `event_key` | `stored`, `count`, `duplicate` | PostgreSQL 알림 |
 | `POST /dlq` | `request_id`(nullable), `workflow`, `node`, `reason`, `safe_payload`, 선택 `execution_ref` | `stored`, `count` | PostgreSQL DLQ |
 
 중복 `key`는 새 티켓을 만들지 않고 기존 티켓을 반환한다. n8n 내부 호출은 별도 인증을 적용한다. 제공 data-api의 직원·기존 티켓·규정 조회는 정해진 계약을 사용한다.
 
 신규는 HTTP201 {"ticket_id":"T-2001","duplicate":false}, 중복은 HTTP200에 같은 ticket_id와 duplicate=true.
 handoff가 원래 priority를 ticket 객체에 붙인다. /tickets 응답에 priority가 항상 있다는 가정을 하지 않는다.
-POST /alerts는 workflow,node,message,severity와 선택 ticket_id, event_key를 받고, 공통 호환 알림 저장 응답은 HTTP200 {"stored":1,"count":1}이며 count는 실제 누적 수다. 웹 관리자 목록은 C01의 /api/admin/alerts에서 제공한다.
+POST /alerts는 workflow,node,message,severity와 선택 ticket_id, event_key를 받는다. 신규 저장은 HTTP200 {"stored":1,"count":<actual count>,"duplicate":false}, 같은 event_key 재요청은 HTTP200 {"stored":0,"count":<actual count>,"duplicate":true}를 반환한다. count는 실제 누적 수다. 웹 관리자 목록은 C01의 /api/admin/alerts에서 제공한다.
+POST /dlq는 신규 저장 시 HTTP200 {"stored":1,"count":<actual count>}를 반환한다. duplicate ACK 동작은 별도 계약으로 정의되지 않았다.
 FastAPI 내부 API는 X-Api-Key 인증을 사용하며 웹 로그인 쿠키와 구별한다.
 운영 새 업무 기록은 PostgreSQL, 공통 고장 시험 모드는 data-api에 연결한다. 설정으로 선택하고 같은 티켓을 양쪽에 동시 생성하지 않는다.
 fault/reset/ops와 실제 호출 대상이 맞는지 원민님이 확인한다.

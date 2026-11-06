@@ -1,6 +1,6 @@
 # 82일차 · 팀장 준비·제출 체크리스트
 
-공개할 발표 자료는 [README](README.md), 최종 인계는 [TEAM-INPUTS](TEAM-INPUTS.md), 리허설/시연은 [PRESENTATION](PRESENTATION.md)이다. 공식 기록은 [DAY82](../../../docs/daily/DAY82.md)에 남긴다.
+공개할 발표 자료는 [README](README.md), 최종 인계는 [TEAM-INPUTS](TEAM-INPUTS.md), 리허설/시연은 [PRESENTATION](PRESENTATION.md)이다. 공식 기록은 [DAY82](../../../daily/DAY82.md)에 남긴다.
 
 ## 1~2교시 · 남은 일과 최종 결과
 

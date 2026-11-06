@@ -114,7 +114,7 @@ def safe_rows(rows, secrets=()):
     return result
 
 
-def collect_api(environ=None, transport=None, clock=now, processor=None, allow_network=False):
+def collect_api(environ=None, transport=None, clock=now, processor=None, allow_network=False, no_auth=False):
     if transport is None and not allow_network:
         raise InventoryError('api_network_not_authorized')
     environ = os.environ if environ is None else environ
@@ -122,12 +122,21 @@ def collect_api(environ=None, transport=None, clock=now, processor=None, allow_n
     base, key = environ.get('DATA_API_URL', ''), environ.get('DATA_API_KEY', '')
     parsed = parse.urlsplit(base)
     if (parsed.scheme not in ('http', 'https') or not parsed.netloc or parsed.username
-            or parsed.password or parsed.query or parsed.fragment or not key or '\n' in key or '\r' in key):
+            or parsed.password or parsed.query or parsed.fragment):
         raise InventoryError('invalid_api_configuration')
+    if no_auth:
+        if (parsed.scheme != 'http' or parsed.netloc != 'data-api:8800'
+                or parsed.path not in ('', '/') or key):
+            raise InventoryError('invalid_api_configuration')
+        headers = {}
+    else:
+        if not key or '\n' in key or '\r' in key:
+            raise InventoryError('invalid_api_configuration')
+        headers = {'X-Api-Key': key}
 
     def fetch(path):
         try:
-            status, payload = transport(base.rstrip('/') + path, {'X-Api-Key': key}, 10)
+            status, payload = transport(base.rstrip('/') + path, headers, 10)
             if status in (401, 403):
                 raise InventoryError('authentication_failed')
             if status != 200:
@@ -149,7 +158,7 @@ def collect_api(environ=None, transport=None, clock=now, processor=None, allow_n
     listed = fetch('/docs')
     docs = validate_list(listed)
     snapshot = {'list_response': listed, 'document_responses': {}, 'collection_errors': {},
-                'retrieved_at': {}, 'mode': 'api', 'list_retrieved_at': clock()}
+                'retrieved_at': {}, 'mode': 'api_no_auth' if no_auth else 'api', 'list_retrieved_at': clock()}
     for name in dict.fromkeys(d['name'] for d in docs):
         try:
             snapshot['document_responses'][name] = fetch('/docs/' + parse.quote(name, safe=''))
@@ -160,7 +169,7 @@ def collect_api(environ=None, transport=None, clock=now, processor=None, allow_n
         return processor(snapshot, secrets=(key, os.environ.get('DATA_API_KEY')))
     # 원문 해시와 권한은 원본으로 계산하고, 반환 스냅샷에는 안전한 대장만 남긴다.
     rows = safe_rows(inventory(snapshot, clock=clock), (key, os.environ.get('DATA_API_KEY')))
-    return {'mode': 'api', 'prepared_rows': rows}
+    return {'mode': snapshot['mode'], 'prepared_rows': rows}
 
 
 def inventory(snapshot, clock=now):
@@ -231,12 +240,17 @@ def render(snapshot, rows, snapshot_hash=None):
     missing = sorted(EXPECTED - {r['doc_key'] for r in safe})
     # 원본/자격증명이 아닌 안전한 대장 투영만 해시 입력으로 직렬화한다.
     snapshot_hash = digest(json.dumps(safe, ensure_ascii=False, sort_keys=True).encode())
+    api_mode = snapshot.get('mode') in ('api', 'api_no_auth')
+    auth_mode = ('명시된 고정 내부 origin http://data-api:8800, 인증 헤더 미전송'
+                 if snapshot.get('mode') == 'api_no_auth' else 'X-Api-Key')
+    source_status = ('실제 API 목록/상세 응답을 수집했으며 각 권한 메타데이터는 아래 항목별로 표시한다.'
+                     if api_mode else 'Mock 입력이며 실제 API 응답 구조·권한은 미검증이다.')
     report = ('# P0-1 원본 대장\n\n'
-        f'모드: {"api" if snapshot.get("mode") == "api" else "mock"}. 실제 API 응답 구조·권한 및 관리자 문서 제공 여부 미검증.\n'
+        f'모드: {"api" if api_mode else "mock"}. {source_status}\n'
         f'입력 스냅샷 SHA-256 (안전한 대장 투영): {snapshot_hash}\n\n'
         '어댑터 지원 형태(실측 전): /docs → {docs:[{name,access_level?}]}, '
         '/docs/{name} → {name,title,text,access_level?}. 다른 구조는 거절하며 추측 변환하지 않는다.\n'
-        '인증 헤더 X-Api-Key는 구현 가정이며 실제 data-api 확인 필요.\n'
+        f'인증 경로: {auth_mode}.\n'
         '해시: 전체 본문 CRLF/CR→LF, 나머지 공백 보존, UTF-8 SHA-256. '
         '절은 원문 순서이며 길이 0인 절도 보존한다. 청크 생성/빈 절 색인 판단은 하지 않는다.\n'
         '권한: 명시 메타데이터 우선, 충돌/미지 값 거절. 없으면 공통 확정 규정 8종의 정확한 키만 all 매핑. '
@@ -429,8 +443,9 @@ def compare_snapshot(snapshot, secrets=()):
                 'body_lengths': length_stats(cohort_lengths[method][state]['body']),
                 'content_lengths': length_stats(cohort_lengths[method][state]['content'])}
     snapshot_hash = digest(json.dumps(summary, ensure_ascii=False, sort_keys=True).encode())
+    api_mode = snapshot.get('mode') in ('api', 'api_no_auth')
     return ('# P0-2 청킹 비교\n\n'
-        f'모드: {"api" if snapshot.get("mode") == "api" else "mock"}. 실제 API·인증·원본 미검증.\n'
+        f'모드: {"api" if api_mode else "mock"}. 실제 API·인증·원본 미검증.\n'
         f'동일 스냅샷의 안전한 비교 투영 SHA-256: {snapshot_hash}\n\n'
         '기본 section / 비교 본문 300 유니코드 문자, overlap=0. '
         '본문은 LF 정규화 전체 text이며 원본 ## 제목 행도 보존한다. '
@@ -455,6 +470,7 @@ def main(argv=None, *, transport=None):
     inv.add_argument('--input', type=Path)
     inv.add_argument('--output', type=Path, required=True)
     inv.add_argument('--allow-network', action='store_true', help='승인받은 실제 API 실행에만 명시')
+    inv.add_argument('--no-auth', action='store_true', help='고정된 내부 data-api origin의 무인증이 실제 확인된 경우에만 명시')
     comparison = sub.add_parser('compare-chunks')
     comparison.add_argument('--source', choices=['mock', 'api'], required=True)
     comparison.add_argument('--input', type=Path)
@@ -462,6 +478,7 @@ def main(argv=None, *, transport=None):
     comparison.add_argument('--candidate', choices=['300'], default='300')
     comparison.add_argument('--output', type=Path, required=True)
     comparison.add_argument('--allow-network', action='store_true', help='승인받은 실제 API 실행에만 명시')
+    comparison.add_argument('--no-auth', action='store_true', help='고정된 내부 data-api origin의 무인증이 실제 확인된 경우에만 명시')
     args = parser.parse_args(argv)
     output = args.output.resolve()
     if not output.is_relative_to(ROOT):
@@ -471,10 +488,11 @@ def main(argv=None, *, transport=None):
     try:
         if args.source == 'api':
             if args.command == 'compare-chunks':
-                report = collect_api(transport=transport, processor=compare_snapshot, allow_network=args.allow_network)
+                report = collect_api(transport=transport, processor=compare_snapshot,
+                                     allow_network=args.allow_network, no_auth=args.no_auth)
                 output.write_text(report, encoding='utf-8')
                 return
-            snapshot = collect_api(transport=transport, allow_network=args.allow_network)
+            snapshot = collect_api(transport=transport, allow_network=args.allow_network, no_auth=args.no_auth)
             raw_hash = None
         else:
             raw = args.input.read_bytes()

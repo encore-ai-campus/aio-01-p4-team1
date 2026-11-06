@@ -161,6 +161,24 @@ class ApiTests(unittest.TestCase):
 
 
 class TransportTests(unittest.TestCase):
+    def test_explicit_no_auth_is_limited_to_verified_internal_origin(self):
+        env = {'DATA_API_URL': 'http://data-api:8800'}
+        calls = []
+        def fake(url, headers, timeout):
+            calls.append((url, headers))
+            return 200, b'{"docs":[]}'
+        snapshot = prepare.collect_api(env, fake, no_auth=True)
+        self.assertEqual(snapshot['mode'], 'api_no_auth')
+        self.assertEqual(calls, [('http://data-api:8800/docs', {})])
+        for invalid in (
+            {'DATA_API_URL': 'http://other:8800'},
+            {'DATA_API_URL': 'https://data-api:8800'},
+            {'DATA_API_URL': 'http://data-api:8800', 'DATA_API_KEY': 'synthetic'},
+        ):
+            with self.assertRaises(prepare.InventoryError) as caught:
+                prepare.collect_api(invalid, fake, no_auth=True)
+            self.assertEqual(str(caught.exception), 'invalid_api_configuration')
+
     def test_urllib_http_and_network_errors_are_sanitized(self):
         from urllib.error import HTTPError, URLError
         env = {'DATA_API_URL': 'http://local.invalid', 'DATA_API_KEY': 'synthetic-only'}

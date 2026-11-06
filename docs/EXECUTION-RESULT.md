@@ -54,3 +54,109 @@
 - main 통합 기준: `952f704` (기존 통합 및 선택 반영 커밋 `36e01ce`, `eb3e8a4`, `7b9b383`, `e03833b`, `952f704`). 팀별 구현은 `develop/jihye/Doc/IMP-PLAN.md`, `develop/dahyeok/Doc/IMP-PLAN.md`, `develop/yubeen/Doc/IMP-PLAN.md`, `develop/wonmin/Doc/`의 P1 결과/HANDOFF를 참조한다.
 - 실제 반영 커밋과 문서 정리 커밋은 구분한다. 이 보고서 갱신은 코드/워크플로우 변경이나 VM 재배포가 아니다.
 - 기록에 없는 workflow execution ID, 처리시간, 청크 분포, hit@3/MRR, 비용, LLM 호출 수는 미기록/미측정으로 둔다.
+
+## 7. 후속 VM 통합 실행 · main `3e0f701`
+
+아래 결과는 위 952f704 시점 기록 이후 `unified-vm-finish-2`로 수행한 별도 실행이다. 초기 관측의 0/0·`practice`·HTTP 000은 그 시점의 역사적 상태로 보존한다.
+
+| 버전/실행 | 실제 결과 | 판정/한계 |
+|---|---|---|
+| main/VM `3e0f701` | VM `origin/main` fast-forward; `SERVICE_MODE=app`를 backend/n8n/runners에서 선별 조회. 기존 PG/n8n named volume과 encryption key 유지 | `develop/jihye/deploy/.env.backend`, RAG `search.env`/`index.env`, compose private env mode 600. 비밀값은 출력·문서·Git에 포함하지 않음 |
+| official employee seed | `seed-employees` HTTP/source adapter 경로 실행, `created=6`; DB employees=6, users=0 | data-api 고정 내부 origin 무인증 계약을 실측했고 원본 6명 검증 후 기존 seed service 사용. 계정/admin 생성은 별개 |
+| RAG preflight/index | manifest source hash 8개 검증; 7=`all`, 1=`it`; index HTTP 200, `ok=true`, indexed=8, rejected=0, failed=0, 33 chunks | DB `rag.documents/chunks=8/33`. indexer 반환 mode string은 `postgres_unverified`였으나 별도 DB 쿼리로 rows/permissions를 검증했다. threshold/청크 길이 분포는 미측정 |
+| direct search, request `vm-search-general-1` | HTTP 200, `ok=true`, evidence=3; 문서 key는 `password-policy` | 실제 OpenAI embedding과 read-only scoped DB search. 답변 품질/threshold 통과 판정은 아님 |
+| direct search, request `vm-search-it-1` | HTTP 200, evidence=3; `security-incident` 포함. `all` 범위 검색은 IT-only key를 반환하지 않았음 | source fallback `security-incident=it`의 권한 필터 결과를 실측. 사용자별 IAM 연동은 아직 없음 |
+| n8n `/webhook/oke-search` | HTTP 200, evidence=3; 일반 정책 문서 검색 | n8n Team credential → search 전용 `X-Team-Key` → `rag-search` 경로 실호출. header 종류가 같다는 이유로 credential을 공유하지 않음 |
+| n8n `/webhook/oke-handoff`, correlation request `vm-fin2-handoff-20261105-01` | 첫 요청 HTTP 200 `T-2001`/duplicate=false/alerted=true/DLQ=false. 동일 request key 재호출 HTTP 200 같은 `T-2001`/duplicate=true/alerted=true/DLQ=false | app C04와 alert 실제 저장. DB에는 test key ticket 1건, 해당 event key alert 1건 |
+| n8n `/webhook/oke-support`, correlation request `vm-fin2-support-20261105-01` | 일반 비밀번호 초기화 질문. HTTP 200, route=`담당자 이관`, reason=`low_confidence`, ticket=`T-2002`, sources=[] | 정상 사용 경로의 triage 후 보수 이관과 실제 C04 저장. 응답 근거가 없으므로 자동 답변/검색 품질 PASS로 취급하지 않음 |
+| 입력/주입 | 빈 질문은 HTTP 400 `question_required`. 주입 시도는 HTTP 200, route=`차단`, `security.reason=prompt_injection`, ticket=null | 이 root workflow의 계약은 입력 검증 오류 400, 정책 차단 응답 200이다. 주입 차단을 HTTP 400이라고 쓰지 않음 |
+| FE/API 내부 smoke | VM localhost `/login` HTTP 200, unauthenticated `/api/auth/me` HTTP 401 | FE 컨테이너 build/health와 proxy 경로 확인. 로그인 계정이 없어 인증 성공/로그아웃/비밀번호 변경은 미실행 |
+| PostgreSQL restart persistence | PostgreSQL container restart 후 healthy; backend `/health/ready` HTTP 200, FE `/login` HTTP 200. DB employees/users/tickets/alerts/DLQ=`6/0/2/3/1`; RAG documents/chunks=`8/33`; `T-2001` 유지 | 기존 PG volume을 사용한 restart 보존 실측. 기존 C05 데이터와 신규 test C04 저장을 구분함 |
+| resources | RAM total 2646 MiB, available 1344 MiB, swap used 343 MiB; disk free 41 GiB; n8n/backend/FE/RAG/search/index/PG OOM=false | 주요 컨테이너 OOM 없음. 자원 snapshot 시각 기준 |
+| 외부 URL | HTTPS `/` 502, `:5678/healthz` 200, `:3000/login` timeout; VM host 80/443 listener/proxy config 없음 | FE 외부 제공 미완료. 내부 `:3000` health는 공개 연결 증거가 아님. 기존 ingress 설정 변경 필요 |
+
+### Workflow/tool checks
+
+- Latest root workflows `oke-support`, `oke-search`, `oke-handoff`, `oke-errors` were imported by their stable IDs and published; `oke-index` remains inactive/manual. Four typed HTTP Header credentials were imported (team webhook, search, index, backend `X-Api-Key`); the existing OpenAI credential was reused. Temporary plaintext credential import staging was removed after import; private VM env files remain mode 600.
+- VM course tool: `/home/toor/aio-01d4-stu/Last3Mon/79/tools/flow.py`, SHA-256 `6b0059cb3af135b08954559d0e6b757991fc2fc42a0624244d129e618284fb6f`. Its `test` accepts `cases`/`request`/`expect.status`, but its HTTP helper sends only `Content-Type` and cannot send the required root `X-Team-Key`. Therefore the root custom team/handoff suites were not run through that tool. No official common-14 JSON case file was found in the course tree.
+- `flow.py check` on root source reports course-specific credential-ID errors (`openAiCourse0001` expected, source placeholders supplied) for support/search/handoff/errors; search/handoff also produce node-version warnings. This static course check does not reflect VM runtime credential mapping. Live n8n C03/C04 calls above are the runtime evidence; no case expectations were changed.
+- The course `flow.py` check is distinct from `develop/dahyeok/tools/flow.py`, which reports itself as a Mock-only checker. Neither is evidence of the official common-14 suite passing.
+
+### Still pending
+
+- Controller answer for first administrator (`김민지/minji.admin` or `정우성/woosung.admin`) remains pending. No admin was bootstrapped; users=0. Thus FE successful login, forced password change, logout/relogin, own/other 403, and admin views are not tested.
+- External ingress must route `https://aio-t1.isitsoft.kr/` to FE. No local VM proxy was present; no extra public port was opened.
+- The support execution safely handed off with empty final sources after low confidence. Direct C03 search succeeded, but RAG threshold, measured quality, and automatic answer acceptance remain unapproved/unmeasured. No accuracy or hit-rate PASS is claimed.
+- Official common-14 suite was not available in the course tree; test runner authentication limitation blocks running the custom header-protected cases as-is. Keep that separate from successful targeted HTTP checks and the two local suites (`jihye` 18/18; `yubeen` 34/34).
+- The current request IDs above are correlation IDs, not captured n8n execution IDs. Do not claim or infer execution IDs, LLM call counts, cost, p95, or chunk length distribution.
+
+## 8. OKE runtime cleanup and project rename · 2026-11-05
+
+This is a later runtime observation after the `3e0f701` integration snapshot above. GitHub `main` was advanced by runtime implementation commit `c1a4c8b` (`ops(vm): rename unified compose project to oke`), pushed, and the VM fast-forwarded to it before cutover. Later docs-only updates were also pushed and fast-forwarded without restarting services. The historical `3e0f701` results above remain the earlier baseline.
+
+| Check | Result | Evidence / limit |
+|---|---|---|
+| Backup and rollback | Verified pre-switch backup at `/home/toor/backups/oke-runtime-cleanup-20261105-final`; directory mode 700, private files mode 600. PostgreSQL dump 1,336,239 bytes; n8n data copy 7.87 MB / 10 files; checksums validated | Full PostgreSQL dump, n8n volume copy, existing private env/admin handoff copies, compose and mount metadata. The copy was made before stopping old services. Two incomplete preflight backup directories were retained but are not rollback sources |
+| Compose/config | `docker compose ... -p oke config --quiet` passed before and after startup | Project name changed; app mode is explicit/default `app`; SearXNG `optional-search`; RAG index remains `indexing` profile |
+| Runtime | Project `oke` has n8n, runners, sandbox API/runner, PostgreSQL, data-api, backend, frontend and RAG search. Healthy PG, sandbox API, backend, FE, search | n8n `/healthz`, backend `/health/ready`, FE `/login` all local HTTP 200; external existing n8n `https://aio-t1.isitsoft.kr:5678/healthz` HTTP 200 |
+| Volumes/network | `day65-n8n_n8n-data`, `oke-jihye-p0_postgres_data`, `day65-n8n_sandbox-tls`, and existing DinD volume ID are attached to corresponding `oke` containers. Existing `day65-n8n_default` external network reused | Service DNS names stay n8n/backend/frontend/postgres/data-api/rag-search. n8n encryption key, user/credential store and workflow history remain in the same volume; no parallel n8n or PostgreSQL writer ran |
+| SearXNG/index | Old SearXNG and indexer are stopped, not deleted. No default `oke` SearXNG/index container exists | SearXNG is retained under optional profile `optional-search`; RAG index remains a manual `indexing` profile. RAG search stays running. OKE workflow reference list showed no SearXNG dependency |
+| C03 | Direct general and IT-scope search each returned HTTP 200, `ok=true`, evidence=3. n8n `oke-search` HTTP 200, `ok=true`, evidence=3, document `password-policy` | Request IDs `oke-cleanup-general-20261105`, `oke-cleanup-it-20261105`, `oke-cleanup-n8n-search-20261105`. No answer-quality/threshold PASS claimed |
+| C04/idempotency | n8n `oke-handoff` first and same-key retry both HTTP 200; ticket `T-2003` same; duplicate false then true; alerted true; DLQ false | New request key `oke-runtime-cleanup-20261105-c04-1`; PostgreSQL confirms that key persisted once. This is new verification data, separate from the prior two tickets |
+| DB preservation | Before: employees/users/tickets/alerts/DLQ=`6/1/2/3/1`; RAG documents/chunks=`8/33`. After: `6/1/3/4/1`; RAG remains `8/33` | Delta is exactly the new ticket and alert. No employee, user, document or chunk rows changed |
+| Admin gate | Login/relogin for `minji.admin` HTTP 200, `must_change_password=true` before/after. Protected admin API HTTP 403; logout HTTP 200; old session then HTTP 401; final logout HTTP 200 | Password was read from VM-only `.env.admin-handoff` in process memory; it was not printed or changed. Existing handoff file remains mode 600. This test does not complete password change or admin features |
+| Credentials/workflows | Six credential records remain: Header Auth account `9a7e5JYI5ez9SXYB`, OKE Backend Internal `bbbd7d3ca8844561`, OKE RAG Index `2d789bbf47004b3f`, OKE RAG Search `a01bde174d3040de`, OKE Team Webhook `6eba4fcbc08d4d75`, OpenAI account `bZrnbEv127VVq5mT`. All 16 workflow credential references resolve | Support/search/handoff/errors active; index inactive. Header Auth account has no current OKE workflow reference but is retained. Distinct typed credentials were not remapped or deleted |
+| FE/image/resources | Local FE login 200. Running image now matches `oke-team-frontend:unified` (`2d2a43fd…`); previous container image ID `578a77e2…` remains with stopped old container | Before image mismatch came from an existing tag pointing to a newer built image while the old container retained its original immutable image ID. No image deletion. RAM available 1347→1433 MiB; disk free 41 GiB; swap used 392→235 MiB |
+
+All old project containers remain stopped and retained. Old index/search/data-api had exit 137 and `OOMKilled=false`; old sandbox runner exit 143 and `OOMKilled=false`. Prior `oke-jihye-p0-postgres-1`, `day67-data-data-api-1`, and completed sandbox-certs exit-0 container remain. No volume, image, container, backup, credential or course file was deleted. The official `flow.py` and common-14 kit were not run. External HTTPS FE root/3000 routing was not changed or retested; the earlier 502/timeout remains a separate issue. No Netbird, nginx, or external ingress setting was modified.
+
+Rollback: first stop project `oke`, then start the retained `day65-n8n` PostgreSQL, data-api, sandbox API, sandbox runner, backend, RAG search, frontend, n8n and runners in dependency order as listed in `deploy/README.md`. Do not start both projects at once because they share exact volumes and host ports. SearXNG and RAG index remain stopped during rollback.
+
+## 9. DAY81 1교시 baseline · 2026-11-06
+
+This is a later **read-only** observation than the 2026-11-05 cleanup record in section 8. The older external FE `502`/`:3000` timeout in sections 7–8 is historical and superseded for public FE routing by the checks below; it is not the current external route status. No VM deployment, account, password, workflow, credential, DB, service, or volume was changed for this report.
+
+| Observation | Actual result | Scope / limit |
+|---|---|---|
+| Git/runtime version boundary | Repo `main=997ea60`; VM repo `a3dd276`; runtime implementation `c1a4c8b` | These commits refer to different environments. `997ea60` is not claimed deployed to VM. VM values are from the controller's read-only snapshot at `2026-11-06T01:01:00Z`. |
+| VM containers / readiness | Compose project `oke`; 9 containers running: n8n, runners, sandbox API/runner, PostgreSQL, data-api, backend, frontend, RAG search. PostgreSQL, sandbox API, backend, frontend, RAG search report healthy. Backend readiness `ready`, `service_mode=app`; n8n/backend/runners mode `app`. | Container/runtime metadata only; no new end-to-end request was sent. |
+| DB baseline | Alembic `0005`; employees/users/tickets/alerts/DLQ = `6/1/3/4/1`; RAG documents/chunks = `8/33` | Read-only counts from the stated VM snapshot. Existing 8-document / 33-chunk index is a baseline, not a new indexing run or a quality result. |
+| Admin readiness | `minji.admin` active admin; `must_change_password=true` | Read-only metadata. No login, password change, or account creation in this task. There is one user account and no general employee login account in this snapshot. |
+| n8n workflow state | `oke-support`, `oke-search`, `oke-handoff`, `oke-errors` active; `oke-index` inactive/manual. Six credential records present. | Metadata only. Active runtime versions are documented in `docs/VM-TEAM-TESTING.md`; version UUIDs are not Git commits. No credential values or IDs recorded here. |
+| Resource snapshot | RAM total `2646 MiB`, available `1436 MiB`; swap total `2965 MiB`, used `224 MiB` | Snapshot-only values, not a sustained load test. |
+| Public FE/API routing (read-only curl during report) | `http://aio-t1.isitsoft.kr/login` → HTTPS (`301`, one redirect); HTTPS `/login` `200` HTML; Next static JS asset `200`; no-cookie `/api/auth/me` `401`; `https://aio-t1.isitsoft.kr:5678/healthz` `200` | Confirms FE HTML/static asset, public `/api` prefix authentication response, and n8n health only. External `/api/docs`, `/api/openapi.json`, `/docs`, `/openapi.json` all return 404; Swagger/OpenAPI is not externally supported. No authenticated FE question/ownership/save flow was run. This resolves the earlier routing observation, not the application test gap. |
+| Official common-14 source / runner | No `cases/common.json` found in the repository or the inspected `Last3Mon/79` course tree. Available `Last3Mon/79/tools/flow.py` SHA-256 `6b0059cb3af135b08954559d0e6b757991fc2fc42a0624244d129e618284fb6f`; its request helper sends JSON content type only and does not support the custom `X-Team-Key` required by current root workflow. | Official common-14 execution not run; pass/total, coverage result, and raw output are N/A/not available. Do not report `0/14` failed or `14/14` passed. Mock checker and team cases are not the official suite. |
+
+The public FE routing check and the controller VM snapshot above are separate observations. The VM snapshot source is the read-only `DAY81-VM-READONLY-SNAPSHOT.txt` handoff; public URL checks used read-only HTTP requests. The report does not imply a login, RAG search, ticket write, alert/DLQ, fault, restore, or common-14 test.
+
+### 1교시 출발점 판정
+
+The 1교시 report material is prepared, but the official common-14 test starting point remains incomplete: the original case file and compatible official runner/authentication procedure have not been handed off. The 81-day checklist's other same-day required checks, including normal evidence-backed answer and its timing criterion, are not complete merely because the VM is healthy or retains 8/33 indexed records. Yubeen's RAG follow-up is scheduled for the weekend after feature freeze/final submission; that does not postpone today's required measurements. The team lead must decide whether to assign a same-day substitute and reserve a safe test window. No substitute owner or score threshold is invented here.
+
+## 10. DAY81 Swagger 공개 경로 · 2026-11-06T10:24:37.289524+09:00
+
+- TASK `vm-public-swagger-1`; FE source `e7f5161`, 이전 VM repo `a3dd276`/통합 runtime `c1a4c8b`와 구분. ff-only 후 frontend만 rebuild/up --no-deps. 나머지 8개 OKE 서비스 ID·StartedAt·image 동일.
+- `GET https://aio-t1.isitsoft.kr/docs`: 200 HTML/SwaggerUIBundle, schema URL `/openapi.json`.
+- `GET https://aio-t1.isitsoft.kr/openapi.json`: 200 JSON, OpenAPI 3.1.0, 18 paths; `/api/auth/login`, `/api/auth/me`, `/api/ask`, `/api/my-requests`, `/api/admin/tickets`, `/tickets` 존재.
+- 회귀: FE `/login`200, HTML에서 찾은 Next static JS200, cookie없는 `/api/auth/me`401, n8n `:5678/healthz`200. `/api/docs`·`/api/openapi.json`은404 유지.
+- 기존 cookie/header 인증을 바꾸지 않았다. 스키마 열람만 확인했으며 실제 업무 POST/삭제·계정/비밀번호·DB변경 시험을 수행하지 않았다. UI 접근200은 인증 API 무조건 성공/공통14 통과의 근거가 아니다.
+
+## 11. FE/BE 통합 배포 및 실 API·DB 대조 · 2026-11-06 11:52–11:55 KST
+
+### 코드·배포 경계
+
+- FE/BE 통합 commit `99fff9c`를 GitHub main에 push했다. FE는 세션/역할 가드, 로그아웃/비밀번호 변경, 질문·내 문의 및 관리자 API 호출을 사용하고 UI fixture 경로를 제거했다. BE `/api/my-requests`는 인증 직원 소유 문의에 연결된 현재 티켓 상태/담당자 답변을 소유자·request key·inquiry 연결 조건으로 결합한다. `npm run typecheck`, `npm run build` 성공; BE `uv run pytest -q`: 162 passed, 65 skipped, 1 기존 deprecation warning. FE 빌드 성공은 브라우저 화면 통과와 구분한다.
+- VM은 `99fff9c`로 ff-only 동기화 후 `SERVICE_MODE=app`에서 backend/frontend만 build/up 했다. 두 컨테이너 healthy. workflow, n8n, RAG search/index, PostgreSQL, data-api 및 기존 볼륨은 변경하지 않았다.
+- 관리자 forced-first-change route guard의 순서 결함을 최소 수정한 FE-only commit `3ff836a`를 이후 push하고 frontend만 추가 배포했다. `npm run typecheck`·`npm run build` 재통과, frontend healthy. 이 수정의 로그인 암호변경 실제 화면 시연은 현재 관리자 계정이 이미 `must_change_password=false`여서 직접 검증하지 않았다.
+- 최종 배포 뒤 공개 GET: `/login` 200, no-cookie `/api/auth/me` 401, `/docs` 200, `/openapi.json` 200, 기존 n8n `:5678/healthz` 200. 브라우저 host unavailable로 시각·클릭 검증은 미실행이다.
+
+### 계정·단일 QA 실행
+
+- 공식 API 검증 후 metadata: `minji.admin` active admin / `must_change_password=false`; `teamtest.employee1` active employee / `must_change_password=false`. 직원 시험 계정은 공식 roster에서 미발급 ID를 확인해 발급했다. 공식 첫 비밀번호 변경, 재로그인, `/api/my-requests` 200, employee의 admin endpoint 403, logout/세션종료가 확인됐다. 비밀값은 저장소 밖 private handoff에만 둔다.
+- 공개 HTTPS QA runner의 고유 `request_id=real-qa-36352d26c53e48eab65a42c4a0c5ec85`, attempt 1, `default_vpn_attempt_1`: `POST /api/ask` HTTP 200, route `담당자 이관`, elapsed 7.341초, sources `[]`. 직원 문의 목록 조회, logout 후 재로그인 조회, admin 처리 PATCH 후 재조회, 직원의 관리자 경로 403가 확인되어 **안전 이관→실 DB 저장→관리자 처리→직원 재조회 API 경로만 PASS**다. 비밀 없는 raw JSON은 `develop/wonmin/runs/real-qa-api-20261106T1150KST.json`이다. 자동답변/검색 근거·8초 normal answer PASS는 아니다.
+- API 목록에서 신규 row를 유일하다고 단정하지 않고, 11:52:07 KST read-only PostgreSQL query로 해당 고유 키를 대조했다: `app.inquiries` request_id 1행, `app.tickets` request_key 1행, ticket `T-2005`; inquiry ID 3 ↔ ticket inquiry_id 3, requester employee ID 1 일치, request key 일치, status `in_progress`, PATCH 답변 일치. 상세 대조는 운영자 비밀 없는 별도 관제 기록에 있으며 raw question/답변 본문은 이 문서에 복제하지 않는다.
+- 배포 직후 전체 read-only count는 users/employees/inquiries/tickets/alerts=`2/6/2/4/5`였다. 이전 기준선과의 총량 차이는 동시 쓰기 가능성 때문에 이 시험의 row 근거로 사용하지 않았으며 기존·타인 row를 삭제/초기화하지 않았다.
+
+### 남은 미검증
+
+- Browser UI click/render, alert/DLQ와 중복 재요청, 본인/타인 API 대조, 재시작 영속성, 일반/IT 정상 문서검색, WF-01 자동답변 및 8초, 공식 common-14 suite는 미실행 또는 이 시험으로 입증되지 않았다. 안정 이관 API pass를 전체 업무/검색 품질 pass로 확대하지 않는다.

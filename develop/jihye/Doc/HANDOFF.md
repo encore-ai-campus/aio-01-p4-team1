@@ -26,7 +26,7 @@ P0-4 갱신(2026-11-05): 전용 검증 DB에 `0002 (head)`를 적용해 vector �
 | --- | --- | --- |
 | C01 | 수언님·오현님 | H01·03·05 핵심(세션 쿠키·관리자 목록·assignee=employees.id·최후 관리자 보호) 공통 반영 완료, H02 세부 제안 유지·실연결 미실행 |
 | C02 | 다혁님·오현님 | 시간 예산·503/504 확정. 응답 캐시/상태·추가 오류코드 등 H04 세부와 H03 nullable 타입은 미확정, 실제 연결 미실행 |
-| C05 | 원민님·오현님 | 요청7/7 적합 및 event_key 경계 회신 수신. H07 팀장 승인 적용해 P1-3 로컬 저장·ACK 구현과 전용 DB 검증 완료. 공통 반영 커밋·workflow/live data-api 실연결은 미확인 |
+| C05 | 원민님·오현님 | P1-3 로컬 구현 `ec6a735`. 원민님이 로컬 Ubuntu n8n→FastAPI→PostgreSQL 15개 그룹 통과를 보고함(`6896952`, push 전; 직접 재실행 아님). 실제 data-api·전체 C04·팀 VM·공통 문서 반영은 미확인 |
 | C06 | 유빈님 | P0-3 실제 DB 접속·vector 가용성 확인. DDL·활성화·grants·실제 색인은 P0-4~5 이후. data-api 응답/인증 및 청크 상태의 DB 저장 필요 여부 추가 확인 |
 | C07 | 오현님·영향받는 담당 | 전용 Compose DB 기동·health·접속·Alembic 기반 확인. 기존 서비스 미변경·호스트 DB포트 미공개. backend/전체Compose/VM은 미실행 |
 
@@ -75,7 +75,7 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 
 ## JH-H07 · C05 알림 ACK·DLQ 상태 명문화 검토
 
-**현재 상태: 사용자 전달로 팀장 승인 및 원민님 세부 회신 수신, P1-3 로컬 구현·전용 PostgreSQL 검증 완료.** 공통 API 문서의 명문화 커밋과 원민 workflow/app 실제 연결은 아직 확인되지 않았다. 아래 ‘미확정’ 표기는 승인 전 당시 검토 이력으로 읽는다.
+**현재 상태: 사용자 전달로 팀장 승인 및 원민님 세부 회신 수신, P1-3 로컬 구현·전용 PostgreSQL 검증 완료. 원민님이 별도 로컬 Ubuntu에서 app C05 HTTP 통합 15개 그룹 통과를 추가 보고했다.** 해당 실행 커밋은 `6896952` push 전이라고 전달받았으며 직접 checkout/재실행하지 않았다. 공통 API 문서 명문화, live practice data-api, 전체 C04 및 팀 VM 연결은 미확인이다. 아래 ‘미확정’ 표기는 승인 전 당시 검토 이력으로 읽는다.
 
 - 출처: 사용자가 전달한 원민님 회신. 대조 대상4bbbf49, 요청 표본7/7 적합(티켓3·알림2·DLQ2). 직접 상대코드 조회/재실행은 하지 않았다.
 - 발견: StoredResponse는 duplicate를 직렬화하지 않아 원민님이 중복알림 성공을 확인하지 못하고 alerts_down으로 판정할 수 있다. DLQ의 현재로컬200과 원민SPEC 신규201 기대가 다르며 공통API§5는DLQ상태코드를 명시하지 않았다.
@@ -85,8 +85,8 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 - ACK 판정: 신규 `{"stored":1,"count":N,"duplicate":false}`, 기존 키 확인 `{"stored":0,"count":N,"duplicate":true}`만 해당 저장 결과로 인정한다. cumulative count만으로 성공을 추정하지 않는다. DLQ는 승인 기준 HTTP200이며 저장 ACK를 확인한다.
 - 상대 검토 결과: 원민님은 해당 내용을 검토 8개 그룹에서 통과했다고 회신했다. 회신자료는 `develop/wonmin/Doc/ALERT-NO-KEY-REVIEW.md`, 커밋 `31e3fa0`이다. 직접 해당 시험을 재실행한 결과가 아니다.
 - P1-3 지혜님 결과: app 응답 모델에 duplicate를 명시하고, app PostgreSQL에서 event_key 없음/신규/동일키/동시 요청과 count를 확인했다. FastAPI HTTP 경로로 tickets 신규201/중복200, alerts ACK와 DLQ200도 확인했다. practice 응답 호환은 HTTP MockTransport로만 확인했다. 전체 222개 시험 통과·기존 경고1건. 상세는 [IMP-PLAN P1-3 실제 기록](IMP-PLAN.md#p1-3-실제-기록--2026-11-05)에 있다. 이는 원민 workflow나 live practice data-api 실연결 결과가 아니다.
-- 다음 반영: 오현님 공통계약 명문화 커밋을 확인한다. 그 뒤 원민님 workflow에서 app C05 실제 HTTP 신규/동일 키/동시 요청·부분 실패를 재시험한다. 공통 반영 및 workflow 실연결은 현재 미확인이다.
-- 남은 확인: 오현님 공통 API 명문화 커밋, 원민 workflow→app C05 실연결, live practice data-api 응답/인증. 승인된 ACK 의미로 P1-3 로컬 구현을 막지 않았다.
+- 원민님 최신 보고(사용자 전달, `6896952`, push 전): 지혜님 `ec6a735` 병합·재배포 뒤 로컬 Ubuntu의 전용 시험 DB/직원 fixture에서 n8n→FastAPI→PostgreSQL 15개 그룹 통과. 신규201/중복200, 동시8회 티켓·알림 각1건, duplicate/event_key 생략·null, DLQ200, 부분실패·복구, DB 재시작 유지를 보고했다. 실제 data-api, 전체 C04, 팀 VM과 공통 C05 문서 반영은 미완료라고 보고받았다. 직접 재실행한 증거가 아니다.
+- 남은 확인: 오현님 공통 API 명문화 커밋, 원민님 보고의 재현 가능한 자료(push 또는 보고서), live practice data-api, 전체 C04와 팀 VM. 승인된 ACK 의미로 P1-3 로컬 구현을 막지 않았다.
 
 ## P0-3 인계·확인·공유 · 2026-11-05
 
@@ -179,7 +179,7 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 
 ### 2026-11-04 · C09 · DAY80 2절 지혜님 진행 내역 반영 요청
 
-- 반영 대상: 루트 `docs/daily/DAY80.md`의 2절 「역할별 진행 내역」 중 지혜님 행. 반영 담당: 오현님.
+- 반영 대상: 루트 `daily/DAY80.md`의 2절 「역할별 진행 내역」 중 지혜님 행. 반영 담당: 오현님.
 - 상태: 본인 HANDOFF에 반영안을 기록했다. 루트 문서는 수정하지 않았으며, 외부 메시지 전송·오현님 확인·공통 문서 반영은 미확인이다.
 - 아래 커밋·작업 상태는 이 요청 작성 시 로컬 Git 기준이다. P0-2 커밋이 생성되면 반영 전에 해당 커밋으로 갱신하고, push 여부는 별도 확인한다.
 
@@ -251,3 +251,11 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 상대 확인이 오면 요청ID·상대 HANDOFF 링크·검토 내용·오현님 공통 반영 커밋/절·관련 SPEC/계획 변경·실제 연결 입력/출력/증거를 구분해 덧붙인다. 현재 전 항목에 확인 근거와 반영 커밋은 없다.
 
 실제 버그는 실행 위치/버전·마스킹한 재현 입력·기대/실제 결과·로그·영향을 전달한다. 상대 파일을 대신 수정하지 않는다. 절차는 [COORDINATION](../../../docs/COORDINATION.md), 기준은 [API](../../../docs/API-CONTRACT.md)·[DB](../../../docs/DATA-AND-DB.md)를 따른다.
+
+## VM 원본 직원 API 무인증 경로 정합화 · 2026-11-05
+
+`main@0bea958` 통합 Compose VM에서 실제 data-api 내부 고정 origin `http://data-api:8800`을 확인했다. `/employees`는 인증 헤더 없이 HTTP 200과 기존 adapter가 검증하는 정확한 6명 계약을 반환했다. 같은 서비스의 `/docs` 목록/상세도 인증 헤더 없이 200, 정확히 8개 원본과 일치했다. 비밀값이나 원문 직원 데이터를 로그/보고에 출력하지 않았다.
+
+기존 `app.cli seed-employees`가 API key/header를 항상 강제해 검증된 내부 no-auth source를 사용할 수 없었다. 통합 변경으로 `DATA_API_EMPLOYEES_NO_AUTH=true`일 때만 `http://data-api:8800` origin을 허용하고 key/header를 하나라도 함께 설정하면 실패하도록 제한한다. 일반 인증 모드는 기존 key+명시 header 경로 그대로 유지한다. seed는 계속 `fetch_employees`의 원본 6명 검증과 `seed_employees` 서비스 함수를 사용하며 직접 SQL·직원값 변경은 하지 않는다. `tests/test_bootstrap.py`: 18 passed, 1 기존 경고.
+
+VM `.env.backend`에는 이 고정 origin no-auth flag만 추가한 뒤 official CLI를 실행할 계획이다. 첫 관리자 이름/login ID는 정책상 미고정이며 controller 답변 대기 중이다. 선택 후 기존 `bootstrap_admin`만 사용하고 비밀번호는 VM mode 600 인계 경로에만 둔다. bootstrap 완료와 로그인·첫 비밀번호 변경을 별도 실측한다.

@@ -195,8 +195,7 @@
       "parameters": {
         "method": "POST",
         "url": "={{ $json.base_url + '/alerts' }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.alert_payload) }}",
@@ -214,12 +213,6 @@
               "responseFormat": "json"
             }
           }
-        }
-      },
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
-          "name": "WONMIN_PRACTICE_STORE_AUTH"
         }
       },
       "retryOnFail": false,
@@ -326,8 +319,7 @@
       "parameters": {
         "method": "POST",
         "url": "={{ $json.base_url + '/dlq' }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.dlq_payload) }}",
@@ -345,12 +337,6 @@
               "responseFormat": "json"
             }
           }
-        }
-      },
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
-          "name": "WONMIN_PRACTICE_STORE_AUTH"
         }
       },
       "retryOnFail": false,
@@ -564,5 +550,6 @@
     "saveManualExecutions": false,
     "errorWorkflow": ""
   },
-  "pinData": {}
+  "pinData": {},
+  "id": "okeErrorsFlow01"
 }

@@ -157,9 +157,42 @@
 변경 전에는 Python 어댑터가 `all,it`를 503/search_unavailable로 반환했고 HTTP 입구는 400/invalid_request로 막았다. 변경 후 형식상 `all,it`는 허용하되 검증 실패는 403/forbidden이다. 400/invalid_request는 필드·목록 형식 오류, 401/unauthorized는 키 누락·불일치, 503/search_unavailable은 임베딩/DB 장애다. 정상/빈 후보는 기존 200 C03 형식을 유지한다. n8n Code 정규화는 하위 400/401/403을 같은 코드로 전달하며 503은 안전한 공통 장애로 반환한다. n8n Webhook 자체의 Header Auth 401 본문은 n8n 실제 버전에서 확인해야 하며 이 변경이 그 본문을 통제한다고 주장하지 않는다.
 
 현재 공식 `oke-search.json`은 비활성이다. 본체 호출 주소 `http://n8n:5678/webhook/oke-search`는 팀 내부 네트워크 계약이며 실제 VM 도달성·Credential·본체 직원 검증·pgvector 결과는 미검증이다. 오현님은 공통 API-CONTRACT 3절에 403/forbidden과 신뢰 경계, 400/401 세부 오류를 반영해야 한다. H-Y01의 옛 `invalid_input` 제안과 현재 `invalid_request` 구현 차이도 정리할 필요가 있다. 원민님은 일반/IT 양성·위조·권한 실패와 하위 503을 분리해 시험해야 한다. 상대 동의·공통 반영·실제 서비스 연결은 기록되지 않았다.
+# RAG 로컬 색인·n8n 인계 (2026-11-05)
+
+- `tools/rag_load.py`가 정확한 Markdown 8개, 명시 승인 권한표, 원본 SHA256을 사전 확인하고 기존 절 청킹·3072차원 임베딩·`PostgresStore`를 연결한다. `--mode real --allow-external`은 명시적인 VM 실행 게이트이며 이 작업에서는 실행하지 않았다.
+- `tools/index_http.py`는 별도 `INDEX_TEAM_KEY`로 인증한 내부 POST `/internal/oke-index`만 받아 서버 소유의 원본·권한표 경로를 사용한다. 인증 실패는 색인을 호출하지 않는다. `oke-index.json`은 비활성 수동 트리거 → 내부 HTTP → 결과 검증이며 기존 Mock은 `tests/fixtures/oke-index-mock.json`에 있다.
+- `oke-search.json`은 기존 비활성 Webhook → 입력 검사 → Python 검색 HTTP → 응답 검사 구조를 유지한다. 일반 직원 검색은 `all`로 제한되고 독립적인 직원 권한 검증 제공자가 연결되지 않은 IT 요청은 Python 서비스에서 403이다. `X-Team-Key`만으로 IT 권한을 증명하지 않는다.
+- 오현님은 VM에서 0004 실제 DDL/권한, 색인·검색 계정, 8개 원본 해시와 문서별 `all`/`it` 승인표, n8n에서 닿는 `INDEX_SERVICE_URL`·`SEARCH_SERVICE_URL`, 두 Header Auth Credential을 확인해야 한다. `Doc/VM-RAG-INTEGRATION-GUIDE.md`에 명령과 환경변수를 적었다. 실제 DB 색인/검색, n8n import·test, 팀 VM 검증은 미완료다.
 
 ## C03 승인 계약 반영 · 2026-11-05
 
 팀장 승인 계약에 따라 X-Team-Key 인증을 통과한 본체 요청의 `access_levels`를 신뢰한다. `["all"]`과 `["all","it"]`만 허용하며 다른 조합은 400, 키 누락·불일치는 401이다. 독립 `trusted_access_resolver`가 없다는 이유로 IT 요청을 403 처리하던 위 C03 기록은 이전 상태 설명이다. 본체의 직원 부서 조회와 권한 생성 책임은 유지된다. 검색 서비스에 직접 접근 가능한 클라이언트가 팀 키를 얻으면 IT 목록을 요청할 수 있으므로 키와 내부 서비스 접근 통제는 배포 시 확인해야 한다. 실제 DB·n8n·VM 검증은 별도다.
 
 로컬 검증: Python `unittest discover -s tests -q` 190개 통과, JavaScript `node --test tests/*.test.cjs` 3개 통과, `git diff --check` 통과. 인증 키 누락·불일치 401, 잘못된 권한 400, 일반/IT 증거 분리, 정상·빈 결과·503은 Fake HTTP/어댑터 테스트로 확인했다. PostgreSQL 실제 데이터, n8n push/test, 팀 VM은 이번 변경에서 실행하지 않았다.
+
+
+## 실제 Markdown 적재 최종 준비 · 2026-11-05
+
+판정 BLOCKED: 로컬 구현과 테스트는 준비됐지만 문서별 승인 권한표·VM 원본 해시/경로·지혜님의 실제 DDL/계정/접속정보가 필요하다. 실제 원본 8개를 읽고 section 33청크 complete·범위 보존·기존 SHA256 일치를 재확인했다. 승인표를 임의로 만들거나 실제 API·DB·VM에 접속하지 않았다.
+
+기존 REAL-DOC-INTEGRATION-READINESS.md와 VM-RAG-INTEGRATION-GUIDE.md에 구현 현황, C03 승인 계약, 9단계 명령·판정 기준, vector(3072)/건수/중복 SQL과 HTTP 양성 점검을 보완했다. oke-search.json은 오래된 403 안내 notes만 수정했다. Python 190개 및 JavaScript 테스트 파일3개 통과, flow.py check 두 워크플로우 오류0·각 경고1, git diff --check 통과. 실제 적재·재실행·rollback·일반/IT 검색·n8n/VM 도달성은 미검증이다. 커밋·푸시는 하지 않았다.
+
+
+## P1-1~5 구현 완료 인계 · 2026-11-05
+
+RAG 담당 코드·평가/복구 도구·워크플로우 검사·통합 제출 준비 구현을 완료했다. 실제 VM 통합 완료와 구별한다. 세부 실행 명령과 계약/합성 샘플은 SUBMISSION-NOTES.md를 따른다.
+
+- Python 전체217건: 216통과, 독립 DB 설정이 없는 기본 실행에서 opt-in1건 skip. JavaScript 테스트 파일3개 통과. JSON/그래프·인증·권한·멱등·rollback·실제 결과 import·실제 보고서 CLI 회귀 포함.
+- 별도 독립 로컬 PostgreSQL17/pgvector0.8.7에서 opt-in1건 실제 실행 통과: 합성 문서2개·합성3072벡터로 INSERT, 동일 입력 skip, 변경 문서만 갱신, 임베딩 실패 보존, 실제 DELETE 후 INSERT 실패 rollback·재시도, all/all+it SQL 검색을 확인했다. 팀원 DB/VM에 접속하지 않았다. 실제 Markdown8개/OpenAI 임베딩 적재 성공으로 해석하지 않는다.
+- rag_db snapshot CLI도 위 로컬 DB에서 읽기 전용 실행 통과했다. 이후 pg_ctl restart 시도가 컨테이너의 주 PostgreSQL 프로세스를 종료하여 --rm/tmpfs 임시 환경이 제거됐다(exit137). 재시작 후 데이터 유지 시험은 통과하지 않았으며 전후 비교 증거가 없다. 이 임시 컨테이너는 남아 있지 않다. VM의 named volume 유지 검증은 팀장 수행 대상이다.
+- flow.py check: oke-index/oke-search 각각 오류0·경고1(수동 트리거에 Webhook 없음 / IF typeVersion2). 정적 검사이며 n8n push/test는 미실행이다. git diff --check 통과.
+- 외부 의존성: 지혜님 마이그레이션/최소권한 계정·실제 GRANT, 리드 문서별 권한표·원본 버전 및 정답표 승인, VM 환경/네트워크/Credential·실제 비용 승인, 본체의 실제 writer/verifier 근거 관측이다.
+- RAG 범위에서 계획한 남은 코드 구현은 없다. 외부 승인·실제 환경 시험 후 발견되는 차이는 후속 보완 대상이다. 코드 READY, 실제 문서 적재/VM 검증 BLOCKED_EXTERNAL. 커밋·푸시는 하지 않았다.
+
+## VM 실원본 접근·권한 manifest 인계 · 2026-11-05
+
+`main@0bea958` VM 내부의 read-only course data-api에서 `/docs` 및 8개 `/docs/{name}` 요청이 인증 헤더 없이 HTTP 200을 반환했다. 목록은 공통 기대 8종과 정확히 일치했고 각 상세의 정규화 text는 기존 원본 파일과 일치했다. API `access_level` 메타데이터는 목록/상세 모두 없었다. source 파일의 SHA-256은 manifest에 기록했다. 이메일·전화 패턴은 0건이며 문서 원문은 보고서에 복사하지 않았다.
+
+`docs/DATA-AND-DB.md` §4와 공통 평가 §1의 확정 fallback을 적용했다: 8개 standard policy 중 `security-incident=it`, 나머지 7개는 `all`. 임의 threshold/정답표 기반 승격은 하지 않았다. `develop/yubeen/rag-permissions.json`은 기존 `rag_load.build_snapshot` 요구 형식과 일치하며, indexer에는 원본 docs를 read-only mount한다. `tests/test_rag_prepare.py`: 34 passed. 실제 OpenAI 색인/검색 결과 및 chunk 수는 아직 실행 후 기입한다.
+
+`rag_prepare inventory --source api --allow-network --no-auth`는 운영자가 명시한 무인증 모드로 제한했다. 이 모드는 `DATA_API_URL`이 `http://data-api:8800`과 정확히 일치하고 `DATA_API_KEY`가 없을 때만 허용하며 인증 헤더를 보내지 않는다. 일반 API-key 모드는 유지한다.

@@ -3,6 +3,8 @@ import argparse
 import copy
 import hashlib
 import json
+import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 from rag_index import MockStore, index_snapshot, load_settings
@@ -30,6 +32,55 @@ def mock_embed(content, model, dimensions):
 def state_digest(store):
     """본문·벡터 원문 대신 저장 상태의 해시만 반환한다."""
     return hashlib.sha256(json.dumps(store.documents, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+
+
+def recovery_inventory(store):
+    """Safe Fake inventory: no document text, vectors, credentials, or DB IDs."""
+    documents = []
+    for key, document in sorted(store.documents.items()):
+        chunks = document['chunks']
+        numbers = [chunk['chunk_no'] for chunk in chunks]
+        documents.append({'doc_key': key, 'chunk_count': len(chunks),
+                          'chunk_nos': numbers,
+                          'content_hashes': [chunk['content_hash'] for chunk in chunks],
+                          'source_hash': document['source_hash'],
+                          'access_level': document['access_level'],
+                          'duplicate_chunk_nos': len(numbers) != len(set(numbers)),
+                          'missing_chunk_nos': numbers != list(range(len(numbers)))})
+    return documents
+
+
+def recovery_record(phase, run_id, before=None):
+    if phase not in ('before', 'after') or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', run_id):
+        raise ValueError('invalid_recovery_input')
+    snapshot = json.loads((ROOT / 'cases/chunk-comparison-mock.json').read_text())
+    store = MockStore()
+    indexed = index_snapshot(snapshot, mock_embed, store)
+    documents = recovery_inventory(store)
+    record = {'phase': phase, 'run_id': run_id, 'mode': 'fake',
+              'verified_at': datetime.now(timezone.utc).isoformat(),
+              'indexed_counts': indexed['counts'], 'documents': documents,
+              'actual_restart_or_restore': False}
+    if phase == 'after':
+        if not isinstance(before, dict) or before.get('phase') != 'before' or before.get('run_id') != run_id or before.get('mode') != 'fake':
+            raise ValueError('matching_before_required')
+        record['comparison'] = {'same_inventory': documents == before.get('documents'),
+                                'baseline_verified_at': before.get('verified_at')}
+    return record
+
+
+def recovery_reports(path):
+    text = path.read_text() if path.exists() else ''
+    return [json.loads(part) for part in re.findall(r'<!-- rag-recovery-record -->\n```json\n(.*?)\n```', text, re.S)]
+
+
+def append_recovery_report(path, record):
+    reports = recovery_reports(path)
+    if any(r.get('run_id') == record['run_id'] and r.get('phase') == record['phase'] for r in reports):
+        raise ValueError('phase_already_recorded')
+    with path.open('a') as stream:
+        stream.write('\n\n<!-- rag-recovery-record -->\n```json\n'
+                     + json.dumps(record, ensure_ascii=False, indent=2) + '\n```\n')
 
 
 def verify_mock(snapshot=None):
@@ -101,7 +152,25 @@ def main(argv=None):
     evaluation.add_argument('--repeats', type=int, default=3)
     evaluation.add_argument('--results', type=Path, help='optional local Fake bundle; no service calls')
     evaluation.add_argument('--output', type=Path)
+    recovery = sub.add_parser('recovery', help='Fake inventory comparison; no restart or DB access')
+    recovery.add_argument('--phase', choices=('before', 'after'), required=True)
+    recovery.add_argument('--run-id', default='mock-local')
+    recovery.add_argument('--output', type=Path, required=True)
     args = parser.parse_args(argv)
+    if args.command == 'recovery':
+        if not args.output.resolve().is_relative_to(ROOT):
+            parser.exit(2, 'output_outside_owner_directory\n')
+        try:
+            prior = recovery_reports(args.output)
+            before = next((r for r in reversed(prior) if r.get('run_id') == args.run_id and r.get('phase') == 'before'), None)
+            record = recovery_record(args.phase, args.run_id, before)
+            append_recovery_report(args.output, record)
+        except (ValueError, OSError, KeyError, TypeError):
+            parser.exit(2, 'invalid_recovery_record\n')
+        print(json.dumps({'phase': record['phase'], 'run_id': record['run_id'],
+                          'mode': 'fake', 'document_count': len(record['documents']),
+                          'comparison': record.get('comparison')}, ensure_ascii=False))
+        return
     if args.command == 'evaluate':
         from rag_evaluate import evaluate
         if args.output and not args.output.resolve().is_relative_to(ROOT):
@@ -123,7 +192,8 @@ def main(argv=None):
             old = args.output.read_text() if args.output.exists() else ''
             if marker not in old:
                 with args.output.open('a') as stream:
-                    stream.write('\n\n' + marker + '\n## P1-3 오프라인 집계 · 실제 검색 미실행\n\n```json\n' + rendered + '\n```\n')
+                    label = '실제 관측 입력 집계 · 실행 출처 별도 확인' if result['mode'] == 'real' else 'Fake/준비 집계 · 실제 검색 미실행'
+                    stream.write('\n\n' + marker + '\n## P1-3 ' + label + '\n\n```json\n' + rendered + '\n```\n')
         print(rendered)
         return
     if args.source != 'mock':

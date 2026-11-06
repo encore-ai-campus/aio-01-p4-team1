@@ -103,3 +103,18 @@ uv run <80일차_키트_경로>/tools/flow.py check workflows/oke-search.json
 
 - [주제](../../../docs/TOPIC.md) · [공통 API 계약](../../../docs/API-CONTRACT.md) · [데이터·DB](../../../docs/DATA-AND-DB.md) · [팀 헌장·역할](../../../docs/TEAM-CHARTER.md)
 - [협업 방식과 연결 규칙](../../../docs/COORDINATION.md) · [RAG 설계서](../../../docs/RAG-ARCHITECTURE.md) · [시나리오·평가 가이드](../../../docs/EVALUATION-GUIDE.md)
+
+
+## P1 구현 현황 갱신 · 2026-11-05
+
+위 생성 예정/미실행 설명은 최초 계획 이력이다. 현재 구현 인계 기준은 아래와 SUBMISSION-NOTES.md를 따른다. 단계의 실환경 완료 체크는 리드의 실행 증거 수신 전 표시하지 않는다.
+
+| 단계 | RAG 구현 산출물 | 실제 환경 대기 |
+| --- | --- | --- |
+| P1-1 | rag_load real→OpenAIEmbeddingProvider→PostgresStore, 멱등/변경/문서 트랜잭션·rollback, opt-in 격리 DB 시험 | DDL/계정·승인표와 실제 적재·재실행 |
+| P1-2 | X-Team-Key→입력→SQL 선필터→C03, rag_contract로 sources/관측 LLM evidence 검사 | 실제 일반/IT SQL·본체 관측·n8n |
+| P1-3 | Fake/real 평가, rag_measure collect/merge/report, 비교용 명시 300청킹, Recall@3/MRR/시간 | 정답표 승인·실측·비용 |
+| P1-4 | rag_db snapshot/compare 실제 읽기 전용 DB 경로, 갱신/실패 재시도, 복구 절차 | 리드 재시작·새 DB/백업 복원과 전후 기록 |
+| P1-5 | SUBMISSION-NOTES, 합성 계약 샘플, 통합 관측 검증 CLI와 실행 순서 | 리드 배포·본체 통합 및 제출 취합 |
+
+코드 구현 준비와 실제 기능 검증은 구별한다. 미확정 질문·문서별 권한은 승인 대기이며 자동 확정하지 않는다. DB DDL·계정·타 담당 폴더·공통 계약은 변경하지 않는다.

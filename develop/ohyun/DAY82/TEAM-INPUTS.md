@@ -35,4 +35,4 @@ DB 마이그레이션·원본/색인/모델·설정 버전:
 - 시연: 원민님 요청·지혜님 실행법·각 기능 담당 재현 → 오현님 VM 리허설.
 - 제출 사본: 검토된 main 원본 → submission 취합·재검증 → 제출처 Default branch. docs/는 merge로만 반영한다.
 
-공식 근거: [실행 결과서](../../../docs/EXECUTION-RESULT.md) · [DAY82](../../../docs/daily/DAY82.md) · [팀장 제출 안내](../SUBMISSION.md).
+공식 근거: [실행 결과서](../../../docs/EXECUTION-RESULT.md) · [DAY82](../../../daily/DAY82.md) · [팀장 제출 안내](../SUBMISSION.md).

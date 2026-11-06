@@ -311,7 +311,7 @@
         300
       ],
       "parameters": {
-        "jsCode": "const item = $input.first().json;\nconst urgentEnrichment = item.urgent_pre_handoff === true && item.handoff_done === true;\nif (item.decision !== 'pending' && !urgentEnrichment) return [{ json: { ...item, retrieval_decision: 'skipped', usable_evidence: [] } }];\nif (item.ticket_lookup?.state === 'forbidden' && !urgentEnrichment) return [{ json: { ...item, retrieval_decision: 'forbidden', decision: 'forbidden', usable_evidence: [] } }];\nif (!urgentEnrichment && item.triage?.ticket_id && ['not_found', 'unavailable'].includes(item.ticket_lookup?.state)) {\n  return [{ json: { ...item, retrieval_decision: 'handoff', retrieval_reason: 'low_confidence',\n    retrieval_error: 'ticket_lookup_unresolved', usable_evidence: [] } }];\n}\n// Without usable policy evidence, an own ticket status question is answered from the verified lookup instead of a new ticket.\nconst statusQuestion = /(처리|진행|접수)\\s*(상태|상황|현황)|어떻게\\s*(됐|되었|되고)|언제\\s*(처리|완료|끝)/.test(item.clean_question);\nconst statusOnly = !urgentEnrichment && Boolean(item.triage?.ticket_id) && item.ticket_lookup?.state === 'ok' && statusQuestion;\nconst noEvidence = reason => statusOnly\n  ? [{ json: { ...item, retrieval_decision: 'ticket_status', decision: 'ticket_status', usable_evidence: [] } }]\n  : [{ json: { ...item, retrieval_decision: 'handoff', retrieval_reason: reason, usable_evidence: [] } }];\nconst search = item.search;\nif (!search || ['invalid', 'unavailable'].includes(search.state) || item.retrieval_error) {\n  return noEvidence('search_unavailable');\n}\nif (search.state === 'empty') return noEvidence('no_evidence');\nif (search.state !== 'found') return noEvidence('low_confidence');\nconst seen = new Set();\nconst usable_evidence = [];\nfor (const row of search.evidence) {\n  const key = `${row.doc}\\u0000${row.section}\\u0000${row.text}`;\n  if (seen.has(key)) continue;\n  seen.add(key);\n  usable_evidence.push(row);\n}\n// Local P1-2 Mock branch value only; no measured or approved production threshold.\nconst mock_threshold = 0.8;\nconst eligible = usable_evidence.filter(row => row.score >= mock_threshold &&\n  (!urgentEnrichment || row.doc === 'security-incident')).slice(0, 3);\nif (eligible.length === 0) return noEvidence('low_confidence');\nreturn [{ json: { ...item, retrieval_decision: 'write', retrieval_reason: null, usable_evidence: eligible,\n  threshold_mode: 'mock', mock_threshold } }];"
+        "jsCode": "const item = $input.first().json;\nconst urgentEnrichment = item.urgent_pre_handoff === true && item.handoff_done === true;\nif (item.decision !== 'pending' && !urgentEnrichment) return [{ json: { ...item, retrieval_decision: 'skipped', usable_evidence: [] } }];\nif (item.ticket_lookup?.state === 'forbidden' && !urgentEnrichment) return [{ json: { ...item, retrieval_decision: 'forbidden', decision: 'forbidden', usable_evidence: [] } }];\nif (!urgentEnrichment && item.triage?.ticket_id && ['not_found', 'unavailable'].includes(item.ticket_lookup?.state)) {\n  return [{ json: { ...item, retrieval_decision: 'handoff', retrieval_reason: 'low_confidence',\n    retrieval_error: 'ticket_lookup_unresolved', usable_evidence: [] } }];\n}\n// Without usable policy evidence, an own ticket status question is answered from the verified lookup instead of a new ticket.\nconst statusQuestion = /(처리|진행|접수)\\s*(상태|상황|현황)|어떻게\\s*(됐|되었|되고)|언제\\s*(처리|완료|끝)/.test(item.clean_question);\nconst statusOnly = !urgentEnrichment && Boolean(item.triage?.ticket_id) && item.ticket_lookup?.state === 'ok' && statusQuestion;\nconst noEvidence = reason => statusOnly\n  ? [{ json: { ...item, retrieval_decision: 'ticket_status', decision: 'ticket_status', usable_evidence: [] } }]\n  : [{ json: { ...item, retrieval_decision: 'handoff', retrieval_reason: reason, usable_evidence: [] } }];\nconst search = item.search;\nif (!search || ['invalid', 'unavailable'].includes(search.state) || item.retrieval_error) {\n  return noEvidence('search_unavailable');\n}\nif (search.state === 'empty') return noEvidence('no_evidence');\nif (search.state !== 'found') return noEvidence('low_confidence');\nconst seen = new Set();\nconst usable_evidence = [];\nfor (const row of search.evidence) {\n  const key = `${row.doc}\\u0000${row.section}\\u0000${row.text}`;\n  if (seen.has(key)) continue;\n  seen.add(key);\n  usable_evidence.push(row);\n}\n// Local P1-2 Mock branch value only; no measured or approved production threshold.\nconst mock_threshold = 0.8;\nconst eligible = usable_evidence.filter(row => row.score >= mock_threshold &&\n  (!urgentEnrichment || row.doc === 'security-incident')).slice(0, 3);\nif (eligible.length === 0) return noEvidence('low_confidence');\nreturn [{ json: { ...item, retrieval_decision: 'write', retrieval_reason: null, usable_evidence: eligible, status_only: statusOnly,\n  threshold_mode: 'mock', mock_threshold } }];"
       }
     },
     {
@@ -323,7 +323,7 @@
         400
       ],
       "parameters": {
-        "jsCode": "const item = $input.first().json;\nif (item.decision === 'clarify' || item.decision === 'auto_answer' || item.decision === 'ticket_status' || item.ticket_lookup?.state === 'forbidden') return [{ json: { ...item, decision: item.ticket_lookup?.state === 'forbidden' ? 'forbidden' : item.decision, handoff_needed: false } }];\nconst category = item.triage?.type ?? 'other';\nconst priority = item.priority === 'high' ? 'high' : 'normal';\n// Until search exists, an ordinary non-clarifying question ends conservatively.\nconst searchReason = item.search?.state === 'empty' ? 'no_evidence' : ['unavailable', 'invalid'].includes(item.search?.state) ? 'search_unavailable' : 'low_confidence';\nconst reason = item.decision_reason ?? item.retrieval_reason ?? searchReason;\nconst titles = { account: '계정 문의', network: '네트워크 문의', mail_document: '메일·문서 문의', device: '장비 문의', software: '소프트웨어 문의', security: '보안 사고 문의', other: 'IT 지원 문의' };\nconst payload = { request_id: item.request_id, requester: item.user, title: titles[category], category, priority, reason };\nreturn [{ json: { ...item, handoff_needed: true, decision_reason: reason, handoff_payload: payload } }];"
+        "jsCode": "const item = $input.first().json;\nif (item.decision === 'clarify' || item.decision === 'auto_answer' || item.decision === 'ticket_status' || item.ticket_lookup?.state === 'forbidden') return [{ json: { ...item, decision: item.ticket_lookup?.state === 'forbidden' ? 'forbidden' : item.decision, handoff_needed: false } }];\n// An own ticket status question that could not get a verified auto answer (locked, writer or verifier failure)\n// still reports the verified own ticket status instead of opening a new ticket.\nif (item.status_only === true && item.ticket_lookup?.state === 'ok' && item.urgent_pre_handoff !== true)\n  return [{ json: { ...item, decision: 'ticket_status', handoff_needed: false } }];\nconst category = item.triage?.type ?? 'other';\nconst priority = item.priority === 'high' ? 'high' : 'normal';\n// Until search exists, an ordinary non-clarifying question ends conservatively.\nconst searchReason = item.search?.state === 'empty' ? 'no_evidence' : ['unavailable', 'invalid'].includes(item.search?.state) ? 'search_unavailable' : 'low_confidence';\nconst reason = item.decision_reason ?? item.retrieval_reason ?? searchReason;\nconst titles = { account: '계정 문의', network: '네트워크 문의', mail_document: '메일·문서 문의', device: '장비 문의', software: '소프트웨어 문의', security: '보안 사고 문의', other: 'IT 지원 문의' };\nconst payload = { request_id: item.request_id, requester: item.user, title: titles[category], category, priority, reason };\nreturn [{ json: { ...item, handoff_needed: true, decision_reason: reason, handoff_payload: payload } }];"
       }
     },
     {
@@ -958,8 +958,7 @@
       "parameters": {
         "method": "GET",
         "url": "={{ String($env.DATA_API_URL || 'http://data-api:8800').replace(/\\/$/, '') + '/employees' }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "options": {
           "timeout": 2000,
           "redirect": {
@@ -974,12 +973,6 @@
               "responseFormat": "json"
             }
           }
-        }
-      },
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
-          "name": "SUPPORT_DATA_API_X_API_KEY"
         }
       },
       "onError": "continueRegularOutput"
@@ -1125,8 +1118,7 @@
       "parameters": {
         "method": "GET",
         "url": "={{ $json.lookup_request.url }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "none",
         "options": {
           "timeout": 2000,
           "redirect": {
@@ -1141,12 +1133,6 @@
               "responseFormat": "json"
             }
           }
-        }
-      },
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
-          "name": "SUPPORT_DATA_API_X_API_KEY"
         }
       },
       "onError": "continueRegularOutput"

@@ -1,6 +1,6 @@
 # 지혜님 · SPEC
 
-[TODO](TODO.md) → **SPEC** → [IMP-PLAN](IMP-PLAN.md). 요구 명세이며 단계별 실제 구현·시험 결과는 IMP-PLAN에 구분한다. P0-1~2 골격·계약 모델·Mock을 확인했으며 실제 인증·업무 저장·외부 연결은 미구현이다. 예시 ID·응답은 기대값이며 실행 결과가 아니다. 기준 적용은 바로 진행하고 변경/누락 정책만 [HANDOFF](HANDOFF.md)로 요청한다.
+[TODO](TODO.md) → **SPEC** → [IMP-PLAN](IMP-PLAN.md). 요구 명세이며 단계별 실제 구현·시험 결과는 IMP-PLAN에 구분한다. P0-1~7·P1-1~3 구현/로컬 확인은 완료 기록이며 P1-4 통합은 진행 중이다. 실제 VM·frontend·RAG 원본/OpenAI·공식 평가 결과는 별도로 확인한다. 예시 ID·응답은 기대값이며 실행 결과가 아니다. 기준 적용은 바로 진행하고 변경/누락 정책만 [HANDOFF](HANDOFF.md)로 요청한다.
 
 ## 1. 적용할 기준 · 새로 선정하지 않음
 

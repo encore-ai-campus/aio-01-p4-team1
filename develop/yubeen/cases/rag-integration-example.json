@@ -1,0 +1,23 @@
+{
+  "mode": "synthetic_example_not_real_execution",
+  "doc_access": {"synthetic-public": "all"},
+  "record": {
+    "access_levels": ["all"],
+    "search_status": 200,
+    "search_response": {
+      "ok": true,
+      "evidence": [{"doc": "synthetic-public", "section": "합성 절", "text": "합성 안내", "score": 0.7}],
+      "reason": null
+    },
+    "llm_evidence": [{"doc": "synthetic-public", "section": "합성 절", "text": "합성 안내", "score": 0.7}],
+    "support_response": {
+      "request_id": "synthetic-integration-001",
+      "route": "자동 답변",
+      "answer": "합성 안내",
+      "sources": [{"doc": "synthetic-public", "section": "합성 절", "score": 0.7}],
+      "ticket": null,
+      "agents": {},
+      "security": {}
+    }
+  }
+}

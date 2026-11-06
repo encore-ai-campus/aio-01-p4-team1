@@ -1,10 +1,10 @@
-"""Offline evaluation only. No indexing or network. Fake numbers are not RAG quality."""
+"""Evaluate labelled Fake or imported real observations without service calls."""
 import math
 import statistics
 import hashlib
 import re
 from collections import Counter
-from rag_search import validate_evidence
+from rag_search import validate_evidence, valid_levels
 
 FIELDS = ('embedding_ms', 'db_ms', 'search_ms', 'embedding_tokens', 'chunk_count', 'cost')
 
@@ -117,8 +117,8 @@ def evaluate(cases, repeats=3, bundle=None):
     if len({q['id'] for q in questions}) != len(questions):
         raise ValueError('duplicate_question_id')
     if bundle is not None:
-        if bundle.get('mode') != 'fake':
-            raise ValueError('only_fake_import_enabled')
+        if bundle.get('mode') not in ('fake', 'real'):
+            raise ValueError('invalid_result_mode')
         compare_conditions(bundle['conditions'])
         condition = bundle['conditions']['section']
         if condition['questions_version'] != cases['version'] or condition['repeats'] != repeats:
@@ -127,7 +127,22 @@ def evaluate(cases, repeats=3, bundle=None):
     expected_keys = {f"{method}:{q['id']}:{r}" for method in ('section','300') for q in questions for r in range(1,repeats+1)}
     if set(records) - expected_keys:
         raise ValueError('unknown_record')
-    output = {'mode': 'preparation' if bundle is None else 'fake', 'actual_search_executed': False,
+    real = bundle is not None and bundle.get('mode') == 'real'
+    if real:
+        if not records:
+            raise ValueError('real_records_required')
+        permissions = bundle.get('doc_access', {})
+        if (not permissions or any(v not in ('all', 'it') for v in permissions.values())
+                or set(permissions) != set(condition['source_hashes'])
+                or any(not valid_levels(q.get('access_levels')) for q in questions)):
+            raise ValueError('invalid_real_permissions')
+        if any(not re.fullmatch('[0-9a-f]{64}', h) for h in condition['source_hashes'].values()):
+            raise ValueError('invalid_real_source_hashes')
+        for r in records.values():
+            if safe_ref(r.get('source_ref')) is None or r.get('search_ms') is None:
+                raise ValueError('real_measurement_provenance_required')
+    output = {'mode': 'preparation' if bundle is None else bundle['mode'], 'actual_search_executed': real,
+              'execution_claim': 'imported_observations' if real else 'not_executed',
               'conditions': None if bundle is None else bundle['conditions'], 'methods': {}}
     for method in ('section', '300'):
         counts = Counter(); excluded = []; observations = []; measurements = {f:[] for f in FIELDS}
@@ -174,6 +189,8 @@ def evaluate(cases, repeats=3, bundle=None):
                                     for rank, e in enumerate(evidence, 1) if e['doc'] == q['expected_doc'])
                     quotes += bool(matching) and all(any(t in e['text'] for e in matching) for t in q['verified_required_quotes'])
                 permissions = {} if bundle is None else bundle.get('doc_access',{})
+                if real and any(e['doc'] not in permissions for e in evidence):
+                    raise ValueError('unknown_document_permission')
                 for e in evidence:
                     if e['doc'] in permissions:
                         leak_observed += 1; leaks += permissions[e['doc']] not in q['access_levels']
@@ -194,6 +211,7 @@ def evaluate(cases, repeats=3, bundle=None):
                     'environment':condition['environment'],'model':condition['model'],
                     'settings_version':condition['settings_version'], 'source_ref':safe_ref(r.get('source_ref'))})
         output['methods'][method] = {'hit_at_3':ratio(hits,answers),
+            'recall_at_3':ratio(hits,answers),  # One relevant document per approved question.
             'mrr':ratio(reciprocal_rank,answers),'section_hit_at_3':ratio(sections,answers),
             'evidence_coverage':ratio(quotes,answers),'no_answer_incorrect':ratio(false_answers,answer_observed),
             'no_answer_attempts':no_answers,'permission_leaks':ratio(leaks,leak_observed),

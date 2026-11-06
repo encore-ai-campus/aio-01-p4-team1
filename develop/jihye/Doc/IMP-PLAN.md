@@ -2,7 +2,7 @@
 
 [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → **IMP-PLAN**. 여기서 첫 미완료 단계부터 실행한다. 공통 기본안을 적용할 때 별도 승인을 기다리지 않는다. 누락 정책은 [HANDOFF](HANDOFF.md)에 제안으로 두고 그 정책과 무관한 작업을 계속한다.
 
-**전체 상태: P0-1~7, P1-1~3 로컬 구현·검증 기록 완료.** C02 실제 n8n 호출, 원민 workflow의 app 저장 연결, live practice data-api, VM·화면 통합은 미확인이다. 아래 단계별 실제 기록 외에는 구현 예정이다. 각 단계의 체크는 실제 확인 증거를 남긴 뒤에만 한다.
+**현재 상태: P0-1~7, P1-1~3 로컬 구현·검증 완료. P1-4 로컬 재시작 유지시험과 web-flow 회귀를 추가·확인 중이며 백업/복원·VM·화면·RAG 통합은 미완료다.** 원민님의 C05 15개 그룹 실연동은 로컬 전용 DB 결과로 전달받았으며 직접 재실행하지 않았다. 각 항목은 실행 주체와 환경을 구분해 기록한다.
 
 모든 아래 로컬 명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 의존성이 없는 모델/Mock 시험부터 시작한다. DB 시험은 본인 전용 검증 DB, 실제 연결은 제공자 준비 후에 수행한다.
 
@@ -26,7 +26,7 @@
 | P1-1 | 직원/계정/세션 테이블·첫 관리자 | 실제 인증/회수·비밀번호·관리자 보호 경계. 추가 제안과 확정 정책 구분 | 수언 실제 쿠키/화면 시험 |
 | P1-2 | 인증·inquiries·support Mock, 실제 연결 때 제공자 준비 | 소유권→선저장→짧은 거래 종료→HTTP→검증/저장. 공통400·timeout·재시도0 확인 | 다혁 C02·수언 본인 목록 |
 | P1-3 | tickets/alerts/dlq·내부 인증·모드, H07 팀장 승인과 원민 회신 적용 | app 저장·practice 어댑터·동시성·부분 실패·DLQ 구현 | 원민 workflow의 app C05 실제 HTTP 재시험 |
-| P1-4 | 제공자·격리 시험 DB·공식 키트/관측 대상 확보 | 실연결·재시작·별도DB 백업/복원·재색인/반복/측정. Mock을 실측으로 집계하지 않음 | 유빈 복원검색·원민 보고서·오현 제출 |
+| P1-4 | 제공자·격리 시험 DB·공식 키트/관측 대상 확보 | 준비된 로컬 경로의 web-flow·재시작 유지, 별도 DB 백업/복원, 실제 화면/RAG/평가 연결. Mock을 실측으로 집계하지 않음 | 유빈 복원검색·원민 C05 보고서·오현 제출 |
 
 각 단계의 파일·명령은 아래 기존 계획에 있다. 전제 미충족은 실제 실패/미실행으로 기록하고, 정상·오류·권한·경계 증거 없이 체크하지 않는다.
 
@@ -225,11 +225,26 @@
 ## P1-4 · 실연결·재시작·측정·인계
 
 - [ ] 연결 SPEC: BE-01~07, C01/C02/C05/C06/C07/C08/C09.
-- 생성 예정: `tests/integration/test_persistence.py`, `tests/integration/test_web_flow.py`, `tests/integration/test_backup_restore.py`; 실제 실행 후 `Doc/SUBMISSION-NOTES.md`. 상대 코드/워크플로우·공통 사례 기대값은 수정하지 않는다.
-- 확인 예정: `uv run pytest tests/integration/test_persistence.py tests/integration/test_web_flow.py -q`, volume 유지 postgres/backend 재시작 후 revision·문의/티켓·RAG 청크/검색 재확인. frontend→FastAPI→동일support, handoff→같은 저장대상, 유빈님 실제 색인/재색인을 각각 확인한다.
-- 백업/복원 확인 예정: `tests/integration/test_backup_restore.py`에서 별도 검증 DB의 백업을 다른 격리 DB에 복원하고 revision·관계·행 수·해시를 대조한다. 유빈님이 복원 후 권한별 검색을 확인한다. named volume 유지 재시작과 별개이며 공유/운영 DB를 덮어쓰지 않는다. 자동 백업 주기·RPO/RTO는 이번 필수 범위에 확정하지 않는다.
-- 측정: SPEC 8절대로 품질·지연 원자료를 수집한다. 개발 호출 예산과 최종 검증을 구분한다. 최종 제출용 LLM 시나리오는 **3회 반복(`--repeat 3`)**하고 회차별 실패도 보고한다. 처리시간 측정은 최대5회 표본과 계산 방법을 남긴다. n8n push/test와 팀 VM 실행은 담당 사람이 수행한다.
-- 넘길 결과: 각 상대에게 실제 입출력·Mock 여부·실패/재시험 보고서, 오현님에게 검증한 명령/버전/head·재시작/복구·정책 미반영·미실행을 전달한다. 설계/결과 취합은 본인 SUBMISSION-NOTES를 통해 하고 공통 docs는 직접 고치지 않는다.
+- 생성: `tests/integration/test_persistence.py`, `tests/integration/test_web_flow.py`, `tests/integration/test_backup_restore.py`, `deploy/check_persistence.py`, `Doc/SUBMISSION-NOTES.md`. 상대 코드/워크플로우·공통 사례 기대값은 수정하지 않는다.
+- 로컬 확인: `uv run python deploy/check_db.py --all`로 app/RAG 모델/API 회귀를 실행한다. `uv run python deploy/check_persistence.py --confirm-private-db`는 `deploy/.env`가 지정한 전용 `oke-jihye-p0`만 재시작하고 unique fixture로 app 업무행·RAG chunk/hash/vector 길이를 재확인한 뒤 삭제한다.
+- web-flow 시험은 세션 사용자→문의 선저장→C02 HTTP Mock→내 문의 조회→C05 티켓 연결을 실제 전용 PostgreSQL과 TestClient로 확인한다. 이 시험의 C02 구간은 Mock이며 frontend/browser나 n8n 실연결이 아니다.
+- 백업/복원은 명시적 opt-in, 별도 빈 DB 이름이 `*_p1_4_restore`, 동일 호스트, `pg_dump`/`pg_restore` 및 관리자 권한이 준비되어야 한다. 운영/공유 DB로 실행하지 않는다. revision·테이블별 행 수·문서/청크 해시와 vector 차원을 대조한다. named volume 재시작과 별개이며 자동 백업 주기·RPO/RTO는 확정 범위가 아니다.
+- 실제 연결·평가: 수언 frontend→FastAPI, 다혁 본체 C02/C03/C04, 유빈 실제 색인/재색인·복원 후 권한 검색, 원민 C05, 공식 키트 시나리오·LLM 3회 반복은 제공 환경/키트 승인 후 각 담당자 결과를 기록한다. 외부 결과는 전달받은 보고와 직접 재실행을 구분한다.
+- 측정은 SPEC 8절대로 원자료와 실행 환경을 남긴다. 최종 제출용 LLM 시나리오는 **3회 반복(`--repeat 3`)**하며 회차별 실패를 보존한다. n8n push/test와 팀 VM 실행은 담당자가 수행한다.
+- 넘길 결과: 실제 입출력·Mock 여부·실패/재시험, 명령/버전/head·재시작/복구·미실행을 `Doc/SUBMISSION-NOTES.md`와 필요한 HANDOFF에 기록한다. 공통 docs는 직접 고치지 않는다.
+
+### P1-4 실제 기록 · 2026-11-05
+
+- 예제/기준: 통합·재시작·별도 DB 복원 순서를 참고하되, 구현은 본인 private Compose DB에만 제한했다. 팀 VM·기존 data-api/n8n·공통 평가 기준을 임의 재배포/변경하지 않았다.
+- 변경: 전용 DB의 업무 데이터와 synthetic RAG 3072차원 chunk를 phase seed→PostgreSQL/backend 재시작→verify→cleanup 하는 `deploy/check_persistence.py`와 `tests/integration/test_persistence.py`를 추가했다. `tests/integration/test_web_flow.py`는 세션→문의/C02 Mock→목록→C05 ticket linkage를 DB/TestClient로 확인한다. `test_backup_restore.py`는 별도 빈 disposable DB와 명시적 opt-in 없이는 skip하고, target 객체가 있으면 수정하지 않는다.
+- `uv run python deploy/check_db.py --all`: 최종 **223 passed, 2 skipped, 기존 warning 1건, exit 0**. opt-in 없는 backup/restore와 phase 없는 persistence test는 안전 조건에 따라 skip한다. 첫 실행은 phase 없는 전체 suite 처리와 web fixture cleanup FK 순서에서 실패했고 수정했다. 그 다음 run은 이전 실패가 남긴 unique `p14-*` fixture 때문에 빈 DB 전제 테스트가 실패했으며, 자기 prefix만 정리하도록 보완한 후 재실행 통과했다.
+- `docker compose ... run db-check ... test_web_flow.py`: **1 passed, warning 1건**. 실제 전용 PostgreSQL을 사용했으며 C02 구간은 HTTP Mock이다.
+- `uv run python deploy/check_persistence.py --confirm-private-db`: seed **1 passed**, private PostgreSQL/backend restart 후 readiness healthy, verify **1 passed**, cleanup **1 passed**. app의 employee/inquiry/ticket/alert/DLQ와 rag document/chunk·metadata/hash·3072 vector 길이 유지 확인. 대상은 로컬 `oke-jihye-p0`; 팀 VM 아님.
+- 원민님 공유 결과(Discord 전달, commit `6896952`, push 전): 로컬 Ubuntu 전용 시험 DB/employee fixture에서 n8n→FastAPI→PostgreSQL 15개 그룹, 동시 8회, C05 ACK·부분 실패 복구·PostgreSQL 재시작 유지 통과라고 보고받았다. 제가 해당 커밋을 직접 checkout하거나 재실행한 결과가 아니다. 실제 data-api, 전체 C04, 팀 VM, 공통 C05 문서 반영은 미완료라고 보고받았다.
+- 유빈님 공유 결과: PostgreSQL17/pgvector0.8.7 실제 SQL 시험과 Python 216/217(독립 DB 1 skip), JavaScript 3개, n8n 정적 검사 오류0/각 경고1. 재시작 중 임시 컨테이너 exit137로 재시작 후 데이터 유지 미확인, 실제 문서·OpenAI·VM 연결 미실행이라고 보고받았다. 직접 시험/코드 검토 결과가 아니다.
+- 백업/복원은 **미실행**. 이 환경에 `pg_dump`/`pg_restore` 실행파일과 승인된 별도 빈 복원 DB가 준비되지 않았다. 팀 VM revision `0005`도 rag 계정에서 `alembic_version` 조회 권한이 거절되어 관리자 확인 대기다.
+- 외부 대기: 화면/frontend, 실제 C02/C03/C04, RAG 실문서/OpenAI, 공식 평가 키트와 LLM 3회 반복, 별도 DB 백업/복원. 오현님에게 `0005`/확장·색인/검색 LOGIN 분리·비밀 전달 경로와 공통 C05 문서 반영 확인이 필요하다.
+- 다음: backup target/tool을 격리 준비한 뒤 복원 검증, 유빈님이 VM 실문서 적재·검색 및 복원 후 권한 검색, 수언/다혁/원민/오현 제공자 연결 후 end-to-end·공통 평가를 수행한다. 공유 전용 정리는 `Doc/SUBMISSION-NOTES.md`다.
 
 ## 단계별 실제 기록 방식
 

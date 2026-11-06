@@ -1,6 +1,7 @@
 # 원민님 · TODO
 
-DAY81 최신(2026-11-06): [평가결과보고서 중간본](TEST-EVALUATION-RESULT-20261106.md). WF-02b 실제 API 1회 통과·T-2007/3.982초. 과거 로컬 차단 기록과 현재 팀VM 연결 결과를 구별한다. 남은 것은 실제 WF-02 질문누락 재시험·공식14/팀≥5·LLM3회·실제근거bench·SQL/권한/장애·UI/리허설·최종승인이다.
+현재 [실제VM 재시험 결과](EXECUTION-RESULT.md): WF-02b API3/3·WF02 UI1회 관측. 이전 작업 결과5개 삭제 후 새 근거로 대체했다. 직접SQL·모델trace·공식전체suite·bench·대표로그3종·리허설은 미완료다.
+
 
 현재 P1-4 일부(2026-11-05): [독립반복·bench 결과](P1-4-PARTIAL-RESULT.md). fresh 실행기·증거 대조 도구 구현, Python20개 통과. 실제 모델17회 실행(3사례3회=12호출 + TM-03 bench5호출), TM-02 기대불일치3건 보존. 실제 data-api/공식80키트 경로를 요청했으며 기존 본체는 identity_unavailable이다. P1-4 전체완료로 처리하지 않는다.
 

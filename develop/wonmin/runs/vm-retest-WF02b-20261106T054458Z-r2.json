@@ -1,0 +1,31 @@
+{
+  "mode": "live_api_sequence",
+  "base_origin": "https://aio-t1.isitsoft.kr",
+  "request_id": "real-qa-f1c560ff39bd46cda7ed866ca4c02461",
+  "input_profile": "explicit",
+  "attempt": 3,
+  "source_evidence": [],
+  "ask_elapsed_seconds": 1.729,
+  "write_requests": 2,
+  "ticket_id": "T-2009",
+  "ticket_count_before_api_view": 8,
+  "ticket_count_after_api_view": 9,
+  "checks": {
+    "employee_admin_forbidden_403": true,
+    "forbidden_body_not_recorded": true,
+    "ask_created_one_ticket_response": true,
+    "inquiry_saved_and_listed_before_logout": true,
+    "employee_logout_http_200": true,
+    "inquiry_and_ticket_visible_after_relogin": true,
+    "admin_ticket_query_found_created_row": true,
+    "admin_status_and_reply_persisted": true,
+    "employee_latest_ticket_status_visible": true,
+    "employee_latest_reply_visible": true
+  },
+  "failed_step": null,
+  "failure_type": null,
+  "mutation_outcome_uncertain": false,
+  "db_count_snapshot": "not_collected_by_this_client",
+  "actual_route": "담당자 이관",
+  "verdict": "PASS_API_SEQUENCE"
+}

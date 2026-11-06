@@ -1,6 +1,7 @@
 # 원민 실행 증거 색인
 
-DAY81 실제 VM 중간점검: [WF-02b 원 raw](real-qa-api-WF02b-20261106T051701Z.json), [시각·버전·허용범위](real-qa-WF02b-context-20261106T051701Z.json), [공개 사전확인](real-qa-preflight-20261106-wonmin.json), [러너5개 회귀](real-qa-runner-regression-20261106.json), [평가결과보고서](../Doc/TEST-EVALUATION-RESULT-20261106.md). 14:17 KST, attempt3→T-2007·이관·3.982초, 실제 API 저장/재로그인/관리자PATCH/직원재조회 통과. 직접PG·n8ntrace·LLM3회·common14전체는 미수집/미실행이다.
+실제 VM 재시험: [결과서](../Doc/EXECUTION-RESULT.md), [3회 요약](vm-retest-summary-20261106T054458Z.json), [r1](vm-retest-WF02b-20261106T054458Z-r1.json), [r2](vm-retest-WF02b-20261106T054458Z-r2.json), [r3](vm-retest-WF02b-20261106T054458Z-r3.json), [UI 관측](vm-browser-WF02-retest.json), [UI 캡처](vm-browser-WF02-retest.png), [검증 집계](vm-retest-validation.json). 기존 작업 결과파일5개는 사용자 요청으로 삭제했고 이번 새 실행만 집계한다.
+
 
 현재 P1-4 일부 실행: [새 ID3회·기능 실패 포함](llm-fresh-app-20261105.json), [TM-03 이관 fresh bench5회](bench-fresh-app-20261105.json), [증거 정합성·기능 실패 분리](p1-4-evidence-audit-20261105.json), [준비물/실제 기존본체차단](p1-4-readiness-20261105.json), [Python20 회귀](p1-4-regression-20261105.json), [해석·재현·인계](../Doc/P1-4-PARTIAL-RESULT.md). 고유3사례·9회차/HTTP12회 중 TM-02 3회 실패(대상만 질문), TM-03/06 각3회 통과. 별도bench는 실제모델5회·p50=0.771119/p95=0.849413초. 실제 data-api/공식키트/정상근거답변bench/팀VM은 미완료다.
 

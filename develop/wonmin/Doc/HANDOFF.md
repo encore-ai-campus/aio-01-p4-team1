@@ -1,14 +1,6 @@
 # 원민님 · 변경 제안·전달 기록
 
-## DAY81 중간점검 WF-02b 실제 API · 2026-11-06 14:17 KST
-
-- main3dc5f23 병합(ade1967). 팀장 지시의 선택1건으로 real-qa-api-runner.py에 질문=접속이 안 돼요/attempt3 적용. 실제 팀VM API PASS_API_SEQUENCE, request_id=real-qa-e364b70dc6a84f0e9c82339def8b0c66, T-2007, 담당자 이관·sources=[]·3.982초.
-- 확인: 직원 admin API403, 문의 저장·로그아웃/재로그인 후 연결조회, 관리자 상태/답변 PATCH·재조회, 직원 최신 상태/답변 조회 모두 통과. 관리자 목록6→7은 API view이며 직접SQL·n8n실행ID·3회안정성은 미확인. 신규QA POST/PATCH만 수행; 배포/fault/reset/볼륨변경 없음.
-- raw: runs/real-qa-api-WF02b-20261106T051701Z.json; 맥락: runs/real-qa-WF02b-context-20261106T051701Z.json. 실제 시각은14:17이며4교시로소급하지 않음.
-- 보고서: [테스트 평가결과 중간본](TEST-EVALUATION-RESULT-20261106.md). 지정md없어 사용자제공PDF16쪽과docs/EXECUTION-RESULT.md 참조. 공통14·팀사례·대표로그·숫자·실패2건·남은업무·15항목대응표 기입. 공식15항목원문미확보·미실행은명시.
-- 다음: 다혁/원민 WF-02 attempt1 질문3항목 재시험, 오현 예약창·공식키트/VM trace·SQL 인계, 지혜/유빈 실제 근거/권한 대조. 공유문서의 계정 비밀값은 신규 보고서에 재복제하지 않았으며 정리/비공개 인계는 문서 소유자 검토가 필요함. 외부메시지 전송·상대확인 완료아님.
-
-다혁님 WF-02/TM-02 기대불일치(2026-11-05): [12회 독립 반복·실행 근거](P1-4-PARTIAL-RESULT.md). 실제 qwen JSON모드에서 이준호/"접속이 안 돼요"/attempt1을 fresh ID로3회 보냈다. missing=["접속 대상"], answer="접속 대상은 무엇인가요?"로3회 동일하며, TM-02·공통 WF-02의 오류/발생시점 질문이 빠졌다. 파서가 거절한 JSON 형식 문제가 아니라 유효 JSON의 의미 누락이다. N06 분류 프롬프트/정규화에서 bare 문의·빈 context의 미확인3항목을 모두 포함하도록 검토하고 같은 입력3회 재시험 부탁드린다. 질문/기대는 변경하지 않았고 상대 소스/업무workflow를 수정하지 않았다. 지혜/오현님 실제 data-api 비공개 설정 경로·80일차 공식키트/환경 안내도 필요하다. 외부 메시지 전송·상대 동의/수정완료를 뜻하지 않는다.
+실제 VM 재시험(2026-11-06): 이전1288823 결과5개 삭제·main3dc5f23 포함 확인. WF-02b API 새ID3회 모두PASS, T-2008/2009/2010, 4.828/1.729/1.649초. 직원재로그인·관리자PATCH·직원재조회10checks 매회통과. WF-02 실제브라우저1회 대상/오류/시점 모두표시·캡처저장. [docs 템플릿 기반 새 결과서](EXECUTION-RESULT.md), runs/vm-retest-*·vm-browser-* 참조. SQL/n8n trace/모델3회/공식14/팀5/bench미확인. 다음은WF02모델3회 및WF12복합·권한/장애·실제근거검증. 기대변경/VM재배포/fault/reset/기존행삭제 없음.
 
 다혁님 C04 실제 app 연결(2026-11-05): [원인·13개 그룹·남은 연결](C04-APP-INTEGRATION-RESULT.md). 최신origin/feat/dahyeok-p0=bb2fa1f의 Git 원본으로 시험했고 C04 요청/매핑/B안·실제 C05 저장이 적합했다(직원 fixture, 실제 로컬 qwen). 최초긴급 실행103은 JSON 코드블록 출력→triage_invalid→normal 저장으로 실패했다. 시험 사본 N06 모델 responseFormat=json_object 후 실행111→112의 T-2012/high·사내망 안내·sources=[] 및 전체13그룹 통과. 다혁님 실제 배포 모델 설정 검토/재시험 요청, 정본/기존 workflow는 미수정이다. 지혜/오현님 실제 data-api 주소·키/기존 티켓 권한이 없어 원래 본체는 identity_unavailable로 남는다. 유빈님 C03=503도 확인해 실제 검색·WF12 기존 티켓·팀 VM/공식 평가와 구별한다. 이번 공유는 HANDOFF 기록이며 외부 전송/상대 확인 완료가 아니다.
 

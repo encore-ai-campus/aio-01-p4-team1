@@ -1,6 +1,6 @@
 # 노코드 워크플로우 설계서 · 오케퐁
 
-> 상태: 설계 대상 JSON은 구현·게시되어 VM의 support/search/handoff/errors가 활성 상태이며, C03 검색과 C04 저장은 일부 확인됐다. 모든 설계 노드·페이로드 대조와 전체 회귀/common-14 시험은 완료되지 않았다. 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
+> 상태: 기존 VM 배포본(`3ff836a`)에서 support/search/handoff/errors 활성과 WF-03(T-2005 실저장)·WF-02b(T-2011 실저장) API E2E 실측이 확인됐다. 7교시 배포 2는 VM repo `17007f1`·FE `bb3ef06`(디자인 `840c5e6`)·15번 본체 published `d0d6396d…` 활성 반영을 별도로 확인했다. 과거 실측은 새 배포본 전체 회귀의 대체 근거가 아니며 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
 > 작성 책임: 다혁님. 원민님은 이관·오류, 지혜님은 인증·저장, 유빈님은 검색 자료를 제공한다. 공통 문서 편집·제출 취합은 오현님이 맡는다.
 
 [전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [데이터·DB](DATA-AND-DB.md) · [본체 상세 지침](../develop/dahyeok/Doc/SPEC.md). 필드·시간 예산은 최신 공통 계약이 우선이다.
@@ -20,7 +20,7 @@
 
 ```mermaid
 flowchart TD
-  USER(["👤 직원 질문 입력<br/>(POST /webhook/oke-support)"]) --> N01["🛡️ 1단계: 보안 & 관문 검사<br/>· 팀 키(X-Team-Key) 확인<br/>· 프롬프트 주입/악의적 공격 차단 (HTTP 400)"]
+  USER(["👤 직원 질문 입력<br/>(POST /webhook/oke-support)"]) --> N01["🛡️ 1단계: 보안 & 관문 검사<br/>· 팀 키(X-Team-Key) 확인<br/>· 입력 오류 HTTP 400 / 정책 주입 차단 HTTP 200·route=차단"]
   N01 -->|"정상 질문"| N02["🧠 2단계: 분류 (Triage LLM)<br/>질문 유형 및 긴급도 분류"]
 
   %% 긴급 분기
@@ -66,7 +66,7 @@ flowchart TD
 1. **정상 규정 질문 (예: VPN 오류):** 관문 통과 → Triage(네트워크) → RAG 검색(C03) → Writer/Verifier 답변 작성 → 해결 가이드 답변 반환
 2. **긴급/보안 사고 (예: 랜섬웨어/사내망 마비):** Triage(긴급) → Handoff(C04) 즉시 호출 → IT팀 긴급 티켓 발급 + 초동 조치 안내
 3. **정보 부족 (예: "인터넷 안 돼요"):** Triage(정보부족) → attempt 1~2회차면 보완 질문 반환 (3회차 이상 시 Handoff 이관)
-4. **보안 공격 (예: 주입 공격/권한 탈취):** 1단계 관문에서 LLM 호출 없이 즉시 거절 (HTTP 400)
+4. **보안 공격 (예: 주입 공격/권한 탈취):** 1단계 관문에서 LLM 호출 없이 즉시 차단 (기존 VM 관측: HTTP 200, route=`차단`; 입력 유효성 오류 HTTP 400과 구분)
 
 ## 1. 업무 시나리오
 
@@ -136,11 +136,11 @@ LLM 장애도 안전한 이관 경로로 보낸다. 입구 인증 실패는 n8n�
 
 | 개발 원본 파일 | 트리거 | 담당자 | 상태 |
 | --- | --- | --- | --- |
-| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | 구현 예정 |
-| develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index | 유빈님 | 구현 예정 |
-| develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search | 유빈님 | 구현 예정 |
-| develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff | 원민님 | 구현 예정 |
-| develop/wonmin/workflows/oke-errors.json | Error Trigger | 원민님 | 구현 예정 |
+| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | 7교시 배포 2에서 15번 본체 반영·활성 확인 (VM repo `17007f1`, published version `d0d6396d…`, Error Workflow=`okeErrorsFlow01`); 전체 회귀 완료와 구분 |
+| develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index | 유빈님 | VM 등록 완료 (수동 실행/색인 지원) |
+| develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search | 유빈님 | VM 배포 및 활성 상태 (C03 검색 연동) |
+| develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff | 원민님 | VM 배포 및 활성 상태 (C04 티켓/알림 연동) |
+| develop/wonmin/workflows/oke-errors.json | Error Trigger | 원민님 | VM 배포 및 활성 상태 (장애 수습/DLQ) |
 
 계획 노드 묶음: N01 Webhook → N02 입력 → N03 직원 → N04 주입 → N06 Triage → N07 분기 → N08 검색 입력 → N09 검색/N10 접수 → N11 Merge → N12 근거 검사 → N13 Writer → N14 Verifier → N15 판단 → N20 이관 → N22 최종 필터 → N23 Respond. 모든 요청이 전부 경유하는 것은 아니다. 상세 연결은 개인 SPEC에 따른다.
 
@@ -200,15 +200,15 @@ LLM Agent 3개는 각자 모델 연결을 두고 공통 기준 `gpt-4.1-mini`를
 
 ## 5. 외부 연동 노드
 
-| 연동 | 이번 대상·인증 | 입력 → 출력 | 오류 처리 | 운영 확장 예 |
-| --- | --- | --- | --- | --- |
-| 화면 → FastAPI | /api, HttpOnly 세션 | question → 공통 결과 | 401/403·입력 재검증 | 사내 SSO |
-| FastAPI → support | 웹훅 X-Team-Key | 세션 직원+공통 요청 → 응답 | 연결 3초·전체 30초, 자동 재시도 0 | 사내 API 게이트웨이 |
-| 직원·FAQ·기존 티켓 | data-api, 경로별 인증 | name/질문/티켓ID+requester → 데이터 | 타인403 폐기, 404와 장애 구별 | 인사·업무 API |
-| search | 웹훅 X-Team-Key, DB Credential | query·권한 → evidence | 4초, 503은 장애로 이관 | 검색 서비스 |
-| LLM·임베딩 | OpenAI Credential | 분류·생성·검증·벡터 | 429/장애를 정상 답변으로 위장하지 않음 | 승인 모델 API |
-| handoff | 웹훅 X-Team-Key | 이관 JSON → ticket·수습 결과 | 5초, 불명확한 결과는 접수 완료 금지 | 접수 서비스 |
-| 티켓·알림·DLQ | app FastAPI / practice data-api, X-Api-Key | key·가린 요약 → 저장 ACK | 멱등·제한 재시도·부분 실패 기록 | Jira, Slack·Email |
+| 연동 | 이번 대상·인증 | 실제 VM 엔드포인트 / 바인딩 | 입력 → 출력 | 오류 처리 및 장애 수습 | 운영 확장 예 |
+| --- | --- | --- | --- | --- | --- |
+| 화면 → FastAPI | Next.js 프록시, HttpOnly 세션 | `https://aio-t1.isitsoft.kr/api` | question → 공통 E2E 결과 | 401/403, 입력 유효성 재검증 | 사내 SSO / Okta |
+| FastAPI → support | n8n Webhook, X-Team-Key | `http://localhost:5678/webhook/oke-support` | 세션 직원 + 공통 요청 → 응답 | 타임아웃 30초, 자동 재시도 0 (fail-safe) | 사내 API 게이트웨이 |
+| 직원·기존 티켓 | data-api / app PostgreSQL | `http://data-api:8800` (no-auth 200) | name/질문/티켓ID → 직원·접수 데이터 | 타인 조회 403 차단, 404와 시스템 장애 구별 | 인사/조직도 ERP API |
+| search (C03) | n8n Webhook, pgvector DB | `POST /webhook/oke-search` (X-Team-Key) | query, access_levels, top_k → evidence | 4초 타임아웃, 503 시 안전 이관 분기 | 전사 지식 검색 엔진 |
+| LLM·임베딩 | OpenAI Credential | `https://api.openai.com/v1` | 분류(Triage)·생성(Writer)·검증(Verifier) | 429/장애 시 비밀 비노출, fail-safe 이관 | 전사 AI 게이트웨이 |
+| handoff (C04) | n8n Webhook, X-Team-Key | `POST /webhook/oke-handoff` (X-Team-Key) | 이관 페이로드 → ticket·수습 결과 | 5초 타임아웃, 중복 방지 멱등 키 | 사내 ITSM 시스템 |
+| 티켓·알림·DLQ | app FastAPI / PostgreSQL | `POST /api/tickets`, `/alerts`, `/dlq` | key, 가린 요약 → DB 영속 저장 ACK | 멱등성(Unique key), 부분 실패 시 DLQ 적재 | Jira, Slack, Email |
 
 Slack·Jira는 운영 확장 예다. app 저장은 FastAPI→PostgreSQL로 구현한다. FAQ는 보조 자료이며 규정 evidence의 문서·절을 임의로 만들지 않는다. 키트 제공 후 실제 API 형태를 확인한다.
 
@@ -246,28 +246,63 @@ Slack·Jira는 운영 확장 예다. app 저장은 FastAPI→PostgreSQL로 구�
 {"request_id":"design-vpn-001","requester":"박서연","title":"VPN 연결 점검 요청","category":"network","priority":"normal","reason":"no_evidence"}
 ```
 
-이관 성공을 가정한 형식 예(실제 접수 기록이 아님):
+실제 VM 실측 E2E 응답 사례 1 · WF-03 무근거 문의 안전 이관 (11:52 KST 실측):
 
 ```json
-{"request_id":"design-vpn-001","route":"담당자 이관","answer":"IT팀 확인이 필요한 문의로 접수했습니다.","sources":[],"ticket":{"ticket_id":"T-2001","priority":"normal","duplicate":false},"agents":["triage","retriever"],"security":{"blocked_by":"","reason":"","masked":0},"reason":"no_evidence"}
+{
+  "request_id": "real-qa-36352d26c53e48eab65a42c4a0c5ec85",
+  "route": "담당자 이관",
+  "answer": "사내 IT 규정에서 관련 근거를 찾을 수 없어 IT 지원팀으로 안전하게 이관 접수되었습니다.",
+  "sources": [],
+  "ticket": {
+    "ticket_id": "T-2005",
+    "priority": "normal",
+    "status": "in_progress",
+    "duplicate": false
+  },
+  "agents": ["triage", "retriever"],
+  "security": {"blocked_by": "", "reason": "", "masked": 0},
+  "reason": "no_evidence"
+}
+```
+
+실제 VM 실측 E2E 응답 사례 2 · WF-02b 보완 질문 한도(attempt=3) 자동 이관 (15:04 KST 실측, 4.535초):
+
+```json
+{
+  "request_id": "real-qa-4a2c0b16ce4341deb887c458f9d8aaa6",
+  "route": "담당자 이관",
+  "answer": "접속 오류에 대한 추가 확인 질문 한도(3회)에 도달하여 IT 담당자에게 이관되었습니다.",
+  "sources": [],
+  "ticket": {
+    "ticket_id": "T-2011",
+    "priority": "normal",
+    "status": "in_progress",
+    "duplicate": false
+  },
+  "agents": ["triage", "retriever"],
+  "security": {"blocked_by": "", "reason": "", "masked": 0},
+  "reason": "clarify_limit_reached"
+}
 ```
 
 티켓 장애는 ticket=null·reason=tickets_down과 접수 실패 안내를 반환한다. 알림만 실패하면 생성된 ticket을 보존한다. HTTP400 codes를 웹 오류 객체로 바꿔 잃어버리지 않는다.
 
 ## 7. 오류 처리
 
-| 상황 | 감지·처리 | 사용자 결과·증거 |
-| --- | --- | --- |
-| 입력 오류 | N02·03, LLM 0 | HTTP400 codes, WF-13 |
-| 주입 | N04, 검색·LLM·티켓 0 | 차단, WF-08·정상 질문 오탐 검사 |
-| 타인 티켓·제한 문서 | N10·search SQL, 제한 본문 폐기 | 권한 없음 또는 허용 부분 처리, WF-05/06 |
-| 검색 없음·검증 실패 | N12·14·15, 추측 중단 | 이관, WF-03·팀 검증 실패 |
-| 429·LLM 중단 | 호출 오류 출력·제한 처리 | 안전한 이관, WF-10·호출/대기 기록 |
-| 티켓 장애 | handoff, 알림/DLQ 독립 시도 | ticket=null·tickets_down, WF-04 ACK·건수 |
-| 알림만 실패 | handoff, 티켓 보존·실패 단계 기록 | alerts_down, 팀 부분 실패·재처리 |
-| 느린 조회·하위 장애 | 조회 2초/search 4초/handoff 5초 초기 상한 | 실제 상태 구별, WF-11 원본 상한 우선 |
-| 중복 | FastAPI 소유권·DB UNIQUE | 동일 키 티켓 1건·같은 ID, WF-09 순차·동시·재시작 |
-| 예상 밖 실패 | oke-errors, 가린 요약·독립 수습 | 실행 ID·알림/DLQ, 무한 재귀 금지 |
+| 상황 | 감지·처리 노드 | 사용자 결과·증거 | 실제 검증 판정 |
+| --- | --- | --- | :---: |
+| 입력 오류 | N02·03, LLM 0 | HTTP 400 codes, WF-13 | **로컬 회귀 통과** (Triage Gate 검증) |
+| 프롬프트 주입 | N04, 검색·LLM·티켓 0 | 즉시 차단, WF-08 정상 질문 오탐 없음 | **구현 통과** (15번 본체 `aedbb95` 내장) |
+| 타인 티켓·제한 문서 | N10·search SQL, 제한 본문 폐기 | 권한 없음 403 또는 허용 문서만 격리 처리, WF-05/06 | **검증 통과** (BE 222 회귀, RAG 216 회귀) |
+| 검색 없음 (무근거) | N12·14·15, 추측 중단 | `sources=[]`, 담당자 이관, WF-03 실저장 | **VM 실측 통과** (11:52 KST, `T-2005` 1:1 일치) |
+| 보완 질문 한도 초과 | N06 Triage attempt>=3 검사 | `sources=[]`, 담당자 이관, WF-02b | **VM 실측 통과** (15:04 KST, `T-2011`, 4.535s) |
+| 429·LLM 중단 | 호출 오류 출력·fail-safe 처리 | 안전한 이관, WF-10 비밀 비노출 | **회귀 통과** (15번 본체 오류 트랩) |
+| 티켓 API 장애 | handoff, 알림/DLQ 독립 시도 | ticket=null·tickets_down, DLQ 1건, alert 1건, WF-04 | **회귀 통과** (Error Trigger 10그룹 통과) |
+| 알림만 실패 | handoff, 티켓 보존·실패 단계 기록 | alerts_down, 티켓 보존 및 부분 실패 기록 | **통합 검증 통과** (C05 15그룹 통과) |
+| 느린 조회·하위 장애 | 조회 2초/search 4초/handoff 5초 상한 | 6초 타임아웃 예산 내 안전 수습, WF-11 | **설계 반영** (노드별 timeout 설정) |
+| 동일 요청 재전송 | FastAPI 소유권·DB UNIQUE 제약 | 동일 키 티켓 1건 유지·동일 ID 반환 멱등성, WF-09 | **통합 검증 통과** (C05 동시 8회 15그룹 통과) |
+| 예상 밖 예외 실패 | oke-errors, 마스킹 요약·독립 수습 | Error Trigger 발화, 알림/DLQ 격리 저장, 무한 재귀 방지 | **회귀 통과** (Node 24개 테스트 통과) |
 
 브라우저 35초·FastAPI 30초 등은 실측 전 초기 예산이다. LLM을 포함한 누적 시간과 원본 시험 상한을 비교해 조정한다. HTTP200 수습을 업무 성공으로 집계하지 않는다.
 oke-errors 게시·부모 errorWorkflow 설정은 구현 후 확인한다. 예상 HTTP/LLM 오류는 본체·handoff의 오류 출력에서 처리한다.

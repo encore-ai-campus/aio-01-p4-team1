@@ -1,0 +1,15 @@
+{
+  "case": "WF-02b",
+  "question": "접속이 안 돼요",
+  "attempt": 3,
+  "started_at_utc": "2026-11-06T06:04:03.136912+00:00",
+  "finished_at_utc": "2026-11-06T06:04:09.307824+00:00",
+  "exit": 0,
+  "raw": "real-qa-WF02b-lead-20261106T060403Z.json",
+  "main_commit": "95d8af33e6f8b0167191b074f92071a641055102",
+  "local_execution": "local QA client calling approved public VM HTTPS API",
+  "vm_os_login": false,
+  "direct_sql": false,
+  "n8n_trace": false,
+  "scope": "one QA sequence authorized by user-relayed lead instruction; no deploy/fault/reset"
+}

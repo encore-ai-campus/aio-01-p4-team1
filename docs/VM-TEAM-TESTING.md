@@ -51,10 +51,9 @@
 - n8n runtime workflow stable IDs는 위 표를 참조한다. 활성본을 덮어쓰거나 같은 ID의 새 workflow를 임의 생성·활성화하지 않는다. `oke-index` 수동 색인도 별도 예약 없이 실행하지 않는다.
 - VM에는 목적별 credential 6개 레코드가 보존되어 있다. 이전 runtime cleanup inventory의 구분은 OpenAI, team webhook, RAG search, RAG index, backend internal, legacy Header Auth account였다. 현재 snapshot은 레코드 수만 재확인했으므로 credential ID/값 및 각 노드 매핑을 본 문서에서 보증하지 않는다.
 - 팀장 또는 지정 관리자는 팀원에게 필요한 사용자 권한, workflow 실행 경로, 해당 용도의 자격 증명 사용 방법만 비공개로 인계한다. key/password/header value를 Git·이슈·채팅·보고서·화면 캡처에 붙이지 않는다. 여러 용도의 키를 이름이 비슷하다는 이유로 공유하지 않는다.
-- 팀원은 개인 계정을 사용한다. `minji.admin`을 공유 계정으로 사용하지 않는다. 최신 계정 기준선은 아래 “FE/BE 배포 및 실제 QA 후속” 절을 참조한다. 계정 비밀번호는 GitHub에 공개하지 않고 팀장이 private handoff에서 필요한 팀원에게 개별 전달한다.
-- 현재 VM n8n owner 사용자는 1명이다. 정확한 owner email은 공개 저장소에 싣지 않고 로컬 private handoff에만 기록한다. 기존 n8n owner 비밀번호는 VM admin handoff에서 확인되지 않았으므로 팀장은 현 n8n 운영자에게 기존 로그인 정보를 비공개로 인계받아야 한다. 암호 추정·계정 reset은 하지 않는다.
-- 관리자/직원 비밀번호는 저장소 밖의 지정 private handoff에서만 전달한다. 계정 상태는 snapshot 시각과 후속 절의 시각을 구분해서 본다.
-- 팀장용 로컬 비밀 인계 위치는 저장소 밖 `orchestrator/private/VM-TEAM-ACCESS.txt` (부모 디렉터리 mode 700, 파일 mode 600)다. 이 문서 경로는 인계 위치 안내일 뿐 공개 저장소에 값이나 파일을 추가하지 않는다. 팀원에게는 공유 admin 비밀번호 대신 개별 시험계정을 발급한 뒤 각자 안전하게 전달한다.
+- 팀원은 개인 계정을 사용하거나 아래 공유 시험 계정을 사용한다. 최신 계정 기준선은 아래 “팀원 공용 시험 계정 및 접속 안내” 절을 참조한다.
+- 현재 VM n8n owner 사용자는 1명이다. owner email은 `team1@test.com`이다.
+- 관리자/직원 시험 계정 정보는 팀원 전체의 원활한 UI/API 기능 테스트를 위해 아래 문서에 투명하게 공개하여 공유한다.
 - 공개 API는 `/api/auth/me` 외부 401을 확인했다. API 경로/스키마는 repo의 [API-CONTRACT](API-CONTRACT.md)와 versioned backend source를 따른다. Swagger UI는 <https://aio-t1.isitsoft.kr/docs>, 스키마는 <https://aio-t1.isitsoft.kr/openapi.json>을 사용한다. UI 열림과 인증 API 실행 권한은 별개다.
 
 ## 팀 작업 순서
@@ -113,3 +112,33 @@
 - QA attempt 1, 고유 request ID `real-qa-36352d26c53e48eab65a42c4a0c5ec85`: API sequence `PASS_API_SEQUENCE`; route는 `담당자 이관`, elapsed 7.341초, sources는 빈 목록. 직원 문의 목록 및 로그아웃 후 재로그인 조회, admin 처리 상태/답변 재조회, 직원 admin API 403을 확인했다. 빈 sources이므로 C03 검색 또는 WF-01 정상 자동답변 성공으로 해석하지 않는다.
 - 별도 read-only PostgreSQL 대조에서 해당 request ID의 `app.inquiries` 1행, `app.tickets.request_key` 1행, `ticket_id=T-2005`; inquiry/ticket/requester 연결키 일치 및 상태 `in_progress`를 확인했다. 과거 전체 행수와의 차이는 동시 변경 가능성이 있어 이 QA 고유 키/연결행 외의 변화를 단정하지 않는다. 기존/타인 행 삭제·초기화는 하지 않았다.
 - 브라우저 화면, 정상 자동답변/8초 기준, RAG evidence 검색, 동일 request ID 중복 재요청, alert/DLQ 관계, 공식 common-14는 미실행이다.
+
+## 팀원 공용 시험 계정 및 접속 안내 (2026-11-06 공유)
+
+팀원 전체가 브라우저 및 API에서 실제 서비스 플로우를 테스트할 수 있도록 검증이 완료된 공용 계정 정보를 공유합니다.
+
+### 1. 주요 접속 엔드포인트
+* **웹 프론트엔드 (로그인)**: <https://aio-t1.isitsoft.kr/login>
+* **FastAPI Swagger UI**: <https://aio-t1.isitsoft.kr/docs>
+* **OpenAPI 스키마**: <https://aio-t1.isitsoft.kr/openapi.json>
+* **n8n 웹 콘솔**: <https://aio-t1.isitsoft.kr:5678/> (Owner: `team1@test.com`)
+
+### 2. 공용 테스트 계정 정보
+
+| 구분 | 로그인 ID | 비밀번호 | 이름 / 소속 | 역할 | 상태 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **관리자** | `minji.admin` | `63KvIc0uttRWx5ht1W0yHUmG?IuWNlTedOZf%qf9` | 김민지 (IT팀) | `admin` | `must_change_password=false` 검증 완료 |
+| **직원 (테스트용)** | `teamtest.employee1` | `eXn_*0sbV*Gi1HvNXr1O9L@kNvvV` | 이준호 (영업팀, 사번 1) | `employee` | 첫 비밀번호 변경 및 권한 검증 완료 |
+
+### 3. 브라우저 실서비스 테스트 방법
+세션 충돌 방지를 위해 **일반 창과 시크릿 창(또는 다른 브라우저)**으로 분리하여 로그인합니다:
+1. **직원 창 (`teamtest.employee1`)**:
+   - 로그인 후 새 문의(Ask/Inquiry) 작성 및 전송
+   - '내 문의' 페이지에서 티켓 번호 생성 확인
+2. **관리자 창 (`minji.admin`)**:
+   - 로그인 후 `/admin/tickets` 접속
+   - 직원이 등록한 문의 티켓 확인 후, 티켓 상태(예: `in_progress` 또는 `resolved`) 및 관리자 답변(Reply) 입력/저장
+3. **직원 창 (`teamtest.employee1`)**:
+   - '내 문의' 페이지 새로고침
+   - 관리자가 입력한 상태와 답변이 정상 반영되어 저장된 것을 확인
+

@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./vite-design.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "오케퐁 IT 헬프데스크", description: "사내 IT 문의 지원" };

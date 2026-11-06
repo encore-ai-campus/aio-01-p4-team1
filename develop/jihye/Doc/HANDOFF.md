@@ -251,3 +251,17 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 상대 확인이 오면 요청ID·상대 HANDOFF 링크·검토 내용·오현님 공통 반영 커밋/절·관련 SPEC/계획 변경·실제 연결 입력/출력/증거를 구분해 덧붙인다. 현재 전 항목에 확인 근거와 반영 커밋은 없다.
 
 실제 버그는 실행 위치/버전·마스킹한 재현 입력·기대/실제 결과·로그·영향을 전달한다. 상대 파일을 대신 수정하지 않는다. 절차는 [COORDINATION](../../../docs/COORDINATION.md), 기준은 [API](../../../docs/API-CONTRACT.md)·[DB](../../../docs/DATA-AND-DB.md)를 따른다.
+
+### 2026-11-05 · C09 · DAY80 2절 지혜님 진행 내역 반영 요청
+
+- 반영 대상: 루트 `docs/daily/DAY80.md`의 2절 「역할별 진행 내역」 중 지혜님 행. 반영 담당: 오현님.
+- 상태: 본인 HANDOFF에 반영안을 기록했다. 루트 문서는 수정하지 않았으며, 외부 메시지 전송·오현님 확인·공통 문서 반영은 미확인이다.
+- 작업일 확인: `Doc/IMP-PLAN.md`와 본 HANDOFF의 실제 기록, 로컬 Git 커밋 날짜를 대조했다. 아래 10개 커밋은 모두 2026-11-05 기록이다. 원격 push 여부는 이번 대조에서 별도로 확인하지 않았다.
+
+| 담당자 | 오늘 진행한 작업 | 산출물 · 커밋 | 상태 |
+| --- | --- | --- | --- |
+| 지혜님 | P0-2 context 제한 보완부터 P0-7 DB readiness까지 구현. P1-1 로그인·세션, P1-2 문의 저장·C02 어댑터, P1-3 C05 저장, P1-4 로컬 통합·재시작 검증 진행 | `develop/jihye/` backend·migrations·deploy·tests 및 개인 문서. 커밋 10건: `fdcd265`, `4904a49`, `c6e42df`, `4fdc313`, `1902a2b`, `f7b81da`, `6348b87`, `2e64cd1`, `ec6a735`, `4fb14e0` | 로컬 시험 `223 passed, 2 skipped`, 기존 경고 1건. 별도 web-flow 시험 `1 passed`. 팀 VM·실제 화면/n8n/data-api/RAG 연결과 백업·복원은 미완료. |
+
+- 검증 근거: [IMP-PLAN P0-2 보완 기록](IMP-PLAN.md#p0-2-보완--2026-11-05) 및 P0-3~P1-4 실제 기록, 2026-11-05 로컬 Git 커밋 이력. P1-4 `uv run python deploy/check_db.py --all`은 223 passed, 2 skipped, 기존 경고1건이며 별도 web-flow 시험은 1 passed다. 이 반영안 작성·갱신 과정에서 시험을 재실행하지 않았다.
+- 집계 주의: 시험 수는 `develop/jihye` 로컬 결과이며 팀 공통 평가 통과 수가 아니다. P1-4 web-flow의 C02 호출은 HTTP Mock이다. 커밋은 로컬 Git 이력에서 확인했으며 원격 push 여부는 확인하지 않았다.
+- 미완료·다음 연결: 팀 VM·실제 화면/n8n/data-api/RAG 원본/OpenAI 연결, 공식 평가 및 백업·복원은 미완료다.

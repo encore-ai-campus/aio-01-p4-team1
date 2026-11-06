@@ -8,9 +8,9 @@ from sqlalchemy.exc import IntegrityError
 from app.api.errors import PublicApiError
 from app.clients.support import build_support_client
 from app.core.config import Settings
-from app.db.models import Inquiry
+from app.db.models import Inquiry, Ticket
 from app.db.session import create_db_engine, create_session_factory
-from app.repositories.inquiries import get_by_request_id, list_by_requester
+from app.repositories.inquiries import get_by_request_id, list_by_requester, list_linked_tickets
 from app.repositories.users import get_user_identity
 from app.schemas.auth import UserSummary
 from app.schemas.support import AskRequest, SupportRequest, SupportResponse
@@ -102,12 +102,27 @@ def _list_requests(settings: Settings, user_id: int) -> list[dict]:
                 raise PublicApiError(401, "unauthorized", "로그인이 필요합니다.")
             employee_id = identity[1].id
             rows = list_by_requester(session, employee_id)
+            tickets_by_inquiry = {ticket.inquiry_id: ticket for ticket in
+                                  list_linked_tickets(session, requester_id=employee_id,
+                                                      inquiries=rows)}
             return [{"request_id": row.request_id, "question": row.question,
                      "attempt": row.attempt, "result": row.result,
-                     "ticket": row.result.get("ticket") if row.result else None,
+                     "ticket": _current_ticket_view(row, tickets_by_inquiry.get(row.id)),
                      "created_at": row.created_at} for row in rows]
     finally:
         engine.dispose()
+
+
+def _current_ticket_view(inquiry: Inquiry, ticket: Ticket | None):
+    """Overlay the owned app ticket's live state without changing the saved C02 result."""
+    snapshot = inquiry.result.get("ticket") if inquiry.result else None
+    if ticket is None:
+        return snapshot
+    current = dict(snapshot) if isinstance(snapshot, dict) else {}
+    current.update({"ticket_id": ticket.ticket_id, "priority": ticket.priority,
+                    "duplicate": current.get("duplicate", False),
+                    "status": ticket.status, "reply": ticket.reply})
+    return current
 
 
 async def ask_support(settings: Settings, *, body: AskRequest,

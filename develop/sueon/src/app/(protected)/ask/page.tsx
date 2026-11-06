@@ -4,12 +4,10 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiRequestError } from "../../../lib/api/client";
 import { me } from "../../../lib/api/auth";
-import { mockAsk } from "../../../mocks/fixtures";
+import { logout } from "../../../lib/api/auth";
 import type { AskResponse, User } from "../../../lib/api/types";
 
 const prompts = [["◒", "VPN 연결 오류", "재택근무·네트워크"], ["◎", "계정 잠김", "로그인·접근 권한"], ["▣", "장비 고장", "노트북·주변기기"]];
-const mockMode = process.env.NEXT_PUBLIC_USE_MOCK === "true";
-
 export default function AskPage() {
   const router = useRouter();
   const [question, setQuestion] = useState("");
@@ -22,11 +20,13 @@ export default function AskPage() {
   const [result, setResult] = useState<AskResponse | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [loadingUser, setLoadingUser] = useState(!mockMode);
+  const [loadingUser, setLoadingUser] = useState(true);
   const [pendingFollowup, setPendingFollowup] = useState<{ id: string; text: string } | null>(null);
+  const [logoutError, setLogoutError] = useState("");
+
+  async function signOut() { setLogoutError(""); try { await logout(); router.replace("/login"); } catch (cause) { setLogoutError(cause instanceof Error ? cause.message : "로그아웃에 실패했습니다."); } }
 
   useEffect(() => {
-    if (mockMode) return;
     me().then(setUser).catch((err: unknown) => {
       if (err instanceof ApiRequestError && err.status === 401) {
         router.replace("/login");
@@ -40,9 +40,7 @@ export default function AskPage() {
     setBusy(true);
     setError("");
     try {
-      const data = mockMode
-        ? mockAsk
-        : await api<AskResponse>("/api/ask", { method: "POST", body: JSON.stringify(payload) });
+      const data = await api<AskResponse>("/api/ask", { method: "POST", body: JSON.stringify(payload) });
       setResult(data);
       setClarificationAnswer("");
       setPendingFollowup(null);
@@ -60,7 +58,7 @@ export default function AskPage() {
       setError("질문은 1~500자로 입력해 주세요.");
       return;
     }
-    if (!mockMode && !user) {
+    if (!user) {
       router.replace("/login");
       return;
     }
@@ -105,7 +103,7 @@ export default function AskPage() {
     await sendAsk({ question: originalQuestion, request_id: previousRequest, attempt: nextAttempt, context: nextContext });
   }
 
-  const displayName = user?.name ?? (mockMode ? "미리보기 사용자" : "사용자");
+  const displayName = user?.name ?? "사용자";
   const displayDept = user ? `${user.dept} · ${user.role === "admin" ? "관리자" : "직원"}` : "";
 
   if (loadingUser) return <main className="center"><p>로그인 상태를 확인하고 있습니다…</p></main>;
@@ -114,8 +112,7 @@ export default function AskPage() {
     <aside className="ask-sidebar">
       <div className="brand"><span className="brand-mark">●</span><div><strong>오케퐁</strong><small>IT HELPDESK</small></div></div>
       <div className="side-section"><span className="side-label">WORKSPACE</span><a className="side-link active" href="/ask">▤ <span>질문하기</span></a><a className="side-link" href="/my-requests">▤ <span>내 문의</span></a></div>
-      <div className="side-section"><span className="side-label">SUPPORT</span><a className="side-link" href="#guide">? <span>이용 가이드</span></a></div>
-      <div className="profile"><span>{displayName.slice(0, 1)}</span><div><b>{displayName}</b><small>{displayDept}</small></div><i>›</i></div>
+      <button className="profile" type="button" onClick={() => void signOut()}><span>{displayName.slice(0, 1)}</span><div><b>{displayName}</b><small>{displayDept}</small></div><i>로그아웃</i></button>
     </aside>
     <section className="ask-main">
       <header className="ask-header"><div>IT 헬프데스크 <b>/ 질문하기</b></div></header>
@@ -127,8 +124,8 @@ export default function AskPage() {
             <form className="ask-card" onSubmit={submitQuestion}>
               <div className="ask-card-head"><div><p className="eyebrow">ASK OKEPONG</p><h2>문제 상황을 알려주세요</h2><p>오류 메시지와 발생 시점을 함께 적으면 더 정확하게 안내할 수 있어요.</p></div><span>1차 문의</span></div>
               <div className="textarea-wrap"><textarea value={question} onChange={event => setQuestion(event.target.value)} maxLength={500} placeholder="예) 재택근무 중 VPN에 연결하면 인증 오류가 반복됩니다."/><small>{question.length} / 500</small></div>
-              <div className="ask-actions"><span>♢ 제출한 문의는 저장한 뒤 처리하며, 결과는 내 문의에서 확인할 수 있습니다.</span><button className="send" disabled={busy || (!mockMode && !user)}>{busy ? "확인 중…" : "질문 보내기　➤"}</button></div>
-              {error && <p className="error" role="alert">{error}</p>}
+              <div className="ask-actions"><span>♢ 제출한 문의는 저장한 뒤 처리하며, 결과는 내 문의에서 확인할 수 있습니다.</span><button className="send" disabled={busy || !user}>{busy ? "확인 중…" : "질문 보내기　➤"}</button></div>
+              {(error || logoutError) && <p className="error" role="alert">{error || logoutError}</p>}
             </form>
             {result?.route === "보완 질문" && attempt < 3 && <form className="ask-card" onSubmit={submitClarification}>
               <div className="ask-card-head"><div><p className="eyebrow">추가 정보</p><h2>확인 질문에 답해 주세요</h2><p>{result.answer}</p></div><span>{attempt + 1}차 문의</span></div>

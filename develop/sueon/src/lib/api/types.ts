@@ -12,4 +12,5 @@ export type EmployeeAdminView = { id: number; name: string; dept: string; user_i
 export type AccountView = { id: number; employee_id: number; login_id: string; name: string; dept: string; role: Role; is_active: boolean; must_change_password: boolean };
 export type CreateAccountRequest = { employee_id: number; login_id: string; temporary_password: string };
 export type AlertView = { id: number; ticket_id: string | null; workflow: string; node: string; message: string; severity: string; created_at: string };
-export type InquiryView = { request_id: string; question: string; attempt: number; result?: AskResponse | Record<string, unknown> | null; ticket?: Ticket | Record<string, unknown> | null; created_at: string; [key: string]: unknown };
+export type InquiryTicketView = { ticket_id?: string | null; status?: string | null; reply?: string | null; assignee?: number | null; priority?: string | null; [key: string]: unknown };
+export type InquiryView = { request_id: string; question: string; attempt: number; result?: AskResponse | Record<string, unknown> | null; ticket?: InquiryTicketView | null; created_at: string; [key: string]: unknown };

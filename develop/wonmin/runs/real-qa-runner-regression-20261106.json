@@ -1,0 +1,16 @@
+{
+  "command": "python3 -m unittest discover -s develop/wonmin/tests -p test_real_qa_api_runner.py -v",
+  "exit": 0,
+  "passed": 5,
+  "failed": 0,
+  "output_tail": [
+    "test_ticket_lookup_requires_exactly_one_match (test_real_qa_api_runner.RealQaApiRunnerTests.test_ticket_lookup_requires_exactly_one_match) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 5 tests in 0.003s",
+    "",
+    "OK"
+  ],
+  "runner_sha256": "e0f539b0afe24a737db0925bac4997f3d9ef8fe4efd21ecd4651998671599def",
+  "instructor_pdf_sha256": "4c4e1e83f920d89d607370fdbc7cf6e6c18de583e1618b52aa459ce6b00466cf"
+}

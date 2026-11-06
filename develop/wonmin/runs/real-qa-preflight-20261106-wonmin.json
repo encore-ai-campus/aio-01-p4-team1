@@ -1,0 +1,12 @@
+{
+  "mode": "read_only_preflight",
+  "base_origin": "https://aio-t1.isitsoft.kr",
+  "checks": {
+    "login_http_200": true,
+    "login_page_has_login_label": true,
+    "anonymous_me_http_401": true
+  },
+  "elapsed_seconds": 0.123,
+  "write_requests": 0,
+  "auth_response_body_recorded": false
+}

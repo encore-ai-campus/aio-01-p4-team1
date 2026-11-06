@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+DAY81 실제 VM 중간점검: [WF-02b 원 raw](real-qa-api-WF02b-20261106T051701Z.json), [시각·버전·허용범위](real-qa-WF02b-context-20261106T051701Z.json), [공개 사전확인](real-qa-preflight-20261106-wonmin.json), [러너5개 회귀](real-qa-runner-regression-20261106.json), [평가결과보고서](../Doc/TEST-EVALUATION-RESULT-20261106.md). 14:17 KST, attempt3→T-2007·이관·3.982초, 실제 API 저장/재로그인/관리자PATCH/직원재조회 통과. 직접PG·n8ntrace·LLM3회·common14전체는 미수집/미실행이다.
+
 현재 P1-4 일부 실행: [새 ID3회·기능 실패 포함](llm-fresh-app-20261105.json), [TM-03 이관 fresh bench5회](bench-fresh-app-20261105.json), [증거 정합성·기능 실패 분리](p1-4-evidence-audit-20261105.json), [준비물/실제 기존본체차단](p1-4-readiness-20261105.json), [Python20 회귀](p1-4-regression-20261105.json), [해석·재현·인계](../Doc/P1-4-PARTIAL-RESULT.md). 고유3사례·9회차/HTTP12회 중 TM-02 3회 실패(대상만 질문), TM-03/06 각3회 통과. 별도bench는 실제모델5회·p50=0.771119/p95=0.849413초. 실제 data-api/공식키트/정상근거답변bench/팀VM은 미완료다.
 
 현재 본체 C04→C05 app 시험: [기존 본체 identity_unavailable 차단](c04-app-preflight-20261105.json), [최초 긴급 JSON형식 실패](c04-app-integration-20261105T103935Z.json), [JSON 출력 설정 보완 후13그룹](c04-app-integration-20261105T104124Z.json), [원인·게시·복구·소스해시](c04-app-final-state-20261105.json), [Node113/Python11](c04-app-regression-20261105.json), [해석·재현·후속 인계](../Doc/C04-APP-INTEGRATION-RESULT.md). 직원은 계약 fixture, triage는 실제 qwen, C04/C05/PG는 실제다. 최종실행 PG 티켓10→16/알림19→26/DLQ9→11·기본DB0→0, 기존workflow보존·프록시복구. 실제data-api/C03검색성공/기존티켓/팀VM/공식평가 통과로 쓰지 않는다.

@@ -1,0 +1,14 @@
+{
+  "scenario": "WF-02b",
+  "question": "접속이 안 돼요",
+  "attempt": 3,
+  "started_at_utc": "2026-11-06T05:17:01.695045+00:00",
+  "finished_at_utc": "2026-11-06T05:17:07.517708+00:00",
+  "exit": 0,
+  "raw_report": "real-qa-api-WF02b-20261106T051701Z.json",
+  "authorization": "user-relayed team lead instruction: one period-4 QA scenario; no deploy/fault/reset",
+  "local_merge_commit": "ade19672a67aac5a791aa85f23a1c9fcae68d28f",
+  "main_source_commit": "3dc5f23957313fe494dea9931c02615648df2ed6",
+  "vm_runtime_commit": "not independently queried; guide reports 3ff836a",
+  "direct_postgresql_observation": false
+}

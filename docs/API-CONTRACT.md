@@ -5,7 +5,7 @@
 DB 구조는 [데이터·DB 기준](DATA-AND-DB.md), 역할·파일 소유권은 [팀 헌장](TEAM-CHARTER.md)을 따른다.
 
 화면은 FastAPI만 호출하고, FastAPI는 세션으로 신원을 확인해 같은 oke-support를 호출한다. n8n은 검색·답변·검증·이관을 처리한다.
-비밀값은 환경변수와 n8n Credential에만 둔다. 현재 구현·실행·시험은 진행 전이다.
+비밀값은 환경변수와 n8n Credential에만 둔다. 구현본은 VM에 배포되어 일부 readiness·C03 검색·C04 저장 확인을 마쳤다. 전체 계약 경로와 인증 사용자 흐름의 검증은 진행 중이며, 실제 범위와 한계는 [실행 결과](EXECUTION-RESULT.md)를 따른다. 이 문서는 API 필드와 응답 계약을 정의한다.
 
 ## 1. 공통 웹훅 · FastAPI ↔ support (C02)
 

@@ -8,6 +8,8 @@
 
 ## 팀원별 진행과 근거
 
+> 이 표와 아래 최초 통합 관측은 2026-11-05 당시 스냅샷이다. 이후 수언 UI 커밋, 공개 FE 경로, 관리자 선택 등 후속 결과는 [DAY81](DAY81.md)과 [VM 팀 사용·시험 안내](../VM-TEAM-TESTING.md)를 참조한다. 아래의 0/9와 당시 막힘은 이력이며 현재 상태로 읽지 않는다.
+
 | 담당 | 단계 | 오늘 반영된 커밋·근거 | 남은 일 |
 |---|---:|---|---|
 | 이수언 · UI | 0/9 (0%) | 원격 브랜치/커밋 없음. 상태 보고에는 로컬 화면 작업 공유만 있음. | 화면 골격 첫 커밋, 실제 백엔드 프록시·로그인·문의 연결 |
@@ -21,7 +23,7 @@
 
 ## VM에서 실제 관측한 숫자와 실행
 
-- VM main 커밋 `952f704`; n8n 컨테이너 재시작 후 주요 workflow 4개 활성. PostgreSQL healthy, Alembic `0005`.
+- 당시 VM main 커밋 `952f704`; n8n 컨테이너 재시작 후 주요 workflow 4개 활성. PostgreSQL healthy, Alembic `0005`.
 - 관측 시 `rag.documents/chunks=0/0`, `app.tickets=0`. mode는 `practice`. 8 KiB 파일 put/get 내용 일치가 확인된 관제 기록이 있다.
 - 이전 본체 실행 `manual-38042b9550d14ce3b3b447a1bdbef2c8`: 질문 `비밀번호 초기화 절차를 알려주세요`, HTTP 200, `search_unavailable`, 이관 응답의 ticket `T-2001`, `sources=[]`. 이는 응답 관측이지 실제 DB 티켓 저장·영속성의 증거가 아니다. 최신 `952f704`에서 그 요청을 재검증한 것도 아니다.
 - 이후 검색 C03 확인은 HTTP 000/connection reset, RAG 컨테이너 및 8765 listener 미구성으로 실패했다. 배포 스모크는 미완료다. 실제 문서 색인·성공 검색 1건·이관 1건 종단 검증은 없다.
@@ -41,10 +43,12 @@
 - 검색서비스 직접 요청: 일반 `all` 접근으로 비밀번호 정책 3개 근거, HTTP 200; IT 접근으로 보안사고 문서 근거 포함, HTTP 200. n8n `/webhook/oke-search`에서도 일반 문서 근거 3개와 HTTP 200을 확인했다. 점수 threshold/hit@3 품질 승인은 아직 없다.
 - n8n `/webhook/oke-handoff` 요청 `vm-fin2-handoff-20261105-01`은 C04 저장 `T-2001`, HTTP 200, alert 성공. 동일 요청을 다시 보내 같은 `T-2001`과 `duplicate=true`를 확인했다. 정상 지원 요청 `vm-fin2-support-20261105-01`은 HTTP 200, `low_confidence` 이관, 실제 `T-2002` 저장; 응답 근거는 비어 있어 자동답변 PASS로 보지 않았다. 빈 질문은 HTTP 400/question_required. 주입 입력은 HTTP 200이지만 `route=차단`, `reason=prompt_injection`, ticket=null로 정책 차단됐다. 현재 워크플로우 계약은 입력 검증 400과 차단 응답 200을 구분한다.
 - PostgreSQL을 재시작한 뒤 healthy, backend readiness 200, FE `/login` 200을 재확인했다. 이후 DB counts는 employees=6/users=0/tickets=2/alerts=3/DLQ=1, RAG=8/33이었고 `T-2001` 및 `all=7,it=1`가 유지됐다. 총 메모리 2646 MiB 중 available 1344 MiB, disk free 41 GiB, 주요 컨테이너 OOM=false다.
-- 공개 FE는 아직 접근되지 않는다: `https://aio-t1.isitsoft.kr/` 502, 외부 `:5678/healthz` 200, `:3000/login` timeout. VM 내 80/443 reverse proxy/listener/config가 없어 FE 공개 라우팅은 ingress 담당 설정이 남았다. 내부 포트 바인딩을 외부 연결 성공으로 보지 않는다.
+- 당시 공개 FE 관측은 `https://aio-t1.isitsoft.kr/` 502, 외부 `:5678/healthz` 200, `:3000/login` timeout이었다. 이는 2026-11-05의 역사적 상태다. 후속 확인에서 공개 `/login`, `/docs`, `/openapi.json`이 200으로 응답했으며 현재 URL과 경계는 [VM 팀 사용·시험 안내](../VM-TEAM-TESTING.md)에 기록했다.
 - 공식 `Last3Mon/79/tools/flow.py`의 check는 팀 root source의 배포 credential placeholder와 course 전용 `openAiCourse0001` ID 기대 때문에 오류를 냈다. VM에서 실제 credential은 용도별로 import했고 n8n C03/C04 실호출은 성공했다. runner `http()`는 Authorization header를 전송하지 않아 credential 인증이 필요한 custom team cases 실행은 부적절했다. 공식 common 14개 case file은 수업 경로에서 찾지 못해 실행하지 않았다.
 
 ## 막힘과 DAY 81 첫 우선순위
+
+> 아래 우선순위는 DAY80 작성 시점의 기록이다. 공개 FE 접근과 관리자 선택 대기는 이후 해소됐지만, 인증된 팀원 계정 발급 및 전체 공통 시나리오 검증은 별도 잔여 항목이다. 후속 현황은 [DAY81](DAY81.md)을 따른다.
 
 1. FE 외부 주소의 502/3000 timeout을 해결할 기존 ingress 라우팅 설정이 필요하다.
 2. 첫 IT 관리자 선택 답변 후 bootstrap·첫 비밀번호 변경·logout/relogin, 본인/타인 403 및 admin 권한 시험을 진행한다.

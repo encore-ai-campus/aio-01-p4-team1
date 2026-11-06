@@ -160,3 +160,31 @@ The 1교시 report material is prepared, but the official common-14 test startin
 ### 남은 미검증
 
 - Browser UI click/render, alert/DLQ와 중복 재요청, 본인/타인 API 대조, 재시작 영속성, 일반/IT 정상 문서검색, WF-01 자동답변 및 8초, 공식 common-14 suite는 미실행 또는 이 시험으로 입증되지 않았다. 안정 이관 API pass를 전체 업무/검색 품질 pass로 확대하지 않는다.
+
+
+## 12. 6교시 팀장 지정 WF-02b 라이브 VM E2E 실측 · 2026-11-06 15:04 KST
+
+### 실행 배경 및 입력
+
+- **실행자**: 원민(QA), 팀장(오현) 지정 시나리오
+- **환경**: 공개 운영 VM `https://aio-t1.isitsoft.kr`, VM 배포본 `3ff836a`, origin/main 최신 병합 후 `feat/wonmin-p0` @ `90fab63`
+- **시나리오**: **WF-02b (보완 질문 한도 도달 후 자동 이관: attempt=3)**
+- **입력**: 질문="접속이 안 돼요", attempt=3, context=없음
+- **고유 요청 키**: `request_id=real-qa-4a2c0b16ce4341deb887c458f9d8aaa6`
+
+### 실제 응답 및 10개 검사 결과
+
+- **응답**: POST `/api/ask` HTTP 200, route `담당자 이관`, elapsed **4.535초**, sources `[]`, 티켓 `T-2011` (`in_progress`)
+- **10개 검사 항목 전원 PASS (`PASS_API_SEQUENCE`)**:
+  1. `employee_admin_forbidden_403`: true (일반 직원 계정의 관리자 엔드포인트 접근 403 차단)
+  2. `forbidden_body_not_recorded`: true (차단된 응답 본문 미기록)
+  3. `ask_created_one_ticket_response`: true (단일 티켓 생성 응답 확인)
+  4. `inquiry_saved_and_listed_before_logout`: true (문의 저장 및 로그아웃 전 목록 조회 일치)
+  5. `employee_logout_http_200`: true (직원 정상 로그아웃 200)
+  6. `inquiry_and_ticket_visible_after_relogin`: true (재로그인 후 문의 및 티켓 상태 정상 조회)
+  7. `admin_ticket_query_found_created_row`: true (관리자 티켓 쿼리에서 생성된 행 일치)
+  8. `admin_status_and_reply_persisted`: true (관리자 상태 변경 및 답변 저장 정상 반영)
+  9. `employee_latest_ticket_status_visible`: true (직원 화면에서 최신 티켓 상태 확인)
+  10. `employee_latest_reply_visible`: true (직원 화면에서 최신 관리자 답변 확인)
+- **증적 자료**: `develop/wonmin/runs/real-qa-WF02b-lead-20261106T060403Z.json`, 실행 맥락 `real-qa-WF02b-lead-context-20261106T060403Z.json`
+- **판정**: **WF-02b 라이브 E2E 실측 통과 (PASS)**.

@@ -8,7 +8,7 @@
 
 ## 팀원별 진행과 근거
 
-> 이 표와 아래 최초 통합 관측은 2026-11-05 당시 스냅샷이다. 이후 수언 UI 커밋, 공개 FE 경로, 관리자 선택 등 후속 결과는 [DAY81](DAY81.md)과 [VM 팀 사용·시험 안내](../VM-TEAM-TESTING.md)를 참조한다. 아래의 0/9와 당시 막힘은 이력이며 현재 상태로 읽지 않는다.
+> 이 표와 아래 최초 통합 관측은 2026-11-05 당시 스냅샷이다. 이후 수언 UI 커밋, 공개 FE 경로, 관리자 선택 등 후속 결과는 [DAY81](DAY81.md)과 [VM 팀 사용·시험 안내](../docs/VM-TEAM-TESTING.md)를 참조한다. 아래의 0/9와 당시 막힘은 이력이며 현재 상태로 읽지 않는다.
 
 | 담당 | 단계 | 오늘 반영된 커밋·근거 | 남은 일 |
 |---|---:|---|---|
@@ -43,7 +43,7 @@
 - 검색서비스 직접 요청: 일반 `all` 접근으로 비밀번호 정책 3개 근거, HTTP 200; IT 접근으로 보안사고 문서 근거 포함, HTTP 200. n8n `/webhook/oke-search`에서도 일반 문서 근거 3개와 HTTP 200을 확인했다. 점수 threshold/hit@3 품질 승인은 아직 없다.
 - n8n `/webhook/oke-handoff` 요청 `vm-fin2-handoff-20261105-01`은 C04 저장 `T-2001`, HTTP 200, alert 성공. 동일 요청을 다시 보내 같은 `T-2001`과 `duplicate=true`를 확인했다. 정상 지원 요청 `vm-fin2-support-20261105-01`은 HTTP 200, `low_confidence` 이관, 실제 `T-2002` 저장; 응답 근거는 비어 있어 자동답변 PASS로 보지 않았다. 빈 질문은 HTTP 400/question_required. 주입 입력은 HTTP 200이지만 `route=차단`, `reason=prompt_injection`, ticket=null로 정책 차단됐다. 현재 워크플로우 계약은 입력 검증 400과 차단 응답 200을 구분한다.
 - PostgreSQL을 재시작한 뒤 healthy, backend readiness 200, FE `/login` 200을 재확인했다. 이후 DB counts는 employees=6/users=0/tickets=2/alerts=3/DLQ=1, RAG=8/33이었고 `T-2001` 및 `all=7,it=1`가 유지됐다. 총 메모리 2646 MiB 중 available 1344 MiB, disk free 41 GiB, 주요 컨테이너 OOM=false다.
-- 당시 공개 FE 관측은 `https://aio-t1.isitsoft.kr/` 502, 외부 `:5678/healthz` 200, `:3000/login` timeout이었다. 이는 2026-11-05의 역사적 상태다. 후속 확인에서 공개 `/login`, `/docs`, `/openapi.json`이 200으로 응답했으며 현재 URL과 경계는 [VM 팀 사용·시험 안내](../VM-TEAM-TESTING.md)에 기록했다.
+- 당시 공개 FE 관측은 `https://aio-t1.isitsoft.kr/` 502, 외부 `:5678/healthz` 200, `:3000/login` timeout이었다. 이는 2026-11-05의 역사적 상태다. 후속 확인에서 공개 `/login`, `/docs`, `/openapi.json`이 200으로 응답했으며 현재 URL과 경계는 [VM 팀 사용·시험 안내](../docs/VM-TEAM-TESTING.md)에 기록했다.
 - 공식 `Last3Mon/79/tools/flow.py`의 check는 팀 root source의 배포 credential placeholder와 course 전용 `openAiCourse0001` ID 기대 때문에 오류를 냈다. VM에서 실제 credential은 용도별로 import했고 n8n C03/C04 실호출은 성공했다. runner `http()`는 Authorization header를 전송하지 않아 credential 인증이 필요한 custom team cases 실행은 부적절했다. 공식 common 14개 case file은 수업 경로에서 찾지 못해 실행하지 않았다.
 
 ## 막힘과 DAY 81 첫 우선순위
@@ -55,7 +55,7 @@
 3. 실제 검색은 성공했지만 응답 품질 threshold와 청크 길이 분포는 승인/측정되지 않았다. 일반 C03 근거 검색, LLM 자동 답변 품질, 안전 이관을 별도로 검증한다.
 4. 공식 common 14개 file은 현재 수업 트리에서 찾지 못했다. `flow.py`가 auth header를 보내지 않는 제한을 해결할 공식 지원 절차 또는 인증을 갖춘 시험 harness가 필요하며 기대값을 바꾸지 않는다.
 
-세부 근거와 버전 경계는 [실행 결과서](../EXECUTION-RESULT.md), [워크플로우 설계](../WORKFLOW-DESIGN.md), [RAG 설계](../RAG-ARCHITECTURE.md), `develop/{jihye,dahyeok,yubeen,wonmin}/Doc/`의 단계 결과·HANDOFF 및 main 커밋 기록을 따른다.
+세부 근거와 버전 경계는 [실행 결과서](../docs/EXECUTION-RESULT.md), [워크플로우 설계](../docs/WORKFLOW-DESIGN.md), [RAG 설계](../docs/RAG-ARCHITECTURE.md), `develop/{jihye,dahyeok,yubeen,wonmin}/Doc/`의 단계 결과·HANDOFF 및 main 커밋 기록을 따른다.
 
 ## 후속 VM 런타임 정리 · 2026-11-05
 
@@ -68,4 +68,4 @@
 - localhost n8n health/backend ready/FE login은 모두 HTTP 200이고 기존 외부 n8n `:5678/healthz`도 200이었다. FE 외부 루트 502/3000 timeout 문제는 이 작업에서 수정하지 않았다. 공식 flow.py/common-14는 실행하지 않았다.
 - 자원은 전환 전 available RAM 1347 MiB에서 전환 후 1433 MiB, 디스크 여유 41 GiB였다. SearXNG와 index 및 모든 기존 `day65-n8n-*` 컨테이너는 삭제 없이 중지 상태로 남겼다. 체크섬 검증된 롤백 백업은 VM `/home/toor/backups/oke-runtime-cleanup-20261105-final`에 보관했다.
 
-세부 볼륨 매핑, 운영/롤백 명령과 실제 시험 표는 [배포 운영 기록](../deploy/README.md) 및 [실행 결과 8절](../EXECUTION-RESULT.md#8-oke-runtime-cleanup-and-project-rename--2026-11-05)에 있다. 이 확인은 강사 검토/승인이나 자동 답변 품질 PASS를 뜻하지 않는다.
+세부 볼륨 매핑, 운영/롤백 명령과 실제 시험 표는 [배포 운영 기록](../docs/deploy/README.md) 및 [실행 결과 8절](../docs/EXECUTION-RESULT.md#8-oke-runtime-cleanup-and-project-rename--2026-11-05)에 있다. 이 확인은 강사 검토/승인이나 자동 답변 품질 PASS를 뜻하지 않는다.

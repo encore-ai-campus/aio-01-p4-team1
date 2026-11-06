@@ -133,7 +133,7 @@ flowchart LR
 
 ## 6. 실제 결과와 실패 · 재시험
 
-**아래 값은 실제 runs에서만 확인합니다.** 아직 실행하지 않은 결과는 공란/미실행으로 두고 0건이나 PASS로 채우지 않습니다. 공식 원본은 [EXECUTION-RESULT](../../../docs/EXECUTION-RESULT.md)와 [DAY82](../../../docs/daily/DAY82.md)입니다.
+**아래 값은 실제 runs에서만 확인합니다.** 아직 실행하지 않은 결과는 공란/미실행으로 두고 0건이나 PASS로 채우지 않습니다. 공식 원본은 [EXECUTION-RESULT](../../../docs/EXECUTION-RESULT.md)와 [DAY82](../../../daily/DAY82.md)입니다.
 
 | 최종 설명할 결과 | 근거 | 현재 준비 상태 |
 | --- | --- | --- |

@@ -1,6 +1,6 @@
 # 81일차 · 팀장 준비·운영 체크리스트
 
-오늘 공개할 자료는 [발표 README](README.md), 역할별 인계는 [TEAM-INPUTS](TEAM-INPUTS.md), 점검/발표 순서는 [PRESENTATION](PRESENTATION.md)에서 확인한다. 이 문서는 작업용이며 실제 기록은 [공식 DAY81](../../../docs/daily/DAY81.md)에 남긴다.
+오늘 공개할 자료는 [발표 README](README.md), 역할별 인계는 [TEAM-INPUTS](TEAM-INPUTS.md), 점검/발표 순서는 [PRESENTATION](PRESENTATION.md)에서 확인한다. 이 문서는 작업용이며 실제 기록은 [공식 DAY81](../../../daily/DAY81.md)에 남긴다.
 
 ## 시작 전
 

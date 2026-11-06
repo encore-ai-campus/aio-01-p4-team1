@@ -1,0 +1,139 @@
+{
+  "scope": "direct computer-use of user-signed-in Ubuntu team VM terminal; readonly commands",
+  "capture_method": "JSON values transcribed from observed VM console screenshots; not an automatic raw stdout download",
+  "new_qa_writes": 0,
+  "runtime": {
+    "os": "Ubuntu 26.04.1 LTS x86_64",
+    "kernel": "7.0.0-42-generic",
+    "repo_commit": "3ff836af8b0be1bc5f81d0483c5b78272fec6c6a",
+    "container_count": 9,
+    "internal_backend_ready_http": 200,
+    "schema": "0005"
+  },
+  "postgres": {
+    "transaction": "READ ONLY; SET LOCAL statement_timeout=5s; rollback at end",
+    "rows": [
+      {
+        "request_id": "real-qa-e9ea1cdc3ffa41999f2ac269e1237db5",
+        "ticket_id": "T-2008",
+        "attempt": 3,
+        "status": "in_progress",
+        "linked": true,
+        "result_matches": true,
+        "reply_matches": true,
+        "ticket_rows": 1,
+        "alerts": 1,
+        "dlq": 0
+      },
+      {
+        "request_id": "real-qa-f1c560ff39bd46cda7ed866ca4c02461",
+        "ticket_id": "T-2009",
+        "attempt": 3,
+        "status": "in_progress",
+        "linked": true,
+        "result_matches": true,
+        "reply_matches": true,
+        "ticket_rows": 1,
+        "alerts": 1,
+        "dlq": 0
+      },
+      {
+        "request_id": "real-qa-2db1971503a241428cf4d30ecab63bac",
+        "ticket_id": "T-2010",
+        "attempt": 3,
+        "status": "in_progress",
+        "linked": true,
+        "result_matches": true,
+        "reply_matches": true,
+        "ticket_rows": 1,
+        "alerts": 1,
+        "dlq": 0
+      },
+      {
+        "request_id": "real-qa-4a2c0b16ce4341deb887c458f9d8aaa6",
+        "ticket_id": "T-2011",
+        "attempt": 3,
+        "status": "in_progress",
+        "linked": true,
+        "result_matches": true,
+        "reply_matches": true,
+        "ticket_rows": 1,
+        "alerts": 1,
+        "dlq": 0
+      }
+    ]
+  },
+  "n8n": {
+    "db_type": "sqlite",
+    "database_open_readonly": true,
+    "total_execution_rows_observed": 20,
+    "matched_support_executions": [
+      {
+        "request_id": "real-qa-e9ea1cdc3ffa41999f2ac269e1237db5",
+        "execution_id": 37,
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "mode": "webhook"
+      },
+      {
+        "request_id": "real-qa-f1c560ff39bd46cda7ed866ca4c02461",
+        "execution_id": 39,
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "mode": "webhook"
+      },
+      {
+        "request_id": "real-qa-2db1971503a241428cf4d30ecab63bac",
+        "execution_id": 42,
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "mode": "webhook"
+      },
+      {
+        "request_id": "real-qa-4a2c0b16ce4341deb887c458f9d8aaa6",
+        "execution_id": 44,
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "mode": "webhook"
+      }
+    ],
+    "success_save_settings": {
+      "oke-support": "default",
+      "oke-search": "none",
+      "oke-handoff": "none",
+      "oke-errors": "none",
+      "oke-index": "none"
+    },
+    "error_save_settings": {
+      "oke-support": "default",
+      "oke-search": "none",
+      "oke-handoff": "none",
+      "oke-errors": "none",
+      "oke-index": "all"
+    },
+    "child_execution_trace": "unavailable/not proved; save settings not modified",
+    "additional_node_payload_query": "not verified; user switched browser tab, further UI input stopped"
+  },
+  "console_proof": {
+    "runtime": {
+      "sha256": "b206d03ea608a5114ce8d4f64f0a7015d19e2a6d384af3041105b0a4481f93d2",
+      "captured_at_utc": "2026-11-06T06:49:27.643973+00:00",
+      "visibility": "private screenshot retained; browser chrome not published"
+    },
+    "postgres": {
+      "sha256": "3e801cdd860e4f5cf10622ddae2d8b968e4830e8cf7469e40853d12f6861d467",
+      "captured_at_utc": "2026-11-06T06:53:30.550634+00:00",
+      "visibility": "private screenshot retained; browser chrome not published"
+    },
+    "n8n": {
+      "sha256": "df73ba35cb1548e5246c1504d381e50fe67be7e05c377256b7940c67858b6c84",
+      "captured_at_utc": "2026-11-06T06:54:36.648163+00:00",
+      "visibility": "private screenshot retained; browser chrome not published"
+    }
+  },
+  "failures_before_success": [
+    "python executable .venv/bin/python absent; corrected to installed python",
+    "SQLAlchemy treated colon in event key string as bind parameter; changed query literal to chr(58), no schema/data change"
+  ],
+  "verdict": "PASS_SCOPED_DB_LINKS_AND_SUPPORT_EXECUTION_MATCH; CHILD_NODE_TRACE_INCOMPLETE"
+}

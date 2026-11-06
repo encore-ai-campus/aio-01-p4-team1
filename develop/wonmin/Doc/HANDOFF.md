@@ -1,5 +1,7 @@
 # 원민님 · 변경 제안·전달 기록
 
+VM 내부 직접대조(2026-11-06): Orca Computer Use로 로그인된 실제 Ubuntu 셸에서 배포HEAD3ff836a·컨테이너9·내부ready200·schema0005 확인. PostgreSQL READ ONLY에서 T-2008~2011 각티켓1·연결/소유자/저장결과/답변 일치·알림1·DLQ0. n8n SQLite readOnly에서 동일request의 본체실행37/39/42/44 success 확인. 하위성공로그저장none으로 전체하위trace는미완료. 상세추가조회는 사용자탭이동관측후중단·성공미집계. [새 결과서](EXECUTION-RESULT.md) 및 runs/vm-internal-observed-20261106.json 참조. 배포/DB쓰기/설정변경없음.
+
 ## 팀장 지정 WF-02b QA · 2026-11-06 15:04 KST
 
 - 변경/기준: 최신 origin/main `95d8af3`을 feat/wonmin-p0에 병합. real-qa-api-runner.py 및 docs/VM-TEAM-TESTING.md 확인. 선택1건만 실행하며 평가결과보고서는 작성하지 않았다.

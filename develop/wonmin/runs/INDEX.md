@@ -1,5 +1,7 @@
 # 원민 실행 증거 색인
 
+실제 VM 내부대조: [선별 관측 JSON](vm-internal-observed-20261106.json), [새 결과서](../Doc/EXECUTION-RESULT.md). 실제 VM 셸·repo3ff836a·내부HTTP/PG READ ONLY·n8n SQLite readOnly 실행. T-2008~2011/본체37,39,42,44 연관확인. 콘솔화면전사이며 자동stdout다운로드원본아님; 원화면비공개보존·해시기록. 추가노드조회 미확인, 하위trace미완료.
+
 팀장 지정 최신 QA: [WF-02b raw](real-qa-WF02b-lead-20261106T060403Z.json), [실행 맥락](real-qa-WF02b-lead-context-20261106T060403Z.json). main95d8af3 병합 후 실제 공개VM HTTPS API에 attempt3 실행, T-2011·4.535초·10checks통과. 로컬클라이언트 실행이며 VM OS/SQL/n8n trace는 미실행. 평가결과보고서 생성 없음.
 
 실제 VM 재시험: 평가결과보고서는 사용자 요청으로 삭제했으며 raw 증거는 보존한다. [3회 요약](vm-retest-summary-20261106T054458Z.json), [r1](vm-retest-WF02b-20261106T054458Z-r1.json), [r2](vm-retest-WF02b-20261106T054458Z-r2.json), [r3](vm-retest-WF02b-20261106T054458Z-r3.json), [UI 관측](vm-browser-WF02-retest.json), [UI 캡처](vm-browser-WF02-retest.png), [검증 집계](vm-retest-validation.json). 기존 작업 결과파일5개는 사용자 요청으로 삭제했고 이번 새 실행만 집계한다.

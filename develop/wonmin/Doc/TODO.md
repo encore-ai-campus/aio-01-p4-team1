@@ -1,5 +1,7 @@
 # 원민님 · TODO
 
+현재 [VM 내부 직접대조](EXECUTION-RESULT.md) 완료: 실제셸/배포HEAD·readiness·PostgreSQL4요청·n8n본체실행4개 확인. 하위노드trace·공식전체QA·실제근거/권한·bench·리허설은대기.
+
 평가결과보고서는 사용자 요청으로 삭제했다. 보존된 실서비스 raw 관측: WF-02b API3/3·WF02 UI1회 관측. 이전 작업 결과5개 삭제 후 새 근거로 대체했다. 직접SQL·모델trace·공식전체suite·bench·대표로그3종·리허설은 미완료다.
 
 

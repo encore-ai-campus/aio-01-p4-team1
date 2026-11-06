@@ -88,3 +88,25 @@
 - WF-12 알림 전송은 응답 필드로는 확인되지 않음 → VM에서 알림 기록으로 확인.
 
 원본: `runs/common-rest-20261106-1.json`, `runs/common-regress-20261106-1.json`
+
+## 6. 팀 시나리오 · 3회 반복 · practice 모드 (support-18)
+
+| 묶음 | 결과 | 원본 |
+| --- | --- | --- |
+| practice 모드 (n8n SERVICE_MODE=practice, 공식 fault 주입) | 7/7 | `runs/practice-20261106-1.json` |
+| 팀 시나리오 cases/team.json + 보강 5건 | 14/16 | `runs/team-repeat-20261106-1.json` |
+| LLM 경로 3회 반복 (WF-01·02·03·05·12) | 5/5 (모두 3/3) | 같은 파일 `repeat3` |
+
+- practice에서 WF-04·TM-07: tickets_down, ticket=null, DLQ +1, 알림 +1 (H04 Create Ticket, high) → 공식 기준 충족.
+- WF-11 practice: 6.6s 안전 응답 (기준 8s, 여유 1.4s). app 모드에서도 티켓 조회는 data-api(timeout 2s)로 가서 실제 지연 검증됨.
+- WF-12: 긴급 알림 +1 확인.
+
+### 실패 2건 원인 (실행 기록 확인)
+- **TM-12 (김민지, IT 전용 문서)**: 권한 all+it 정상 전달, security-incident 검색됨. 원문 질문이 막연해 서문만 0.45~0.49로 검색 → writer가 answerable=false → 안전 이관. 구체 질문으로 바꾸면 N07 긴급 규칙(피싱+클릭, 악성코드·감염 단어)에 걸려 IT팀도 긴급 이관 → 현재 구조에서는 IT팀 자동 답변이 나올 수 없음.
+- **TX-2 (회의실 프로젝터)**: meeting-room "2. 장비" 0.53 검색, writer 3/3회 answerable=false → 이관이 맞는 동작(기대값 설정 오류). 단 writer가 used_ticket을 빠뜨려 실패 사유가 writer_unanswerable 대신 writer_invalid로 기록됨.
+
+### 제안 (기능 동결 후라 승인 필요 · 미반영)
+1. N07: IT팀 + 대응 절차를 묻는 질문 + 본인·사고 보고 표현 없음 → 긴급 강제 제외 (WF-12 등 일반 직원 동작은 그대로).
+2. N13 Parse writer: answerable=false를 형식 검사보다 먼저 판정 (기록 사유만 정확해짐, 응답 동일).
+3. (원민) TM-11·TM-12 질문을 구체 문장으로 고정.
+4. (원민) 같은 request_id 재요청 시 H06 알림이 한 번 더 쌓임 → 의도 여부 확인.

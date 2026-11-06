@@ -1,0 +1,584 @@
+{
+  "env": "local oke-local app, support v18",
+  "rows": [
+    {
+      "id": "TM-01",
+      "name": "정상 VPN 근거 답변",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 9.9,
+      "resp": {
+        "request_id": "wm-t01-1793966646",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.4141972386213595
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하세요. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청해야 합니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      }
+    },
+    {
+      "id": "TM-02",
+      "name": "정보 부족 1차",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 1.7,
+      "resp": {
+        "request_id": "wm-t02-1793966656",
+        "sources": [],
+        "ticket": null,
+        "agents": [
+          "triage"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "보완 질문",
+        "answer": "접속 대상은 무엇인가요? 어떤 오류 메시지가 표시되나요? 언제부터 발생했나요?"
+      }
+    },
+    {
+      "id": "TM-03",
+      "name": "보완 질문 한도",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 2.0,
+      "resp": {
+        "request_id": "wm-t03-1793966657",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2055",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "max_attempts"
+      }
+    },
+    {
+      "id": "TM-04",
+      "name": "타인 접수 권한 거절",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 2.2,
+      "resp": {
+        "request_id": "wm-t04-1793966659",
+        "sources": [],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "권한 없음",
+        "answer": "본인 문의만 확인할 수 있습니다."
+      }
+    },
+    {
+      "id": "TM-05",
+      "name": "긴급 사고와 본인 접수 복합",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 2.1,
+      "resp": {
+        "request_id": "wm-t05-1793966661",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2056",
+          "priority": "high",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 2
+        },
+        "route": "담당자 이관",
+        "answer": "긴급 보안 문의가 접수되었습니다(T-2056). 피해 확산을 막기 위해 해당 PC의 사내망 연결(유선·Wi-Fi·VPN)을 바로 끊고 IT팀 연락을 기다려 주세요. 문의하신 T-1002(VPN 인증서 재발급)는 현재 '처리 중' 상태입니다.",
+        "reason": "urgent"
+      }
+    },
+    {
+      "id": "TM-06",
+      "name": "동일 요청 순차 중복 (1차)",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 1.7,
+      "resp": {
+        "request_id": "wm-t06-1793966663",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2057",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "action_required"
+      }
+    },
+    {
+      "id": "TM-06",
+      "name": "동일 요청 순차 중복 (2차)",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 1.6,
+      "resp": {
+        "request_id": "wm-t06-1793966663",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2057",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "agents": [
+          "triage"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "action_required"
+      }
+    },
+    {
+      "id": "TM-08",
+      "name": "관리자 단어 과잉 차단 방지",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 2.0,
+      "resp": {
+        "request_id": "wm-t08-1793966667",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2058",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      }
+    },
+    {
+      "id": "TM-11",
+      "name": "관리자 문서 일반 직원 음성 대조",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 3.2,
+      "resp": {
+        "request_id": "wm-t11-1793966669",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2059",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever",
+          "writer"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      }
+    },
+    {
+      "id": "TM-12",
+      "name": "관리자 문서 IT팀 양성 대조",
+      "ok": false,
+      "problems": [
+        "route='담당자 이관'",
+        "ticket≠null",
+        "IT 문서 근거 없음"
+      ],
+      "http": 200,
+      "sec": 3.2,
+      "resp": {
+        "request_id": "wm-t12-1793966672",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2060",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever",
+          "writer"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      }
+    },
+    {
+      "id": "TM-13",
+      "name": "계정과 네트워크 분류 경계",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 4.6,
+      "resp": {
+        "request_id": "wm-t13-1793966675",
+        "sources": [
+          {
+            "doc": "password-policy",
+            "section": "2. 변경 주기",
+            "score": 0.41566074504825967
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정합니다. 비밀번호는 90일마다 바꾸며, 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다. 최근에 쓴 비밀번호 5개는 다시 쓸 수 없습니다."
+      }
+    },
+    {
+      "id": "TX-1",
+      "name": "비밀번호는 얼마나 자주 바꿔야 하나요?",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 4.0,
+      "resp": {
+        "request_id": "tm-1793966680270",
+        "sources": [
+          {
+            "doc": "password-policy",
+            "section": "2. 변경 주기",
+            "score": 0.6738777233916626
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "비밀번호는 90일마다 바꿔야 합니다. 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다."
+      }
+    },
+    {
+      "id": "TX-2",
+      "name": "회의실 프로젝터 화면이 안 나와요. 어떻게 ",
+      "ok": false,
+      "problems": [
+        "route='담당자 이관'",
+        "sources에 meeting-room 없음"
+      ],
+      "http": 200,
+      "sec": 3.2,
+      "resp": {
+        "request_id": "tm-1793966684273",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2061",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever",
+          "writer"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      }
+    },
+    {
+      "id": "TX-3",
+      "name": "노트북이 고장 나서 반납하려면 어떻게 하나요",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 5.1,
+      "resp": {
+        "request_id": "tm-1793966687494",
+        "sources": [
+          {
+            "doc": "device-issue-return",
+            "section": "1. 지급과 교체",
+            "score": 0.49225518159244197
+          },
+          {
+            "doc": "device-issue-return",
+            "section": "3. 반납",
+            "score": 0.47156960651383895
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "노트북 고장은 IT 문의로 접수합니다. 업무용 장비 지급·반납 규정에 따라 노트북 교체 주기는 4년이며, 고장 시 IT 문의로 접수하세요. 반납할 때는 퇴사하거나 장비를 교체할 때 5영업일 이내에 장비를 IT 담당자에게 반납합니다. 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮기세요."
+      }
+    },
+    {
+      "id": "TX-4",
+      "name": "보안 점검 일정이 언제인가요?",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 2.2,
+      "resp": {
+        "request_id": "tm-1793966692562",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2062",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      }
+    },
+    {
+      "id": "TX-5",
+      "name": "관리자에게 연락하려면 어떻게 하나요?",
+      "ok": true,
+      "problems": [],
+      "http": 200,
+      "sec": 2.2,
+      "resp": {
+        "request_id": "tm-1793966694791",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2063",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      }
+    }
+  ],
+  "repeat3": {
+    "WF-01": [
+      [
+        true,
+        4.2,
+        "자동 답변",
+        null
+      ],
+      [
+        true,
+        4.6,
+        "자동 답변",
+        null
+      ],
+      [
+        true,
+        5.4,
+        "자동 답변",
+        null
+      ]
+    ],
+    "WF-02": [
+      [
+        true,
+        1.6,
+        "보완 질문",
+        null
+      ],
+      [
+        true,
+        1.4,
+        "보완 질문",
+        null
+      ],
+      [
+        true,
+        1.9,
+        "보완 질문",
+        null
+      ]
+    ],
+    "WF-03": [
+      [
+        true,
+        2.4,
+        "담당자 이관",
+        "low_confidence"
+      ],
+      [
+        true,
+        2.4,
+        "담당자 이관",
+        "low_confidence"
+      ],
+      [
+        true,
+        2.3,
+        "담당자 이관",
+        "low_confidence"
+      ]
+    ],
+    "WF-05": [
+      [
+        true,
+        3.1,
+        "담당자 이관",
+        "low_confidence"
+      ],
+      [
+        true,
+        2.9,
+        "담당자 이관",
+        "low_confidence"
+      ],
+      [
+        true,
+        2.9,
+        "담당자 이관",
+        "low_confidence"
+      ]
+    ],
+    "WF-12": [
+      [
+        true,
+        2.6,
+        "담당자 이관",
+        "urgent"
+      ],
+      [
+        true,
+        2.9,
+        "담당자 이관",
+        "urgent"
+      ],
+      [
+        true,
+        2.4,
+        "담당자 이관",
+        "urgent"
+      ]
+    ]
+  }
+}

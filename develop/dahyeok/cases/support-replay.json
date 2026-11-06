@@ -1,0 +1,184 @@
+{
+  "purpose": "P1-4 N05 결과 재사용·소유권·충돌·처리중·장애 로컬 Mock. 순차 fixture 비교만 수행, 실제 DB 영속·동시성·재시작 검증 아님.",
+  "cases": [
+    {
+      "id": "P14-01-first-miss",
+      "request_file": "requests/duplicate.json",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "no_evidence",
+        "ticket_id": "T-552532",
+        "duplicate": false,
+        "replay_state": "miss",
+        "handoff_calls": 1,
+        "triage_ran": true
+      }
+    },
+    {
+      "id": "P14-02-second-hit",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "hit_handoff",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "no_evidence",
+        "ticket_id": "T-552532",
+        "duplicate": true,
+        "replay_state": "hit",
+        "handoff_calls": 0,
+        "triage_ran": false,
+        "search_ran": false
+      }
+    },
+    {
+      "id": "P14-03-other-user",
+      "request_file": "requests/replay-other-user.json",
+      "replay_result": "hit_handoff",
+      "expect": {
+        "http_status": 200,
+        "route": "권한 없음",
+        "ticket": null,
+        "replay_state": "forbidden",
+        "handoff_calls": 0,
+        "triage_ran": false,
+        "search_ran": false
+      }
+    },
+    {
+      "id": "P14-04-content-change",
+      "request_file": "requests/replay-conflict.json",
+      "replay_result": "hit_handoff",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "invalid_request"
+        ],
+        "replay_state": "conflict",
+        "handoff_calls": 0,
+        "triage_ran": false
+      }
+    },
+    {
+      "id": "P14-05-processing",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "processing",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "handoff_unavailable",
+        "ticket": null,
+        "replay_state": "processing",
+        "handoff_calls": 0,
+        "triage_ran": false
+      }
+    },
+    {
+      "id": "P14-06-store-down",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "unavailable",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "handoff_unavailable",
+        "ticket": null,
+        "replay_state": "unavailable",
+        "handoff_calls": 0
+      }
+    },
+    {
+      "id": "P14-07-malformed-hit",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "malformed",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "handoff_unavailable",
+        "ticket": null,
+        "replay_state": "unavailable",
+        "handoff_calls": 0
+      }
+    },
+    {
+      "id": "P14-08-explicit-forbidden",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "forbidden",
+      "expect": {
+        "http_status": 200,
+        "route": "권한 없음",
+        "ticket": null,
+        "replay_state": "forbidden",
+        "handoff_calls": 0
+      }
+    },
+    {
+      "id": "P14-09-explicit-conflict",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "conflict",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "invalid_request"
+        ],
+        "replay_state": "conflict",
+        "handoff_calls": 0
+      }
+    },
+    {
+      "id": "P14-10-invalid-input",
+      "request_file": "requests/input-empty.json",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "question_required"
+        ],
+        "replay_state": "skipped",
+        "handoff_calls": 0,
+        "triage_ran": false
+      }
+    },
+    {
+      "id": "P14-11-injection",
+      "request_file": "requests/injection.json",
+      "expect": {
+        "http_status": 200,
+        "route": "차단",
+        "ticket": null,
+        "replay_state": "skipped",
+        "handoff_calls": 0,
+        "triage_ran": false
+      }
+    },
+    {
+      "id": "P14-12-urgent-replay",
+      "request_file": "requests/urgent-complex.json",
+      "replay_result": "hit_urgent",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "urgent",
+        "ticket_id": "T-2201",
+        "priority": "high",
+        "duplicate": true,
+        "replay_state": "hit",
+        "handoff_calls": 0,
+        "triage_ran": false
+      }
+    },
+    {
+      "id": "P14-13-cached-answer-masked",
+      "request_file": "requests/duplicate.json",
+      "replay_result": "hit_contact",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "ticket_id": "T-552532",
+        "duplicate": true,
+        "replay_state": "hit",
+        "handoff_calls": 0,
+        "security_masked": 1,
+        "answer_excludes": "02-0000-0000"
+      }
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+# Mac-only overrides for the VM unified stack. Always use -p oke-local.
+name: oke-local
+
+services:
+  sandbox-api:
+    env_file: !override []
+    environment:
+      SANDBOX_API_KEYS: ${SANDBOX_API_KEYS:?run deploy/local/setup.py init}
+      SANDBOX_API_RUNNER_REGISTRATION_TOKEN: ${SANDBOX_API_RUNNER_REGISTRATION_TOKEN:?run deploy/local/setup.py init}
+      SANDBOX_API_RUNNER_API_KEY: ${SANDBOX_API_RUNNER_API_KEY:?run deploy/local/setup.py init}
+  sandbox-runner-1:
+    env_file: !override []
+    environment:
+      SANDBOX_RUNNER_REGISTRATION_TOKEN: ${SANDBOX_RUNNER_REGISTRATION_TOKEN:?run deploy/local/setup.py init}
+      SANDBOX_RUNNER_API_KEYS: ${SANDBOX_RUNNER_API_KEYS:?run deploy/local/setup.py init}
+  n8n:
+    env_file: !override
+      - path: local/.private/n8n.env
+        required: true
+    environment:
+      SERVICE_MODE: app
+      N8N_HOST: localhost
+      N8N_PROTOCOL: http
+      N8N_PORT: '5678'
+      N8N_EDITOR_BASE_URL: http://localhost:15679/
+      WEBHOOK_URL: http://localhost:15679/
+      N8N_SECURE_COOKIE: 'false'
+      N8N_RUNNERS_ENABLED: 'true'
+      N8N_RUNNERS_MODE: external
+      N8N_RUNNERS_BROKER_LISTEN_ADDRESS: 0.0.0.0
+    ports: !override
+      - '127.0.0.1:15679:5678'
+  runners:
+    env_file: !override
+      - path: local/.private/n8n.env
+        required: true
+    environment:
+      SERVICE_MODE: app
+      N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
+      N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: '15'
+  searxng:
+    volumes: !override
+      - searxng-config:/etc/searxng
+      - searxng-cache:/var/cache/searxng
+  postgres:
+    ports: !override
+      - '127.0.0.1:15432:5432'
+    volumes: !override
+      - postgres-data:/var/lib/postgresql/data
+  data-api:
+    ports: !override []
+    volumes: !override
+      - ${OKE_LOCAL_DATA_API_DIR:?run deploy/local/setup.py init}/server.py:/app/server.py:ro
+      - ${OKE_LOCAL_DATA_API_DIR:?run deploy/local/setup.py init}/data:/data:ro
+  backend:
+    image: oke-team-backend:local
+    env_file: !override
+      - path: local/.private/backend.env
+        required: true
+    environment:
+      SERVICE_MODE: app
+      DATA_API_URL: http://data-api:8800
+    ports: !override []
+  frontend:
+    ports: !override
+      - '127.0.0.1:3001:3000'
+  rag-search:
+    env_file: !override
+      - path: local/.private/openai.env
+        required: false
+      - path: local/.private/search.env
+        required: true
+  rag-index:
+    env_file: !override
+      - path: local/.private/openai.env
+        required: false
+      - path: local/.private/index.env
+        required: true
+    volumes: !override
+      - ${OKE_LOCAL_DATA_API_DIR:?run deploy/local/setup.py init}/data/docs:/rag-docs:ro
+      - ../develop/yubeen/rag-permissions.json:/app/develop/yubeen/rag-permissions.json:ro
+  db-migrate:
+    profiles: [local-setup]
+    image: oke-team-backend:local
+    build:
+      context: ../develop/jihye
+      dockerfile: deploy/backend.Dockerfile
+    env_file: !override
+      - path: local/.private/migrate.env
+        required: true
+    entrypoint: [python, -m, alembic, -c, migrations/alembic.ini]
+    command: [upgrade, head]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+    networks: [internal]
+  seed-employees:
+    profiles: [local-setup]
+    image: oke-team-backend:local
+    env_file: !override
+      - path: local/.private/backend.env
+        required: true
+    entrypoint: [python, -m, app.cli, seed-employees]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      data-api:
+        condition: service_started
+    restart: 'no'
+    networks: [internal]
+  bootstrap-admin:
+    profiles: [local-setup]
+    image: oke-team-backend:local
+    env_file: !override
+      - path: local/.private/backend.env
+        required: true
+      - path: local/.private/admin-handoff.env
+        required: true
+    entrypoint: [python, -m, app.cli, bootstrap-admin]
+    command: [--employee-name, 김민지, --login-id, minji.admin]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+    networks: [internal]
+
+networks:
+  internal: !override
+    name: oke-local-internal
+    driver: bridge
+    external: false
+
+volumes:
+  n8n-data: !override
+    name: oke-local_n8n-data
+    external: false
+  sandbox-tls: !override
+    name: oke-local_sandbox-tls
+    external: false
+  sandbox-docker: !override
+    name: oke-local_sandbox-docker
+    external: false
+  postgres-data: !override
+    name: oke-local_postgres-data
+    external: false
+  searxng-config: !override
+    name: oke-local_searxng-config
+    external: false
+  searxng-cache: !override
+    name: oke-local_searxng-cache
+    external: false

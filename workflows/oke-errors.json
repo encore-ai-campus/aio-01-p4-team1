@@ -1,0 +1,555 @@
+{
+  "name": "oke-errors",
+  "active": false,
+  "nodes": [
+    {
+      "name": "E01 Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "parameters": {},
+      "id": "errors-0",
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "E02 Safe Error Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst object = v => v && typeof v === 'object' && !Array.isArray(v) ? v : {};\nconst event = object(raw), parent = object(event.workflow), execution = object(event.execution), trigger = object(event.trigger);\nconst own = typeof $workflow === 'object' ? $workflow : {};\nconst self = parent.name === 'oke-errors' || Boolean(own.id && (typeof parent.id === 'string' || Number.isSafeInteger(parent.id)) && String(parent.id) === String(own.id));\nconst workflowNames = ['oke-support', 'oke-index', 'oke-search', 'oke-handoff'];\nconst source_workflow = workflowNames.includes(parent.name) ? parent.name : 'unknown';\nconst knownNodes = [\"E02 Safe Error Context\", \"E03 Store Alert App\", \"E03 Store Alert Practice\", \"E04 Store DLQ App\", \"E04 Store DLQ Practice\", \"E05 Outcome\", \"H01 Handoff Webhook\", \"H02 Validate and Map\", \"H02a Valid Input\", \"H03 Select Store\", \"H03a Store Ready\", \"H03b App Ticket Store\", \"H04 Create Ticket App\", \"H04 Create Ticket Practice\", \"H04 Retry Ticket App\", \"H04 Retry Ticket Practice\", \"H05 Recheck Budget\", \"H05 Restore First Result\", \"H05 Retry Gate\", \"H05 Wait\", \"H05a Retry Allowed\", \"H05b App Retry Store\", \"H05c Retry Still Allowed\", \"H06 Keep Ticket\", \"H07 Failure Context\", \"H08 Check Alert\", \"H08 Store Alert App\", \"H08 Store Alert Practice\", \"H08a App Alert Store\", \"H09 Check DLQ\", \"H09 Store DLQ App\", \"H09 Store DLQ Practice\", \"H09a Needs DLQ\", \"H09b App DLQ Store\", \"H10 Build Result\", \"H11 Respond\", \"N09 Search knowledge\", \"N13 Writer Agent\", \"N14 Verifier Agent\", \"N20 Map handoff\", \"N20 Mock C04\", \"N20 Prepare handoff\", \"N22 Finalize P0-3\", \"N22 Output filter\"];\nconst nodeName = execution.lastNodeExecuted ?? object(object(execution.error).node).name ?? object(object(trigger.error).node).name;\nconst source_node = knownNodes.includes(nodeName) ? nodeName : 'unknown';\nconst id = typeof execution.id === 'string' ? execution.id\n  : Number.isSafeInteger(execution.id) && execution.id > 0 ? String(execution.id) : '';\nconst execution_ref = /^\\d{1,20}$/.test(id) ? id : null;\nconst error_kind = Object.keys(object(trigger.error)).length ? 'trigger_error'\n  : Object.keys(object(execution.error)).length ? 'execution_error' : 'unknown';\n// Standard Error Trigger data does not prove an inquiry ID. Never infer it from raw error/context/URL.\nreturn [{ json: { skip: self, request_id: null, execution_ref, source_workflow, source_node, error_kind } }];"
+      },
+      "id": "errors-1",
+      "position": [
+        180,
+        300
+      ]
+    },
+    {
+      "id": "errors-2",
+      "name": "E02a External Parent",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H03a",
+              "leftValue": "={{ !$json.skip }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "E02 Select Store",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const safe = $input.first().json;\nconst unavailable = () => [{ json: { ...safe, configuration_error: true, ready: false, alerted: false, dlq: false } }];\ntry {\n  const mode = $env.SERVICE_MODE;\n  if (!['practice', 'app'].includes(mode)) return unavailable();\n  const value = mode === 'app' ? ($env.WONMIN_APP_STORE_URL || 'http://backend:8000')\n    : ($env.WONMIN_PRACTICE_STORE_URL || 'http://data-api:8800');\n  const match = typeof value === 'string' && /^(https?:\\/\\/[a-zA-Z0-9.-]+)(?::([0-9]{1,5}))?\\/?$/.exec(value);\n  if (!match || (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 65535))) return unavailable();\n  const base_url = match[1] + (match[2] ? ':' + match[2] : '');\n  const alert_payload = { workflow: 'oke-errors', node: 'E02 Safe Error Context',\n    message: '예상 밖 워크플로우 오류 (' + safe.source_workflow + '/' + safe.source_node\n      + '). 부모 실행: ' + (safe.execution_ref ?? '미상'), severity: 'high' };\n  if (mode === 'app' && safe.execution_ref) alert_payload.event_key = 'n8n-execution:' + safe.execution_ref + ':unexpected-error';\n  const dlq_payload = { request_id: null, workflow: 'oke-errors', node: 'E02 Safe Error Context',\n    reason: 'unexpected', safe_payload: { stage: 'unexpected', source_workflow: safe.source_workflow,\n      source_node: safe.source_node, error_kind: safe.error_kind } };\n  if (safe.execution_ref) dlq_payload.execution_ref = safe.execution_ref;\n  return [{ json: { ...safe, ready: true, mode, base_url, alert_payload, dlq_payload } }];\n} catch { return unavailable(); }"
+      },
+      "id": "errors-3",
+      "position": [
+        540,
+        300
+      ]
+    },
+    {
+      "id": "errors-4",
+      "name": "E02b Store Ready",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H03a",
+              "leftValue": "={{ $json.ready }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "errors-5",
+      "name": "E03a App Alert Store",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H03a",
+              "leftValue": "={{ $json.mode === 'app' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "errors-6",
+      "name": "E03 Store Alert App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/alerts' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.alert_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_APP_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "errors-7",
+      "name": "E03 Store Alert Practice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1260,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/alerts' }}",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.alert_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "name": "E03 Check Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const state = $('E02 Select Store').first().json;\nconst reply = $input.first().json, b = reply.body;\nconst validCount = b && Number.isSafeInteger(b.count) && b.count >= 1;\nconst ack = validCount && ((b.stored === 1 && b.duplicate !== true)\n  || (state.mode === 'app' && b.stored === 0 && b.duplicate === true));\nconst alerted = Boolean(reply.statusCode === 200 && ack);\nconst { alert_payload, ...safe } = state;\n// Never rethrow sink errors. Always proceed to independent DLQ attempt.\nreturn [{ json: { ...safe, alerted, dlq: false } }];"
+      },
+      "id": "errors-8",
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "id": "errors-9",
+      "name": "E04a App DLQ Store",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1620,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "H03a",
+              "leftValue": "={{ $json.mode === 'app' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "errors-10",
+      "name": "E04 Store DLQ App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/dlq' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.dlq_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_LOCAL_CREDENTIAL_ID",
+          "name": "WONMIN_APP_STORE_AUTH"
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "errors-11",
+      "name": "E04 Store DLQ Practice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.base_url + '/dlq' }}",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.dlq_payload) }}",
+        "options": {
+          "timeout": 600,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "name": "E04 Check DLQ",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const state = $('E03 Check Alert').first().json;\nconst reply = $input.first().json, b = reply.body;\nconst dlq = Boolean(reply.statusCode === 200 && b && b.stored === 1\n  && Number.isSafeInteger(b.count) && b.count >= 1);\nreturn [{ json: { request_id: null, execution_ref: state.execution_ref, source_workflow: state.source_workflow,\n  source_node: state.source_node, error_kind: state.error_kind, alerted: state.alerted, dlq } }];"
+      },
+      "id": "errors-12",
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "name": "E05 Outcome",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const state = $input.first().json;\nconst alerted = state.alerted === true, dlq = state.dlq === true;\nconst outcome = state.skip ? 'skipped_self' : state.configuration_error ? 'configuration_error'\n  : alerted && dlq ? 'success' : alerted || dlq ? 'partial_failure' : 'failed';\n// Internal outcome only: never manufacture an HTTP response for the already-failed parent.\nreturn [{ json: { workflow: 'oke-errors', outcome, request_id: null, execution_ref: state.execution_ref ?? null,\n  source_workflow: state.source_workflow ?? 'unknown', source_node: state.source_node ?? 'unknown',\n  error_kind: state.error_kind ?? 'unknown', alerted, dlq } }];"
+      },
+      "id": "errors-13",
+      "position": [
+        2340,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "E01 Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "E02 Safe Error Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E02 Safe Error Context": {
+      "main": [
+        [
+          {
+            "node": "E02a External Parent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E02a External Parent": {
+      "main": [
+        [
+          {
+            "node": "E02 Select Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E05 Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E02 Select Store": {
+      "main": [
+        [
+          {
+            "node": "E02b Store Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E02b Store Ready": {
+      "main": [
+        [
+          {
+            "node": "E03a App Alert Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E05 Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E03a App Alert Store": {
+      "main": [
+        [
+          {
+            "node": "E03 Store Alert App",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E03 Store Alert Practice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E03 Store Alert App": {
+      "main": [
+        [
+          {
+            "node": "E03 Check Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E03 Store Alert Practice": {
+      "main": [
+        [
+          {
+            "node": "E03 Check Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E03 Check Alert": {
+      "main": [
+        [
+          {
+            "node": "E04a App DLQ Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E04a App DLQ Store": {
+      "main": [
+        [
+          {
+            "node": "E04 Store DLQ App",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E04 Store DLQ Practice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E04 Store DLQ App": {
+      "main": [
+        [
+          {
+            "node": "E04 Check DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E04 Store DLQ Practice": {
+      "main": [
+        [
+          {
+            "node": "E04 Check DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E04 Check DLQ": {
+      "main": [
+        [
+          {
+            "node": "E05 Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": false,
+    "errorWorkflow": ""
+  },
+  "pinData": {},
+  "id": "okeErrorsFlow01"
+}

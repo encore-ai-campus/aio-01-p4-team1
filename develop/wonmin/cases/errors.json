@@ -1,0 +1,182 @@
+{
+  "schema": "wonmin-p0-review-v1",
+  "execution": "manual_review_only",
+  "note": "Error Trigger item/내부결과기대. HTTP요청suite가아님. 실제검증은 tests/errors.test.mjs와runs 참조.",
+  "cases": [
+    {
+      "id": "ERR-01",
+      "name": "부모 실행 오류·두 sink 성공",
+      "conditions": [
+        "app 전용 Mock",
+        "error-execution.json 합성 item"
+      ],
+      "expect": {
+        "outcome": "success",
+        "alerted": true,
+        "dlq": true,
+        "execution_ref": "231",
+        "request_id": null
+      },
+      "side_effects": [
+        "티켓0",
+        "알림1",
+        "DLQ1"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-02",
+      "name": "알림만 실패",
+      "conditions": [
+        "alerts503,dlq정상"
+      ],
+      "expect": {
+        "outcome": "partial_failure",
+        "alerted": false,
+        "dlq": true
+      },
+      "side_effects": [
+        "티켓0",
+        "알림0",
+        "DLQ1"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-03",
+      "name": "DLQ만 실패",
+      "conditions": [
+        "alerts정상,dlq503"
+      ],
+      "expect": {
+        "outcome": "partial_failure",
+        "alerted": true,
+        "dlq": false
+      },
+      "side_effects": [
+        "티켓0",
+        "알림1",
+        "DLQ0"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-04",
+      "name": "두 sink 모두 실패",
+      "conditions": [
+        "alerts503,dlq503"
+      ],
+      "expect": {
+        "outcome": "failed",
+        "alerted": false,
+        "dlq": false
+      },
+      "side_effects": [
+        "각sink시도1회",
+        "티켓/알림/DLQ0"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-05",
+      "name": "트리거 오류·부모 실행ID 없음",
+      "conditions": [
+        "error-trigger-failure.json 합성 item"
+      ],
+      "expect": {
+        "outcome": "success",
+        "request_id": null,
+        "execution_ref": null
+      },
+      "side_effects": [
+        "가짜ID/event_key 생성0",
+        "알림1",
+        "DLQ1"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-06",
+      "name": "오류 처리기 자신 재진입",
+      "conditions": [
+        "sourceworkflow.name=oke-errors 또는 자기 workflow ID 일치"
+      ],
+      "expect": {
+        "outcome": "skipped_self",
+        "alerted": false,
+        "dlq": false
+      },
+      "side_effects": [
+        "외부호출0",
+        "추가throw0"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-07",
+      "name": "부모 실행 중복 알림",
+      "conditions": [
+        "app에서 동일 부모 execution.id로2회"
+      ],
+      "expect": {
+        "outcome": "success",
+        "alerted": true,
+        "dlq": true
+      },
+      "side_effects": [
+        "알림1건 유지",
+        "DLQ중복정책은별도"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    },
+    {
+      "id": "ERR-08",
+      "name": "설정 불일치",
+      "conditions": [
+        "잘못된SERVICE_MODE 또는주소"
+      ],
+      "expect": {
+        "outcome": "configuration_error",
+        "alerted": false,
+        "dlq": false
+      },
+      "side_effects": [
+        "외부호출0",
+        "추가throw0"
+      ],
+      "cleanup": [
+        "독립Mock종료",
+        "실제부모시험은임시오류제거·정상복구와설정확인"
+      ],
+      "official_n8n_status": "not_run"
+    }
+  ]
+}

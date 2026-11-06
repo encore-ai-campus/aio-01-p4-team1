@@ -1,0 +1,234 @@
+{
+  "name": "oke-search",
+  "active": false,
+  "nodes": [
+    {
+      "id": "search-step1-webhook",
+      "name": "검색 요청 수신",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "oke-search-step1",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oke-search",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "notes": "비활성. X-Team-Key Header Auth Credential을 n8n에서 연결한다. 실제 호출 전 Credential과 내부 서비스 주소를 별도 확인한다."
+    },
+    {
+      "id": "search-step1-inspect",
+      "name": "요청 형식 확인",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst valid = body && typeof body === 'object' && !Array.isArray(body)\n  && typeof body.request_id === 'string' && body.request_id.length >= 1 && body.request_id.length <= 64\n  && typeof body.query === 'string' && body.query.trim().length > 0\n  && typeof body.type === 'string' && body.type.trim().length > 0\n  && Array.isArray(body.access_levels) && (body.access_levels.length === 1 && body.access_levels[0] === 'all' || body.access_levels.length === 2 && body.access_levels[0] === 'all' && body.access_levels[1] === 'it')\n  && body.top_k === 3;\nreturn [{json:{valid:!!valid, request:valid ? {request_id:body.request_id,query:body.query,type:body.type,access_levels:body.access_levels,top_k:3} : null}}];"
+      },
+      "notes": "[all] 또는 [all,it] 형식만 통과. 본체가 직원 조회로 만든 권한을 X-Team-Key 인증 이후 신뢰한다. Python 서비스는 독립 resolver 부재로 IT 요청을 거절하지 않는다."
+    },
+    {
+      "id": "search-route",
+      "name": "유효한 C03 요청",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-step1-respond",
+      "name": "C03 응답 반환",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "responseCode": "={{ $json.status }}"
+        }
+      },
+      "notes": "서비스 응답을 C03 본문과 상태 코드로 반환한다. 활성화 전 n8n import/test 검증 필요."
+    },
+    {
+      "id": "search-http",
+      "name": "실제 검색 서비스 호출",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -120
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SEARCH_SERVICE_URL }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request) }}",
+        "options": {
+          "timeout": 4000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "SEARCH_SERVICE_URL은 n8n에서 접근 가능한 /webhook/oke-search 전체 URL로 별도 설정. HTTP Header Auth Credential의 Name=X-Team-Key, Value=비공개 키를 UI에서 연결. URL·키를 JSON에 저장하지 않는다."
+    },
+    {
+      "id": "search-normalize",
+      "name": "검색 응답 검증",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ],
+      "parameters": {
+        "jsCode": "const x=$input.first().json;\nconst failure={status:503,body:{ok:false,evidence:[],reason:'search_unavailable'}};\nif (x.error) return [{json:failure}];\nif ([400,401,403].includes(x.statusCode)) {\n const reason={400:'invalid_request',401:'unauthorized',403:'forbidden'}[x.statusCode];\n return [{json:{status:x.statusCode,body:{ok:false,evidence:[],reason}}}];\n}\nif (![200,503].includes(x.statusCode)) return [{json:failure}];\nconst b=x.body;\nif (!b || typeof b!=='object' || Array.isArray(b)) return [{json:failure}];\nif (x.statusCode===503) return [{json:failure}];\nconst rows=b.evidence;\nif (b.ok!==true || !Array.isArray(rows) || rows.length>3 ||\n    !rows.every(r=>r && typeof r.doc==='string' && r.doc.trim() && typeof r.section==='string' && r.section.trim() && typeof r.text==='string' && r.text.trim() && typeof r.score==='number' && Number.isFinite(r.score)) ||\n    b.reason!==(rows.length ? null : 'no_evidence')) return [{json:failure}];\nreturn [{json:{status:200,body:{ok:true,evidence:rows.map(r=>({doc:r.doc,section:r.section,text:r.text,score:r.score})),reason:b.reason}}}];"
+      },
+      "notes": "실제 서비스의 C03 외형만 반환하고 오류 상세를 버린다."
+    },
+    {
+      "id": "search-invalid",
+      "name": "입력 거절",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        120
+      ],
+      "parameters": {
+        "jsCode": "return [{json:{status:400,body:{ok:false,evidence:[],reason:'invalid_request'}}}];"
+      },
+      "notes": "H-Y01 상세 400 형식은 미확정."
+    }
+  ],
+  "connections": {
+    "검색 요청 수신": {
+      "main": [
+        [
+          {
+            "node": "요청 형식 확인",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "요청 형식 확인": {
+      "main": [
+        [
+          {
+            "node": "유효한 C03 요청",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "실제 검색 서비스 호출": {
+      "main": [
+        [
+          {
+            "node": "검색 응답 검증",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "검색 응답 검증": {
+      "main": [
+        [
+          {
+            "node": "C03 응답 반환",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "입력 거절": {
+      "main": [
+        [
+          {
+            "node": "C03 응답 반환",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "유효한 C03 요청": {
+      "main": [
+        [
+          {
+            "node": "실제 검색 서비스 호출",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "입력 거절",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "meta": {
+    "phase": "P1-2 C03 response and trusted IT boundary prepared, inactive",
+    "realSearchVerified": false
+  }
+}

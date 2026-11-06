@@ -1,0 +1,113 @@
+{
+  "purpose": "교차검증 결함 수정 P1-2 보완: 상태 필수 조회 실패와 일반전화/국제전화 마스킹의 로컬 Mock.",
+  "cases": [
+    {
+      "id": "R09-01-status-down",
+      "request_file": "requests/own-ticket.json",
+      "search_result": "found",
+      "lookup_result": "unavailable",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "lookup_state": "unavailable",
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "R09-02-status-404",
+      "request_file": "requests/own-ticket.json",
+      "search_result": "found",
+      "lookup_result": "not_found",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "lookup_state": "not_found",
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "R09-03-other-403",
+      "request_file": "requests/other-ticket.json",
+      "search_result": "found",
+      "lookup_result": "other_forbidden",
+      "expect": {
+        "http_status": 200,
+        "route": "권한 없음",
+        "ticket": null,
+        "source_count": 0,
+        "writer_valid": null
+      }
+    },
+    {
+      "id": "R09-04-no-ticket-found",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "source_count": 1
+      }
+    },
+    {
+      "id": "R09-05-landline-answer",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "writer_result": "landline_contact",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "security_masked": 2,
+        "answer_excludes": "02-0000-0000",
+        "source_count": 1
+      }
+    },
+    {
+      "id": "R09-06-landline-input",
+      "request_file": "requests/phone-contact.json",
+      "search_result": "found",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "security_masked": 2,
+        "writer_input_excludes": "02-0000-0000"
+      }
+    },
+    {
+      "id": "R09-07-landline-ticket-note",
+      "request_file": "requests/own-ticket.json",
+      "search_result": "found",
+      "lookup_result": "own_landline",
+      "expect": {
+        "http_status": 200,
+        "route": "자동 답변",
+        "security_masked": 3,
+        "lookup_state": "ok"
+      }
+    },
+    {
+      "id": "R09-08-search-down",
+      "request_file": "requests/input-valid.json",
+      "search_result": "unavailable",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "search_unavailable",
+        "source_count": 0
+      }
+    },
+    {
+      "id": "R09-09-injection",
+      "request_file": "requests/injection.json",
+      "expect": {
+        "http_status": 200,
+        "route": "차단",
+        "ticket": null,
+        "writer_valid": null
+      }
+    }
+  ]
+}

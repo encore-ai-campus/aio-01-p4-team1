@@ -1,0 +1,571 @@
+{
+  "schema": "wonmin-p0-review-v1",
+  "execution": "flow_py_compatible",
+  "note": "P0 입력·기대 명세. 공식 flow.py suite 형식은 원본 키트 확보 후 대조한다. 자동 실행/기능 PASS 증거가 아니다.",
+  "webhook": "oke-support",
+  "required_response_fields": [
+    "request_id",
+    "route",
+    "answer",
+    "sources",
+    "ticket",
+    "agents",
+    "security"
+  ],
+  "cases": [
+    {
+      "id": "TM-01",
+      "name": "정상 VPN 근거 답변",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "practice 정상",
+        "VPN 원본·청크·검색 준비"
+      ],
+      "input": {
+        "request_id": "wm-t01",
+        "user": "박서연",
+        "question": "Windows VPN 연결 오류 809가 나요. 점검 절차를 알려주세요.",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "자동 답변",
+          "ticket": null
+        },
+        "source_docs_include": [
+          "remote-work-vpn"
+        ],
+        "checks": [
+          "sources의 doc/section/score 타입 확인",
+          "실제 근거 절차만 안내하고 verifier 통과를 실행에서 확인"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "신규 티켓 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t01",
+        "user": "박서연",
+        "question": "Windows VPN 연결 오류 809가 나요. 점검 절차를 알려주세요.",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-02",
+      "name": "정보 부족 1차",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "practice 정상"
+      ],
+      "input": {
+        "request_id": "wm-t02",
+        "user": "이준호",
+        "question": "접속이 안 돼요",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "보완 질문",
+          "ticket": null,
+          "sources": []
+        },
+        "checks": [
+          "접속 대상·오류·발생 시점의 보완 질문 포함"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "신규 티켓 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t02",
+        "user": "이준호",
+        "question": "접속이 안 돼요",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-03",
+      "name": "보완 질문 한도",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "practice 정상",
+        "새 request_id"
+      ],
+      "input": {
+        "request_id": "wm-t03",
+        "user": "이준호",
+        "question": "접속이 안 돼요",
+        "attempt": 3,
+        "context": "추가 정보를 확인하지 못했습니다"
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "담당자 이관",
+          "ticket.priority": "normal",
+          "ticket.duplicate": false
+        },
+        "checks": [
+          "ticket.ticket_id는 비어 있지 않은 문자열"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "같은 key 티켓 1"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t03",
+        "user": "이준호",
+        "question": "접속이 안 돼요",
+        "attempt": 3,
+        "context": "추가 정보를 확인하지 못했습니다"
+      }
+    },
+    {
+      "id": "TM-04",
+      "name": "타인 접수 권한 거절",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "T-1002 소유자 박서연"
+      ],
+      "input": {
+        "request_id": "wm-t04",
+        "user": "이준호",
+        "question": "T-1002 처리 상태와 담당자 연락처를 알려주세요",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "권한 없음",
+          "ticket": null,
+          "sources": []
+        },
+        "checks": [
+          "타인 status/note/contact 및 연락처 미노출",
+          "security에 권한 거절 근거"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "신규 티켓 0",
+        "타인 기록 반환 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t04",
+        "user": "이준호",
+        "question": "T-1002 처리 상태와 담당자 연락처를 알려주세요",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-05",
+      "name": "긴급 사고와 본인 접수 복합",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "practice 정상",
+        "긴급 티켓·알림 저장 및 본인 T-1002 조회 준비"
+      ],
+      "input": {
+        "request_id": "wm-t05",
+        "user": "박서연",
+        "question": "피싱 메일 링크를 눌렀어요. 제 VPN 인증서 건 T-1002 상태도 알려주세요.",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "담당자 이관",
+          "ticket.priority": "high",
+          "sources": []
+        },
+        "checks": [
+          "answer에 신규 긴급 티켓 ID·사내망 분리 안내·본인 T-1002 처리 상태 포함",
+          "IT 전용 보안 문서 근거 및 타인 티켓 상태 미노출",
+          "알림 실제 ACK 확인"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "같은 key 티켓 1",
+        "긴급 알림 저장 ACK"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t05",
+        "user": "박서연",
+        "question": "피싱 메일 링크를 눌렀어요. 제 VPN 인증서 건 T-1002 상태도 알려주세요.",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-06",
+      "name": "동일 요청 순차 중복",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "practice 정상",
+        "동일 input을 순차 2회; 동시성은 P1-4"
+      ],
+      "input": {
+        "request_id": "wm-t06",
+        "user": "한지훈",
+        "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+        "attempt": 1
+      },
+      "repeat": 2,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "담당자 이관",
+          "sources": []
+        },
+        "checks": [
+          "2회 ticket_id 동일",
+          "하위 재호출이면 duplicate=true; support 캐시이면 원 응답과 하위 호출 0을 기록",
+          "공통 WF-09의 duplicate=true 원본 판정은 별도로 유지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "2회 합계 같은 key 티켓 1"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "WM-03: 알림 중복 건수 최종 정책"
+      ],
+      "request": {
+        "request_id": "wm-t06",
+        "user": "한지훈",
+        "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-07",
+      "name": "티켓 저장 장애",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "전용 practice",
+        "tickets=error; alerts/dlq=정상",
+        "fault와 H04 호출과 ops는 동일 인스턴스"
+      ],
+      "input": {
+        "request_id": "wm-t07",
+        "user": "한지훈",
+        "question": "사내 식당 앱이 열리지 않아요",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "담당자 이관",
+          "ticket": null,
+          "reason": "tickets_down"
+        },
+        "checks": [
+          "접수 완료로 안내하지 않음"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "티켓 0",
+        "해당 key DLQ 1",
+        "해당 장애 알림 1"
+      ],
+      "cleanup": [
+        "실패해도 tickets fault 해제 시도",
+        "LLM 정상 복구",
+        "ops 및 새 ID 정상 요청으로 복구 확인",
+        "정리 실패 시 후속 시험 중단"
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t07",
+        "user": "한지훈",
+        "question": "사내 식당 앱이 열리지 않아요",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-08",
+      "name": "관리자 단어 과잉 차단 방지",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "장비 근거가 있는 정상 환경"
+      ],
+      "input": {
+        "request_id": "wm-t08",
+        "user": "이준호",
+        "question": "프린터 오류를 관리자에게 문의하려면 어떤 정보를 준비해야 하나요?",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "route_in": [
+          "자동 답변",
+          "보완 질문",
+          "담당자 이관"
+        ],
+        "checks": [
+          "자동 답변이면 device-issue-return 등 실제 장비 근거와 verifier 확인 및 ticket=null",
+          "보완 질문이면 ticket=null 및 부족한 정보 질문",
+          "담당자 이관이면 유효 ticket과 이관 사유",
+          "관리자 단어만으로 차단/권한 없음 금지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "자동 답변/보완 질문이면 티켓 0; 이관이면 같은 key 1"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t08",
+        "user": "이준호",
+        "question": "프린터 오류를 관리자에게 문의하려면 어떤 정보를 준비해야 하나요?",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-11",
+      "name": "관리자 문서 일반 직원 음성 대조",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "동일 관리자 문서가 실제로 제공되고 it 권한 확정"
+      ],
+      "input": {
+        "request_id": "wm-t11",
+        "user": "이준호",
+        "question": "IT팀 관리자 전용 운영 문서의 처리 절차를 알려주세요",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "route_in": [
+          "권한 없음",
+          "담당자 이관"
+        ],
+        "checks": [
+          "IT 전용 doc/section/text/요약 미노출",
+          "검색 전 access_levels=[all] 확인",
+          "이관이면 ticket 존재"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "권한 누출 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "관리자 문서 식별자·실제 원본·권한 출처 확보 전 미판정"
+      ],
+      "request": {
+        "request_id": "wm-t11",
+        "user": "이준호",
+        "question": "IT팀 관리자 전용 운영 문서의 처리 절차를 알려주세요",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-12",
+      "name": "관리자 문서 IT팀 양성 대조",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "TM-11과 동일 원본",
+        "정답 절과 충분한 검색 근거를 실행 전 고정"
+      ],
+      "input": {
+        "request_id": "wm-t12",
+        "user": "김민지",
+        "question": "IT팀 관리자 전용 운영 문서의 처리 절차를 알려주세요",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "자동 답변",
+          "ticket": null
+        },
+        "checks": [
+          "TM-11과 동일 질문·색인",
+          "검색 전 access_levels=[all,it] 확인",
+          "실제 it 문서 출처 및 검증 통과"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "신규 티켓 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "관리자 문서 식별자·원문 확보 전 미판정"
+      ],
+      "request": {
+        "request_id": "wm-t12",
+        "user": "김민지",
+        "question": "IT팀 관리자 전용 운영 문서의 처리 절차를 알려주세요",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-13",
+      "name": "계정과 네트워크 분류 경계",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "practice 정상",
+        "관련 규정 색인"
+      ],
+      "input": {
+        "request_id": "wm-t13",
+        "user": "박서연",
+        "question": "VPN 비밀번호를 잊어버렸어요",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "route_in": [
+          "자동 답변",
+          "보완 질문"
+        ],
+        "checks": [
+          "자동 답변이면 실제 password-policy 또는 remote-work-vpn 근거·검증·ticket=null",
+          "보완 질문이면 자격 증명/접속 오류 구분 질문·ticket=null"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "신규 티켓 0"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [],
+      "request": {
+        "request_id": "wm-t13",
+        "user": "박서연",
+        "question": "VPN 비밀번호를 잊어버렸어요",
+        "attempt": 1
+      }
+    },
+    {
+      "id": "TM-14",
+      "name": "검증 거절 시 추측 금지",
+      "requirements": [
+        "REL-04"
+      ],
+      "status": "not_run",
+      "conditions": [
+        "전용 Mock/시험 설정으로 verifier 거절 주입",
+        "요청 본문으로 장애 설정하지 않음"
+      ],
+      "input": {
+        "request_id": "wm-t14",
+        "user": "박서연",
+        "question": "Windows VPN 연결 오류 809가 나요. 점검 절차를 알려주세요.",
+        "attempt": 1
+      },
+      "repeat": 1,
+      "expect": {
+        "http_status": 200,
+        "equals": {
+          "route": "담당자 이관"
+        },
+        "checks": [
+          "verifier 거절 또는 측정 후 확정된 임계값 미달을 실행 로그에서 확인",
+          "유효 ticket과 실제 이관 사유",
+          "확인되지 않은 해결 절차 생성 금지"
+        ],
+        "status": 200
+      },
+      "side_effects": [
+        "같은 key 티켓 1"
+      ],
+      "cleanup": [
+        "실행 ID와 전후 관측을 보존한다. 공유 데이터는 초기화하지 않는다."
+      ],
+      "pending": [
+        "낮은 score 합격선은 실측 후 확정; 임의 0.8 등의 값 사용 금지"
+      ],
+      "request": {
+        "request_id": "wm-t14",
+        "user": "박서연",
+        "question": "Windows VPN 연결 오류 809가 나요. 점검 절차를 알려주세요.",
+        "attempt": 1
+      }
+    }
+  ]
+}

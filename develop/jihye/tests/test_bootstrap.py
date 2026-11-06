@@ -62,6 +62,22 @@ def test_cli_does_not_infer_live_auth(monkeypatch, capsys):
     assert "employee_source_configuration_required" in capsys.readouterr().out
 
 
+def test_explicit_no_auth_is_limited_to_verified_internal_data_api():
+    assert cli.employee_source_headers("http://data-api:8800/", None, None, "true") == {}
+    with pytest.raises(cli.BootstrapError, match="employee_source_configuration_required"):
+        cli.employee_source_headers("http://other:8800/", None, None, "true")
+    with pytest.raises(cli.BootstrapError, match="employee_source_configuration_required"):
+        cli.employee_source_headers("http://data-api:8800/", "invented", None, "true")
+    with pytest.raises(cli.BootstrapError, match="employee_source_configuration_required"):
+        cli.employee_source_headers("http://data-api:8800/", None, "X-Api-Key", "true")
+
+
+def test_existing_employee_source_auth_remains_supported():
+    assert cli.employee_source_headers("https://source.example/", "provided-key", "X-Api-Key", None) == {
+        "X-Api-Key": "provided-key"
+    }
+
+
 def test_cli_masks_sensitive_exception(monkeypatch, capsys):
     secret = secrets.token_urlsafe(32)
     monkeypatch.setenv("BOOTSTRAP_ADMIN_PASSWORD", secret)

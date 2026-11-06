@@ -78,3 +78,24 @@
 검토 상태는 `제안 → 검토 요청 → 상대 확인 → 공통 반영 → 실제 연결 확인`을 각각 증거 링크로 남긴다. 상대 답변이 없으면 동의로 처리하지 않는다. 소유자가 수정한 뒤 동일 조건으로 재시험하고 원 실패/수정 버전/재시험 보고서를 연결한다. 다른 사람의 파일은 고치지 않는다.
 
 절차 기준: [COORDINATION](../../../docs/COORDINATION.md). 현재 외부 전달·검토·시험 기록은 없다.
+
+## REAL-QA-1 · 앱 실통합 시험 전 코드 갭 (검토 요청 전)
+
+- 상태: 코드 읽기 전용 확인으로 발견. 상대 확인·공통 반영·VM 실행은 없음.
+- 기존: `develop/sueon/src/app/(protected)/admin/tickets/page.tsx`는 로컬 `seed`와 `useState`만 사용하며 `/api/admin/tickets` 조회·PATCH를 호출하지 않는다. 관리자 로그아웃 링크는 `/login` 이동이다. 따라서 현재 UI만으로 실제 티켓 조회·상태/답변 저장을 증명할 수 없다.
+- 기존: `develop/jihye/app/services/inquiries.py`의 `_list_requests`는 `Inquiry.result.ticket`을 반환하며 저장된 티켓의 최신 `status`·`reply`를 조회해 합치지 않는다. `GET /api/my-requests`는 관리자 변경 뒤에도 현재 상태·답변을 제공하지 않을 수 있다. 공통 C01의 본인 문의·답변·티켓 상태 목록 계약 및 `InquiryTicketView`의 status/reply 의도와 대조가 필요하다.
+- 제안: 수언님이 관리자 티켓 페이지를 세션 기반 GET/PATCH API에 연결하고 실제 logout API를 호출한다. 지혜님이 본인 문의 목록에서 소유권이 확인된 앱 티켓의 최신 상태·답변을 안전하게 포함한다. 오현님은 실제 배포 버전·FE/API 준비를 확인한다.
+- 영향: 관리자 메뉴/API 연계, 재로그인 후 직원 문의 UI의 현재 티켓 상태·답변, 이 작업의 실통합 합격 범위.
+- 검토 상대: 수언님(FE), 지혜님(API/DB), 공통 계약 해석이 필요할 때 오현님. 각자 소유 파일만 수정한다.
+- 실행: `tools/real-qa-api-runner.py`는 읽기 전용 preflight가 기본이며 실쓰기 모드는 예약 창 및 FE/계정 인계 환경 게이트를 요구한다. 이 runner는 HTTP API 시퀀스를 지원하지만 실제 브라우저 UI 확인과 DB 직접 count 증거를 대신하지 않는다.
+- VM 쓰기·계정 생성/변경·배포·n8n 작업·외부 전달은 수행하지 않았다. 본 절은 검토 요청 초안이며 상대 동의나 수정 완료를 의미하지 않는다.
+- 후속 재확인: 이 기록 뒤 shared worktree에서 수언님 관리자 티켓 UI의 API 연결과 지혜님 문의 목록의 현재 티켓 상태/답변 결합 변경이 관측됐다. 해당 변경은 아직 실제 통합 시험·VM 배포 근거가 없어 초기 갭은 **로컬 소스 후보 수정으로 보완 중, 실행 준비 미확인**으로 둔다. 이 문서 작성자는 해당 파일을 수정하지 않았다.
+- QA runner 검토 반영: 기존 `attempt=3` 보완질문 한도 강제 입력을 제거했다. 기본은 VPN 첫 질문·attempt=1·context 없음이며 `--question`·`--attempt`·`--context`를 명시할 수 있다. 실제 route/source ID·score·API 경과시간만 기록하고 질문·context·답변 원문은 보고서에서 제외한다. 실제 route가 보완 질문이면 미완료로 종료하고 저장된 문의 재로그인 확인만 한다. ticket_id가 없으면 관리자 PATCH를 호출하지 않고 전체 PASS도 반환하지 않는다. curl 전송은 TLS 검증을 유지하고 redirect를 따르지 않는다. 요청 본문은 stdin, 계정 비밀번호 환경변수는 curl child에서 제거하며 cookie/raw response는 0700/0600 임시 저장소에 한정한다. mock subprocess 회귀 5개가 통과했고 실제 TLS/VM 연결은 미실행이다.
+- 통합자 분리 인계: oc0.2는 FE/BE 통합·배포를 담당하고, 원민은 이번 후속에서 `tools/real-qa-api-runner.py` 전송 계층과 그 회귀 테스트만 인수했다. 실제 live/API 작업창은 시작하지 않는다.
+
+## 실제 실행 후 보완 · 2026-11-06 11:52 KST
+
+- 앞 절의 “실제 작업창 미시작” 및 FE/계정/배포 미확인은 runner 실행 전 시점의 기록이다. 이후 oc0.2가 main `99fff9c`의 FE/BE를 VM에 배포하고, 별도 FE guard fix `3ff836a`를 frontend-only 배포한 뒤 공개 HTTPS attempt 1 QA를 실행했다.
+- `request_id=real-qa-36352d26c53e48eab65a42c4a0c5ec85`, `route=담당자 이관`, `sources=[]`, elapsed 7.341초. 인증/role·employee admin 403·문의 생성/직원 목록/재로그인·관리자 처리와 재조회 API sequence는 PASS. 이는 검색 성공/정상 자동답변/WF-01 8초 PASS가 아니다.
+- 같은 고유 request_id로 독립 read-only DB 검증: inquiry 1행, matching ticket request_key 1행, `T-2005`; inquiry/ticket/requester ID 연결, `in_progress`, 관리 답변 일치. 전체 row count 증가분을 단건 증거로 쓰지 않았고, 기존/타인 데이터를 삭제하지 않았다. 자세한 비밀 없는 실행 결과는 `docs/EXECUTION-RESULT.md` 및 `daily/DAY81.md`에 있다.
+- 브라우저 시각/클릭 검증은 자동화 host unavailable로 미실행. 공식 common-14, duplicate retry, alert/DLQ 연계, WF-01 normal answer/source evidence도 미실행이다.

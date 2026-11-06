@@ -167,3 +167,7 @@ uv run alembic -c migrations/alembic.ini current
 VM 배포 후 공통 시험·LLM 반복·실제 runs 결과는 원민님과 오현님이 기록한다. n8n `push/test`는 사람이 수행한다. 80일차 키트가 준비된 뒤 그 키트 작업 디렉터리에서 `uv run tools/flow.py doctor`를 확인하는 계획이며, 현재 키트 준비나 ready를 확인했다고 쓰지 않는다.
 
 [전체 아키텍처](../../../docs/ARCHITECTURE.md) · [공통 API](../../../docs/API-CONTRACT.md) · [제출·시연](../../ohyun/SUBMISSION.md).
+
+### VM data-api no-auth source verification · 2026-11-05
+
+The initial P0-6 note above records the unverified state at implementation time. Later VM integration verified `GET http://data-api:8800/employees` without an auth header returned the exact existing six-person response accepted by `fetch_employees`; no key/header is configured or required by this internal source. The CLI now accepts `DATA_API_EMPLOYEES_NO_AUTH=true` only when `DATA_API_URL` is exactly `http://data-api:8800` and both `DATA_API_KEY` and `DATA_API_EMPLOYEES_AUTH_HEADER` are absent. It sends no authentication header in this mode. Other origins continue to require the existing explicit key and header configuration. The adapter validates the entire roster before the existing `seed_employees` service runs. See the dated VM evidence in [HANDOFF](../Doc/HANDOFF.md).

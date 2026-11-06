@@ -1,0 +1,2 @@
+# Standalone search HTTP service: PostgreSQL DB-API driver.
+psycopg[binary]==3.3.8

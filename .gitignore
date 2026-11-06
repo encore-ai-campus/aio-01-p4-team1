@@ -13,3 +13,4 @@ __pycache__/
 .coverage
 coverage/
 *.log
+/deploy/local/.private/

@@ -1,0 +1,2257 @@
+{
+  "scope": "app variants of original TM-02/TM-03/TM-06; contract employee HTTP fixture, actual local triage LLM and actual C04/C05/PG. Original practice preconditions and official evaluation remain unverified.",
+  "official_evaluation": false,
+  "source_suite_sha256": "4fe06722bf4af2cc3530f12fcedda2cdc1183baab59b3bcaace00f230c0cf13f",
+  "suite_sha256": "426b948a12e8afe5756c480c91a1862209f8c311e0d35b5fba37361ef8895139",
+  "repeat": 3,
+  "prefix": "llm-105427-ecbd",
+  "bench": false,
+  "unique_scenarios": 3,
+  "results": [
+    {
+      "case": "TM-02",
+      "round": 1,
+      "passed": false,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-02-r1-e2c47426e635",
+            "user": "이준호",
+            "question": "접속이 안 돼요",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-02-r1-e2c47426e635",
+              "sources": [],
+              "ticket": null,
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "보완 질문",
+              "answer": "접속 대상은 무엇인가요?"
+            }
+          },
+          "seconds": 1.412597,
+          "errors": [
+            "clarify_content"
+          ]
+        }
+      ],
+      "traces": [
+        {
+          "id": 132,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-02-r1-e2c47426e635",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "account",
+              "urgency": "normal",
+              "missing": [
+                "접속 대상"
+              ],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": null,
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-02-r1-e2c47426e635",
+            "sources": [],
+            "ticket": null,
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "보완 질문",
+            "answer": "접속 대상은 무엇인가요?"
+          }
+        }
+      ],
+      "tickets": [],
+      "alerts": 0
+    },
+    {
+      "case": "TM-02",
+      "round": 2,
+      "passed": false,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-02-r2-1e7b45973e3f",
+            "user": "이준호",
+            "question": "접속이 안 돼요",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-02-r2-1e7b45973e3f",
+              "sources": [],
+              "ticket": null,
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "보완 질문",
+              "answer": "접속 대상은 무엇인가요?"
+            }
+          },
+          "seconds": 0.673794,
+          "errors": [
+            "clarify_content"
+          ]
+        }
+      ],
+      "traces": [
+        {
+          "id": 133,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-02-r2-1e7b45973e3f",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "account",
+              "urgency": "normal",
+              "missing": [
+                "접속 대상"
+              ],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": null,
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-02-r2-1e7b45973e3f",
+            "sources": [],
+            "ticket": null,
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "보완 질문",
+            "answer": "접속 대상은 무엇인가요?"
+          }
+        }
+      ],
+      "tickets": [],
+      "alerts": 0
+    },
+    {
+      "case": "TM-02",
+      "round": 3,
+      "passed": false,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-02-r3-7387166310ad",
+            "user": "이준호",
+            "question": "접속이 안 돼요",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-02-r3-7387166310ad",
+              "sources": [],
+              "ticket": null,
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "보완 질문",
+              "answer": "접속 대상은 무엇인가요?"
+            }
+          },
+          "seconds": 0.687485,
+          "errors": [
+            "clarify_content"
+          ]
+        }
+      ],
+      "traces": [
+        {
+          "id": 134,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-02-r3-7387166310ad",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "account",
+              "urgency": "normal",
+              "missing": [
+                "접속 대상"
+              ],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": null,
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-02-r3-7387166310ad",
+            "sources": [],
+            "ticket": null,
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "보완 질문",
+            "answer": "접속 대상은 무엇인가요?"
+          }
+        }
+      ],
+      "tickets": [],
+      "alerts": 0
+    },
+    {
+      "case": "TM-03",
+      "round": 1,
+      "passed": true,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-03-r1-88618d128229",
+            "user": "이준호",
+            "question": "접속이 안 돼요",
+            "attempt": 3,
+            "context": "추가 정보를 확인하지 못했습니다"
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-03-r1-88618d128229",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2017",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "max_attempts"
+            }
+          },
+          "seconds": 0.825778,
+          "errors": []
+        }
+      ],
+      "traces": [
+        {
+          "id": 135,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-03-r1-88618d128229",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "account",
+              "urgency": "normal",
+              "missing": [
+                "접속 대상"
+              ],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2017",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-03-r1-88618d128229",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2017",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "max_attempts"
+          }
+        },
+        {
+          "id": 136,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-03-r1-88618d128229",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2017",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_id": "T-2017",
+          "priority": "normal"
+        }
+      ],
+      "alerts": 1
+    },
+    {
+      "case": "TM-03",
+      "round": 2,
+      "passed": true,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-03-r2-469601768aee",
+            "user": "이준호",
+            "question": "접속이 안 돼요",
+            "attempt": 3,
+            "context": "추가 정보를 확인하지 못했습니다"
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-03-r2-469601768aee",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2018",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "max_attempts"
+            }
+          },
+          "seconds": 0.808093,
+          "errors": []
+        }
+      ],
+      "traces": [
+        {
+          "id": 137,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-03-r2-469601768aee",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "account",
+              "urgency": "normal",
+              "missing": [
+                "접속 대상"
+              ],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2018",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-03-r2-469601768aee",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2018",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "max_attempts"
+          }
+        },
+        {
+          "id": 138,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-03-r2-469601768aee",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2018",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_id": "T-2018",
+          "priority": "normal"
+        }
+      ],
+      "alerts": 1
+    },
+    {
+      "case": "TM-03",
+      "round": 3,
+      "passed": true,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-03-r3-be4c05bdc2a0",
+            "user": "이준호",
+            "question": "접속이 안 돼요",
+            "attempt": 3,
+            "context": "추가 정보를 확인하지 못했습니다"
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-03-r3-be4c05bdc2a0",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2019",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "max_attempts"
+            }
+          },
+          "seconds": 0.779288,
+          "errors": []
+        }
+      ],
+      "traces": [
+        {
+          "id": 139,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-03-r3-be4c05bdc2a0",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "account",
+              "urgency": "normal",
+              "missing": [
+                "접속 대상"
+              ],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2019",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-03-r3-be4c05bdc2a0",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2019",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "max_attempts"
+          }
+        },
+        {
+          "id": 140,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-03-r3-be4c05bdc2a0",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2019",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_id": "T-2019",
+          "priority": "normal"
+        }
+      ],
+      "alerts": 1
+    },
+    {
+      "case": "TM-06",
+      "round": 1,
+      "passed": true,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+            "user": "한지훈",
+            "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2020",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "search_unavailable"
+            }
+          },
+          "seconds": 0.794916,
+          "errors": []
+        },
+        {
+          "duplicate_index": 1,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+            "user": "한지훈",
+            "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2020",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "search_unavailable"
+            }
+          },
+          "seconds": 0.726629,
+          "errors": []
+        }
+      ],
+      "traces": [
+        {
+          "id": 141,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "other",
+              "urgency": "normal",
+              "missing": [],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2020",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2020",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "search_unavailable"
+          }
+        },
+        {
+          "id": 143,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2020",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        },
+        {
+          "id": 144,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "other",
+              "urgency": "normal",
+              "missing": [],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2020",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2020",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "search_unavailable"
+          }
+        },
+        {
+          "id": 146,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r1-2bd739b9fd5d",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2020",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_id": "T-2020",
+          "priority": "normal"
+        }
+      ],
+      "alerts": 1
+    },
+    {
+      "case": "TM-06",
+      "round": 2,
+      "passed": true,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+            "user": "한지훈",
+            "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2021",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "search_unavailable"
+            }
+          },
+          "seconds": 0.764725,
+          "errors": []
+        },
+        {
+          "duplicate_index": 1,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+            "user": "한지훈",
+            "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2021",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "search_unavailable"
+            }
+          },
+          "seconds": 0.722655,
+          "errors": []
+        }
+      ],
+      "traces": [
+        {
+          "id": 147,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "other",
+              "urgency": "normal",
+              "missing": [],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2021",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2021",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "search_unavailable"
+          }
+        },
+        {
+          "id": 149,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2021",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        },
+        {
+          "id": 150,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "other",
+              "urgency": "normal",
+              "missing": [],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2021",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2021",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "search_unavailable"
+          }
+        },
+        {
+          "id": 152,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r2-0041bf61febf",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2021",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_id": "T-2021",
+          "priority": "normal"
+        }
+      ],
+      "alerts": 1
+    },
+    {
+      "case": "TM-06",
+      "round": 3,
+      "passed": true,
+      "errors": [],
+      "attempts": [
+        {
+          "duplicate_index": 0,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+            "user": "한지훈",
+            "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2022",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "search_unavailable"
+            }
+          },
+          "seconds": 0.729253,
+          "errors": []
+        },
+        {
+          "duplicate_index": 1,
+          "request": {
+            "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+            "user": "한지훈",
+            "question": "사내 식당 앱이 열리지 않아요. 담당자 점검을 요청합니다",
+            "attempt": 1
+          },
+          "reply": {
+            "status": 200,
+            "body": {
+              "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2022",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "search_unavailable"
+            }
+          },
+          "seconds": 0.723223,
+          "errors": []
+        }
+      ],
+      "traces": [
+        {
+          "id": 153,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "other",
+              "urgency": "normal",
+              "missing": [],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2022",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2022",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "search_unavailable"
+          }
+        },
+        {
+          "id": 155,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2022",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        },
+        {
+          "id": 156,
+          "workflow_id": "wmc0417676ce1ea",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "employee_lookup": "ok",
+          "triage": {
+            "executed": true,
+            "error": null,
+            "value": {
+              "type": "other",
+              "urgency": "normal",
+              "missing": [],
+              "ticket_id": null,
+              "needs_action": false
+            }
+          },
+          "c04": {
+            "http_status": 200,
+            "body": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2022",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            },
+            "mock": false
+          },
+          "result": {
+            "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2022",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "search_unavailable"
+          }
+        },
+        {
+          "id": 158,
+          "workflow_id": "wmc0426f3465344",
+          "status": "success",
+          "request_id": "llm-105427-ecbd-tm-06-r3-ef47eecb3893",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "employee_lookup": null,
+          "triage": null,
+          "c04": null,
+          "result": {
+            "ok": true,
+            "ticket": {
+              "ticket_id": "T-2022",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "reason": null,
+            "alerted": true,
+            "dlq": false
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_id": "T-2022",
+          "priority": "normal"
+        }
+      ],
+      "alerts": 1
+    }
+  ],
+  "verdict": "FAIL_SCOPED_APP_VARIANTS",
+  "workflows_before": [
+    {
+      "id": "wmc0417676ce1ea",
+      "name": "wonmin-c04-support-app",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveManualExecutions\":false}",
+      "activeVersionId": "2b52c244-fd93-4aa5-a204-d60e5e646c92"
+    },
+    {
+      "id": "wmc0426f3465344",
+      "name": "wonmin-c04-handoff-app",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerrapp7a38cad3f6\"}",
+      "activeVersionId": "f845c64f-bbd1-4d74-874a-14d986813547"
+    },
+    {
+      "id": "wmc05livecf8ca714f5",
+      "name": "wonmin-c05-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "8ebada99-752f-4483-8e6a-3538b65a23b6"
+    },
+    {
+      "id": "wmerr84aab85722",
+      "name": "oke-errors",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "8fc0ae40-d522-4cf4-a133-a1dc0f592117"
+    },
+    {
+      "id": "wmerrapp1f0e60f5e7",
+      "name": "wonmin-errors-app-guard",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp586c99abd2",
+      "name": "wonmin-errors-app-parent",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp7a38cad3f6",
+      "name": "wonmin-errors-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "1bffe3b0-5cb0-4cc7-afd1-33f8dd1ed63d"
+    },
+    {
+      "id": "wmfai82080ebab7",
+      "name": "oke-handoff",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmhanecca84e267",
+      "name": "oke-handoff",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "7e3fa453-c5b4-4c1d-905e-44a849fef4e8"
+    },
+    {
+      "id": "wmind533d9aa4ec",
+      "name": "oke-index",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"all\",\"saveDataErrorExecution\":\"all\",\"saveManualExecutions\":true,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmllm12c4cbcae0",
+      "name": "wonmin-local-llm-probe",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerr84aab85722\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": "b38efbc8-671d-4e54-b6c1-023cb1699473"
+    },
+    {
+      "id": "wmsea8d8275d1c1",
+      "name": "oke-search",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"none\",\"saveDataErrorExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "40f8c5ff-2659-40d7-8c90-5d7c542f478a"
+    },
+    {
+      "id": "wmsup6dde10727e",
+      "name": "oke-support",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "c4824ab3-4437-4932-bf29-d6b3e4edac78"
+    }
+  ],
+  "model": {
+    "model": {
+      "__rl": true,
+      "mode": "id",
+      "value": "qwen2.5-coder:latest"
+    },
+    "options": {
+      "temperature": 0,
+      "responseFormat": "json_object"
+    }
+  },
+  "main_db_before": {
+    "tickets": 0,
+    "alerts": 0,
+    "dlq": 0
+  },
+  "test_db_before": {
+    "tickets": 16,
+    "alerts": 26,
+    "dlq": 11
+  },
+  "actual_llm_executions": 12,
+  "summary": {
+    "n": 12,
+    "failed": 3,
+    "p50_seconds": 0.729253,
+    "p95_seconds": 1.412597,
+    "max_seconds": 1.412597,
+    "method": "nearest-rank; all attempts including failures"
+  },
+  "per_case_latency": {
+    "TM-02": {
+      "n": 3,
+      "failed": 3,
+      "p50_seconds": 0.687485,
+      "p95_seconds": 1.412597,
+      "max_seconds": 1.412597,
+      "method": "nearest-rank; all attempts including failures"
+    },
+    "TM-03": {
+      "n": 3,
+      "failed": 0,
+      "p50_seconds": 0.808093,
+      "p95_seconds": 0.825778,
+      "max_seconds": 0.825778,
+      "method": "nearest-rank; all attempts including failures"
+    },
+    "TM-06": {
+      "n": 6,
+      "failed": 0,
+      "p50_seconds": 0.726629,
+      "p95_seconds": 0.794916,
+      "max_seconds": 0.794916,
+      "method": "nearest-rank; all attempts including failures"
+    }
+  },
+  "main_db_after": {
+    "tickets": 0,
+    "alerts": 0,
+    "dlq": 0
+  },
+  "test_db_after": {
+    "tickets": 22,
+    "alerts": 32,
+    "dlq": 11
+  },
+  "workflows_after": [
+    {
+      "id": "wmc0417676ce1ea",
+      "name": "wonmin-c04-support-app",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveManualExecutions\":false}",
+      "activeVersionId": "2b52c244-fd93-4aa5-a204-d60e5e646c92"
+    },
+    {
+      "id": "wmc0426f3465344",
+      "name": "wonmin-c04-handoff-app",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerrapp7a38cad3f6\"}",
+      "activeVersionId": "f845c64f-bbd1-4d74-874a-14d986813547"
+    },
+    {
+      "id": "wmc05livecf8ca714f5",
+      "name": "wonmin-c05-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "8ebada99-752f-4483-8e6a-3538b65a23b6"
+    },
+    {
+      "id": "wmerr84aab85722",
+      "name": "oke-errors",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "8fc0ae40-d522-4cf4-a133-a1dc0f592117"
+    },
+    {
+      "id": "wmerrapp1f0e60f5e7",
+      "name": "wonmin-errors-app-guard",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp586c99abd2",
+      "name": "wonmin-errors-app-parent",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp7a38cad3f6",
+      "name": "wonmin-errors-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "1bffe3b0-5cb0-4cc7-afd1-33f8dd1ed63d"
+    },
+    {
+      "id": "wmfai82080ebab7",
+      "name": "oke-handoff",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmhanecca84e267",
+      "name": "oke-handoff",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "7e3fa453-c5b4-4c1d-905e-44a849fef4e8"
+    },
+    {
+      "id": "wmind533d9aa4ec",
+      "name": "oke-index",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"all\",\"saveDataErrorExecution\":\"all\",\"saveManualExecutions\":true,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmllm12c4cbcae0",
+      "name": "wonmin-local-llm-probe",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerr84aab85722\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": "b38efbc8-671d-4e54-b6c1-023cb1699473"
+    },
+    {
+      "id": "wmsea8d8275d1c1",
+      "name": "oke-search",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"none\",\"saveDataErrorExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "40f8c5ff-2659-40d7-8c90-5d7c542f478a"
+    },
+    {
+      "id": "wmsup6dde10727e",
+      "name": "oke-support",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "c4824ab3-4437-4932-bf29-d6b3e4edac78"
+    }
+  ]
+}

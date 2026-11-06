@@ -1,0 +1,14 @@
+{
+  "version": "p1-1-v1",
+  "embedding_model": "text-embedding-3-large",
+  "embedding_dimensions": 3072,
+  "distance": "cosine",
+  "top_k": 3,
+  "score_threshold": null,
+  "chunking": "section",
+  "chunking_version": "p0-2-v1",
+  "overlap": 0,
+  "content_review_max_utf8_bytes": 8000,
+  "execution_mode": "mock",
+  "real_execution_enabled": false
+}

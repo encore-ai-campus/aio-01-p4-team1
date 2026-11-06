@@ -1,0 +1,272 @@
+name: oke
+
+services:
+  sandbox-certs:
+    profiles: [tls-bootstrap]
+    image: ghcr.io/n8n-io/n8n-sandbox-service-api:${N8N_SANDBOX_VERSION:?set from existing n8n env}
+    user: '0:0'
+    entrypoint: ['sh', '-c']
+    command: ['bootstrap-mtls.sh --out-dir /tls --api-san sandbox-api --control-san-prefix sandbox-runner --world-readable && chown -R sandbox-api:sandbox-api /tls/api && chmod -R a+rX /tls']
+    environment:
+      NUM_RUNNERS: '1'
+    volumes:
+      - sandbox-tls:/tls
+    networks: [internal]
+  sandbox-api:
+    image: ghcr.io/n8n-io/n8n-sandbox-service-api:${N8N_SANDBOX_VERSION:?set from existing n8n env}
+    env_file:
+      - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
+        required: true
+    environment:
+      SANDBOX_API_GRPC_TLS_CERT_FILE: /tls/api/grpc-server.crt
+      SANDBOX_API_GRPC_TLS_KEY_FILE: /tls/api/grpc-server.key
+      SANDBOX_API_GRPC_TLS_CLIENT_CA_FILE: /tls/api/ca.crt
+      SANDBOX_API_RUNNER_CONTROL_GRPC_TLS_CA_FILE: /tls/api/ca.crt
+      SANDBOX_API_RUNNER_CONTROL_GRPC_TLS_CERT_FILE: /tls/api/control-grpc-api-client.crt
+      SANDBOX_API_RUNNER_CONTROL_GRPC_TLS_KEY_FILE: /tls/api/control-grpc-api-client.key
+      SANDBOX_API_RUNNER_CONTROL_GRPC_TLS_SERVER_NAME: sandbox-runner-1
+    volumes:
+      - sandbox-tls:/tls:ro
+    healthcheck:
+      test: [CMD, wget, -qO-, http://localhost:8080/healthz]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks: [internal]
+  sandbox-runner-1:
+    image: ghcr.io/n8n-io/n8n-sandbox-service-runner-dind:${N8N_SANDBOX_VERSION:?set from existing n8n env}
+    privileged: true
+    depends_on:
+      sandbox-api:
+        condition: service_healthy
+    env_file:
+      - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
+        required: true
+    environment:
+      SANDBOX_RUNNER_API_GRPC_ADDR: sandbox-api:9090
+      SANDBOX_RUNNER_HTTP_BASE_URL: https://sandbox-runner-1:8080
+      SANDBOX_RUNNER_CONTROL_GRPC_LISTEN_ADDR: ':9091'
+      SANDBOX_RUNNER_CONTROL_GRPC_ADVERTISE_ADDR: sandbox-runner-1:9091
+      SANDBOX_RUNNER_ID: runner-1
+      SANDBOX_RUNNER_DOCKER_SANDBOX_IMAGE: ghcr.io/n8n-io/n8n-sandbox-service-sandbox:${N8N_SANDBOX_VERSION:?set from existing n8n env}
+      SANDBOX_RUNNER_REGISTRATION_GRPC_CA_FILE: /tls/runner/ca.crt
+      SANDBOX_RUNNER_REGISTRATION_GRPC_CERT_FILE: /tls/runner/grpc-client.crt
+      SANDBOX_RUNNER_REGISTRATION_GRPC_KEY_FILE: /tls/runner/grpc-client.key
+      SANDBOX_RUNNER_REGISTRATION_GRPC_SERVER_NAME: sandbox-api
+      SANDBOX_RUNNER_CONTROL_GRPC_TLS_CERT_FILE: /tls/runner/control-grpc-server.crt
+      SANDBOX_RUNNER_CONTROL_GRPC_TLS_KEY_FILE: /tls/runner/control-grpc-server.key
+      SANDBOX_RUNNER_CONTROL_GRPC_TLS_CLIENT_CA_FILE: /tls/runner/ca.crt
+    volumes:
+      - sandbox-tls:/tls:ro
+      - sandbox-docker:/var/lib/docker
+    restart: unless-stopped
+    networks: [internal]
+  n8n:
+    image: docker.io/n8nio/n8n:${N8N_VERSION:?set from existing n8n env}
+    depends_on:
+      sandbox-api:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    env_file:
+      - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
+        required: true
+    environment:
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: 'false'
+      N8N_PROXY_HOPS: '1'
+      SERVICE_MODE: ${SERVICE_MODE:-app}
+      DATA_API_URL: http://data-api:8800
+      SEARCH_SERVICE_URL: http://rag-search:8765/webhook/oke-search
+      INDEX_SERVICE_URL: http://rag-index:8766/internal/oke-index
+    ports:
+      - '5678:5678'
+    volumes:
+      - n8n-data:/home/node/.n8n
+    restart: unless-stopped
+    networks: [internal]
+  runners:
+    image: ghcr.io/n8n-io/runners:${N8N_VERSION:?set from existing n8n env}
+    depends_on: [n8n]
+    env_file:
+      - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
+        required: true
+    environment:
+      N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
+      N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: '15'
+      SERVICE_MODE: ${SERVICE_MODE:-app}
+    restart: unless-stopped
+    networks: [internal]
+  searxng:
+    profiles: [optional-search]
+    image: ghcr.io/searxng/searxng:latest
+    env_file:
+      - path: ${N8N_ENV_FILE:-/home/toor/n8n/day65-n8n/.env}
+        required: true
+    volumes:
+      - /home/toor/n8n/day65-n8n/searxng-settings.yml:/etc/searxng/settings.yml:ro
+      - searxng-config:/etc/searxng
+      - searxng-cache:/var/cache/searxng
+    restart: unless-stopped
+    networks: [internal]
+  postgres:
+    image: pgvector/pgvector:pg16@sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?load from the existing DB env file}
+      POSTGRES_USER: ${POSTGRES_USER:?load from the existing DB env file}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?load from the existing DB env file}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256 --auth-local=scram-sha-256
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -p 5432 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+    networks: [internal]
+  data-api:
+    image: python:3.12-slim
+    command: python /app/server.py
+    environment:
+      DATA_DIR: /data
+      PYTHONUNBUFFERED: '1'
+      TZ: KST-9
+    ports:
+      - '127.0.0.1:8800:8800'
+    volumes:
+      - /home/toor/aio-01d4-stu/Last3Mon/79/data-api/server.py:/app/server.py:ro
+      - /home/toor/aio-01d4-stu/Last3Mon/79/data-api/data:/data:ro
+    restart: unless-stopped
+    networks: [internal]
+  backend:
+    build:
+      context: ../develop/jihye
+      dockerfile: deploy/backend.Dockerfile
+    image: oke-team-backend:unified
+    env_file:
+      - path: ${BACKEND_ENV_FILE:-../develop/jihye/deploy/.env.backend}
+        required: false
+    environment:
+      SERVICE_MODE: ${SERVICE_MODE:-app}
+      DATA_API_URL: http://data-api:8800
+    ports:
+      - '127.0.0.1:8000:8000'
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      data-api:
+        condition: service_started
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=8).close()"]
+      interval: 10s
+      timeout: 9s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    networks: [internal]
+  frontend:
+    build:
+      context: ../develop/sueon
+      dockerfile: ../../deploy/frontend.Dockerfile
+      args:
+        BACKEND_ORIGIN: http://backend:8000
+    image: oke-team-frontend:unified
+    environment:
+      BACKEND_ORIGIN: http://backend:8000
+    ports:
+      - '3000:3000'
+    depends_on:
+      backend:
+        condition: service_started
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    restart: unless-stopped
+    networks: [internal]
+  rag-search:
+    build:
+      context: ../develop/yubeen
+      dockerfile: ../../deploy/rag.Dockerfile
+    image: oke-team-rag:unified
+    command: [python, search_http.py, --host, 0.0.0.0, --port, '8765']
+    env_file:
+      - path: ${RAG_OPENAI_ENV_FILE:-../develop/yubeen/.env.openai}
+        required: false
+      - path: ${SEARCH_ENV_FILE:-../develop/yubeen/search.env}
+        required: false
+    environment:
+      SEARCH_MODE: live
+      SEARCH_HOST: 0.0.0.0
+      SEARCH_PORT: '8765'
+    expose: ['8765']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import socket; s=socket.create_connection(('127.0.0.1',8765),2); s.close()"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+    networks: [internal]
+  rag-index:
+    profiles: [indexing]
+    image: oke-team-rag:unified
+    command: [python, index_http.py, --host, 0.0.0.0, --port, '8766']
+    env_file:
+      - path: ${RAG_OPENAI_ENV_FILE:-../develop/yubeen/.env.openai}
+        required: false
+      - path: ${INDEX_ENV_FILE:-../develop/yubeen/index.env}
+        required: false
+    environment:
+      INDEX_HOST: 0.0.0.0
+      INDEX_PORT: '8766'
+      RAG_DOCS_DIR: /rag-docs
+      RAG_PERMISSIONS_FILE: /app/develop/yubeen/rag-permissions.json
+    volumes:
+      - /home/toor/aio-01d4-stu/Last3Mon/79/data-api/data/docs:/rag-docs:ro
+      - ../develop/yubeen/rag-permissions.json:/app/develop/yubeen/rag-permissions.json:ro
+    expose: ['8766']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [internal]
+
+networks:
+  internal:
+    external: true
+    # Keep the established network so existing VM ingress and service peers remain attached.
+    name: day65-n8n_default
+
+volumes:
+  n8n-data:
+    external: true
+    name: day65-n8n_n8n-data
+  sandbox-tls:
+    external: true
+    name: day65-n8n_sandbox-tls
+  sandbox-docker:
+    external: true
+    name: 3a5d9783d9d8ca9ede4a05ce7cb5f2462e07d4a3667106c90d4b74ab2f70d68d
+  postgres-data:
+    external: true
+    name: oke-jihye-p0_postgres_data
+  searxng-config:
+    external: true
+    name: e2301cccdfb2d4aaf6a2a83f83462244e413ed172e8f7671d5127656732687f8
+  searxng-cache:
+    external: true
+    name: b4c36f6c3f847d6ec6070ef76ac67631f64dcec3f960881319882f877c7fed89

@@ -46,7 +46,7 @@ NODE_CREDENTIALS = {
 }
 
 
-def prepare(source_dir: Path, credential_meta: Path, output_dir: Path):
+def prepare(source_dir: Path, credential_meta: Path, output_dir: Path, only=None):
     credentials = json.loads(credential_meta.read_text(encoding="utf-8"))
     if not isinstance(credentials, list):
         raise ValueError("credential_metadata_invalid")
@@ -59,14 +59,19 @@ def prepare(source_dir: Path, credential_meta: Path, output_dir: Path):
             named[item["name"]] = item
         elif item["type"] == "openAiApi":
             openai.append(item)
-    required = {name for mapping in NODE_CREDENTIALS.values()
-                for _, name in mapping.values() if name is not None}
-    if required - named.keys() or len(openai) != 1:
+    selected = list(IDS) if not only else list(only)
+    if not selected or set(selected) - IDS.keys():
+        raise ValueError("workflow_selection_invalid")
+    required = {name for stem in selected for _, name in NODE_CREDENTIALS[stem].values()
+                if name is not None}
+    needs_openai = any(name is None for stem in selected
+                       for _, name in NODE_CREDENTIALS[stem].values())
+    if required - named.keys() or (needs_openai and len(openai) != 1):
         raise ValueError("credential_mapping_incomplete")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     plan = []
-    for stem in IDS:
+    for stem in selected:
         workflow = json.loads((source_dir / f"{stem}.json").read_text(encoding="utf-8"))
         workflow["id"] = IDS[stem]
         workflow["active"] = False
@@ -102,9 +107,11 @@ def main():
     parser.add_argument("--credentials", type=Path, required=True,
                         help="Sanitized metadata only: id/name/type; never credential data")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--only", nargs="+", choices=tuple(IDS),
+                        help="Limit local preparation to workflows whose required credentials are present")
     args = parser.parse_args()
     try:
-        plan = prepare(args.source, args.credentials, args.output)
+        plan = prepare(args.source, args.credentials, args.output, only=args.only)
     except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
         parser.exit(2, f"Workflow preparation failed: {error}\n")
     for item in plan:

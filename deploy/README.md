@@ -1,5 +1,7 @@
 # Unified VM deployment
 
+For a separate Mac-local copy of this stack (isolated Compose project, local-only secrets and volumes, FE at port 3001), see [LOCAL-MAC.md](LOCAL-MAC.md). The Mac setup does not use the VM's volumes or mutate VM runtime/configuration/data.
+
 `compose.vm.yaml` runs the team stack as Compose project `oke`. It keeps the existing service DNS names (`n8n`, `backend`, `frontend`, `postgres`, `data-api`, `rag-search`) and reuses the existing `day65-n8n_default` network. Reusing the established network preserves the current VM ingress and other attached peers; this task does not change ingress or publish new ports.
 
 The three critical data volumes are external and retain their exact existing names: `day65-n8n_n8n-data`, `oke-jihye-p0_postgres_data`, and `day65-n8n_sandbox-tls`; sandbox DinD uses its existing external volume ID. The Compose file also retains the existing SearXNG volumes. Never run `down -v`, volume prune, or delete old containers/backups as part of a project rename.

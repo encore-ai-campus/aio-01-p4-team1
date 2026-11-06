@@ -14,6 +14,7 @@
 | 문의·support | P1-2 로컬 PostgreSQL+MockTransport 확인. 팀 VM QA에서는 이관 경로와 문의 저장이 확인됐지만 `sources=[]`여서 정상 RAG 답변 검증은 아님 |
 | 업무 처리 | P1-3 로컬 C05 저장 구현·검증. 원민님의 별도 로컬 n8n→FastAPI→PostgreSQL 15개 그룹 결과는 전달받은 보고임. VM QA는 티켓 저장·관리자 처리·직원 재조회 경로를 확인했으며 알림/DLQ 전체 시험은 별도 |
 | 현재 잔여 | P1-4 로컬 시험 223 passed·2 skipped·warning 1건 기록. DB 재시작·web-flow·별도 DB backup/restore는 확인했지만 원본 RAG 문서·청크가 0건이라 실제 벡터 복원은 미검증. 전체 VM 통합과 공식 공통 평가는 미완료 |
+| 별도 후속 | P1-4 잔여 확인 → 로컬 초기 설정 재현 → CI 실행 스크립트/Actions 예시 → CD workflow·설정·백업/검증/복구 인계 양식 준비. 현재 후속 산출물은 미착수이며 실제 루트 workflow 반영·Secrets/승인 설정·VM 배포는 오현님 담당 |
 
 상태 출처: 개인 P1-4 결과는 아래 IMP-PLAN 실행 기록, VM 결과는 [팀 VM 시험 기록](../../docs/VM-TEAM-TESTING.md)의 2026-11-06 보고다. VM 기록은 전달/문서 근거이며 이번 README 정리에서 직접 재실행한 결과가 아니다. 배포 커밋과 개인 작업 브랜치 커밋은 구분한다.
 

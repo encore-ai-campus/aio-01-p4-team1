@@ -1,5 +1,15 @@
 # 원민님 · 변경 제안·전달 기록
 
+## 팀장 지정 WF-02b QA · 2026-11-06 15:04 KST
+
+- 변경/기준: 최신 origin/main `95d8af3`을 feat/wonmin-p0에 병합. real-qa-api-runner.py 및 docs/VM-TEAM-TESTING.md 확인. 선택1건만 실행하며 평가결과보고서는 작성하지 않았다.
+- 입력/기대: 공용 직원, 질문=접속이 안 돼요, attempt=3. 기대는 담당자 이관·티켓ID 및 문의/티켓 저장·관리자 처리·직원 재조회.
+- 실제: PASS_API_SEQUENCE, request_id=real-qa-4a2c0b16ce4341deb887c458f9d8aaa6, T-2011, 담당자 이관, sources=[], ask4.535초. 직원 admin403·로그아웃/재로그인 후 문의/티켓 연결·관리자 상태/답변 PATCH/재조회·직원 최신 상태/답변 확인 등10checks 모두true. API 목록10→11은 SQL 직접 관측과 구별한다.
+- 증거: [raw](../runs/real-qa-WF02b-lead-20261106T060403Z.json), [실행 맥락](../runs/real-qa-WF02b-lead-context-20261106T060403Z.json). 실제시각15:04이며4교시로 소급하지 않는다. 로컬 QA 클라이언트에서 공개VM HTTPS API 호출. VM OS로그인/직접PG/n8n trace는 미실행이다.
+- 변경 범위: 새 문의 POST1·해당 신규 티켓 PATCH1. 인증세션 호출 별도. VM배포/재시작/import/publish/fault/reset/기존행삭제 없음. 비밀은 자식프로세스 환경에만 주입·raw에 미기록.
+- 다음 연결 상대: 팀장에게 raw와 선택사례 결과 인계용 기록. 실제 외부메시지는 전송하지 않았다. 지혜/원민 SQL 연결행·다혁/원민 실제 노드trace 및WF02/WF12 추가시험은 별도 인계/접속 후 진행한다.
+
+
 실제 VM 재시험(2026-11-06): 이전1288823 결과5개 삭제·main3dc5f23 포함 확인. WF-02b API 새ID3회 모두PASS, T-2008/2009/2010, 4.828/1.729/1.649초. 직원재로그인·관리자PATCH·직원재조회10checks 매회통과. WF-02 실제브라우저1회 대상/오류/시점 모두표시·캡처저장. 평가결과보고서는 사용자 요청으로 삭제했다. runs/vm-retest-*·vm-browser-* 참조. SQL/n8n trace/모델3회/공식14/팀5/bench미확인. 다음은WF02모델3회 및WF12복합·권한/장애·실제근거검증. 기대변경/VM재배포/fault/reset/기존행삭제 없음.
 
 다혁님 C04 실제 app 연결(2026-11-05): [원인·13개 그룹·남은 연결](C04-APP-INTEGRATION-RESULT.md). 최신origin/feat/dahyeok-p0=bb2fa1f의 Git 원본으로 시험했고 C04 요청/매핑/B안·실제 C05 저장이 적합했다(직원 fixture, 실제 로컬 qwen). 최초긴급 실행103은 JSON 코드블록 출력→triage_invalid→normal 저장으로 실패했다. 시험 사본 N06 모델 responseFormat=json_object 후 실행111→112의 T-2012/high·사내망 안내·sources=[] 및 전체13그룹 통과. 다혁님 실제 배포 모델 설정 검토/재시험 요청, 정본/기존 workflow는 미수정이다. 지혜/오현님 실제 data-api 주소·키/기존 티켓 권한이 없어 원래 본체는 identity_unavailable로 남는다. 유빈님 C03=503도 확인해 실제 검색·WF12 기존 티켓·팀 VM/공식 평가와 구별한다. 이번 공유는 HANDOFF 기록이며 외부 전송/상대 확인 완료가 아니다.

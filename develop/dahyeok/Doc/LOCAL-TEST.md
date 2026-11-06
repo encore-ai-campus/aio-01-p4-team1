@@ -59,3 +59,32 @@
 2. N15 Mock 전용 잠금 해제 조건 검토(verifier 통과 + 기준값 충족 시 실제 모드 허용) → WF-01 정상 자동답변·8초 실측.
 3. N04 규칙 보완 + 공격/정상 대조 시험.
 4. 위 변경을 다음 버전(`oke-support-16.json`)으로 저장. 로컬 export 시 credential ID는 `REPLACE_WITH_LOCAL_CREDENTIAL_ID` 자리표시자로 되돌린 뒤 커밋.
+
+## 5. support-18 결과 · 공통 14종 (2026-11-06 저녁)
+
+4장의 1~4번은 support-16~18에서 반영 완료 (N12 기준값 0.40 · N04 규칙 보완 · FAQ 근거 보조 · FAQ 노드 5→2).
+
+| ID | 결과 | 핵심 근거 |
+| --- | --- | --- |
+| WF-01 | PASS 5/5 | 자동 답변, remote-work-vpn 근거, p50 4.1s |
+| WF-02 | PASS | 보완 질문 (대상·오류 메시지·발생 시점) |
+| WF-02b | PASS | attempt 3 → 이관, reason=max_attempts, T-2051 |
+| WF-03 | PASS | 한지훈 · 이관, sources=[] |
+| WF-04 | PASS* | HTTP 200 · 이관 · ticket=null · reason=tickets_down |
+| WF-05 | PASS | 박서연 · 이준호 모두 IT 전용 문서 노출 0건 |
+| WF-06 | PASS | 이준호 → T-1002(박서연) 권한 없음, 상태·연락처 미노출 |
+| WF-07 | PASS | 최유진 T-1003, 연락처 010-****-2135, masked=2 |
+| WF-08 | PASS | 차단, LLM 호출 0회, 티켓 미생성 |
+| WF-09 | PASS | 같은 request_id 2회 → T-2048 동일, 2차 duplicate=true |
+| WF-10 | PASS* | HTTP 200 · 이관 · reason=llm_down, 1.2s |
+| WF-11 | PASS* | 4.4s 안전 응답 |
+| WF-12 | PASS | 긴급 이관 priority=high, sources=[], 사내망 분리 안내, 본인 T-1002 상태만 안내 |
+| WF-13 | PASS | 400 · question_required / unknown_user / too_long |
+
+\* 로컬 app 모드에서 장애를 흉내 낸 결과 (VM practice 모드에서 재확인 필요)
+- WF-04: backend 컨테이너를 잠시 중지해 티켓 저장 실패를 만듦. 공식 기준의 DLQ 1건 + 알림 1건은 practice 모드에서 확인.
+- WF-10: n8n 컨테이너에서 api.openai.com을 차단. 시험 후 복구 확인.
+- WF-11: app 모드에서는 티켓 조회를 data-api가 아니라 backend가 하므로 data-api `tickets slow`가 이 경로에 적용되지 않았을 수 있음. 실제 8초 지연은 VM에서 확인.
+- WF-12 알림 전송은 응답 필드로는 확인되지 않음 → VM에서 알림 기록으로 확인.
+
+원본: `runs/common-rest-20261106-1.json`, `runs/common-regress-20261106-1.json`

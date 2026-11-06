@@ -1,0 +1,89 @@
+{
+  "scope": "derived_not_official_common_suite",
+  "selection": "no_ticket_expected_candidates",
+  "origin": "https://aio-t1.isitsoft.kr:5678",
+  "deploy_sha": "17007f1",
+  "suite_sha256": "6cb6db78ad20d1495c4ac5a12dfd91fc3cc31e148fbcde687db4a1e28bff87f7",
+  "runner_sha256": "fc09b153d3da33ee53c2582938b34fa0050cd10816a269c0826aacd32168534b",
+  "category_count": null,
+  "cases": [
+    {
+      "case_id": "WF-06",
+      "call_index": 1,
+      "request_id": "p7-f0ce7acbde0d4f69a43b0693c188fef9",
+      "http_status": 403,
+      "elapsed_seconds": 0.214,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {},
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    },
+    {
+      "case_id": "WF-07",
+      "call_index": 1,
+      "request_id": "p7-140ec4cac262445ba4d88567b5534f89",
+      "http_status": 403,
+      "elapsed_seconds": 0.068,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {},
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    },
+    {
+      "case_id": "WF-08",
+      "call_index": 1,
+      "request_id": "p7-5e473701098b489bb03ad294c333e929",
+      "http_status": 403,
+      "elapsed_seconds": 0.058,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {},
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    },
+    {
+      "case_id": "WF-13-empty",
+      "call_index": 1,
+      "request_id": "p7-a4da2d8092714f4584591034868c46d2",
+      "http_status": 403,
+      "elapsed_seconds": 0.069,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {},
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    },
+    {
+      "case_id": "WF-13-unknown-user",
+      "call_index": 1,
+      "request_id": "p7-b9389de5aff54dcbb02e0bc471e51d76",
+      "http_status": 403,
+      "elapsed_seconds": 0.079,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {},
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    },
+    {
+      "case_id": "WF-13-too-long",
+      "call_index": 1,
+      "request_id": "p7-920b1c35d009499ea9e9fb00a2442ceb",
+      "http_status": 403,
+      "elapsed_seconds": 0.247,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {},
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    }
+  ]
+}

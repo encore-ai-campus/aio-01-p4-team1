@@ -1,0 +1,42 @@
+{
+  "scope": "derived_not_official_common_suite",
+  "selection": "live_request_candidates",
+  "origin": "https://aio-t1.isitsoft.kr:5678",
+  "deploy_sha": "17007f1",
+  "suite_sha256": "0a856384abbd9ad2da16b12f09e72eeabb47bd2bcd402ecdffdfdc4be5d5e41e",
+  "runner_sha256": "0fa9755b6cfea961082718d6112dde6fa73ac0c28262596dd1a3a3cbcefcfa3d",
+  "category_count": null,
+  "aborted_on_baseline_failure": false,
+  "abort_http_status": null,
+  "cases": [
+    {
+      "case_id": "WF-01",
+      "call_index": 1,
+      "request_id": "p7-0ec20d5dc6514b1292631e6738b89188",
+      "http_status": 200,
+      "elapsed_seconds": 2.251,
+      "observed": {
+        "request_id_matches": true,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "source_docs": [],
+        "ticket_id": "T-2026",
+        "ticket_duplicate": false,
+        "security_masked": 0
+      },
+      "checks": {
+        "request_id_matches": true,
+        "http_status": true,
+        "route": false,
+        "source_doc": false,
+        "ticket_null": false
+      },
+      "unobserved": [
+        "answer steps grounded in source",
+        "verifier trace",
+        "actual DB side-effect counts"
+      ],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    }
+  ]
+}

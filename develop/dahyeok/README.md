@@ -6,7 +6,7 @@
 
 ## 내가 만들 것
 
-- `workflows/oke-support.json`은 P0-1 원본으로 보존하고, 이후 단계는 번호를 붙인 JSON에 누적 구현한다. P1-5 실제 HTTP 연결 준비본은 `workflows/oke-support-12.json`, 그 로컬 실행 버그 수정본은 `workflows/oke-support-13.json`, 자동 답변 잠금 구조를 반영한 현재 최신본은 `workflows/oke-support-14.json`이다.
+- `workflows/oke-support.json`은 P0-1 원본으로 보존하고, 이후 단계는 번호를 붙인 JSON에 누적 구현한다. P1-5 실제 HTTP 연결 준비본은 `workflows/oke-support-12.json`, 그 로컬 실행 버그 수정본은 `workflows/oke-support-13.json`, 자동 답변 잠금 구조본은 `workflows/oke-support-14.json`, 실제 데이터 시험 결과를 반영한 현재 최신본은 `workflows/oke-support-15.json`이다.
 - triage 분류 → 검색/본인 접수 조회 → writer 초안 → verifier 검증.
 - Code·IF·Switch로 보완·긴급·이관·실패를 제어하고 공통 응답을 한 번 반환.
 - 요청·Mock·예외 확인 자료와 실제 노드·연결선 설계 자료. 검색·저장은 다른 담당 모듈을 호출한다.

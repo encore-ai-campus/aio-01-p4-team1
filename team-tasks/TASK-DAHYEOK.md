@@ -1,5 +1,10 @@
 # ⚙️ [임다혁 님 전용] 오케스트레이션(`oke-support` v18) 통합 테스트 실행 및 핵심 설계 근거 워크시트 (`TASK-DAHYEOK.md`)
 
+> ⚠️ **[절대 주의] 실서버 VM 내부 설치 · 파일 수정 · 컨테이너 재시작 절대 금지**
+> - 실서버 VM(`aio-t1`)은 공용 실서비스 환경입니다.
+> - **VM 내부에서 `pip install`, `npm install`, `apt`, 소스코드 직접 수정, `docker compose down/restart` 등을 절대 실행하지 마세요!** (서버가 망가질 수 있습니다)
+> - 패키지 설치(`pip install websockets`)는 오직 **본인 개인 로컬 PC**에서만 수행하셔야 합니다.
+
 - **담당**: 임다혁 님 (메인 워크플로우 `oke-support` v18 · Triage 게이트 · FAQ 2노드 · Verifier/Writer · 이관 분기)
 - **마감 기한**: **오늘(11/07 토) 18:00까지**
 - **제출할 파일 (오직 본인 폴더 `develop/dahyeok/` 내부만 수정)**:

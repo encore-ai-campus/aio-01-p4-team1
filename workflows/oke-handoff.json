@@ -1189,6 +1189,7 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "errorWorkflow": "okeErrorsFlow01",
     "saveDataErrorExecution": "all",
     "saveDataSuccessExecution": "all",
     "saveExecutionProgress": true,

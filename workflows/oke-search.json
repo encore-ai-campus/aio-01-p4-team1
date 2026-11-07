@@ -234,6 +234,7 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "errorWorkflow": "okeErrorsFlow01",
     "saveDataSuccessExecution": "all",
     "saveDataErrorExecution": "all",
     "saveManualExecutions": true

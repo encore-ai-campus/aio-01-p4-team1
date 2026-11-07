@@ -1,8 +1,36 @@
 # 원민님 · TODO
 
+현재 [VM 내부 직접대조](EXECUTION-RESULT.md) 완료: 실제셸/배포HEAD·readiness·PostgreSQL4요청·n8n본체실행4개 확인. 하위노드trace·공식전체QA·실제근거/권한·bench·리허설은대기.
+
+평가결과보고서는 사용자 요청으로 삭제했다. 보존된 실서비스 raw 관측: WF-02b API3/3·WF02 UI1회 관측. 이전 작업 결과5개 삭제 후 새 근거로 대체했다. 직접SQL·모델trace·공식전체suite·bench·대표로그3종·리허설은 미완료다.
+
+
+현재 P1-4 일부(2026-11-05): [독립반복·bench 결과](P1-4-PARTIAL-RESULT.md). fresh 실행기·증거 대조 도구 구현, Python20개 통과. 실제 모델17회 실행(3사례3회=12호출 + TM-03 bench5호출), TM-02 기대불일치3건 보존. 실제 data-api/공식80키트 경로를 요청했으며 기존 본체는 identity_unavailable이다. P1-4 전체완료로 처리하지 않는다.
+
+현재 C04→C05(2026-11-05): [직원 fixture·실제 로컬 LLM·실제 C05 저장 13개 그룹](C04-APP-INTEGRATION-RESULT.md). 정상·긴급·중복·부분/전체 실패·동시2회 확인. 기존 본체의 실제 data-api 미설정 차단과 긴급 JSON 형식 실패를 별도 기록했다. 시험 사본만 JSON 모드를 보완했으며 실제 신원/기존 티켓·C03·팀 VM/공식 평가는 미완료다.
+
+현재 오류 수습(2026-11-05): [실제 app Error Trigger 결과](ERRORS-APP-INTEGRATION-RESULT.md). 자동 발화 5조건과 별도 메타데이터/재진입 probe 등 10개 그룹 통과. 실제 app 알림/DLQ 수습 재시험은 완료했다. 팀 본체 전체·실제 data-api·공통/공식 키트·팀 VM 검증은 남아 있다.
+
+현재 C05 상태(2026-11-05): [ec6a735 실제 app 연결 15개 그룹 통과](C05-APP-INTEGRATION-RESULT.md). 티켓/알림 순차·동시8회·권한 거절, 키 없음/null, DLQ200, 부분 실패·복구 및 PG 재시작 영속성을 확인했다. 전용 app DB/직원 fixture 범위이며 아래 1902a2b/501 기록은 과거 상태다. 본체 C04 전체 연결·실제 data-api·팀 VM·공식 키트는 남아 있다.
+
+지혜1902a2b 재확인(2026-11-05): [backend 최신 배포·C05 결과](C05-LIVE-1902a2b-RESULT.md). 직원 seed/관리자 CLI 구현과 전체180개 통과는 확인했다. 실제 C05는 여전히501이므로 저장·동시성·보존·영속성은 미완료로 유지한다.
+
+최신 C05 확인(2026-11-05): [실제 저장 시험](C05-LIVE-RESULT.md). 실제 API33회·DB 전후·n8n app 경로를 확인했으나 저장 API501로 차단됐다. C05 실제 저장/동시성/티켓 보존/영속성 체크는 완료로 바꾸지 않는다. 지혜님 실제 구현 후 재시험이 필요하다.
+
+2026-11-05 실환경 갱신: [Ubuntu 결과](UBUNTU-INTEGRATION-RESULT.md). 아래 기존 단계 체크와 별도로 실제 완료 범위를 구분한다.
+
+- [x] 로컬 Ubuntu Compose 기동·실제 errors ID 부모 연결·자동 Error Trigger 정상/부분/전체 수습 확인
+- [x] 로컬 Ollama 실제 HTTP 호출·PostgreSQL 통합 45개·원민 회귀 89개 확인
+- [x] 오류 시험 부모 정상 코드/인증 복원·게시 해제 및 일반 경로 복구
+- [x] 지혜 ec6a735 실제 C05 API→DB 저장·키 인증·중복·순차/동시·영속성 확인 (로컬 Ubuntu 전용 app DB/직원 fixture, 15개 그룹)
+- [x] Error Trigger 실제 app 알림/DLQ 저장·부분/전체 실패·복구 및 재진입·중복 ACK 확인 (로컬 Ubuntu 전용 DB)
+- [x] 본체 C04→handoff→실제 C05 app 연결 시험 (직원 fixture·실제 로컬 LLM, 13개 그룹)
+- [ ] 실제 data-api 직원/권한·기존 업무 본체 연결·WF12 본인 기존 티켓·C03·팀 VM 시험
+- [ ] 다혁님 본체의 실제 C04/업무 LLM 연결·공식 키트·LLM3회·공용 VM 회귀
+
 읽는 순서: [README](../README.md) → 이 문서 → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md). 변경 제안은 [HANDOFF](HANDOFF.md)에만 기록한다.
 
-> 체크박스는 **구현과 실제 확인 완료** 표시다. 지금은 전부 미실행이며 문서 구체화만 수행했다.
+> 체크박스는 해당 단계의 실제 확인 완료 표시다. P0 입력 작성·정적 확인과 P1-1 로컬 구현·HTTP Mock 40개 검증은 완료했다. 키트·공통 원본 및 실제 n8n/백엔드 기능 시험은 대기다. ../runs/INDEX.md 참조.
 
 ## 목적과 사용자
 
@@ -22,10 +50,17 @@
 | 6 | 공통 14유형·팀 5개 이상·LLM 독립 3회·bench·VM 회귀를 남긴다 | REL-04·06 | 실제 runs 파일, 실패/수정/재시험 연결 |
 | 7 | 시연 순서를 리허설하고 취합용 자료를 넘긴다 | REL-04 | SUBMISSION-NOTES의 실제 파일·노드·측정·남은 문제 |
 
-- [ ] P0 입력·기대·도구 버전 준비
-- [ ] P1-1 handoff 정상·중복
-- [ ] P1-2 장애·부분실패·수습
-- [ ] P1-3 errors·app 통합
+- [x] P0 팀/handoff 입력·기대·시연 요청 작성 및 정적 확인
+- [ ] P0 80일차 키트·공통 원본·도구 버전/해시 확보
+- [x] P1-1 handoff 정상·중복 로컬 구현·HTTP Mock 40개 검증
+- [ ] P1-1 공식 check·사람의 n8n 게시/실행·실제 저장소 대조
+- [x] P1-2 장애·부분/전체 실패 수습 로컬 구현·HTTP Mock 검증
+- [ ] P1-2 공식 check·사람의 n8n 게시/실행 및 실제 C05 ACK·관측 대조
+- [x] P1-3 oke-errors Error Trigger·독립 알림/DLQ 로컬 구현·Mock 검증
+- [ ] P1-3 부모 errorWorkflow 실제ID 연결·자동 오류 발화·수습/복구 증거
+- [ ] P1-3 실제 app 인증/권한·DB/동시성·재시작 영속성 통합
+- [x] P1-4 fresh 반복/증거 도구 구현·app3사례 독립3회 및 이관5회 bench 기록 (기능 실패 포함)
+- [ ] TM-02 질문3항목 누락 담당자 보완 후 동일 조건3회 재시험
 - [ ] P1-4 필수 시험·공통·팀·반복·bench·실패 재시험·동시성 확인
 - [ ] P1-5 필수 VM 회귀·시연·제출 자료
 

@@ -1,0 +1,4 @@
+services:
+  n8n:
+    environment:
+      SERVICE_MODE: app

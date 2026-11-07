@@ -222,9 +222,9 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "saveDataSuccessExecution": "none",
-    "saveDataErrorExecution": "none",
-    "saveManualExecutions": false
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true
   },
   "pinData": {},
   "meta": {

@@ -1,0 +1,19 @@
+{
+  "scope": "existing errors Node regression; actual automatic app tests reported separately",
+  "command": "node --test develop/wonmin/tests/errors.test.mjs",
+  "exit": 0,
+  "passed": 24,
+  "failed": 0,
+  "stdout_tail": [
+    "✔ P1-3 alert ACK does not infer success from count alone or wrong types (0.65525ms)",
+    "ℹ tests 24",
+    "ℹ suites 0",
+    "ℹ pass 24",
+    "ℹ fail 0",
+    "ℹ cancelled 0",
+    "ℹ skipped 0",
+    "ℹ todo 0",
+    "ℹ duration_ms 3325.475208"
+  ],
+  "stdout_sha256": "4d43f20edfb8a17532c629849f0dee48229c808bb4ec9969a3da95c5206a6972"
+}

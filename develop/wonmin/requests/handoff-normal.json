@@ -1,0 +1,8 @@
+{
+  "request_id": "wm-p11-handoff-normal",
+  "requester": "박서연",
+  "title": "VPN 현장 점검 요청",
+  "category": "network",
+  "priority": "normal",
+  "reason": "no_evidence"
+}

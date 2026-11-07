@@ -1,330 +1,364 @@
-# 노코드 워크플로우 설계서 · 오케퐁
+# Workflow Design — OKE-Pong n8n v18
 
-> 상태: 기존 VM 배포본(`3ff836a`)에서 support/search/handoff/errors 활성과 WF-03(T-2005 실저장)·WF-02b(T-2011 실저장) API E2E 실측이 확인됐다. 7교시 배포 2는 VM repo `17007f1`·FE `bb3ef06`(디자인 `840c5e6`)·15번 본체 published `d0d6396d…` 활성 반영을 별도로 확인했다. 과거 실측은 새 배포본 전체 회귀의 대체 근거가 아니며 실행 범위·결과는 [실행 결과](EXECUTION-RESULT.md)를 따른다.
-> 작성 책임: 다혁님. 원민님은 이관·오류, 지혜님은 인증·저장, 유빈님은 검색 자료를 제공한다. 공통 문서 편집·제출 취합은 오현님이 맡는다.
+> Source workflows: `workflows/oke-support.json`, `oke-index.json`, `oke-search.json`, `oke-handoff.json`, `oke-errors.json`. Approved design baseline: main commits `983f25c` (support v18) and `9bdb9c6` (controlled error hook and full execution logging).
+> Scope: this document describes the checked-in JSON graph, its actual node names, and the boundary payload contracts. A local JSON snapshot can differ from a separately approved deployment; source discrepancies are called out explicitly.
 
-[전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [데이터·DB](DATA-AND-DB.md) · [본체 상세 지침](../develop/dahyeok/Doc/SPEC.md). 필드·시간 예산은 최신 공통 계약이 우선이다.
+## 1. v18 behavior, runtime settings, and architecture rationale
 
-## 먼저 이해할 구조 · Agent와 제어 방식
+- **v18 Main Workflow Architecture (`oke-support.json`, 63 nodes):**
+  - FAQ enrichment was streamlined from 5 nodes down to 2 nodes (`N10b FAQ HTTP` → `N10b Match FAQ`), reducing total main workflow complexity from 66 to **63 nodes**. FAQ failure preserves policy-only evidence and never replaces policy citations.
+  - **N12 Evidence Gate Threshold (`APPROVED_MIN_SCORE=0.40`):** Based on empirical cosine similarity measurements (`text-embedding-3-large`, `top_k=3`) where in-scope questions scored **0.380–0.709** (median 0.571) and out-of-scope top candidates scored up to **0.383**, replacing the initial Mock threshold (`0.80`) with `0.40`. A source below `0.40` cannot authorize automatic answering.
+- **Multi-stage Pipeline Safety Design (`Triage ➔ Search(C03) ➔ Writer ➔ Verifier ➔ Handoff(C04)`):**
+  - Rather than relying on a single monolithic prompt, each stage isolates its failure mode to guarantee **"never fabricate when uncertain; escalate safely"**:
+    1. **Pre-LLM Rule & Triage Gate:** Malformed inputs (`WF-13`: empty, >500 chars, unknown employee) return HTTP 400 and prompt injection attempts (`WF-08`) are blocked deterministically by `N04 Injection rules` with **0 LLM calls**. Ambiguous requests (`WF-02`, `attempt < 3`) return structured clarifying questions (`접속 대상 / 오류 메시지 / 발생 시점`), while `attempt >= 3` (`WF-02b`) escalates immediately to prevent infinite clarification loops.
+    2. **Search (`C03`):** Uses only verified employee department ACL (`IT팀` → `["all","it"]`, general → `["all"]`) and passes top-3 evidence through `N12 Evidence gate` (`>= 0.40`).
+    3. **Writer (`N13`):** Generates answers strictly from retrieved `evidence.text`. If the evidence does not directly answer the question, Writer sets `answerable=false` and escalates with `reason="low_confidence"`.
+    4. **Verifier (`N14`):** Performs a second-pass sentence-level grounding and policy check (`grounded`, `policy_ok`), catching any hallucinated details or border-score (`0.380–0.40`) false positives before output filtering (`N22 Output filter`, PII masking).
+- **Sub-workflow Separation, Timeouts, and Live VM Recovery:**
+  - **`oke-search.json` (7 nodes / 3 core HTTP-validation steps):** Enforces a **4-second** HTTP timeout (`4000ms`) to the RAG search service. On timeout or downstream error, it returns a safe `search_unavailable` state so `oke-support` gracefully escalates via Handoff (`HTTP 200`) instead of crashing.
+  - **`oke-handoff.json` (30 nodes):** Called by `oke-support` with a **5-second** timeout (`5000ms`), bounded ticket retry (max 2 attempts × 1000ms), and independent fail-safe sinks for operator alerts (`alerts`, 600ms) and Dead-Letter Queue (`dlq`, 600ms). During live VM QA ([`runs/live-integration-qa-20261107.json`](../runs/live-integration-qa-20261107.json)), a missing entry webhook node (`H01 Handoff Webhook`, 29 nodes on VM vs. 30 in repo) caused `Cannot read properties of null (reading 'disabled')` (HTTP 500). Republishing the canonical **30-node** `oke-handoff.json` on the live VM restored `H01` and verified **HTTP 200 OK** on both first call (`ticket_id: "T-2033"`, `duplicate: false`, `alerted: true`, `dlq: false`) and duplicate retry (`ticket_id: "T-2033"`, `duplicate: true`, `WF-09` idempotency 100% satisfied).
+  - **`oke-errors.json` (14 nodes):** Dedicated `Error Trigger` workflow (`okeErrorsFlow01`) that isolates unexpected runtime exceptions from expected business faults (`WF-04`/`WF-10`). It has no `errorWorkflow` of its own and never rethrows sink failures, guaranteeing non-recursive fail-safe execution.
+- Approved logging policy is successful and failed execution data saved as `all`; the support workflow error hook is `okeErrorsFlow01` (the `oke-errors.json` workflow handles the controlled error path).
+- **Checked-in snapshot discrepancy:** `oke-index.json` currently declares `saveDataSuccessExecution: "none"`, `saveDataErrorExecution: "none"`, and `saveManualExecutions: false`; this conflicts with the approved all-execution logging requirement. This task is documentation-only, so the JSON remains unchanged. Before claiming configuration parity, reconcile the index workflow setting in the workflow source/deployment.
+- Current JSON settings: support: `errorWorkflow=okeErrorsFlow01`, success/error=`all`; search, handoff, errors: success/error=`all`; index: as discrepancy above. Error workflow has no `errorWorkflow` of its own, avoiding recursive hook chaining.
+- Search is delegated through C03; handoff through C04. Mock branches are explicit test paths and must not be described as live persistence.
 
-- 서비스는 **고정된 오케스트레이션**으로 시작한다. Code·IF·Switch가 입력·권한·순서·분기를 제어하고 triage(분류)·writer(작성)·verifier(검증)의 LLM 역할 3개를 필요한 경로에서 호출한다. 별도 Supervisor LLM은 기본안에 없다.
-- retriever는 HTTP/DB 검색 역할이며 추가 LLM으로 세지 않는다. 차단·입력 오류는 LLM0회, 보완 경로는 triage만 경유할 수 있다. 모든 문의가 3개 LLM을 전부 호출해야 한다는 뜻이 아니다.
-- oke-handoff는 IT팀 티켓·알림·DLQ를 처리하는 **업무 이관**이다. Agent끼리 자율적으로 제어권을 넘기는 Handoff 패턴을 선택한 것이 아니다.
-- 워크플로우5종은 기능별 파일 경계다. 팀원에게 붙인 개발 CLI는 이 서비스를 만드는 도구이며 서비스 안의 Agent 수와 별개다.
-- 화면에서 보이는 기능과 담당자는 [예상 화면·기능표](PREVIEW.md), 재사용할 코드는 [내부 참고 예제](references/README.md)를 따른다.
+## 2. Payload contract catalog
 
-## 0. 한눈에 보는 워크플로우 종합 구조 (1장 요약)
 
-> **핵심 정의:**  
-> 오케퐁(OKE-Pong)은 사내 직원이 IT 문제를 질문했을 때, **AI가 사내 규정을 찾아 직접 답변**하거나 **해결이 불가능/긴급한 경우 IT 지원팀에 티켓을 발급(이관)**해 주는 단 1개의 통합 서비스(`POST /webhook/oke-support`)입니다.
+Each `main` edge carries n8n item JSON from its source unless a listed Code node constructs or projects a new object. Branch index 0/1 is the n8n output order, not a business status by itself; descriptions below specify the condition. Fields marked required are required at that boundary; optional fields may be absent or null as stated. Internal envelopes can carry additional context fields from earlier steps; external HTTP payloads are the closed contracts shown here.
 
-```mermaid
-flowchart TD
-  USER(["👤 직원 질문 입력<br/>(POST /webhook/oke-support)"]) --> N01["🛡️ 1단계: 보안 & 관문 검사<br/>· 팀 키(X-Team-Key) 확인<br/>· 입력 오류 HTTP 400 / 정책 주입 차단 HTTP 200·route=차단"]
-  N01 -->|"정상 질문"| N02["🧠 2단계: 분류 (Triage LLM)<br/>질문 유형 및 긴급도 분류"]
+### S1 · Support webhook request (required `request_id`, `user`, `question`; optional `channel`, `attempt`, `context`)
 
-  %% 긴급 분기
-  N02 -->|"🚨 긴급 사고 (보안사고/전사 장애)"| H1["🎫 [이관 서브WF: C04]<br/>즉시 IT팀 티켓 발급 & 알림"]
-
-  %% 정보 부족 분기
-  N02 -->|"❓ 정보 부족 (attempt 1~2)"| ASK["💬 추가 정보 질문 반환"]
-
-  %% 일반 답변 분기 (병렬 조회)
-  N02 -->|"일반 질문"| DUAL{"🔍 3단계: 두 갈래 병렬 조회"}
-
-  subgraph SUB_SEARCH["신유빈님 담당 (oke-search.json)"]
-    DUAL -->|"지식 검색"| RAG["📚 [RAG 검색 서브WF: C03]<br/>pgvector DB 코사인 검색<br/>사내 규정 문서 8종 탐색"]
-  end
-
-  DUAL -->|"내 티켓 내역"| MY_TICKET["📋 본인 티켓 조회<br/>(이전 접수 이력 확인)"]
-
-  RAG --> MERGE["🔗 결과 합치기 (Merge)"]
-  MY_TICKET --> MERGE
-
-  MERGE --> N03["✍️ 4단계: 답변 생성 & 검증 (LLM 2개)<br/>· Writer: 규정 근거 기반 초안 작성<br/>· Verifier: 근거 없는 환각 검증"]
-
-  N03 -->|"검증 통과 (답변 가능)"| OUT["📤 5단계: 최종 응답 (HTTP 200)<br/>개인정보 마스킹 후 답변 전송"]
-  N03 -->|"근거 불충분 / 현장 조치 필요"| SUB_HANDOFF
-
-  subgraph SUB_HANDOFF["이원민님 담당 (oke-handoff.json)"]
-    H1 --> OUT
-    N03 -->|"이관 결정"| H2["🎫 [이관 서브WF: C04]<br/>IT팀 티켓 발급 & 슬랙 알림<br/>장애 시 DLQ 보존"]
-    H2 --> OUT
-  end
-```
-
-### 3대 마이크로 워크플로우 역할 및 연동 구조
-
-| 담당자 | 워크플로우 파일 | 역할 | 본체와의 연동 방식 |
-|---|---|---|---|
-| **임다혁** | **`oke-support.json`** (메인 본체) | 전체 뼈대 및 오케스트레이션 | 관문 검사 → Triage(분류) → 병렬 호출 → Writer/Verifier(답변 생성) 총괄 |
-| **신유빈** | **`oke-search.json`** (서브 WF) | 사내 규정 RAG 지식 검색 | 본체가 3단계에서 **`Webhook C03`**으로 호출하면 pgvector DB에서 규정 찾아 반환 |
-| **이원민** | **`oke-handoff.json`** (서브 WF) | IT팀 티켓 발급 및 알림/장애 수습 | 본체가 긴급/이관 필요 시 **`Webhook C04`**로 호출하면 티켓 생성 및 알림 발송 |
-
-### 4대 시나리오별 처리 기준 요약
-
-1. **정상 규정 질문 (예: VPN 오류):** 관문 통과 → Triage(네트워크) → RAG 검색(C03) → Writer/Verifier 답변 작성 → 해결 가이드 답변 반환
-2. **긴급/보안 사고 (예: 랜섬웨어/사내망 마비):** Triage(긴급) → Handoff(C04) 즉시 호출 → IT팀 긴급 티켓 발급 + 초동 조치 안내
-3. **정보 부족 (예: "인터넷 안 돼요"):** Triage(정보부족) → attempt 1~2회차면 보완 질문 반환 (3회차 이상 시 Handoff 이관)
-4. **보안 공격 (예: 주입 공격/권한 탈취):** 1단계 관문에서 LLM 호출 없이 즉시 차단 (기존 VM 관측: HTTP 200, route=`차단`; 입력 유효성 오류 HTTP 400과 구분)
-
-## 1. 업무 시나리오
-
-오케퐁 직원 6명이 로그인해 사내 IT 문제를 질문한다. FastAPI가 세션으로 직원을 확인하고 문의를 저장한 뒤 n8n에 전달한다. n8n은 입력·주입 공격·권한을 확인하고 규정 검색과 본인 접수 조회를 거쳐 검증된 답변을 제공한다. 정보가 부족하면 보완 질문을 하고, 세 번째에도 부족하거나 근거·검증이 불충분하거나 실제 조치가 필요하면 IT팀 티켓으로 이관한다. 보안 사고는 긴급 접수·알림을 우선하며 규정에 있는 초동 조치만 안내한다.
-
-| 문의 유형 | 근거 문서 | 처리·이관 기준 |
-| --- | --- | --- |
-| 계정·인증 | password-policy | 재설정·잠금 해제 절차 안내. 직접 계정 조작은 이관 |
-| 네트워크·VPN | remote-work-vpn | 연결·인증서 점검. 현장 조치는 이관, 전사 장애는 high |
-| 메일·문서·개인정보 | email-and-documents, privacy | 용량·공유·정보 처리 안내. 유출 의심은 high |
-| 장비·프린터·회의실 | device-issue-return, meeting-room | 자가 점검·반납 안내. 교체·현장 조치는 이관 |
-| 소프트웨어 | software-usage | 승인·사용 절차 안내. 실제 설치·승인은 이관 |
-| 보안 사고 | security-incident | 피싱 클릭·감염·분실·유출 의심은 high |
-
-일반 직원은 all 문서와 본인 접수만 조회한다. IT팀 김민지·정우성은 all+it 권한이다. 웹 관리자 기능은 FastAPI가 별도로 검사한다. 질문의 관리자 주장으로 권한을 올리지 않는다.
-본체의 기존 티켓 조회는 제공된 T-1001~T-1004를 사용한다. 새 app 티켓 상태는 FastAPI의 내 문의·관리자 API에서 확인한다. 새 티켓의 대화형 상태 조회를 추가할 때는 없는 내부 API를 가정하지 않고 연결 계약부터 보완한다.
-
-## 2. 전체 흐름
-
-1. 직원 화면 → Next.js 동일 출처 프록시 → FastAPI. 실제 로그인·계정 활성·첫 비밀번호 변경을 확인한다.
-2. FastAPI가 요청과 소유권을 검증하고 문의를 저장한다. user는 화면 입력 대신 세션의 제공 직원 name으로 만든다.
-3. 웹 요청과 공통 시험은 같은 POST /webhook/oke-support를 호출한다. X-Team-Key로 보호한다.
-4. support가 입력·직원·주입을 확인한다. 입력 오류는 HTTP400 codes, 알려진 주입은 LLM 없이 차단한다.
-5. triage가 유형·긴급도·부족한 정보·티켓 ID·실제 조치 필요 여부를 JSON으로 분류하고 Code가 검증한다.
-6. 긴급은 handoff를 먼저 호출한다. 일반 정보 부족은 attempt 1·2에 보완 질문, 3 이상에 이관한다.
-7. 답변 경로는 search와 본인 티켓 조회의 두 갈래로 나누고 request_id로 합친다. 조회가 없거나 실패해도 상태 항목을 반환한다.
-8. 허용 근거·점수·권한을 확인하고 writer 초안 → verifier → Code 최종 판단을 거쳐 답변 또는 이관한다.
-9. handoff가 설정된 대상 하나에 티켓·알림·DLQ를 기록한다. 같은 request_id의 티켓은 한 건만 만든다.
-10. 개인정보 필터 후 한 번 응답한다. FastAPI가 결과를 저장하고 직원 내 문의·관리자 처리 화면으로 연결한다.
-
-practice 저장은 data-api, app 저장은 FastAPI→PostgreSQL이다. 공통 시험을 먼저 확인한 뒤 웹·실제 저장 어댑터를 연결한다.
-
-## 3. 워크플로우 흐름도
-
-```mermaid
-flowchart TD
-  A["Support Webhook · Header Auth"] --> B["입력 · 직원 · 주입 검사"]
-  B -->|"입력 오류"| R["Respond · HTTP400 codes"]
-  B -->|"주입"| F["최종 조합 · 개인정보 필터"]
-  B -->|"정상"| T["Triage · JSON 검증"]
-  T --> U{"긴급 사고?"}
-  U -->|"예"| H1["Handoff 먼저 호출 · 결과 보존"]
-  H1 --> P["조회 분기"]
-  U -->|"아니오"| Q{"정보 부족 또는 실제 조치?"}
-  Q -->|"정보 부족 · attempt 1~2"| C["보완 질문"]
-  C --> F
-  Q -->|"attempt 3 이상 또는 실제 조치"| H2["Handoff · 일반 이관"]
-  Q -->|"답변 경로"| P
-  P --> S["oke-search · 권한 선필터"]
-  P --> L["본인 티켓 조회 · 없으면 skipped"]
-  S --> M["Merge · request_id 대조"]
-  L --> M
-  M --> G{"근거 · 조회 · 점수 조건 충족?"}
-  G -->|"예"| W["Writer → Verifier → Code 검증"]
-  W --> V{"검증 통과?"}
-  V -->|"예"| F
-  V -->|"아니오"| D{"긴급 이관을 이미 시도했나?"}
-  G -->|"아니오"| D
-  D -->|"예 · 재접수 금지"| F
-  D -->|"아니오"| H2
-  H2 --> F
-  F --> O["Respond · HTTP200 공통 응답"]
-```
-
-LLM 장애도 안전한 이관 경로로 보낸다. 입구 인증 실패는 n8n이 거절한다. 예상 밖 실패는 oke-errors가 처리하며 원래 웹 응답을 대신 반환한다고 가정하지 않는다.
-긴급 경로는 후속 근거·접수 조회와 답 검증에 성공해도 최종 route=담당자 이관과 먼저 받은 ticket을 유지한다. 검증한 보안 초동 조치·본인 상태만 안내에 보강하고, 후속 실패로 재접수하거나 긴급도를 낮추지 않는다.
-
-| 개발 원본 파일 | 트리거 | 담당자 | 상태 |
-| --- | --- | --- | --- |
-| develop/dahyeok/workflows/oke-support.json | POST /webhook/oke-support | 다혁님 | 7교시 배포 2에서 15번 본체 반영·활성 확인 (VM repo `17007f1`, published version `d0d6396d…`, Error Workflow=`okeErrorsFlow01`); 전체 회귀 완료와 구분 |
-| develop/yubeen/workflows/oke-index.json | POST /webhook/oke-index | 유빈님 | VM 등록 완료 (수동 실행/색인 지원) |
-| develop/yubeen/workflows/oke-search.json | POST /webhook/oke-search | 유빈님 | VM 배포 및 활성 상태 (C03 검색 연동) |
-| develop/wonmin/workflows/oke-handoff.json | POST /webhook/oke-handoff | 원민님 | VM 배포 및 활성 상태 (C04 티켓/알림 연동) |
-| develop/wonmin/workflows/oke-errors.json | Error Trigger | 원민님 | VM 배포 및 활성 상태 (장애 수습/DLQ) |
-
-계획 노드 묶음: N01 Webhook → N02 입력 → N03 직원 → N04 주입 → N06 Triage → N07 분기 → N08 검색 입력 → N09 검색/N10 접수 → N11 Merge → N12 근거 검사 → N13 Writer → N14 Verifier → N15 판단 → N20 이관 → N22 최종 필터 → N23 Respond. 모든 요청이 전부 경유하는 것은 아니다. 상세 연결은 개인 SPEC에 따른다.
-
-N05 결과 재사용의 저장·조회 연결은 추가 검토하고 없는 내부 API를 가정하지 않는다. 티켓 멱등성은 이 연결과 별도로 필수다. 실제 노드 수와 게시 상태는 구현 후 기록한다.
-
-### 3.1 담당별 노드 설계 그림
-
-그림은 구현 전 노드 계획이다. 한 박스에 묶인 HTTP×2→Merge처럼 여러 노드를 요약한 부분이 있으며 실제 노드 수·이름·버전·연결선은 구현 후 확인한다. 내부 구현 선택은 담당자가 구체화하고 외부 계약은 유지한다.
-
-**다혁님 · 본체** — Webhook·직원/입력·triage·두 조회·writer·verifier·분기·Respond.
-
-![문의 본체 노드 설계](images/planned/flow-support.svg)
-
-**유빈님 · 색인** — HTTP 목록/본문·Split Out·Code 청킹·임베딩·Postgres 문서 거래·집계·Respond. 임베딩 HTTP Request는 초기 구현안이며 기존 Embeddings 하위 노드를 쓰려면 저장 노드·rag 스키마 호환을 먼저 검증한다.
-
-![색인 노드 설계](images/planned/flow-index.svg)
-
-**유빈님 · 검색** — 입력/권한 검증·동일 모델 임베딩·Postgres 권한 WHERE/정렬/top3·근거·Respond. 후보 없음과 장애를 구분한다.
-
-![검색 노드 설계](images/planned/flow-search.svg)
-
-**원민님 · 이관** — 입력 검사·Switch 모드·티켓/제한 재시도·알림·필요한 DLQ·ACK 집계·Respond. 두 저장 대상에 동시 생성하지 않는다.
-
-![이관 노드 설계](images/planned/flow-handoff.svg)
-
-**원민님 · 예상 밖 오류** — Error Trigger·마스킹·모드·독립 알림/DLQ·종료. 부모 응답을 대신하지 않는다.
-
-![오류 처리 노드 설계](images/planned/flow-errors.svg)
-
-규정·공통 계약을 바꾸는 결정과 내부 노드 구현 선택은 구분한다. 개인 README의 확정/담당자 결정/선택 표에서 자기 범위를 확인한다.
-
-## 4. 에이전트 역할 · 분기 · 병렬 · 루프
-
-### 4.1 역할 카드
-
-| 역할 | 목적·입력 | 출력 JSON | Tool·실행 경계 |
-| --- | --- | --- | --- |
-| triage | 질문/context/확인한 dept로 분류 | type, urgency, missing, ticket_id, needs_action | Tool 없음. 답변·권한 부여·티켓 생성 금지 |
-| retriever | 검색어·검증된 권한·티켓 ID로 조회 | evidence, ticket_lookup | HTTP·DB 노드 역할이며 별도 LLM Agent가 아님 |
-| writer | 허용 근거·가린 본인 접수로 안내 초안 | answer, used_sources, used_ticket | Tool 없음. 없는 근거·접수 사실 생성 금지 |
-| verifier | 질문·초안·원근거·가린 접수 검증 | grounded, policy_ok, issues | Tool 없음. 답 재작성 대신 검증 결과 반환 |
-| Code | 형식·출처·권한·실제 상태로 최종 판단 | route, sources, ticket, security | 엄격한 타입·enum·boolean 검사, 출력 마스킹 |
-
-LLM Agent 3개는 각자 모델 연결을 두고 공통 기준 `gpt-4.1-mini`를 사용한다. 시스템 지시와 직렬화된 질문/근거 데이터를 구분한다. 프롬프트는 다혁님 SPEC에 유지하고 제출 때 실제 노드와 대조한다.
-
-### 4.2 구조
-
-| 구조 | 위치·목적 | 기준·종료 조건 | 확인할 사례 |
-| --- | --- | --- | --- |
-| 분기 | N07 긴급/보완, N12·15 근거/검증, N20 이관 | 자동 답변은 권한·근거·출처·검증·측정 임계값 모두 충족 | WF-01/03/05/12 |
-| 두 갈래 조회 | N08 → N09/N10 → N11 | 성공·skip·오류 모두 한 항목, 같은 request_id만 병합 | WF-06/11/12 |
-| 보완 루프 | 요청 사이 attempt/context | 1·2 질문, 3 이상에도 부족하면 이관. 새 차례 새 ID, 재시도 같은 ID | WF-02/02b |
-| 전송 재시도 | handoff 저장 | 티켓 최대 2회·각 1초, 알림/DLQ 각 1회·0.6초. 401/403 무재시도 | WF-04/09/11 |
-| 재검색·재작성 | 기본 답변 경로 | 검색 1회·writer 재작성 0회. 추가 재검색은 P2 검토 | 팀 경계 시험 |
-
-두 갈래 연결은 n8n 실행 설정에 따라 순차 처리될 수 있다. 동시 실행·속도 개선을 실측 전 성과로 쓰지 않는다. 자동 답변 임계값은 RAG 비교 후 반영한다.
-
-## 5. 외부 연동 노드
-
-| 연동 | 이번 대상·인증 | 실제 VM 엔드포인트 / 바인딩 | 입력 → 출력 | 오류 처리 및 장애 수습 | 운영 확장 예 |
-| --- | --- | --- | --- | --- | --- |
-| 화면 → FastAPI | Next.js 프록시, HttpOnly 세션 | `https://aio-t1.isitsoft.kr/api` | question → 공통 E2E 결과 | 401/403, 입력 유효성 재검증 | 사내 SSO / Okta |
-| FastAPI → support | n8n Webhook, X-Team-Key | `http://localhost:5678/webhook/oke-support` | 세션 직원 + 공통 요청 → 응답 | 타임아웃 30초, 자동 재시도 0 (fail-safe) | 사내 API 게이트웨이 |
-| 직원·기존 티켓 | data-api / app PostgreSQL | `http://data-api:8800` (no-auth 200) | name/질문/티켓ID → 직원·접수 데이터 | 타인 조회 403 차단, 404와 시스템 장애 구별 | 인사/조직도 ERP API |
-| search (C03) | n8n Webhook, pgvector DB | `POST /webhook/oke-search` (X-Team-Key) | query, access_levels, top_k → evidence | 4초 타임아웃, 503 시 안전 이관 분기 | 전사 지식 검색 엔진 |
-| LLM·임베딩 | OpenAI Credential | `https://api.openai.com/v1` | 분류(Triage)·생성(Writer)·검증(Verifier) | 429/장애 시 비밀 비노출, fail-safe 이관 | 전사 AI 게이트웨이 |
-| handoff (C04) | n8n Webhook, X-Team-Key | `POST /webhook/oke-handoff` (X-Team-Key) | 이관 페이로드 → ticket·수습 결과 | 5초 타임아웃, 중복 방지 멱등 키 | 사내 ITSM 시스템 |
-| 티켓·알림·DLQ | app FastAPI / PostgreSQL | `POST /api/tickets`, `/alerts`, `/dlq` | key, 가린 요약 → DB 영속 저장 ACK | 멱등성(Unique key), 부분 실패 시 DLQ 적재 | Jira, Slack, Email |
-
-Slack·Jira는 운영 확장 예다. app 저장은 FastAPI→PostgreSQL로 구현한다. FAQ는 보조 자료이며 규정 evidence의 문서·절을 임의로 만들지 않는다. 키트 제공 후 실제 API 형태를 확인한다.
-
-## 6. 노드 간 페이로드
-
-아래는 설계 예시이며 실제 실행 자료는 구현 후 가려서 추가한다. 외부 필드는 API-CONTRACT의 C02/C03/C04/C05를 따른다.
-
-| 연결선 | 필수·선택 데이터 | 변환·검증 |
-| --- | --- | --- |
-| FastAPI → N01 | request_id,user,question / channel,attempt,context | user는 세션 직원 name, 화면 role·dept 무시 |
-| N03 → N06/08 | user,dept,access_levels,질문,attempt | IT all+it, 그 외 all. 원본 연락처는 LLM에 보내지 않음 |
-| N06 → N07 | type,urgency,missing,ticket_id,needs_action | enum·정확한 boolean, 실제 질문에 있는 티켓 ID 검사 |
-| N08 → search | request_id,query,type,access_levels,top_k | top_k=3, 인증·권한 선필터 |
-| N09/N10 → N11 | request_id,search 또는 ticket_lookup | skip·403·404·timeout 구분, 비공개 본문 폐기 |
-| N11 → writer → verifier | 허용 evidence,가린 접수,초안,사용 출처 | 실제 doc/section만 인용. 검증 true/true·issues=[] |
-| N20 → handoff | request_id,requester,title,category,priority,reason / evidence_summary | key=request_id, 가린 요약, 재접수 방지 |
-| handoff → 저장 | tickets key/title/requester/category/priority, alerts·dlq 계약 | 대상 하나, event_key는 app 계약 적용 |
-| N22 → FastAPI/시험 | request_id,route,answer,sources,ticket,agents,security / reason,timings | 실제 사용 출처·역할만, 마스킹 후 단일 응답 |
-
-공통 요청 예:
+`request_id`: nonempty string, max 64; `question`: nonempty string; `user`: employee name; `channel`: string; `attempt`: positive integer; `context`: string. `N02 Normalize input` trims strings, normalizes absent values and accumulates `codes`. Employee identity is validated by real employee lookup or explicit mock adapter; client supplied role/department is not trusted.
 
 ```json
-{"request_id":"design-vpn-001","user":"박서연","question":"VPN이 계속 끊겨요. 어떻게 점검하나요?","channel":"web","attempt":1}
+{"request_id":"r-001","user":"박서연","question":"VPN 접속 오류가 납니다.","channel":"web","attempt":1,"context":"Windows 11"}
 ```
 
-검색 호출 예:
+### S2 · Normalized support envelope (required `request_id`, `user`, `clean_question`, `context`, `codes`, `employee_lookup`; optional `dept`, `blocked`, `integration_mode`, replay/triage/handoff state)
+
+`N02` adds trimmed `clean_question`, safe `context`, `codes`; `N03 Capture employee` maps data-api `{employees:[...]}` or supported `{items:[...]}` into a matched employee and verified `dept`. The mock adapter is test-only. `N04 Injection rules` adds `blocked` and a reason without treating user claims as authority. `N05 Parse replay` adds replay state; a hit may terminate with the prior safe response, a miss enters triage.
 
 ```json
-{"request_id":"design-vpn-001","query":"VPN 연결 점검","type":"network","access_levels":["all"],"top_k":3}
+{"request_id":"r-001","user":"박서연","clean_question":"VPN 접속 오류가 납니다.","context":"Windows 11","codes":[],"employee_lookup":"ok","dept":"재무팀","blocked":false}
 ```
 
-이관 호출 예:
+### S3 · Triage result (required `type`, `urgency`, `missing`, `needs_action`; optional `ticket_id`, `reason`)
+
+`N06 Parse triage` parses JSON and validates enums/types; `N07 Route triage` applies deterministic incident override and derives a routing `decision`. `type` is a category string; `urgency` is `normal|high`; `missing` is a string array; `needs_action` is boolean. No triage field grants permissions.
 
 ```json
-{"request_id":"design-vpn-001","requester":"박서연","title":"VPN 연결 점검 요청","category":"network","priority":"normal","reason":"no_evidence"}
+{"type":"network","urgency":"normal","missing":[],"needs_action":false,"ticket_id":null}
 ```
 
-실제 VM 실측 E2E 응답 사례 1 · WF-03 무근거 문의 안전 이관 (11:52 KST 실측):
+### S4 · C03 search request (required `request_id`, `query`, `type`, `access_levels`, `top_k`)
+
+`N08 Build search input` derives `query` from cleaned question and context, uses only verified employee department for ACL (`IT팀` → `all,it`; otherwise `all`), sets `top_k:3`, and preserves request correlation. `APPROVED_MIN_SCORE=0.40` is the acceptance threshold for evidence scores. The search backend must apply access-level filtering before ranking.
 
 ```json
-{
-  "request_id": "real-qa-36352d26c53e48eab65a42c4a0c5ec85",
-  "route": "담당자 이관",
-  "answer": "사내 IT 규정에서 관련 근거를 찾을 수 없어 IT 지원팀으로 안전하게 이관 접수되었습니다.",
-  "sources": [],
-  "ticket": {
-    "ticket_id": "T-2005",
-    "priority": "normal",
-    "status": "in_progress",
-    "duplicate": false
-  },
-  "agents": ["triage", "retriever"],
-  "security": {"blocked_by": "", "reason": "", "masked": 0},
-  "reason": "no_evidence"
-}
+{"request_id":"r-001","query":"VPN 접속 오류 Windows 11","type":"network","access_levels":["all"],"top_k":3}
 ```
 
-실제 VM 실측 E2E 응답 사례 2 · WF-02b 보완 질문 한도(attempt=3) 자동 이관 (15:04 KST 실측, 4.535초):
+### S5 · C03 response (required `ok`, `evidence`, `reason`; evidence fields required `doc`, `section`, `score`, `snippet`; optional backend metadata)
+
+`N09 Capture C03` stores HTTP status/body; `N09 Normalize search` validates shape and maps failure to a safe unavailable state. `N11 Join retrieval` requires exactly one search and one ticket branch with matching `request_id`. `N12 Evidence gate` keeps only allowed evidence with score >= 0.40; lower scores cannot authorize an automatic answer. `reason` can identify `no_evidence`, `search_unavailable`, `forbidden` or a successful result.
 
 ```json
-{
-  "request_id": "real-qa-4a2c0b16ce4341deb887c458f9d8aaa6",
-  "route": "담당자 이관",
-  "answer": "접속 오류에 대한 추가 확인 질문 한도(3회)에 도달하여 IT 담당자에게 이관되었습니다.",
-  "sources": [],
-  "ticket": {
-    "ticket_id": "T-2011",
-    "priority": "normal",
-    "status": "in_progress",
-    "duplicate": false
-  },
-  "agents": ["triage", "retriever"],
-  "security": {"blocked_by": "", "reason": "", "masked": 0},
-  "reason": "clarify_limit_reached"
-}
+{"ok":true,"evidence":[{"doc":"remote-work-vpn","section":"연결 점검","score":0.62,"snippet":"인증서와 네트워크 상태를 확인합니다."}],"reason":null}
 ```
 
-티켓 장애는 ticket=null·reason=tickets_down과 접수 실패 안내를 반환한다. 알림만 실패하면 생성된 ticket을 보존한다. HTTP400 codes를 웹 오류 객체로 바꿔 잃어버리지 않는다.
+### S6 · Own-ticket lookup and FAQ enrichment
 
-## 7. 오류 처리
+The ticket lookup is conditional on a validated triage `ticket_id`; requester is the validated employee name. Lookup output is normalized to `ticket_lookup:{state,data}` where state distinguishes `skipped`, `ok`, `not_found`, `forbidden`, and unavailable. The FAQ path is exactly two nodes: `N10b FAQ HTTP` requests `GET /faq?q=<clean question>`; `N10b Match FAQ` validates and maps at most the configured matching FAQ entries into evidence rows (`doc:"faq"`). FAQ failure preserves policy evidence only. FAQ is supplementary and never fabricates policy citations.
 
-| 상황 | 감지·처리 노드 | 사용자 결과·증거 | 실제 검증 판정 |
-| --- | --- | --- | :---: |
-| 입력 오류 | N02·03, LLM 0 | HTTP 400 codes, WF-13 | **로컬 회귀 통과** (Triage Gate 검증) |
-| 프롬프트 주입 | N04, 검색·LLM·티켓 0 | 즉시 차단, WF-08 정상 질문 오탐 없음 | **구현 통과** (15번 본체 `aedbb95` 내장) |
-| 타인 티켓·제한 문서 | N10·search SQL, 제한 본문 폐기 | 권한 없음 403 또는 허용 문서만 격리 처리, WF-05/06 | **검증 통과** (BE 222 회귀, RAG 216 회귀) |
-| 검색 없음 (무근거) | N12·14·15, 추측 중단 | `sources=[]`, 담당자 이관, WF-03 실저장 | **VM 실측 통과** (11:52 KST, `T-2005` 1:1 일치) |
-| 보완 질문 한도 초과 | N06 Triage attempt>=3 검사 | `sources=[]`, 담당자 이관, WF-02b | **VM 실측 통과** (15:04 KST, `T-2011`, 4.535s) |
-| 429·LLM 중단 | 호출 오류 출력·fail-safe 처리 | 안전한 이관, WF-10 비밀 비노출 | **회귀 통과** (15번 본체 오류 트랩) |
-| 티켓 API 장애 | handoff, 알림/DLQ 독립 시도 | ticket=null·tickets_down, DLQ 1건, alert 1건, WF-04 | **회귀 통과** (Error Trigger 10그룹 통과) |
-| 알림만 실패 | handoff, 티켓 보존·실패 단계 기록 | alerts_down, 티켓 보존 및 부분 실패 기록 | **통합 검증 통과** (C05 15그룹 통과) |
-| 느린 조회·하위 장애 | 조회 2초/search 4초/handoff 5초 상한 | 6초 타임아웃 예산 내 안전 수습, WF-11 | **설계 반영** (노드별 timeout 설정) |
-| 동일 요청 재전송 | FastAPI 소유권·DB UNIQUE 제약 | 동일 키 티켓 1건 유지·동일 ID 반환 멱등성, WF-09 | **통합 검증 통과** (C05 동시 8회 15그룹 통과) |
-| 예상 밖 예외 실패 | oke-errors, 마스킹 요약·독립 수습 | Error Trigger 발화, 알림/DLQ 격리 저장, 무한 재귀 방지 | **회귀 통과** (Node 24개 테스트 통과) |
+```json
+{"ticket_lookup":{"state":"ok","data":{"ticket_id":"T-1001","status":"open"}},"faq_evidence":[{"doc":"faq","section":"FAQ-003","score":1,"snippet":"VPN 오류 해결 순서"}]}
+```
 
-브라우저 35초·FastAPI 30초 등은 실측 전 초기 예산이다. LLM을 포함한 누적 시간과 원본 시험 상한을 비교해 조정한다. HTTP200 수습을 업무 성공으로 집계하지 않는다.
-oke-errors 게시·부모 errorWorkflow 설정은 구현 후 확인한다. 예상 HTTP/LLM 오류는 본체·handoff의 오류 출력에서 처리한다.
+### S7 · Handoff request (required `request_id`, `requester`, `title`, `category`, `priority`, `reason`; optional `evidence_summary`, `ticket_id`)
 
-## 8. 아키텍처 원칙 적용과 검증 자료
+`N20 Prepare handoff` creates this contract only when required by route; request_id is the idempotency key. `priority` is `normal|high`; summary is masked and bounded. `N20 C04 HTTP` sends the request with the configured team key; response capture retains status/body separately. Mock C04 does not persist a ticket.
 
-| 배운 흐름 | 적용 |
-| --- | --- |
-| 67 연동·68/69 Agent·분기/병렬/루프 | 역할별 JSON 검증·계약에 따른 HTTP 연동 |
-| 70 모듈 | 워크플로우 5종·개인별 파일 소유권 |
-| 71 RAG | 청킹 비교·권한 선필터·pgvector 영속 저장 |
-| 72/73 안정성·보안 | 재시도·DLQ·주입 차단·마스킹 |
-| 74/76/77 시험·관측 | 원본 공통·팀 사례·반복·장애·시간 측정 |
-| 78 품질 | 형식 오류와 처리 실패 구별, 수정 후 해당 건 재확인 |
-| Vibe 순서 | TODO → SPEC → IMP-PLAN → 작은 구현 → 확인 → 커밋 |
+```json
+{"request_id":"r-001","requester":"박서연","title":"VPN 연결 장애","category":"network","priority":"normal","reason":"근거 부족","evidence_summary":"VPN 접속 오류, 개인식별정보 제거"}
+```
 
-78일차 FAQ 가져오기·격리함·품질 보고서 전체를 추가 필수 워크플로우로 복제하지 않는다. 79일차는 자료 배포 후 적용 범위를 확인한다.
+### S8 · C04 response / final support response
 
-- 공통 14유형(02b 포함)·팀 5개 이상·LLM 3회 반복·bench를 실제 수행한다.
-- fault/reset/ops와 실제 저장 호출의 대상을 맞춘다. app 결과를 practice 관측으로 판정하지 않는다.
-- 실패·수정·같은 조건 재시험을 보존한다. 티켓 성공·알림 실패는 미완료 단계만 복구한다.
-- 실제 노드·연결선·입출력·시간·보고서는 구현 후 [실행 결과서](EXECUTION-RESULT.md)에 연결한다.
-- [취합 안내](../develop/ohyun/SUBMISSION.md)에 따라 최종 원본을 루트 제출 경로로 모은다.
+C04 response requires `ok`, `ticket` (`ticket_id`, `priority`, `duplicate` when present), `reason`, `alerted`, `dlq`. `N20 Map handoff` accepts only validated shapes and `N20 After handoff`/`N21 Already handed off` prevent duplicate escalation. `N22 Finalize P0-3` builds the common result; `N22 Output filter` masks PII before `N23 Respond`.
 
-참조 문서: [전체 구성도](ARCHITECTURE.md) · [API 계약](API-CONTRACT.md) · [평가·시나리오 기준](EVALUATION-GUIDE.md).
+```json
+{"ok":true,"ticket":{"ticket_id":"T-2030","priority":"normal","duplicate":false},"reason":null,"alerted":true,"dlq":false}
+```
+
+```json
+{"request_id":"r-001","route":"auto_answer","answer":"VPN 인증서와 네트워크 상태를 확인하세요.","sources":[{"doc":"remote-work-vpn","section":"연결 점검"}],"ticket":null,"agents":{"triage":true,"writer":true,"verifier":true},"security":{"blocked":false}}
+```
+
+### S9 · Index service request/result
+
+`수동 색인 시작` emits a manual trigger item; `실제 색인 서비스 호출` sends the configured index-service HTTP request. The response verifier requires HTTP 200, `ok:true`, 8 documents, `counts.failed=0`, `counts.rejected=0`; it returns only safe aggregate/document identifiers and status.
+
+```json
+{"ok":true,"mode":"upsert","counts":{"indexed":8,"failed":0,"rejected":0},"documents":[{"doc_key":"remote-work-vpn","status":"ok","chunk_count":4}]}
+```
+
+### S10 · C03 webhook input/result
+
+Required request: `request_id`, `query`, `type`, `access_levels`, `top_k`; request validator rejects invalid shapes before HTTP. `실제 검색 서비스 호출` returns an HTTP envelope; `검색 응답 검증` maps known 400/401/403 errors to safe C03 responses and malformed/5xx results to 503.
+
+```json
+{"request_id":"r-001","query":"VPN 접속","type":"network","access_levels":["all"],"top_k":3}
+```
+
+```json
+{"ok":true,"evidence":[{"doc":"remote-work-vpn","section":"연결 점검","score":0.62,"snippet":"인증서를 확인합니다."}],"reason":null}
+```
+
+### S11 · Handoff store envelopes
+
+`H03 Select Store` chooses exactly one app or practice target and returns readiness/config status. Ticket writes accept the mapped S7 request; a successful app ticket ACK is 201/new or 200/duplicate with `{ticket_id,duplicate}`. Retry is bounded by budget and preserves the first confirmed result. Alert payload requires `workflow,node,message,severity`; optional `ticket_id,event_key`. DLQ requires `request_id,workflow,node,reason,safe_payload`; `execution_ref` optional. Sensitive fields are removed before these writes. `H10 Build Result` returns `{ok,ticket,reason,alerted,dlq}`.
+
+```json
+{"workflow":"oke-handoff","node":"H06 Keep Ticket","message":"담당자 이관 티켓이 접수되었습니다.","severity":"normal","ticket_id":"T-2030","event_key":"r-001:ticket-created"}
+```
+
+```json
+{"request_id":"r-001","workflow":"oke-handoff","node":"H08 Check Alert","reason":"alert_store_failed","safe_payload":{"stage":"alert","priority":"normal"},"execution_ref":"exec-42"}
+```
+
+### S12 · Controlled error workflow event/store payload
+
+n8n `errorWorkflow` on support points to `okeErrorsFlow01`. Error Trigger input carries the n8n parent workflow/execution/trigger objects; `E02 Safe Error Context` validates parent identity, allowlisted workflow names and extracts only safe `source_workflow`, `source_node`, `execution_ref`, `error_kind`. Self-trigger or untrusted parent is skipped. Alert and DLQ writes are independent; sink failure is not rethrown and no parent HTTP response is fabricated.
+
+```json
+{"workflow":{"name":"oke-support","id":"support-flow"},"execution":{"id":"exec-42","error":{"name":"NodeApiError","message":"redacted"}},"trigger":{"error":{"message":"redacted"}}}
+```
+
+```json
+{"workflow":"oke-errors","outcome":"success","request_id":null,"execution_ref":"exec-42","source_workflow":"oke-support","source_node":"N13 Writer Agent","error_kind":"node_error","alerted":true,"dlq":true}
+```
+
+### S13 · AI model connector input
+
+AI model connections carry LangChain model configuration, not the business JSON envelope. `N06 Triage model`, `N13 Writer model`, `N14 Verifier model` feed only their corresponding Agent node. Credentials are n8n-managed and never part of item data.
+
+```json
+{"model":"gpt-4.1-mini","credential":"n8n credential reference"}
+```
+
+## 3. Edge-by-edge connection contract
+
+The following inventory is generated from every `connections` entry in the five source JSON files. Every edge names its source and destination exactly, its n8n connection type/output index, the payload schema reference, and the transformation/branch semantics. Schema references resolve to §2; examples are included there.
+
+### oke-support.json
+
+| Source node | Connection | Destination node | Payload schema | Required/optional, transformation and branch |
+|---|---|---|---|---|
+| `N01 Support webhook` | `main[0]` | `N02 Normalize input` | S1 | Webhook body enters normalization. |
+| `N02 Normalize input` | `main[0]` | `N03 Employee mode` | S2 | Input is normalized or employee response is captured; verified employee attributes are added. |
+| `N03 Validate employee MOCK` | `main[0]` | `N04 Injection rules` | S2 | Test-only employee fixture; production path uses HTTP adapter. |
+| `N04 Injection rules` | `main[0]` | `N05 Replay MOCK` | S2 | Adds blocked/reason; next replay stage can terminate blocked request. |
+| `N05 Triage gate` | `main[0]` | `N05 Triage mode` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N05 Triage gate` | `main[1]` | `N22 Finalize P0-3` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N05 Triage mode` | `main[0]` | `N06 Triage MOCK` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N05 Triage mode` | `main[1]` | `N06 Triage Agent` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N06 Triage MOCK` | `main[0]` | `N06 Parse triage` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N06 Triage Agent` | `main[0]` | `N06 Parse triage` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N06 Triage model` | `ai_languageModel[0]` | `N06 Triage Agent` | S13 | Model connector config only; no user payload crosses this edge. |
+| `N06 Parse triage` | `main[0]` | `N07 Route triage` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N07 Route triage` | `main[0]` | `N07 Route urgent` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N20 Prepare handoff` | `main[0]` | `N20 Handoff gate` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 Handoff gate` | `main[0]` | `N20 Handoff mode` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 Handoff gate` | `main[1]` | `N22 Finalize P0-3` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 Mock C04` | `main[0]` | `N20 Map handoff` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 Map handoff` | `main[0]` | `N20 After handoff` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N22 Finalize P0-3` | `main[0]` | `N22 Output filter` | S8 | Final response envelope is PII-filtered before webhook response. |
+| `N08 Build search input` | `main[0]` | `N09 Search mode` | S2/S4 | Creates S4 search_request; branch 0 starts search, sibling branch starts own-ticket lookup. |
+| `N08 Build search input` | `main[0]` | `N10 Build ticket lookup` | S2/S4 | Creates S4 search_request; branch 0 starts search, sibling branch starts own-ticket lookup. |
+| `N09 Mock C03` | `main[0]` | `N09 Normalize search` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N09 Normalize search` | `main[0]` | `N11 Collect retrieval` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Build ticket lookup` | `main[0]` | `N10 Ticket mode` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Mock ticket` | `main[0]` | `N10 Normalize ticket` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Normalize ticket` | `main[0]` | `N10b FAQ HTTP` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N11 Collect retrieval` | `main[0]` | `N11 Join retrieval` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N11 Join retrieval` | `main[0]` | `N12 Evidence gate` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N12 Evidence gate` | `main[0]` | `N12 Route evidence` | S2/S5 | Evidence gate retains rows with score >= 0.40; branch 0 is answerable evidence, branch 1 is already handed off/insufficient evidence. |
+| `N12 Route evidence` | `main[0]` | `N13 Prepare writer` | S2/S5 | Evidence gate retains rows with score >= 0.40; branch 0 is answerable evidence, branch 1 is already handed off/insufficient evidence. |
+| `N12 Route evidence` | `main[1]` | `N21 Already handed off` | S2/S5 | Evidence gate retains rows with score >= 0.40; branch 0 is answerable evidence, branch 1 is already handed off/insufficient evidence. |
+| `N13 Prepare writer` | `main[0]` | `N13 Writer mode` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer mode` | `main[0]` | `N13 Writer MOCK` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer mode` | `main[1]` | `N13 Writer Agent` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer MOCK` | `main[0]` | `N13 Parse writer` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer Agent` | `main[0]` | `N13 Parse writer` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer model` | `ai_languageModel[0]` | `N13 Writer Agent` | S13 | Model connector config only; no user payload crosses this edge. |
+| `N13 Parse writer` | `main[0]` | `N13 Writer valid` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer valid` | `main[0]` | `N14 Prepare verifier` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N13 Writer valid` | `main[1]` | `N21 Already handed off` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N14 Prepare verifier` | `main[0]` | `N14 Verifier mode` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N14 Verifier mode` | `main[0]` | `N14 Verifier MOCK` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N14 Verifier mode` | `main[1]` | `N14 Verifier Agent` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N14 Verifier MOCK` | `main[0]` | `N14 Parse verifier` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N14 Verifier Agent` | `main[0]` | `N14 Parse verifier` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N14 Verifier model` | `ai_languageModel[0]` | `N14 Verifier Agent` | S13 | Model connector config only; no user payload crosses this edge. |
+| `N14 Parse verifier` | `main[0]` | `N15 Decide answer` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N15 Decide answer` | `main[0]` | `N15 Route answer` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N15 Route answer` | `main[0]` | `N22 Finalize P0-3` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N15 Route answer` | `main[1]` | `N21 Already handed off` | S2/S5 | Writer/verifier JSON is parsed and validated; branch 0 continues a valid answer, branch 1 escalates or preserves prior handoff. |
+| `N22 Output filter` | `main[0]` | `N23 Respond` | S8 | Final response envelope is PII-filtered before webhook response. |
+| `N07 Route urgent` | `main[0]` | `N20 Prepare handoff` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N07 Route urgent` | `main[1]` | `N08 Build search input` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N20 After handoff` | `main[0]` | `N08 Build search input` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 After handoff` | `main[1]` | `N22 Finalize P0-3` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N21 Already handed off` | `main[0]` | `N22 Finalize P0-3` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N21 Already handed off` | `main[1]` | `N20 Prepare handoff` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N05 Replay MOCK` | `main[0]` | `N05 Parse replay` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N05 Parse replay` | `main[0]` | `N05 Route replay` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N05 Route replay` | `main[0]` | `N22 Finalize P0-3` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N05 Route replay` | `main[1]` | `N05 Triage gate` | S2/S3 | Carry validated context; parse triage JSON and branch by replay/triage/route decision. |
+| `N03 Employee mode` | `main[0]` | `N03 Get employees HTTP` | S2 | Input is normalized or employee response is captured; verified employee attributes are added. |
+| `N03 Employee mode` | `main[1]` | `N03 Validate employee MOCK` | S2 | Input is normalized or employee response is captured; verified employee attributes are added. |
+| `N03 Get employees HTTP` | `main[0]` | `N03 Capture employee` | S2 | Input is normalized or employee response is captured; verified employee attributes are added. |
+| `N03 Capture employee` | `main[0]` | `N04 Injection rules` | S2 | Input is normalized or employee response is captured; verified employee attributes are added. |
+| `N09 Search mode` | `main[0]` | `N09 C03 HTTP` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N09 Search mode` | `main[1]` | `N09 Mock C03` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N09 C03 HTTP` | `main[0]` | `N09 Capture C03` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N09 Capture C03` | `main[0]` | `N09 Normalize search` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Ticket mode` | `main[0]` | `N10 Own ticket HTTP` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Ticket mode` | `main[1]` | `N10 Mock ticket` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Own ticket HTTP` | `main[0]` | `N10 Capture ticket` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10 Capture ticket` | `main[0]` | `N10 Normalize ticket` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N20 Handoff mode` | `main[0]` | `N20 C04 HTTP` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 Handoff mode` | `main[1]` | `N20 Mock C04` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 C04 HTTP` | `main[0]` | `N20 Capture C04` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N20 Capture C04` | `main[0]` | `N20 Map handoff` | S2/S7/S8 | Maps C04 result; branch depends on handoff eligibility/success and existing handoff state. |
+| `N10b FAQ HTTP` | `main[0]` | `N10b Match FAQ` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+| `N10b Match FAQ` | `main[0]` | `N11 Collect retrieval` | S4/S5/S6 | Captures and normalizes search/ticket/FAQ results; adds one typed retrieval branch. FAQ enriches only eligible normal pending requests. |
+
+### oke-index.json
+
+| Source node | Connection | Destination node | Payload schema | Required/optional, transformation and branch |
+|---|---|---|---|---|
+| `수동 색인 시작` | `main[0]` | `실제 색인 서비스 호출` | S9 | Manual invocation passes to configured index HTTP call and result validation; validator emits safe aggregate status. |
+| `실제 색인 서비스 호출` | `main[0]` | `색인 결과 검증` | S9 | Manual invocation passes to configured index HTTP call and result validation; validator emits safe aggregate status. |
+
+### oke-search.json
+
+| Source node | Connection | Destination node | Payload schema | Required/optional, transformation and branch |
+|---|---|---|---|---|
+| `검색 요청 수신` | `main[0]` | `요청 형식 확인` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+| `요청 형식 확인` | `main[0]` | `유효한 C03 요청` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+| `실제 검색 서비스 호출` | `main[0]` | `검색 응답 검증` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+| `검색 응답 검증` | `main[0]` | `C03 응답 반환` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+| `입력 거절` | `main[0]` | `C03 응답 반환` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+| `유효한 C03 요청` | `main[0]` | `실제 검색 서비스 호출` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+| `유효한 C03 요청` | `main[1]` | `입력 거절` | S10 | Validates C03 request; branch 0 is valid HTTP search, branch 1 is rejection; capture/validator maps HTTP envelope to safe C03 response. |
+
+### oke-handoff.json
+
+| Source node | Connection | Destination node | Payload schema | Required/optional, transformation and branch |
+|---|---|---|---|---|
+| `H01 Handoff Webhook` | `main[0]` | `H02 Validate and Map` | S7 | Validates and maps required C04 request; invalid branch responds immediately. |
+| `H02 Validate and Map` | `main[0]` | `H02a Valid Input` | S7 | Validates and maps required C04 request; invalid branch responds immediately. |
+| `H02a Valid Input` | `main[0]` | `H03 Select Store` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H02a Valid Input` | `main[1]` | `H11 Respond` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H03 Select Store` | `main[0]` | `H03a Store Ready` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H03a Store Ready` | `main[0]` | `H03b App Ticket Store` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H03a Store Ready` | `main[1]` | `H11 Respond` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H03b App Ticket Store` | `main[0]` | `H04 Create Ticket App` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H03b App Ticket Store` | `main[1]` | `H04 Create Ticket Practice` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H04 Create Ticket Practice` | `main[0]` | `H05 Retry Gate` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H04 Create Ticket App` | `main[0]` | `H05 Retry Gate` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05 Retry Gate` | `main[0]` | `H05a Retry Allowed` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05a Retry Allowed` | `main[0]` | `H05 Wait` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05a Retry Allowed` | `main[1]` | `H05 Recheck Budget` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05 Wait` | `main[0]` | `H05 Recheck Budget` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05b App Retry Store` | `main[0]` | `H04 Retry Ticket App` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05b App Retry Store` | `main[1]` | `H04 Retry Ticket Practice` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H04 Retry Ticket Practice` | `main[0]` | `H06 Keep Ticket` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H04 Retry Ticket App` | `main[0]` | `H06 Keep Ticket` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05 Restore First Result` | `main[0]` | `H06 Keep Ticket` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H06 Keep Ticket` | `main[0]` | `H07 Failure Context` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H07 Failure Context` | `main[0]` | `H08a App Alert Store` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H08a App Alert Store` | `main[0]` | `H08 Store Alert App` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H08a App Alert Store` | `main[1]` | `H08 Store Alert Practice` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H08 Store Alert App` | `main[0]` | `H08 Check Alert` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H08 Store Alert Practice` | `main[0]` | `H08 Check Alert` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H08 Check Alert` | `main[0]` | `H09a Needs DLQ` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09a Needs DLQ` | `main[0]` | `H09b App DLQ Store` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09a Needs DLQ` | `main[1]` | `H10 Build Result` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09b App DLQ Store` | `main[0]` | `H09 Store DLQ App` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09b App DLQ Store` | `main[1]` | `H09 Store DLQ Practice` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09 Store DLQ App` | `main[0]` | `H09 Check DLQ` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09 Store DLQ Practice` | `main[0]` | `H09 Check DLQ` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H09 Check DLQ` | `main[0]` | `H10 Build Result` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H10 Build Result` | `main[0]` | `H11 Respond` | S11 | Writes/checks safe alert or DLQ receipt; branch selects exactly one app/practice adapter or skips unnecessary DLQ. |
+| `H05 Recheck Budget` | `main[0]` | `H05c Retry Still Allowed` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05c Retry Still Allowed` | `main[0]` | `H05b App Retry Store` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+| `H05c Retry Still Allowed` | `main[1]` | `H05 Restore First Result` | S7/S11 | Selects store, writes ticket, retries only within deadline and preserves first confirmed ACK; response carries ticket receipt. |
+
+### oke-errors.json
+
+| Source node | Connection | Destination node | Payload schema | Required/optional, transformation and branch |
+|---|---|---|---|---|
+| `E01 Error Trigger` | `main[0]` | `E02 Safe Error Context` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E02 Safe Error Context` | `main[0]` | `E02a External Parent` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E02a External Parent` | `main[0]` | `E02 Select Store` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E02a External Parent` | `main[1]` | `E05 Outcome` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E02 Select Store` | `main[0]` | `E02b Store Ready` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E02b Store Ready` | `main[0]` | `E03a App Alert Store` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E02b Store Ready` | `main[1]` | `E05 Outcome` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E03a App Alert Store` | `main[0]` | `E03 Store Alert App` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E03a App Alert Store` | `main[1]` | `E03 Store Alert Practice` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E03 Store Alert App` | `main[0]` | `E03 Check Alert` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E03 Store Alert Practice` | `main[0]` | `E03 Check Alert` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E03 Check Alert` | `main[0]` | `E04a App DLQ Store` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E04a App DLQ Store` | `main[0]` | `E04 Store DLQ App` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E04a App DLQ Store` | `main[1]` | `E04 Store DLQ Practice` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E04 Store DLQ App` | `main[0]` | `E04 Check DLQ` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E04 Store DLQ Practice` | `main[0]` | `E04 Check DLQ` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+| `E04 Check DLQ` | `main[0]` | `E05 Outcome` | S12 | Extracts safe error context; branch gates parent allowlist/store readiness. Alert and DLQ sinks run independently and outcome is internal only. |
+
+## 4. Exact node-name inventory
+
+Names below are copied verbatim from the `nodes[].name` values in each source JSON. This is the alignment source of truth; names are not the older conceptual N01…N23 plan labels.
+
+### oke-support.json
+
+Node count: **63**
+
+`N01 Support webhook` | `N02 Normalize input` | `N03 Validate employee MOCK` | `N04 Injection rules` | `N05 Triage gate` | `N05 Triage mode` | `N06 Triage MOCK` | `N06 Triage Agent` | `N06 Triage model` | `N06 Parse triage` | `N07 Route triage` | `N08 Build search input` | `N09 Mock C03` | `N09 Normalize search` | `N10 Build ticket lookup` | `N10 Mock ticket` | `N10 Normalize ticket` | `N11 Collect retrieval` | `N11 Join retrieval` | `N12 Evidence gate` | `N20 Prepare handoff` | `N20 Handoff gate` | `N20 Mock C04` | `N20 Map handoff` | `N22 Finalize P0-3` | `N23 Respond` | `N13 Prepare writer` | `N12 Route evidence` | `N13 Writer mode` | `N13 Writer MOCK` | `N13 Writer Agent` | `N13 Writer model` | `N13 Parse writer` | `N13 Writer valid` | `N14 Prepare verifier` | `N14 Verifier mode` | `N14 Verifier MOCK` | `N14 Verifier Agent` | `N14 Verifier model` | `N14 Parse verifier` | `N15 Decide answer` | `N15 Route answer` | `N22 Output filter` | `N07 Route urgent` | `N20 After handoff` | `N21 Already handed off` | `N05 Replay MOCK` | `N05 Parse replay` | `N05 Route replay` | `N03 Employee mode` | `N03 Get employees HTTP` | `N03 Capture employee` | `N09 Search mode` | `N09 C03 HTTP` | `N09 Capture C03` | `N10 Ticket mode` | `N10 Own ticket HTTP` | `N10 Capture ticket` | `N20 Handoff mode` | `N20 C04 HTTP` | `N20 Capture C04` | `N10b FAQ HTTP` | `N10b Match FAQ`
+
+### oke-index.json
+
+Node count: **3**
+
+`수동 색인 시작` | `실제 색인 서비스 호출` | `색인 결과 검증`
+
+### oke-search.json
+
+Node count: **7**
+
+`검색 요청 수신` | `요청 형식 확인` | `유효한 C03 요청` | `C03 응답 반환` | `실제 검색 서비스 호출` | `검색 응답 검증` | `입력 거절`
+
+### oke-handoff.json
+
+Node count: **30**
+
+`H01 Handoff Webhook` | `H02 Validate and Map` | `H02a Valid Input` | `H03 Select Store` | `H03a Store Ready` | `H03b App Ticket Store` | `H04 Create Ticket Practice` | `H04 Create Ticket App` | `H05 Retry Gate` | `H05a Retry Allowed` | `H05 Wait` | `H05 Recheck Budget` | `H05c Retry Still Allowed` | `H05b App Retry Store` | `H04 Retry Ticket Practice` | `H04 Retry Ticket App` | `H05 Restore First Result` | `H06 Keep Ticket` | `H07 Failure Context` | `H08a App Alert Store` | `H08 Store Alert Practice` | `H08 Store Alert App` | `H08 Check Alert` | `H09a Needs DLQ` | `H09b App DLQ Store` | `H09 Store DLQ Practice` | `H09 Store DLQ App` | `H09 Check DLQ` | `H10 Build Result` | `H11 Respond`
+
+### oke-errors.json
+
+Node count: **14**
+
+`E01 Error Trigger` | `E02 Safe Error Context` | `E02a External Parent` | `E02 Select Store` | `E02b Store Ready` | `E03a App Alert Store` | `E03 Store Alert App` | `E03 Store Alert Practice` | `E03 Check Alert` | `E04a App DLQ Store` | `E04 Store DLQ App` | `E04 Store DLQ Practice` | `E04 Check DLQ` | `E05 Outcome`
+
+## 5. Operational interpretation
+
+- `oke-support.json` is the main orchestration: normalize/validate, employee lookup, injection/replay gates, triage, optional early handoff, C03 and own-ticket retrieval, FAQ enrichment, evidence gate, writer/verifier, final response filter.
+- `oke-index.json` is a manual trigger → index service request → strict result validation workflow.
+- `oke-search.json` validates the C03 contract, invokes the search service, validates the response, and returns either a safe result or rejection.
+- `oke-handoff.json` validates C04, selects one store, creates an idempotent ticket with bounded retry, records alert and conditionally DLQ receipts, then responds.
+- `oke-errors.json` receives controlled n8n error events, derives safe context, checks the parent and storage readiness, then attempts alert and DLQ persistence without replacing the parent HTTP response.
+- Any evidence of VM activation, external service availability, or a live ticket receipt belongs in execution evidence, not inferred from workflow JSON alone.

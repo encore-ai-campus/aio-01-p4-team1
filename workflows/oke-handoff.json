@@ -1189,10 +1189,10 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "saveDataErrorExecution": "none",
-    "saveDataSuccessExecution": "none",
-    "saveExecutionProgress": false,
-    "saveManualExecutions": false
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true
   },
   "pinData": {},
   "id": "okeHandoffFlow01"

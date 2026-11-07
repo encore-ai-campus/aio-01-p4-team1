@@ -1,5 +1,47 @@
 # 원민님 · 변경 제안·전달 기록
 
+VM 내부 직접대조(2026-11-06): Orca Computer Use로 로그인된 실제 Ubuntu 셸에서 배포HEAD3ff836a·컨테이너9·내부ready200·schema0005 확인. PostgreSQL READ ONLY에서 T-2008~2011 각티켓1·연결/소유자/저장결과/답변 일치·알림1·DLQ0. n8n SQLite readOnly에서 동일request의 본체실행37/39/42/44 success 확인. 하위성공로그저장none으로 전체하위trace는미완료. 상세추가조회는 사용자탭이동관측후중단·성공미집계. [새 결과서](EXECUTION-RESULT.md) 및 runs/vm-internal-observed-20261106.json 참조. 배포/DB쓰기/설정변경없음.
+
+## 팀장 지정 WF-02b QA · 2026-11-06 15:04 KST
+
+- 변경/기준: 최신 origin/main `95d8af3`을 feat/wonmin-p0에 병합. real-qa-api-runner.py 및 docs/VM-TEAM-TESTING.md 확인. 선택1건만 실행하며 평가결과보고서는 작성하지 않았다.
+- 입력/기대: 공용 직원, 질문=접속이 안 돼요, attempt=3. 기대는 담당자 이관·티켓ID 및 문의/티켓 저장·관리자 처리·직원 재조회.
+- 실제: PASS_API_SEQUENCE, request_id=real-qa-4a2c0b16ce4341deb887c458f9d8aaa6, T-2011, 담당자 이관, sources=[], ask4.535초. 직원 admin403·로그아웃/재로그인 후 문의/티켓 연결·관리자 상태/답변 PATCH/재조회·직원 최신 상태/답변 확인 등10checks 모두true. API 목록10→11은 SQL 직접 관측과 구별한다.
+- 증거: [raw](../runs/real-qa-WF02b-lead-20261106T060403Z.json), [실행 맥락](../runs/real-qa-WF02b-lead-context-20261106T060403Z.json). 실제시각15:04이며4교시로 소급하지 않는다. 로컬 QA 클라이언트에서 공개VM HTTPS API 호출. VM OS로그인/직접PG/n8n trace는 미실행이다.
+- 변경 범위: 새 문의 POST1·해당 신규 티켓 PATCH1. 인증세션 호출 별도. VM배포/재시작/import/publish/fault/reset/기존행삭제 없음. 비밀은 자식프로세스 환경에만 주입·raw에 미기록.
+- 다음 연결 상대: 팀장에게 raw와 선택사례 결과 인계용 기록. 실제 외부메시지는 전송하지 않았다. 지혜/원민 SQL 연결행·다혁/원민 실제 노드trace 및WF02/WF12 추가시험은 별도 인계/접속 후 진행한다.
+
+
+실제 VM 재시험(2026-11-06): 이전1288823 결과5개 삭제·main3dc5f23 포함 확인. WF-02b API 새ID3회 모두PASS, T-2008/2009/2010, 4.828/1.729/1.649초. 직원재로그인·관리자PATCH·직원재조회10checks 매회통과. WF-02 실제브라우저1회 대상/오류/시점 모두표시·캡처저장. 평가결과보고서는 사용자 요청으로 삭제했다. runs/vm-retest-*·vm-browser-* 참조. SQL/n8n trace/모델3회/공식14/팀5/bench미확인. 다음은WF02모델3회 및WF12복합·권한/장애·실제근거검증. 기대변경/VM재배포/fault/reset/기존행삭제 없음.
+
+다혁님 C04 실제 app 연결(2026-11-05): [원인·13개 그룹·남은 연결](C04-APP-INTEGRATION-RESULT.md). 최신origin/feat/dahyeok-p0=bb2fa1f의 Git 원본으로 시험했고 C04 요청/매핑/B안·실제 C05 저장이 적합했다(직원 fixture, 실제 로컬 qwen). 최초긴급 실행103은 JSON 코드블록 출력→triage_invalid→normal 저장으로 실패했다. 시험 사본 N06 모델 responseFormat=json_object 후 실행111→112의 T-2012/high·사내망 안내·sources=[] 및 전체13그룹 통과. 다혁님 실제 배포 모델 설정 검토/재시험 요청, 정본/기존 workflow는 미수정이다. 지혜/오현님 실제 data-api 주소·키/기존 티켓 권한이 없어 원래 본체는 identity_unavailable로 남는다. 유빈님 C03=503도 확인해 실제 검색·WF12 기존 티켓·팀 VM/공식 평가와 구별한다. 이번 공유는 HANDOFF 기록이며 외부 전송/상대 확인 완료가 아니다.
+
+원민 P1-3 실제 app 수습(2026-11-05): [10개 시험 그룹 결과](ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 부모/처리기82→83,84→85,86→87,88→89,90→91에서 정상·알림 실패·DLQ 실패·전체 실패·복구 확인. 신규/중복 알림 ACK·DLQ200과 실제 PG 행을 대조했고 키/오류 원문 미저장 확인. 정본/상대 코드는 수정하지 않았고 기존 workflow 설정·게시 상태는 보존했다. 임시 부모/probe 비활성화·throw 제거·프록시 복구 완료. 지혜님 API 변경 요청 없음, 오현님 공통 C05 문서 반영은 이전 요청 유지. 다음 연결은 다혁님 본체 C04→handoff→C05 전체 app 시험이다. 상대 확인이나 팀 VM 완료로 처리하지 않는다.
+
+지혜 ec6a735 후속 연결(2026-11-05): [원민 workflow→실제 app 저장 결과](C05-APP-INTEGRATION-RESULT.md). 15개 시험 그룹 통과: 신규/중복·동시8회 티켓/알림 각1건, event_key 없음/null 매번 신규, DLQ200, 부분 실패 시 티켓 유지·독립 sink, PG 재시작 보존. 전용 DB/직원 fixture이며 실제 data-api/팀 VM은 미확인이다. 지혜님께 테스트 Settings의 internal_api_key=None 명시(환경키 상속 시 1개 실패; pytest 자식만 키 제거 후222통과)를 제안한다. 오현님께 origin/main41644de의 C05 예시에 duplicate·DLQ200 명시 후속 커밋을 요청한다(최근 해당 파일 변경 db14b79). 상대 확인/공통 반영 완료로 처리하지 않는다. 아래 501 기록은 과거 결과다.
+
+다혁 WF-12 요청 보완(2026-11-05): [원인·수정·검증·n8n 반영](WF12-ALIGNMENT-RESULT.md). 사용자 요청의 공통 cases/team.json 및 원민 사본 TM-05를 sources=[]로 갱신하고 보안 규정 색인 조건을 제거했다. 다혁 b975286 병합·pin/Git blob 출처 일치·미병합 거절 보완, Node97/Python3 및 다혁 adapter12/retrieval9 통과. 로컬 n8n은 N22만 갱신하고 Credential/모델/설정 보존을 확인했다. 오현님께 docs/EVALUATION-GUIDE.md WF-12의 이전 근거 문구 정리를 인계한다. 전체 WF-12 HTTP·실제 ACK는 data-api 연결 후 확인이 필요하다.
+
+지혜 후속1902a2b 확인(2026-11-05): [최신 배포에서 C05 재시험](C05-LIVE-1902a2b-RESULT.md). 새 직원 seed/관리자 CLI를 병합·backend 재빌드했고 전체180개/원민89개가 통과했다. 실제 C05는33회 중401×3/501×30, DB0→0으로 계속 차단된다. 지혜 README에도 키 검증/저장 미구현으로 기록돼 있다. 실제 C05 구현 커밋·브랜치 확인 및 해당 구현 반영이 필요하다.
+
+최신 C05 실제 검증(2026-11-05): [실제 backend·DB·n8n app 결과와 지혜님 요청](C05-LIVE-RESULT.md). 지혜4fdc313·다혁859e3af는 최신, 유빈1b0c3b5 새3커밋을 병합했다. 실제 저장 API33회 중 누락키3회401/나머지30회501, 시험 DB tickets/alerts/dlq 모두0→0이었다. StoredResponse duplicate도 여전히 제거된다. 지혜님 내부키 대조·실제 저장·duplicate 응답·직원 seed 구현 후 원민이 동일 조건으로 재시험한다. 이번 결과는 저장 검증 차단이며 동시성/영속성 통과가 아니다.
+
+현재 재배포(2026-11-05): [팀 소스 n8n·Compose 반영](TEAM-REDEPLOY-RESULT.md). 지원13·검색·색인·이관·errors가 목록에 표시되고 index 실행35 Succeeded를 확인했다. 실제 PG48 통과·0004 적용. 본체는 identity_unavailable, 검색은503, 실제 저장 API는501로 남아 해당 담당자의 후속 연결이 필요하다.
+
+팀 소스 병합(2026-11-05): [다혁·유빈·지혜 브랜치 병합 기록](TEAM-MERGE-RESULT.md). feat/wonmin-p0에 세 소스를 충돌 없이 병합하고 원민89·유빈171·지혜110·다혁 adapter12 통과를 확인했다. 지혜 DB48개는 skip이다. main/submission 및 실행 중 서비스는 변경하지 않았다.
+
+최종 실환경 확인(2026-11-05): [Ubuntu 실행·C05 후속 요청](UBUNTU-INTEGRATION-RESULT.md). errors=wmerr84aab85722를 원민 부모 실제 설정에 연결하고 자동 발화를 확인했다. 실제 Ollama 호출 및 PG 45개 통과. 지혜님 c6e42df backend의 /tickets·/alerts·/dlq는 각각 501이고 /health/ready는 404다. 지혜님 저장/인증·duplicate 응답 구현 후 실제 API→DB와 동시/영속성 재시험이 필요하다. 다혁님 업무 C04/LLM 연결·공용 VM은 이번 결과에 포함하지 않는다. 아래 기록은 각 단계 당시 상태다.
+
+지혜님 후속 질의(2026-11-05): [event_key 없음/null·practice ACK 회신 자료](ALERT-NO-KEY-REVIEW.md). key 없음은 매번 신규/duplicate=false, practice는 key를 보내지 않아 동일티켓 재요청에도 알림추가 가능. HTTP Mock과 실제data-api/PG 미확인을 구분했다.
+
+최신 P1-3(2026-11-05): [oke-errors 구현·실제 부모연결 절차](P1-3-RESULT.md). 전체89개 로컬시험 통과. 실제errors ID·부모설정·자동발화·backend/DB는 미확인이다.
+
+최신 P1-2(2026-11-05): [수습 구현·실제 로컬 결과·추가 진행 가이드](P1-2-RESULT.md). 사용자 전달 팀장 승인으로 알림 duplicate 유지·DLQ HTTP200 적용. 전체 로컬65개 통과, 실제 n8n/백엔드/DB는 미실행이다. 아래 이전 C05 불일치 기록은 승인 전/상대 미반영 당시 근거로 보존한다.
+
+최신 C04 검토(2026-11-05): [C04-PAIR-REVIEW.md](C04-PAIR-REVIEW.md). 다혁님 `aac0dbf`의 최신08에서 C04 요청 생성·응답 매핑 구현 확인. 양쪽 실제 Code와 원민 JSON·HTTP Mock 경계 관측17건 일치. 발신은 아직 N20 Mock C04이며 n8n 실연결은 미실행이다. 아래9bda763 기록은 이전 시점이다.
+
+최신 C05 검토: [C05-MODEL-REVIEW.md](C05-MODEL-REVIEW.md). 지혜님 `4bbbf49` 실제 모델에 요청 표본 7/7 적합, 중복 알림 ACK의 duplicate 직렬화 불일치 1건 확인. 실제 API/인증/DB는 미실행이다.
+
 기본안대로 구현하는 일에는 새 협의가 필요 없다. [README](../README.md) → [TODO](TODO.md) → [SPEC](SPEC.md) → [IMP-PLAN](IMP-PLAN.md)으로 바로 진행한다. 여기는 **공통에 실제로 빠진 정책의 제안과 변경 근거**만 기록한다.
 
 > 2026-11-03 문서 제안 작성. 아래 상태는 모두 **제안 작성·미검토·공통 미반영·실제 연결 미확인**이다. 외부 메시지 전송·상대 동의·설치·시험·PASS를 뜻하지 않는다. 공통 반영은 오현님이 맡는다.
@@ -79,6 +121,78 @@
 
 절차 기준: [COORDINATION](../../../docs/COORDINATION.md). 현재 외부 전달·검토·시험 기록은 없다.
 
+## P0 전달 자료 · 2026-11-04 (외부 전송 없음)
+
+- 변경 파일: cases/team.json(12), handoff.json(13), app-integration.md(11절차), requests 6개, runs/INDEX.md 및 p0-validation.txt. README/TODO/IMP-PLAN에 실제 준비 상태 반영.
+- 확인 방법/실제 결과: p0-validation.txt의 로컬 정적 확인. 서버·인증·DB·n8n·공통 평가 키트 기능 시험은 미실행. suite는 공식 도구 호환을 아직 주장하지 않는 P0 검토 명세다.
+- 다혁님(C04): 팀 입력과 정상/중복/티켓 장애/알림 부분실패 기대를 준비했다. TM-09의 ok·알림 DLQ와 인증 거절 새 reason은 WM-04 미판정이다. 다음 P1-1에서 실제 handoff를 제공한다.
+- 지혜님(C05): 신규 201/중복 200 및 ticket_id 동일, 소유권 거절, alert/DLQ 실제 ACK, 동시 1건과 재시작 유지의 관측이 필요하다. app 상세 ops는 아직 미확정이므로 제공할 관리자 API/마스킹 DB 관측으로 확인한다.
+- 유빈님·오현님: 현재 저장소에는 실제 data-api 규정 8종 원문·관리자 문서 식별자·실제 권한 응답 및 인증 확인 근거가 없다. 제공 문서의 명세를 실제 확보로 간주하지 않았다. 실제 원본 확보 여부는 **미확인**이다. data-api 환경이 준비되면 유빈님 어댑터로 원본·권한 출처를 확보하고 TM-11/12 정답 문서를 고정해야 한다. 상대 폴더와 대장은 수정하지 않았다.
+- 오현님(C09): 80일차 flow.py/common.json 원본 반입·배포 버전·해시·실행 환경 매핑이 필요하다. 과거 키트로 대체하지 않았고 공통 판정은 생성/수정하지 않았다.
+- 문서 불일치 처리: 최신 공통 API §8에는 handoff 5초, tickets 최대 2회·각 1초, alerts/DLQ 각 1회·0.6초의 **초기 기본값**이 있다. 위 WM-01의 '공통에 없음'은 과거 제안 기록으로 읽는다. 현재 사례는 공통 초기값을 우선하며 backoff/Retry-After/내부 전체 기한의 제안은 계속 미판정이다. WM-02의 예시 dlq_id 응답도 확정 ACK로 사용하지 않는다.
+- 다음 연결 상대: 다혁님·지혜님(C04/C05), 유빈님·오현님(실제 원본·키트). 본 기록은 전달 자료 작성이며 상대 검토/동의/실제 연결 완료가 아니다.
+
+## P1-1 전달 자료 · 2026-11-04 (외부 전송·상대 확인 없음)
+
+- 변경 파일: workflows/oke-handoff.json(15노드), tools/mock-store.py, tests/handoff.test.mjs·workflow-runner.mjs, requests/handoff-normal·high·duplicate.json, README·워크플로우 안내·TODO·IMP-PLAN·runs 증거.
+- 확인 방법/실제 결과: 저장소 루트 `node --test` 40개 통과. 실제 HTTP Mock 두 인스턴스를 사용했고 원본 워크플로우의 Code·표현식·분기를 로컬 어댑터로 실행했다. 신규 201/중복 200, 순차 동일 ID, 동시 8건 중 신규 1/중복 7·저장 1건, high 유지와 알림 ACK, 설정 기반 단일 저장소 선택을 확인했다. 공식 check/n8n Header Auth·실행/실제 백엔드·DB/VM은 미실행이다.
+- 다혁님(C04): 요청은 handoff-normal/high/duplicate.json 참조. 정상 C04는 기존 6필드이며 티켓에 입력 priority를 복원한다. 캐시 없이 C05를 호출하므로 중복 응답은 duplicate=true다. H01은 X-Team-Key Credential 연결 필요. 단일 H11 응답 경로이며 n8n 게시·실제 호출은 사람이 확인해야 한다.
+- 지혜님(C05): request_id를 key로 보내고 신규 201+duplicate=false/중복 200+duplicate=true 및 ticket_id를 함께 확인한다. title은 제한된 개인정보/명시적 비밀값을 가리고 requester는 유지한다. Mock의 동일 key 본문/소유자 충돌은 409·티켓 미노출이다. 실제 UNIQUE·거래·소유권·동시성은 백엔드 구현 책임이며 현재 Mock 결과로 실제 DB를 보증하지 않는다.
+- app 알림은 event_key=request_id:ticket-created를 보낸다. 로컬 Mock은 stored=0/count 유지/duplicate=true로 중복 ACK를 반환한다. 실제 백엔드에서 이 조합을 지원하는지 미확인이고 duplicate가 없으면 alerted=true로 추정하지 않는다. 지혜님 최신 원격 4bbbf49의 DTO도 읽기 대조했으며 실제 인증·저장이 아직 미구현인 것으로 문서에 기재되어 있다. 상대 테스트를 대신 실행하거나 승인하지 않았다.
+- 미정 경계: C04 오류 필드 code는 추가하지 않았고 잘못된 입력은 400+일반 오류 메시지의 임시 외형이다. 알림만 실패하면 티켓 유지·alerts_down·alerted=false, ok=false를 보수적으로 반환하며 WM-04의 확정으로 간주하지 않는다. 설정 오류는 쓰기 없이 503. 이 응답의 세부 합의와 부분실패/DLQ는 후속 검증 대상이다.
+- 범위/다음 단계: 티켓 자동 재시도·실패 시 독립 알림/DLQ는 P1-2, Error Trigger/실제 app 연결은 P1-3이다. 현재 dlq=false이며 티켓 실패는 tickets_down으로 안전 반환만 한다. 공통 WF-04 전체 수습을 통과한 구현은 아니다. practice 중복 알림 건수 정책도 WM-03으로 구분한다.
+- 오현님(C07/C09): Credential placeholder 교체, SERVICE_MODE와 Mock/실제 주소 매핑, n8n의 모드/주소 $env 접근 확인, 공식 키트 반입과 사람이 check 후 게시/시험할 환경 준비가 필요하다. 원민 폴더 이외 및 루트/다른 팀원 코드는 수정하지 않았다.
+- 다음 연결 상대: 다혁님 C04, 지혜님 C05, 오현님 키트·배포. 실제 증거는 runs/INDEX.md 참조.
+
+## C05 모델 대조 · 2026-11-04 · 지혜님 4bbbf49
+
+- 변경 파일: Doc/C05-MODEL-REVIEW.md, requests/c05-store-samples.json, tools/check-c05-models.py, runs/c05-jihye-4bbbf49-review.json 및 인계/색인 링크. 워크플로우·Mock·지혜님 코드·공통 계약은 변경하지 않았다.
+- 확인 방법/실제 결과: fetch 후 지혜님 고정 커밋의 common/tickets/alerts 모델을 메모리로 읽고 uv.lock과 동일한 Pydantic 2.14.2로 실제 검증했다. 기존 Code 노드에서 추출한 티켓3·알림2, 후속 구현용 DLQ 계획2 표본은 7/7 필드 손실 없이 적합하다. DLQ는 현재 미전송이며 request_id=null은 허용, 필드 생략은 거절됨을 확인했다.
+- **WM-C05-01 · 응답 불일치:** StoredResponse에는 stored/count만 있고 extra=ignore이므로 backend 결과의 duplicate=true가 제거된다. 원민 app H10의 중복 ACK는 stored=0/count>=1/duplicate=true를 요구하므로 직렬화 전 alerted=true에서 후 alerted=false/alerts_down으로 바뀜을 실제 모델/로컬 Code로 재현했다. count만으로 성공 판정하도록 완화하지 않았다.
+- 지혜님·오현님 검토 항목: 중복 알림의 명시적 ACK 필드/의미를 공통 계약·응답 DTO로 확정할지 검토 필요. 선택 duplicate 또는 이벤트 저장 확인 경로는 제안이며 승인 아님. 현재 요청 DTO 변경 필요는 보이지 않는다.
+- DLQ 상태 기대: 지혜님 현재 POST /dlq 라우터는 StoredResponse+기본200이다. 원민 SPEC의 신규201/중복200은 팀 공통 C05에 별도 확정되어 있지 않으므로 P1-2 전에 기대를 정리해야 한다. `dlq_id`를 실제 확정 응답으로 사용하지 않는다.
+- 미확인: deps는 X-Api-Key 누락401/키 존재501, 기본 backend도501인 골격이다. 이는 코드 검토 결과이며 서버를 호출한 것이 아니다. 실제 키 대조·DB·멱등/동시성·알림/DLQ ACK 및 n8n 연결은 미실행이다.
+- 다음 연결 상대: 지혜님(C05 DTO·응답), 오현님(공통 ACK/상태 정리). 본 문서는 검토 자료 작성이며 외부 전송·상대 동의/수정 완료로 표시하지 않는다.
+
+## C04 연결 대조 · 2026-11-04 · 다혁님 9bda763
+
+- 변경 파일: Doc/C04-CONNECTION-REVIEW.md, tools/check-c04-dahyeok.mjs, requests/c04-dahyeok-urgent.json, runs/c04-dahyeok-9bda763-review.json 및 문서 링크. 원민 워크플로우·다혁님 파일·공통 계약은 변경하지 않았다.
+- 참조 대상: fetch 후 origin/feat/dahyeok-p0 고정 커밋 9bda7639aaeee3f6dca59f6aabd91e61fa05a847. oke-support.json은 P0-1 보존본, 최신 개발본은 oke-support-02.json(P0-2)이며 C04 구현은 상대 계획 P0-3이다. 상대 자체 flow.py는 공식 키트로 취급하지 않았다.
+- 확인 방법/실제 결과: Git에서 JSON을 메모리로 읽어 기존 Code/표현식 어댑터로 로컬6건 실행. attempt1/2는 보완 질문, attempt3·긴급은 내부 handoff_mock이나 최종 ticket=null/reason=not_implemented다. context-resolved도 미구현 응답이며 injection은 차단이다. 6/6은 골격 상태 확인이고 공통 시나리오나 이관 기능 PASS가 아니다.
+- **WM-C04-01 · 실제 연결 미구현:** 최신 본체에 발신 HTTP Request 노드가0개이고 N20 Prepare/Call/Map도 없다. 실제 C04 URL/Credential/timeout·결과 매핑 검증은 불가하다. SPEC의 긴급 C04 표본1개는 원민 H02에 적합하며 ID/requester/high를 유지했다. 문서 표본의 적합과 실제 생성/호출을 구분했다.
+- 다혁님 후속 연결: 검증한 user→requester, ID 유지, title 마스킹·category/priority/reason, X-Team-Key Credential, 공통 초기 timeout5초·중첩 재시도0을 N20에 적용해야 한다. 정상 reason=null이면 본체 원래 이관 사유 유지, 실패 reason은 보존, 중복 ticket_id/priority/duplicate 보존이 필요하다.
+- WM-04: 상대 SPEC의 alerts_down 예시는 ok=true, 원민 임시 구현은 ok=false이며 둘 다 ticket 보존을 요구한다. 향후 mapper에서 ok=false만 보고 확인된 ticket을 폐기하지 않도록 정책 확인 필요. 현재 mapper가 없어 실제 본체 버그나 합의 완료로 판정하지 않았다.
+- 미확인/다음 상대: 다혁님 C04 실제 호출·매핑 구현, 오현님 게시 버전 선택·공식 키트·n8n 환경. 프로젝트 n8n 게시/웹훅/인증/Executions·저장소는 미실행이다. 다음 버전 제공 뒤 정상/중복/high/tickets_down/alerts_down/전송 실패를 실제 경로로 재확인한다. 본 기록은 외부 전송·상대 동의가 아니다.
+
+## C04 최신 재확인 · 2026-11-05 · 다혁님 aac0dbf
+
+- 변경 파일: Doc/C04-PAIR-REVIEW.md, tools/check-c04-pair.mjs, runs/c04-pair-aac0dbf-review.json 및 README/이전 검토/색인 링크. 양쪽 워크플로우·Mock 서버·공통 계약·다혁님 파일은 변경하지 않았다.
+- 참조: origin/feat/dahyeok-p0의 aac0dbf12e030ad7622fe3057654f866545c983b, 최신 workflows/oke-support-08.json. P0-3에서 N20이 추가되고07/08에 원민 부분실패 매핑이 반영됐다. 이전 'N20 미구현'은9bda763 당시의 기록이다.
+- 확인 방법/실제 결과: `node develop/wonmin/tools/check-c04-pair.mjs` 로컬 관측17/17 일치. 실제 Prepare Code의 요청을 원민 JSON 어댑터·HTTP Mock에 연결하고 응답을 실제 Map/Finalize/Output filter Code로 되돌려 확인했다. 정상·순차 중복·high·attempt3과 동시4건은 실제 C05 HTTP Mock 저장을 대조했다. 알림503은 Response 주입(티켓은 HTTP Mock 저장), 티켓503·설정 오류 및 schema/401/403/timeout·상대fixture는 합성 경계 검증이다. 모든17건을 실제 HTTP연결/공통 기능 통과로 세지 않는다.
+- 결과: 필수6필드 수신 적합, 같은 ID→key, 신규/중복 동일 ticket_id·false→true, high/urgent와 max_attempts 보존, 동시4건 티켓 증가1. ok=false/alerts_down에서도 기존 ticket을 Map와 최종 응답이 보존한다. 이전 WM-04의 해당 코드 매핑 우려는 현재 버전 로컬 범위에서 해소. C05 StoredResponse 중복 알림 ACK 불일치는 별도 미해결이다.
+- 실제 연결 경계: 현재 그래프는 Prepare→gate→N20 Mock C04→Map이며 HTTP Request 노드0개다. 이번 스크립트가 테스트 안에서 Mock 경계 결과를 공급한 것이고 소스 그래프를 실제 연결한 것이 아니다. 발신URL·X-Team-Key Credential·5초timeout·응답 envelope, 프로젝트 n8n/Header Auth/Executions와 실제backend·DB는 미확인이다.
+- 다음 상대: 다혁님 N20 실제HTTP 설정·mapper envelope, 지혜님 C05 실제키/저장/ACK, 오현님 번호판 선택·공식키트·전용 n8n 게시/사람 시험. 원민 P1-2 retry/DLQ·P1-3 errors는 미구현이다. 외부 메시지·상대 승인·공통 반영 완료로 쓰지 않는다.
+
+## P1-2 수습 구현·C05 승인 적용 · 2026-11-05
+
+- 승인 근거: 이번 사용자 메시지의 팀장 지시 "C05 계약(알림 duplicate 필드 유지, DLQ HTTP 200)"를 그대로 적용했다. 상대 재승인을 작업 선행조건으로 삼지 않았다. main550d784와 지혜4904a49는 아직 해당필드/문구가 반영되지 않은 것으로 읽기 확인해 별도 인계한다. 실제 상대 반영 완료로 표시하지 않는다.
+- 변경 파일: workflows/oke-handoff.json(30노드), tools/mock-store.py, tests/recovery.test.mjs·workflow-runner.mjs·handoff.test.mjs, cases/handoff.json, SPEC/TODO/IMP-PLAN·README·P1-2-RESULT·runs 색인/실제 보고서. 모든 편집은 원민 폴더 내부다.
+- 확인 방법/실제 결과: `node --test` 전체65개(기존40+추가25) 통과, 종료0. HTTP fault 시나리오22개와 Code경계3개를 추가했다. tickets_down/alerts_down/알림·DLQ 각각 또는 동시 실패, 영구거절 무재시도,429 Retry-After,동일 key/payload 제한 재시도,알림/DLQ timeout,티켓 지연 저장·동일ID 재요청을 관측했다. 보고서 p1-2-local-20261105T022016Z.json/.txt 참조.
+- 결과 요약: 티켓 최대2회·각1초, 알림/DLQ 각1회·0.6초. 티켓 실패에도 두 sink시도, 알림 실패가 DLQ를 막지 않고, 티켓 성공은 후속 실패로 지우지 않는다. raw body/headers/stack·연락처/키/원문을 DLQ에 넣지 않는다. ACK 없는 sink는false이며 늦게 저장됐을 수 있어0건으로 단정하지 않는다. 전체실패도 단일응답·유한종료다.
+- 지혜님 C05: 알림 신규응답 duplicate=false·중복 stored=0/duplicate=true를 유지하고, DLQ200+stored/count를 제공해 주세요. 원민은 app의 명시적중복ACK를 성공으로 인식하고 DLQ201·잘못된타입은 성공으로 처리하지 않는다. 실제 API키·영속저장·UNIQUE/소유권·동시거래·실제누적수·DLQ중복(stored=0)의 의미는 미검증이다.
+- 다혁님 C04: 기존 mapper/aac0dbf와 현재 P1-2로 로컬 경계17건 재검증 일치. 최신11의 dlq전달 코드는 읽기 확인했으나 전체11 실행은 하지 않았다. 실제C04 HTTP/X-Team-Key·5초timeout·envelope는 아직Mock이므로 실제연결 시험이 필요하다. ok=false+alerts_down의 ticket보존과 tickets_down의 실제알림/DLQ 플래그를 확인해야 한다.
+- 오현님 C07/C09: 공식flow.py/common 원본·해시 및 전용 n8n에서 사람이 Credential연결/게시/시험할 환경이 필요하다. 실행ID·같은호출/fault/ops 대상·전후/지연후 건수·정리결과를 남겨야 한다. 재시도4초예산은 로컬판단값이며 hard SLA/실제n8n 전체시간을 보장한 것이 아니다. common판정/다른폴더/배포설정은 변경하지 않았다.
+- 다음 단계: 원민 P1-3 oke-errors.json/Error Trigger·독립 sink수습 및 부모errorWorkflow 연결. 이후 app인증/권한·DB/동시·재시작/P1-4 공통14종·팀·LLM3회·bench/P1-5 VM회귀를 진행한다. 상세순서는 P1-2-RESULT.md 참조. 이번 변경은 P1-2 로컬완료이며 n8n·실제backend/DB·VM은 미실행, 외부메시지 전송·상대확인/공통반영 완료가 아니다.
+
+## P1-3 Error Trigger·독립 수습 · 2026-11-05
+
+- 변경 파일: workflows/oke-errors.json(14노드), tests/errors.test.mjs·workflow-runner.mjs, tools/mock-store.py의 안전한 unexpected/추적참조 관측, cases/errors.json, requests/error-execution·error-trigger-failure.json, P1-3-RESULT·README/TODO/IMP-PLAN·runs 실제보고서. 기존 handoff JSON·상대파일·공통설정은 변경하지 않았다.
+- 확인 방법/실제 결과: 저장소 루트 `node --test` 전체89개(기존65+추가24)통과·종료0.20개 독립Mock 시나리오(재진입/설정오류는호출0)와4개경계검사. 정상·알림만/DLQ만/둘다 실패·timeout, metadata누락/trigger오류,app중복알림ACK,모드·인증거절,원문미노출,자기이름/문자열·숫자ID 재진입 차단을 확인했다. p1-3-final-20261105T024732Z.json/.txt가 최종 실제증거이며 이전 최초통과본도 보존했다.
+- 동작: 알림/DLQ 각1회·0.6초. 앞sink실패가 뒤sink시도를 막지 않는다. 부모inquiry request_id는 검증근거가 없어null, 부모execution.id 유효시참조·없으면null. raw message/stack/URL/headers/context·임의이름을 전달하지 않고 고정/허용목록값만 저장한다. 알림단독성공에도 안전한부모참조를 남긴다. 오류처리기 자기source면외부호출없이종료, 예상sink실패를다시throw하지않는다. E05는내부진단결과이며부모HTTP/실패상태를성공으로바꾸지않는다.
+- 각 부모소유자(다혁/유빈/원민): 실제errors ID 확보 후 Settings Error workflow에 연결해야 한다. errors.json에가짜자기ID/부모ID를기록하지않았고 실제handoff의errorWorkflow도임의변경하지않았다. 자동실행부모의비민감시험오류로parent/errors 실행ID·수습ACK를함께확인해야한다. 수동노드실행은발화증거가아니다.
+- 오현님/지혜님: 공식키트check·Credential/모드·같은저장/관측환경, 실제C05알림duplicate·DLQ200/키검증·DB준비가필요하다. n8n공식문서상ErrorTrigger자체publish는필수가아니고기본자기오류동작이있어코드guard도뒀다. 부모실행저장설정/trigger실패에따라execution.id가없을수있으므로참조관측근거를확인해야한다.
+- 미실행/다음단계: 실제n8nimport/부모설정/자동발화·sink실패·복구 및 app권한/저장/중복/영속성은대기. P1-4/5공통·반복·bench·VM증거로Mock결과를대체하지않는다. 상세안전시험/정리절차는P1-3-RESULT.md참조. 외부메시지·상대동의/연결완료로쓰지않는다.
+
 ## REAL-QA-1 · 앱 실통합 시험 전 코드 갭 (검토 요청 전)
 
 - 상태: 코드 읽기 전용 확인으로 발견. 상대 확인·공통 반영·VM 실행은 없음.
@@ -99,3 +213,33 @@
 - `request_id=real-qa-36352d26c53e48eab65a42c4a0c5ec85`, `route=담당자 이관`, `sources=[]`, elapsed 7.341초. 인증/role·employee admin 403·문의 생성/직원 목록/재로그인·관리자 처리와 재조회 API sequence는 PASS. 이는 검색 성공/정상 자동답변/WF-01 8초 PASS가 아니다.
 - 같은 고유 request_id로 독립 read-only DB 검증: inquiry 1행, matching ticket request_key 1행, `T-2005`; inquiry/ticket/requester ID 연결, `in_progress`, 관리 답변 일치. 전체 row count 증가분을 단건 증거로 쓰지 않았고, 기존/타인 데이터를 삭제하지 않았다. 자세한 비밀 없는 실행 결과는 `docs/EXECUTION-RESULT.md` 및 `daily/DAY81.md`에 있다.
 - 브라우저 시각/클릭 검증은 자동화 host unavailable로 미실행. 공식 common-14, duplicate retry, alert/DLQ 연계, WF-01 normal answer/source evidence도 미실행이다.
+
+
+## oke-search VM 연결 조사 · 2026-11-06 17:23 KST
+
+- 변경 파일: `Doc/SEARCH-VM-DIAGNOSIS.md`, `runs/vm-search-observed-20261106.json`. 관측값은 실제 로그인된 팀 VM 콘솔 전사이며 raw stdout 자동 수집이 아니다.
+- 확인 방법/실제 결과: 실제 검색 함수 임베딩 200·근거 3건·1.404초, 백엔드 컨테이너의 실제 웹훅 키로 n8n 운영 검색 호출 HTTP 200·ok=true·근거 3건·2.227초. 문서 8개/청크 33개, 모델/3072차원 일치. 검색 서비스 키로 n8n 수신 웹훅을 호출한 별도 경계 검사는 403이며 실제 백엔드 호출 장애의 증거가 아니다.
+- 판정: 현재 장애 미재현. 편집기 입력/출력 없음·UI 환경변수 미리보기 제한·실행 저장 none을 운영 장애로 판단하지 않는다. 간헐 실패 원인은 미확정이며 실제 실패 시각/응답 수집이 필요하다.
+- 다음 연결 상대: 유빈님(RAG/Search), 다혁님(본체 C03 호출), 팀장(VM 진단 기록 정책). 워크플로우/키/설정/서비스 변경·재배포는 수행하지 않았다.
+
+
+## [최종 통합 제출] 이원민 (QA · 안정성 · 티켓/DLQ/Error) 핵심 검증 및 설계 근거
+
+### 1. [팀 시나리오 1개] 내가 직접 기획·검증한 장애 복구/멱등성 시나리오
+| 항목 | 작성 내용 |
+| :--- | :--- |
+| **시나리오 이름** | 네트워크 재시도·더블클릭으로 동일 request_id가 중복 이관돼도 티켓 1건을 보장(WF-09)하고, 티켓 저장소 장애 시에도 알림과 DLQ를 서로 독립 격리(WF-04) |
+| **기획 의도 (왜 필요한가?)** | 응답이 느릴 때 사용자가 버튼을 두 번 누르거나 상위 워크플로우가 재시도하면 같은 문의로 티켓과 알림이 중복되는 운영 사고가 난다. 이를 막고, 티켓 저장소가 죽어도 문의가 유실되지 않게 DLQ에 격리하려는 것이다. |
+| **입력 조건 및 테스트 방법** | 동일 request_id로 `/webhook/oke-handoff`를 2회 연속 호출하고, PostgreSQL `app.tickets`(`request_key`)·`app.alerts`·`app.dlq` 행수를 호출 전·중·후로 비교한다. |
+| **기대 결과 vs 실제 검증 결과** | • **기대 결과**: 1차 `duplicate=false` 신규 티켓, 2차 `duplicate=true`와 동일 `ticket_id`, DB 티켓 +1건만 유지<br>• **실제 결과(공용 VM, 2026-11-07)**: **FAIL.** 두 호출 모두 HTTP 500 `Cannot read properties of null (reading 'disabled')`, 티켓/알림/DLQ 변화 0건(32/35/8 유지). 멱등성은 실서버에서 판정하지 못했고 PASS로 집계하지 않는다. 원인은 VM 게시본 `okeHandoffFlow01`에 웹훅 노드 H01이 없는 것(29노드, main 원본은 30노드)이며 근거는 `runs/live-integration-qa-20261107.json`이다.<br>• **참고(로컬 Ubuntu 랩, 공용 VM 아님)**: 같은 요청 2회에서 1차 `T-2005 duplicate=false`, 2차 `T-2005 duplicate=true`를 확인했다. |
+
+### 2. [실패 및 해결 사례 6칸 표] 안정성·QA 개발 및 통합 중 겪은 난관과 해결책 (1건)
+| ① 현상 (문제점) | ② 재현 조건 | ③ 원인 및 근거 | ④ 조치 내용 (해결책) | ⑤ 재시험 결과 | ⑥ 잔여 위험 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| oke-handoff를 n8n에 가져오자 계약 경로 `/webhook/oke-handoff`가 아닌 workflow·노드 이름이 붙은 다른 경로로 등록됐다. | 로컬 Ubuntu 랩(n8n 2.46.6)에 JSON을 CLI로 import하고 게시했을 때(2026-11-05). | Webhook 노드에 `webhookId`가 없으면 n8n이 fallback 경로를 만든다. 등록된 실제 경로를 조회해 확인했다. | 원본 handoff의 Webhook 노드에 `webhookId`를 추가하고 회귀 테스트를 보강했다. | 재가져오기·게시·재시작 뒤 계약 경로 HTTP 200을 확인했고 Node 회귀 89개가 통과했다(`Doc/UBUNTU-INTEGRATION-RESULT.md`). | **공용 VM은 별개 문제로 미해결이다.** VM 게시본에 웹훅 노드가 없어 500이 나고, 재게시는 팀장 권한이라 재시험은 재배포 이후에 한다. |
+
+### 3. [아키텍처 설계 근거 (Why?)] 심사위원 질의응답 방어용 2줄
+- **Q1. 티켓 생성 실패(`tickets_down`) 시 에러를 그대로 던지지 않고 `oke-handoff` 안에서 알림(`alerts`)과 DLQ를 독립 분기로 시도하는 이유는?**
+  - **내 답변**: 티켓 DB가 일시 중단돼도 문의의 마스킹된 요약을 DLQ에 보존해 사후에 수동 복구할 수 있다. 한 수습 Sink가 실패해도 다른 Sink(운영자 알림)는 끝까지 실행되도록 Fail-Safe로 격리했다. 이 격리는 로컬 테스트와 Ubuntu 랩에서 확인했다.
+- **Q2. 예상된 비즈니스 장애(`WF-04` 티켓 장애 등)와 예상 밖 런타임 예외(`oke-errors` Error Trigger)를 이원화한 이유는?**
+  - **내 답변**: 하위 API 503·타임아웃처럼 예측 가능한 장애는 워크플로우 안의 정상 제어 흐름으로 수습하고, 노드 오류 같은 예측 불가 예외만 Error Workflow가 받게 분리했다. errors는 오류를 다시 던지지 않아 재귀가 없다. 단 이번 VM의 handoff는 `errorWorkflow`가 비어 있어 이 연결이 실서버에서 동작하는지는 미확인이다.

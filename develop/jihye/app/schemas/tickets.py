@@ -25,7 +25,7 @@ class TicketPatch(ContractModel):
 
 
 class TicketView(ContractModel):
-    """H03 draft list/single DTO; excludes original data-api ticket states."""
+    """Administrator list/single DTO; excludes original data-api ticket states."""
     id: EntityId
     ticket_id: NonEmpty
     request_id: RequestId
@@ -36,5 +36,6 @@ class TicketView(ContractModel):
     status: TicketStatus
     assignee: EntityId | None
     reply: str | None
+    question: str | None = None
     created_at: datetime
     updated_at: datetime

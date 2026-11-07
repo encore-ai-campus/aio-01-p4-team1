@@ -2,9 +2,10 @@ from sqlalchemy import func, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.api.errors import PublicApiError
 from app.core.security import hash_password, validate_password
 from app.db.models import Employee, User
-from app.repositories.sessions import revoke_user_sessions
+from app.repositories.sessions import delete_user_sessions, revoke_user_sessions
 from app.repositories.users import get_user_identity, list_employees, list_users
 
 
@@ -21,6 +22,20 @@ def lock_accounts(session: Session):
 def employee_items(session: Session):
     return [{"id": employee.id, "name": employee.name, "dept": employee.dept, "user_id": user_id}
             for employee, user_id in list_employees(session)]
+
+
+def create_employee(session: Session, *, name: str, dept: str):
+    lock_accounts(session)
+    if session.scalar(select(Employee.id).where(Employee.name == name)) is not None:
+        raise AccountError(409, "employee_conflict", "이미 등록된 직원입니다.")
+    employee = Employee(name=name, dept=dept)
+    session.add(employee)
+    try:
+        session.flush()
+    except IntegrityError:
+        raise AccountError(409, "employee_conflict", "이미 등록된 직원입니다.") from None
+    return {"id": employee.id, "name": employee.name, "dept": employee.dept,
+            "user_id": None}
 
 
 def account_items(session: Session):
@@ -92,3 +107,18 @@ def reset_password(session: Session, *, user_id: int, password: str):
     revoke_user_sessions(session, user.id)
     session.flush()
     return {"ok": True, "must_change_password": True}
+
+
+def delete_account(session: Session, *, user_id: int, actor_id: int):
+    lock_accounts(session)
+    pair = get_user_identity(session, user_id)
+    if pair is None:
+        raise AccountError(404, "not_found", "계정을 찾을 수 없습니다.")
+    user, _employee = pair
+    if user.id == actor_id or user.role == "admin":
+        raise PublicApiError(400, "account_delete_forbidden",
+                             "관리자 본인 계정은 삭제할 수 없습니다.")
+    delete_user_sessions(session, user.id)
+    session.delete(user)
+    session.flush()
+    return {"ok": True, "message": "계정이 삭제되었습니다."}

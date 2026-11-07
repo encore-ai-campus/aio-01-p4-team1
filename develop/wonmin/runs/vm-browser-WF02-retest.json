@@ -1,0 +1,16 @@
+{
+  "environment": "team VM browser real service",
+  "scenario": "WF-02",
+  "input": "접속이 안 돼요",
+  "attempt": 1,
+  "observed_at_utc": "2026-11-06T05:45:35.312Z",
+  "checks": {
+    "clarification_visible": true,
+    "target_question": true,
+    "error_question": true,
+    "time_question": true
+  },
+  "request_id": "not_collected",
+  "no_ticket_sql_count": "not_collected",
+  "repeat": 1
+}

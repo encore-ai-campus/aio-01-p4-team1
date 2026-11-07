@@ -305,4 +305,13 @@ VM `.env.backend`에는 이 고정 origin no-auth flag만 추가한 뒤 official
 
 - 검증 근거: [IMP-PLAN P0-2 보완 기록](IMP-PLAN.md#p0-2-보완--2026-11-05) 및 P0-3~P1-4 실제 기록, 2026-11-05 로컬 Git 커밋 이력. P1-4 `uv run python deploy/check_db.py --all`은 223 passed, 2 skipped, 기존 경고1건이며 별도 web-flow 시험은 1 passed다. 이 반영안 작성·갱신 과정에서 시험을 재실행하지 않았다.
 - 집계 주의: 시험 수는 `develop/jihye` 로컬 결과이며 팀 공통 평가 통과 수가 아니다. P1-4 web-flow의 C02 호출은 HTTP Mock이다. 커밋은 로컬 Git 이력에서 확인했으며 원격 push 여부는 확인하지 않았다.
-- 미완료·다음 연결: 팀 VM·실제 화면/n8n/data-api/RAG 원본/OpenAI 연결, 공식 평가 및 백업·복원은 미완료다.
+- 미완료·다음 연결: 팀 VM·실제 화면/n8n/data-api/RAG 원본/OpenAI 연결, 공식 평가 및 백업·복원은 당시 미완료다.
+
+## 관리자 직원 생성·계정 삭제 API · 2026-11-07
+
+- **구현 요청 출처:** 팀장 관제탑의 명시적 작업 지시. 개인 백엔드 코드·테스트에 API를 추가했으며 DB migration은 만들지 않았다. 공통 계약 반영·통합 커밋·배포 상태는 별도 검토 전이다.
+- **기존 기준:** C01에는 `GET /api/admin/employees`, `GET/POST/PATCH /api/admin/users`가 정의되어 있고 employee roster는 기존 6명으로 설명된다. 직원 신규 등록 POST와 사용자 DELETE는 정의되어 있지 않다.
+- **제안/구현 계약:** IT팀 관리자가 `POST /api/admin/employees`에 `{name,dept}`를 보내면 새 employee를 만들고 `201 {id,name,dept,user_id:null}`을 받는다. 이어 기존 `POST /api/admin/users`의 `employee_id,login_id,temporary_password`로 계정을 발급한다. `DELETE /api/admin/users/{id}` 성공은 `200 {ok:true,message:"계정이 삭제되었습니다."}`이다. 호출자 본인 또는 `role=admin` 대상은 400 `관리자 본인 계정은 삭제할 수 없습니다.`로 거절한다. 삭제는 같은 DB transaction에서 연결 sessions를 먼저 제거한 뒤 user만 제거하며 employee와 문의·티켓 이력은 보존한다. 새 이름 충돌은 거절한다.
+- **영향:** C01 소비자는 사원 등록 다음 계정 발급의 두 단계와 새 DELETE 응답/400 오류를 알아야 한다. migration은 필요 없고 제공 고정 6명 데이터는 변경하지 않는다.
+- **검토 상대:** 수언님(C01 화면·API 소비/관리자 UI), 오현님(공통 `docs/API-CONTRACT.md` 갱신 및 통합 승인). 이 기록은 상대 검토 요청이며 동의나 공통 반영 완료를 뜻하지 않는다. 외부 메시지는 전송하지 않았다.
+- **확인 상태:** `uv run pytest -q` **163 passed, 67 skipped, 1 기존 Starlette/httpx warning**. OpenAPI와 POST employee/DELETE user 성공 응답·일반 직원 403 fixture는 실행 통과했다. 계정 생성/삭제, 세션 선삭제, employee·문의·티켓 보존을 확인하는 새 격리 PostgreSQL 통합 테스트는 추가했으나 DB opt-in 미설정으로 실행되지 않았다. VM 계정·데이터에는 적용하지 않았다.

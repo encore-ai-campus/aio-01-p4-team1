@@ -1,0 +1,46 @@
+{
+  "scope": "actual source Code executed in local Node VM; synthetic input and ticket ID; not full n8n WF-12 HTTP or real storage",
+  "source_commit": "b9752869ae62d8a12b1395110d21ff68a4388181",
+  "source_file": "develop/dahyeok/workflows/oke-support-13.json",
+  "source_sha256": "38e4d615a37e0d7bb0c3f66e0000d36286a6b6ef2001f2568f08152e6f1497b3",
+  "red_before_fix": {
+    "node_failed": 4,
+    "node_passed": 4,
+    "python_failed": 3
+  },
+  "green_after_fix": {
+    "node_passed": 97,
+    "node_failed": 0,
+    "python_passed": 3,
+    "dahyeok_http_adapter": 12,
+    "dahyeok_retrieval_mock": 9
+  },
+  "wf12_synthetic_output": {
+    "status_code": 200,
+    "response": {
+      "request_id": "wf12-local-report",
+      "sources": [],
+      "ticket": {
+        "ticket_id": "T-2999",
+        "priority": "high",
+        "duplicate": false
+      },
+      "agents": [
+        "triage"
+      ],
+      "security": {
+        "blocked_by": "",
+        "reason": "",
+        "masked": 0
+      },
+      "route": "담당자 이관",
+      "answer": "긴급 보안 문의가 접수되었습니다(T-2999). 피해 확산을 막기 위해 해당 PC의 사내망 연결(유선·Wi-Fi·VPN)을 바로 끊고 IT팀 연락을 기다려 주세요. 문의하신 T-1002(VPN 인증서 재발급)는 현재 '처리 중' 상태입니다.",
+      "reason": "urgent"
+    }
+  },
+  "changed_cases": [
+    "cases/team.json#TM-05",
+    "develop/wonmin/cases/team.json#TM-05"
+  ],
+  "official_flow_check": "not_run"
+}

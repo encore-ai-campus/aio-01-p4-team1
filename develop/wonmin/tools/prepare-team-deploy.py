@@ -11,17 +11,18 @@ import uuid
 
 OWN = Path(__file__).resolve().parents[1]
 ROOT = OWN.parents[1]
-SOURCES = {'jihye': '4fdc3136c1cf643a094bef4bbb9fc872be444571',
+SOURCES = {'jihye': 'ec6a735ea93edacef97f15696bd84cd4e8055241',
            'yubeen': '95ef45f5914b5f2e35e7bd8d94b4f94281d5df49',
-           'dahyeok': '859e3afb10a13baed6f9a0ea0477c4470577c8db'}
+           'dahyeok': 'b9752869ae62d8a12b1395110d21ff68a4388181'}
 
 
 def main():
     runtime = OWN / '.runtime'
     manifest = {'sources': SOURCES, 'workflows': [], 'mode': 'private Ubuntu lab'}
+    for commit in SOURCES.values():
+        subprocess.run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT, check=True)
     for owner in ('jihye', 'yubeen'):
         commit = SOURCES[owner]
-        subprocess.run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT, check=True)
         target = runtime / ('peer-' + owner + '-' + commit[:7])
         marker = target / '.deployment-source.json'
         if marker.exists():
@@ -60,7 +61,11 @@ def main():
                    'WONMIN_PRACTICE_STORE_AUTH': 'wonminLabStorePractice'}
     workflows = []
     for name, source in specs:
-        content = source.read_bytes()
+        owner = {'support': 'dahyeok', 'search': 'yubeen', 'index': 'yubeen'}.get(name)
+        source_commit = SOURCES[owner] if owner else None
+        # Read the pinned blob itself: dirty/newer working files must not be labelled with an older commit.
+        content = (subprocess.check_output(['git', 'show', f'{source_commit}:{source.relative_to(ROOT)}'], cwd=ROOT)
+                   if source_commit else source.read_bytes())
         workflow = json.loads(content)
         workflow['id'] = ids[name]
         workflow['active'] = False
@@ -81,10 +86,12 @@ def main():
                 node['credentials'] = {'httpHeaderAuth': {'id': 'wonminLabTeam', 'name': 'WONMIN_X_TEAM_KEY'}}
             if name == 'search' and node['type'] == 'n8n-nodes-base.httpRequest':
                 node['credentials'] = {'httpHeaderAuth': {'id': 'wonminLabTeam', 'name': 'WONMIN_X_TEAM_KEY'}}
-        workflow['meta'] = {**workflow.get('meta', {}), 'wonminLabDeployment': True, 'sourceSha256': hashlib.sha256(content).hexdigest()}
+        workflow['meta'] = {**workflow.get('meta', {}), 'wonminLabDeployment': True,
+                            'sourceSha256': hashlib.sha256(content).hexdigest(), 'sourceCommit': source_commit}
         workflows.append(workflow)
         manifest['workflows'].append({'id': ids[name], 'name': workflow['name'],
-                                      'source': str(source.relative_to(ROOT)), 'source_sha256': hashlib.sha256(content).hexdigest()})
+                                      'source': str(source.relative_to(ROOT)), 'source_sha256': hashlib.sha256(content).hexdigest(),
+                                      'source_commit': source_commit, 'source_kind': 'git_blob' if source_commit else 'working_tree'})
     imports = runtime / 'n8n-import'
     private_values = dict(line.split('=', 1) for line in (runtime / 'lab.env').read_text().splitlines() if '=' in line)
     for path, data in [(imports / 'team-workflows.json', workflows),

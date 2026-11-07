@@ -125,9 +125,15 @@ def test_session_inquiry_support_and_c05_ticket_linkage(monkeypatch):
             admin_login = admin_client.post("/api/auth/login", json={
                 "login_id": f"p14-admin-login-{suffix}", "password": admin_password})
             assert admin_login.status_code == 200
+            admin_listed = admin_client.get("/api/admin/tickets")
+            assert admin_listed.status_code == 200
+            admin_ticket = next(row for row in admin_listed.json()["items"]
+                                if row["id"] == stored_ticket_id)
+            assert admin_ticket["question"] == "합성 VPN 문의"
             patched = admin_client.patch(f"/api/admin/tickets/{stored_ticket_id}", json={
                 "status": "resolved", "reply": "담당자가 확인했습니다."})
             assert patched.status_code == 200
+            assert patched.json()["question"] == "합성 VPN 문의"
 
             # A fresh session reads current app.tickets state; saved C02 result stays immutable.
             assert client.post("/api/auth/logout").status_code == 200
@@ -155,6 +161,10 @@ def test_session_inquiry_support_and_c05_ticket_linkage(monkeypatch):
             with create_session_factory(engine).begin() as session:
                 session.execute(update(Ticket).where(Ticket.id == stored_ticket_id)
                                 .values(request_key=request_id, inquiry_id=None))
+            admin_ticket_without_fk = next(
+                row for row in admin_client.get("/api/admin/tickets").json()["items"]
+                if row["id"] == stored_ticket_id)
+            assert admin_ticket_without_fk["question"] == "합성 VPN 문의"
             assert client.get("/api/my-requests").json()["items"][0]["ticket"] is None
     finally:
         with create_session_factory(engine).begin() as session:

@@ -1,0 +1,180 @@
+{
+  "scope": "pinned DTO model validation + local workflow Code; no FastAPI/n8n/DB execution",
+  "jihye_commit": "4bbbf49aac652bae947fec1a787b86af7e74f24e",
+  "pydantic_version": "2.14.2",
+  "source_sha256": {
+    "develop/jihye/app/schemas/common.py": "3799414ef507d0d9a60f8a70f19949e72eb931886cb5556a2f2e4b60258d3aad",
+    "develop/jihye/app/schemas/tickets.py": "acbbb39636219c017b3be7f5a281dd230384c41c30506900cc10b2a88b2bd73d",
+    "develop/jihye/app/schemas/alerts.py": "b2c0db66960e86bd85a073b7e108be539985f03121583c12c774ede88feed5dc"
+  },
+  "workflow_sha256": "f011b9342175b37d34dde8c58f2ac413d9121ce5b8761c4c09ef5066df62e443",
+  "samples": [
+    {
+      "name": "tickets-normal",
+      "endpoint": "/tickets",
+      "stage": "implemented_mapping",
+      "body": {
+        "key": "wm-p11-handoff-normal",
+        "title": "VPN 현장 점검 요청",
+        "requester": "박서연",
+        "category": "network",
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "alerts-practice",
+      "endpoint": "/alerts",
+      "stage": "implemented_mapping",
+      "body": {
+        "workflow": "oke-handoff",
+        "node": "H06 Keep Ticket",
+        "message": "담당자 이관 티켓이 접수되었습니다.",
+        "severity": "normal",
+        "ticket_id": "T-2001"
+      }
+    },
+    {
+      "name": "alerts-app",
+      "endpoint": "/alerts",
+      "stage": "implemented_mapping",
+      "body": {
+        "workflow": "oke-handoff",
+        "node": "H06 Keep Ticket",
+        "message": "담당자 이관 티켓이 접수되었습니다.",
+        "severity": "normal",
+        "ticket_id": "T-2001",
+        "event_key": "wm-p11-handoff-normal:ticket-created"
+      }
+    },
+    {
+      "name": "tickets-high",
+      "endpoint": "/tickets",
+      "stage": "implemented_mapping",
+      "body": {
+        "key": "wm-p11-handoff-high",
+        "title": "VPN 현장 점검 요청",
+        "requester": "박서연",
+        "category": "network",
+        "priority": "high"
+      }
+    },
+    {
+      "name": "tickets-duplicate",
+      "endpoint": "/tickets",
+      "stage": "implemented_mapping",
+      "body": {
+        "key": "wm-p11-handoff-duplicate",
+        "title": "VPN 현장 점검 요청",
+        "requester": "박서연",
+        "category": "network",
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "dlq-ticket-failure",
+      "endpoint": "/dlq",
+      "stage": "planned_P1-2_or_P1-3_not_sent",
+      "body": {
+        "request_id": "wm-c05-ticket-failure",
+        "workflow": "oke-handoff",
+        "node": "H04 Create Ticket",
+        "reason": "tickets_down",
+        "safe_payload": {
+          "stage": "ticket",
+          "priority": "normal"
+        },
+        "execution_ref": "local-review-only"
+      }
+    },
+    {
+      "name": "dlq-unexpected-error",
+      "endpoint": "/dlq",
+      "stage": "planned_P1-2_or_P1-3_not_sent",
+      "body": {
+        "request_id": null,
+        "workflow": "oke-errors",
+        "node": "E02 Safe Context",
+        "reason": "unexpected",
+        "safe_payload": {
+          "stage": "unexpected",
+          "priority": "normal"
+        },
+        "execution_ref": "local-review-only"
+      }
+    }
+  ],
+  "request_checks": [
+    {
+      "name": "tickets-normal",
+      "endpoint": "/tickets",
+      "request_model": "accepted_no_fields_lost"
+    },
+    {
+      "name": "alerts-practice",
+      "endpoint": "/alerts",
+      "request_model": "accepted_no_fields_lost"
+    },
+    {
+      "name": "alerts-app",
+      "endpoint": "/alerts",
+      "request_model": "accepted_no_fields_lost"
+    },
+    {
+      "name": "tickets-high",
+      "endpoint": "/tickets",
+      "request_model": "accepted_no_fields_lost"
+    },
+    {
+      "name": "tickets-duplicate",
+      "endpoint": "/tickets",
+      "request_model": "accepted_no_fields_lost"
+    },
+    {
+      "name": "dlq-ticket-failure",
+      "endpoint": "/dlq",
+      "request_model": "accepted_no_fields_lost"
+    },
+    {
+      "name": "dlq-unexpected-error",
+      "endpoint": "/dlq",
+      "request_model": "accepted_no_fields_lost"
+    }
+  ],
+  "requests_accepted": 7,
+  "dlq_request_id_omitted": "rejected_required_nullable_field",
+  "duplicate_alert_ack": {
+    "backend_input": {
+      "stored": 0,
+      "count": 1,
+      "duplicate": true
+    },
+    "model_output": {
+      "stored": 0,
+      "count": 1
+    },
+    "workflow_before_serialization": {
+      "ok": true,
+      "ticket": {
+        "ticket_id": "T-2001",
+        "priority": "normal",
+        "duplicate": true
+      },
+      "reason": null,
+      "alerted": true,
+      "dlq": false
+    },
+    "workflow_after_serialization": {
+      "ok": false,
+      "ticket": {
+        "ticket_id": "T-2001",
+        "priority": "normal",
+        "duplicate": true
+      },
+      "reason": "alerts_down",
+      "alerted": false,
+      "dlq": false
+    },
+    "status": "incompatible_duplicate_flag_is_discarded"
+  },
+  "service_auth_storage": "not_run"
+}

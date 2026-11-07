@@ -1,0 +1,9 @@
+{
+  "request_id": "dh-urgent-001",
+  "requester": "박서연",
+  "title": "피싱 링크 클릭 신고 및 VPN 접수 문의",
+  "category": "security",
+  "priority": "high",
+  "reason": "urgent",
+  "evidence_summary": "보안 사고 문의. 세부 개인정보는 제외."
+}

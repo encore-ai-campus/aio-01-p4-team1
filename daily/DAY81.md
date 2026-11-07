@@ -239,3 +239,22 @@ case 고정 입력·기대값을 수정하지 않았고 수동 장애 주입/상
 | DAY81 4교시 중간점검·배포1 반영 및 5교시 갱신 | 이 커밋의 GitHub main 이력으로 확인 | 1~4교시 요약 정합화, 4교시 중간점검 및 VM 배포 1 완료 반영, 5교시 보안/권한 진행 착수 기록 |
 | DAY81 5교시 보안/권한 완료 반영 및 6교시 갱신 | 이 커밋의 GitHub main 이력으로 확인 | 5교시 본체 15번(aedbb95) 및 FE 디자인 이식(67ef41b) 반영, 6교시 장애/멱등성 착수 기록 |
 | DAY81 6교시 장애/멱등성 완료 및 7교시 갱신 | 이 커밋의 GitHub main 이력으로 확인 | 6교시 WF-02b VM E2E 실측 통과(90fab63, T-2011, 4.535s) 및 WF-04/09 멱등 회귀 반영, 1~6교시 전담 섹션 구축, 7교시 배포 2 착수 기록 |
+
+## 8교시 · 기능 동결 및 주말 보완 인계 · 2026-11-07
+
+### 동결 기준선
+
+- **동결 범위:** DAY81 발표/제출 기준으로 배포·공용 workflow·권한/DB 계약을 임의 수정하지 않는다. VM은 `17007f1`/Support 15 published `d0d6396d…` 기준의 이전 관측이며 11/07 보고서에서 신규 deploy를 확인하지 않았다. 실행 중단/수정이 필요한 경우 별도 승인과 버전·rollback 기록을 남긴다.
+- **v18 주말 보완 이력:** 다혁 로컬 `support-16~18`에서 N12 후보값 0.40, N04 triage 규칙, FAQ 보조 근거와 FAQ 조회 5노드→2노드 경량화를 적용한 기록이 `develop/dahyeok/Doc/LOCAL-TEST.md`에 있다. 이는 로컬 개선·측정이며 VM에 반영된 정책이나 승인 임계값은 아니다.
+- **RAG 실측 업데이트:** 11/07 VM `af82c3b` 보고서에서 원문 8문서/저장 33청크, all 7문서/30청크와 it 1문서/3청크, `vector(3072)`, `cl100k_base` 길이/토큰 분포, 해시 정합을 확인했다. C03 일반/IT 및 n8n 검색 HTTP 200/evidence 3. Hit@3/MRR/threshold/p95/청킹 비교와 비용은 미측정으로 유지한다.
+- **라이브 QA 영수증:** 동일 요청 멱등 `T-2030`(tickets 1, inquiries 1, alert 1, DLQ 0), WF-02b `T-2011`(10 API sequence checks), WF-03 `T-2005`(inquiry-ticket 1:1, 관리자 처리 및 직원 재조회)로 구분 기록했다. 각 시각·버전은 EXECUTION-RESULT §15를 따른다.
+- **동결 잔여:** 공식 common-14 원본/runner 미확보, official 14 PASS 미주장, Error Trigger 자동 발화·child execution logging `all` 미검증, VM 정상 자동답변·8초 기준 미통과/미입증. `WORKFLOW-LINK-LOG-GAP-ANALYSIS-2026-11-07.md`를 근거로 오류 경로는 미확인 유지.
+
+### 주말 개선 항목 (동결 이후, 완료 주장 아님)
+
+1. **오류 추적성:** 승인된 테스트 부모 workflow와 실행 권한을 마련하고 자식 성공/오류 execution 저장 `all` 설정 여부, parent/child ID, `oke-errors` 자동 발화, alert/DLQ DB 행을 안전한 통제 시험으로 확인한다.
+2. **RAG 품질:** 승인된 frozen 정답표 및 동일 해시/권한의 격리 DB에서 질문별 top-3, score, 정답 section/필수 인용, 권한 누출, 시간·오류를 측정한다. 0.40은 승인 threshold로 취급하지 않는다.
+3. **성능/정상 경로:** 다혁·원민이 고정 입력과 동일 배포를 사용해 WF-01을 fresh request ID로 반복하고 실제 source·trace·최종 route·응답시간을 보존한다. 로컬 v18 9.9/10.8초 및 VM Period7 3회 안전 이관 결과를 성공 자동답변으로 재분류하지 않는다.
+4. **RAG DSN 재현성:** local fresh setup의 `repair-rag-dsn` 문서화 및 secret-free 확인 절차를 보완하고, VM search/index DSN은 담당자 읽기 전용 점검으로 확인한다.
+
+모든 개선은 다음 제출 승인·실행 창에 묶고, 변경 전 기준선·실패 raw·수정 commit·동일 조건 재시험을 연결한다. 이 기록은 workflow/RAG 설계서 자체의 수정을 의미하지 않는다.

@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.db.models import Session as LoginSession, User
@@ -25,3 +25,8 @@ def revoke_user_sessions(session: Session, user_id: int) -> int:
     for row in rows:
         row.revoked_at = now
     return len(rows)
+
+
+def delete_user_sessions(session: Session, user_id: int) -> int:
+    result = session.execute(delete(LoginSession).where(LoginSession.user_id == user_id))
+    return result.rowcount or 0

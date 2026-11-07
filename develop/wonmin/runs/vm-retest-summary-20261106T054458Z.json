@@ -1,0 +1,40 @@
+{
+  "environment": "team VM public real service",
+  "main_source": "3dc5f23",
+  "scenario": "WF-02b",
+  "independent_request_ids": true,
+  "rounds": [
+    {
+      "round": 1,
+      "started_at_utc": "2026-11-06T05:44:58.696486+00:00",
+      "raw": "vm-retest-WF02b-20261106T054458Z-r1.json",
+      "exit": 0,
+      "request_id": "real-qa-e9ea1cdc3ffa41999f2ac269e1237db5",
+      "ticket_id": "T-2008",
+      "verdict": "PASS_API_SEQUENCE",
+      "seconds": 4.828
+    },
+    {
+      "round": 2,
+      "started_at_utc": "2026-11-06T05:45:05.737356+00:00",
+      "raw": "vm-retest-WF02b-20261106T054458Z-r2.json",
+      "exit": 0,
+      "request_id": "real-qa-f1c560ff39bd46cda7ed866ca4c02461",
+      "ticket_id": "T-2009",
+      "verdict": "PASS_API_SEQUENCE",
+      "seconds": 1.729
+    },
+    {
+      "round": 3,
+      "started_at_utc": "2026-11-06T05:45:09.390869+00:00",
+      "raw": "vm-retest-WF02b-20261106T054458Z-r3.json",
+      "exit": 0,
+      "request_id": "real-qa-2db1971503a241428cf4d30ecab63bac",
+      "ticket_id": "T-2010",
+      "verdict": "PASS_API_SEQUENCE",
+      "seconds": 1.649
+    }
+  ],
+  "direct_sql": false,
+  "n8n_trace": false
+}

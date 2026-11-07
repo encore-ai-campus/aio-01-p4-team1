@@ -57,7 +57,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
       <nav aria-label={admin ? "관리자 메뉴" : "직원 메뉴"}>{links.map(([label, href]) => <Link key={href} className={`${admin ? "admin-nav" : "employee-nav"} ${pathname === href ? "active" : ""}`} href={href}>{label}</Link>)}</nav>
     </aside>
     <section className={admin ? "admin-main" : "employee-main"}>
-      <header className={admin ? "admin-header" : "employee-header"}><span>{user.name} · {user.dept} · {admin ? "관리자" : "직원"}</span><button type="button" onClick={signOut}>로그아웃</button></header>
+      <header className={admin ? "admin-header" : "employee-header"}><span className="header-user-summary">{user.name} · {user.dept} · {admin ? "관리자" : "직원"}</span><button className="header-logout" type="button" onClick={signOut}>로그아웃</button></header>
       {error && <p className="error shell-error" role="alert">{error}</p>}
       {children}
     </section>

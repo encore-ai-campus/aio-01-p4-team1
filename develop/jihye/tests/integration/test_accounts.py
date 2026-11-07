@@ -13,11 +13,13 @@ from pydantic import SecretStr
 
 from app.core.config import Settings
 from app.core.security import hash_password, hash_session_token, verify_password
-from app.db.models import Employee, Session as LoginSession, User
+from app.db.models import (Employee, Inquiry, Session as LoginSession, Ticket, User)
 from app.db.session import create_db_engine, create_session_factory
 from app.main import create_app
 from app.services.accounts import (AccountError, account_items, create_account,
-                                   employee_items, reset_password, update_active)
+                                   create_employee, delete_account, employee_items,
+                                   reset_password, update_active)
+from app.api.errors import PublicApiError
 from app.services.auth import (LoginError, authenticate, change_password, load_current_user,
                                logout)
 
@@ -112,6 +114,49 @@ def test_account_creation_duplicates_reset_and_session_revocation(db):
     with pytest.raises(LoginError):
         authenticate(db, login_id=employee["login_id"], password="Temporary-Staff-934!",
                      session_secret=secret)
+
+
+def test_create_employee_and_delete_account_preserves_employee_history(db):
+    employee_view = create_employee(db, name="fixture-new-staff", dept="영업팀")
+    employee = db.get(Employee, employee_view["id"])
+    assert employee is not None and employee_view["user_id"] is None
+    with pytest.raises(AccountError) as duplicate:
+        create_employee(db, name="fixture-new-staff", dept="영업팀")
+    assert duplicate.value.status == 409
+
+    account = create_account(db, employee_id=employee.id, login_id="fixture-new-staff",
+                             password="Temporary-Staff-934!")
+    inquiry = Inquiry(request_id="fixture-new-staff-1", requester_id=employee.id,
+                      question="기록 보존 질문", attempt=1, status="completed")
+    db.add(inquiry)
+    db.flush()
+    ticket = Ticket(request_key=inquiry.request_id, inquiry_id=inquiry.id,
+                    requester_id=employee.id, title="기록 보존 티켓", category="network",
+                    priority="normal")
+    login_session = LoginSession(user_id=account["id"], token_hash="fixture-delete-token-hash",
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1))
+    db.add_all([ticket, login_session])
+    db.flush()
+
+    with pytest.raises(PublicApiError) as self_delete:
+        delete_account(db, user_id=account["id"], actor_id=account["id"])
+    assert self_delete.value.status == 400
+    assert self_delete.value.message == "관리자 본인 계정은 삭제할 수 없습니다."
+
+    result = delete_account(db, user_id=account["id"], actor_id=999999)
+    assert result == {"ok": True, "message": "계정이 삭제되었습니다."}
+    assert db.get(User, account["id"]) is None
+    assert db.get(LoginSession, login_session.id) is None
+    assert db.get(Employee, employee.id) is not None
+    assert db.get(Inquiry, inquiry.id).question == "기록 보존 질문"
+    assert db.get(Ticket, ticket.id).inquiry_id == inquiry.id
+
+
+def test_admin_account_cannot_be_deleted(db):
+    _, _, admin, _, _ = setup_accounts(db)
+    with pytest.raises(PublicApiError) as rejected:
+        delete_account(db, user_id=admin.id, actor_id=999999)
+    assert rejected.value.status == 400
 
 
 def test_inactive_account_expires_and_last_admin_guards(db):

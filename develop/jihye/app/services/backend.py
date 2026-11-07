@@ -7,7 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.core.config import Settings
 from app.db.session import DatabaseConfigurationError, create_db_engine, create_session_factory
 from app.services.accounts import (AccountError, account_items, create_account,
-                                   employee_items, reset_password, update_active)
+                                   create_employee, delete_account, employee_items,
+                                   reset_password, update_active)
 from app.services.auth import LoginError, authenticate, change_password, logout
 from app.services.inquiries import ask_support, my_requests
 from app.services.alerts import create_alert, create_dlq, list_admin_alerts
@@ -70,6 +71,8 @@ class DatabaseBackend:
                         new_password=body.new_password.get_secret_value())
                 if operation == "employees":
                     return {"items": employee_items(session)}
+                if operation == "create_employee":
+                    return create_employee(session, name=body.name, dept=body.dept)
                 if operation == "users":
                     return {"items": account_items(session)}
                 if operation == "create_user":
@@ -78,6 +81,8 @@ class DatabaseBackend:
                 if operation == "update_user":
                     return update_active(session, user_id=entity_id, actor_id=principal.id,
                                          is_active=body.is_active)
+                if operation == "delete_user":
+                    return delete_account(session, user_id=entity_id, actor_id=principal.id)
                 if operation == "reset_password":
                     return reset_password(session, user_id=entity_id,
                                           password=body.temporary_password.get_secret_value())

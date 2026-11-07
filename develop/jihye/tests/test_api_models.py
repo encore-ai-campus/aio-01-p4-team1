@@ -18,8 +18,9 @@ WEB = {
     "/api/auth/login": {"post"}, "/api/auth/logout": {"post"}, "/api/auth/me": {"get"},
     "/api/auth/change-password": {"post"}, "/api/ask": {"post"}, "/api/my-requests": {"get"},
     "/api/admin/tickets": {"get"}, "/api/admin/tickets/{id}": {"patch"},
-    "/api/admin/employees": {"get"}, "/api/admin/users": {"get", "post"},
-    "/api/admin/users/{id}": {"patch"}, "/api/admin/users/{id}/reset-password": {"post"},
+    "/api/admin/employees": {"get", "post"}, "/api/admin/users": {"get", "post"},
+    "/api/admin/users/{id}": {"patch", "delete"},
+    "/api/admin/users/{id}/reset-password": {"post"},
     "/api/admin/alerts": {"get"},
 }
 
@@ -28,7 +29,7 @@ def test_openapi_matches_current_contract():
     schema = create_app().openapi()
     paths = schema["paths"]
     assert {p: set(ops) for p, ops in paths.items() if p.startswith("/api/")} == WEB
-    assert sum(len(ops) for ops in WEB.values()) == 14
+    assert sum(len(ops) for ops in WEB.values()) == 16
     assert set(paths) == set(WEB) | {"/health/live", "/health/ready", "/tickets", "/alerts", "/dlq"}
     for path, operations in paths.items():
         for method, operation in operations.items():
@@ -145,7 +146,9 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
         login={"user": account, "_token": "fixture-only-token"}, logout={"ok": True},
         change_password={"ok": True, "must_change_password": False},
         employees={"items": [{"id": 5, "name": admin.name, "dept": admin.dept, "user_id": 2}]},
+        create_employee={"id": 6, "name": "신규 직원", "dept": "영업팀", "user_id": None},
         users={"items": [account]}, create_user=account, update_user=account,
+        delete_user={"ok": True, "message": "계정이 삭제되었습니다."},
         reset_password={"ok": True, "must_change_password": True},
         my_requests={"items": [{"request_id": "req-fixture", "question": "문의", "attempt": 1,
                                 "result": None, "ticket": None, "created_at": now}]},
@@ -162,9 +165,12 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
         ("post", "/api/ask", {"question": "문의", "request_id": "req-fixture"}, 200),
         ("get", "/api/my-requests", None, 200), ("get", "/api/admin/tickets", None, 200),
         ("patch", "/api/admin/tickets/1", {"status": "in_progress", "assignee": 5}, 200),
-        ("get", "/api/admin/employees", None, 200), ("get", "/api/admin/users", None, 200),
+        ("get", "/api/admin/employees", None, 200),
+        ("post", "/api/admin/employees", {"name": "신규 직원", "dept": "영업팀"}, 201),
+        ("get", "/api/admin/users", None, 200),
         ("post", "/api/admin/users", {"employee_id": 5, "login_id": "fixture", "temporary_password": password}, 201),
         ("patch", "/api/admin/users/2", {"is_active": False}, 200),
+        ("delete", "/api/admin/users/3", None, 200),
         ("post", "/api/admin/users/2/reset-password", {"temporary_password": password}, 200),
         ("get", "/api/admin/alerts", None, 200),
         ("post", "/tickets", {"key": "req-fixture", "title": "문의", "requester": user.name,
@@ -181,6 +187,11 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
             assert response.json()["items"][0]["question"] == "원문 질문"
         elif path == "/api/admin/tickets/1":
             assert response.json()["question"] == "원문 질문"
+        elif path == "/api/admin/employees" and method == "post":
+            assert response.json() == {"id": 6, "name": "신규 직원", "dept": "영업팀",
+                                       "user_id": None}
+        elif path == "/api/admin/users/3" and method == "delete":
+            assert response.json() == {"ok": True, "message": "계정이 삭제되었습니다."}
         for secret in [password, account["password_hash"], account["token_hash"]]:
             assert secret not in response.text
         if path == "/api/auth/login":

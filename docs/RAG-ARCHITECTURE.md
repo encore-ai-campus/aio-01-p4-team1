@@ -1,6 +1,6 @@
 # RAG 아키텍처 · 오케퐁
 
-**기준 실측:** 2026-11-07, VM 배포 코드 `af82c3b`. PostgreSQL의 규정 인덱스 8문서·33청크, 권한 분류, 원문/저장 청크 해시 정합성, 임베딩 모델과 차원을 확인했다. 토큰 통계는 `cl100k_base`로 산출했다. 검색 점수 분포는 2026-11-06 로컬 `oke-local` 검색 실행에서 측정했으며, VM 실DB 저장 통계와 구분한다. 평가 기준 및 운영 설명은 [데이터·DB 기준](DATA-AND-DB.md), [API 계약](API-CONTRACT.md), [실행 결과](EXECUTION-RESULT.md)를 따른다.
+**기준 실측:** 2026-11-07, VM 배포 코드 `af82c3b` 및 실서버 검색 검증 영수증([`runs/rag-search-eval-20261107.json`](../runs/rag-search-eval-20261107.json)). PostgreSQL의 사내 규정 인덱스 **8문서·33청크**(`all` 일반 7문서·30청크, `it` 전용 1문서·3청크), 권한 분류, 원문/저장 청크 해시 정합성, 임베딩 모델(`text-embedding-3-large`)과 차원(`vector(3072)`)을 실측 확인했다. 토큰 통계는 `cl100k_base`로 산출했다(본문 240–433자 / 195–375 tokens, 청크 13–156자 / 10–163 tokens, 임베딩 입력 26–182자 / 22–192 tokens). 검색 점수 분포는 로컬 `oke-local` 검색 실행과 실서버 C03 웹훅 검증 결과를 함께 기록한다. 평가 기준 및 운영 설명은 [데이터·DB 기준](DATA-AND-DB.md), [API 계약](API-CONTRACT.md), [실행 결과](EXECUTION-RESULT.md)를 따른다.
 
 ## 1. 원본과 실측 색인
 
@@ -41,9 +41,13 @@
 
 이 표의 청크 수는 문서 분할 결과 비교다. 청크 수만으로 검색 품질 우열을 정하지 않는다. 표·목록·코드 블록을 보존하고, 절 경계를 가로지르는 비교 청크에는 포함 절과 원문 범위를 남긴다. 기준 색인은 절 단위이며, 다른 분할 방식으로 운영 기본값을 바꾸려면 동일 질의·모델·권한 조건의 평가 근거가 필요하다.
 
+- **아키텍처 선정 근거 ① — 절 단위(`##`) 청킹을 선택한 이유:** 사내 규정의 절 제목과 세부 조건을 하나의 임베딩 입력(`문서 제목 + 절 제목 + 본문`) 안에 온전히 보존하고, 답변 생성 시 정확한 `doc`·`section` 출처 인용을 유지하기 위해서다. 고정 글자 수(300자/500자) 분할 시 표나 예외 조항이 절 경계에서 잘려 문맥이 유실되는 문제를 방지한다.
+
 ## 3. 권한 격리와 검색
 
 검색은 권한을 벡터 유사도 계산 뒤에 거르는 방식으로 구현하지 않는다. 본체가 직원 신원을 확인해 `access_levels`를 만든 뒤 검색 요청에 전달한다. DB 질의는 먼저 문서 권한을 SQL `WHERE` 조건으로 제한하고, 허용 집합의 후보에 대해서만 모델·벡터 거리를 계산한다.
+
+- **아키텍처 선정 근거 ② — 검색 전 권한 필터(SQL Pre-Filtering)를 선택한 이유:** 허용되지 않은 `it` 전용 청크를 Top-3 후보 계산 전에 원천 배제해야 비권한 일반 직원에게 보안 문건이 근거로 노출되거나 일반 규정 후보가 밀려나는 현상을 막을 수 있다.
 
 ```sql
 SELECT d.doc_key, c.section, c.content,
@@ -58,7 +62,12 @@ LIMIT 3;
 
 일반 직원은 `verified_access_levels = ['all']`, IT 직원은 `['all','it']`로 검색한다. 접근 수준을 SQL 후보 집합에서 선제한 뒤 점수순으로 최대 3건을 반환한다. 쿼리는 바인딩 매개변수를 사용한다. 질문의 문구나 팀 키만으로 직원 권한을 만들어내지 않으며, 허용 집합이 없거나 지원하지 않는 값이면 요청을 거절한다.
 
-**WF-05 권한 격리 결과:** DB에는 `all` 7문서/30청크, `it` 1문서(`security-incident`)/3청크가 저장돼 있다. 일반 직원의 `all` 검색 결과에서 IT 전용 문서 노출은 **0건**이었다. 권한 격리는 응답 후 필터만으로 보장하지 않고, SQL 사전 필터와 결과 검증을 함께 적용한다.
+**WF-05 권한 격리 실서버 검증 결과 ([`runs/rag-search-eval-20261107.json`](../runs/rag-search-eval-20261107.json)):**
+- 실서버 DB에는 `all` 7문서/30청크, `it` 1문서(`security-incident`)/3청크(전 청크 3072차원)가 저장돼 있다.
+- **동일 보안사고 질의 비교 실측:**
+  - 일반 직원 범위(`access_levels=["all"]`, `test_id: WF05-ALL-SCOPE`): HTTP 200, 반환 문서 ID `["privacy", "device-issue-return", "password-policy"]` (점수 `0.5394`, `0.4420`, `0.3790`) ➔ **IT 전용 규정(`security-incident`) 누출 0건 (`wf05_leaked_it_count: 0`, PASS)**.
+  - IT 부서 범위(`access_levels=["all", "it"]`, `test_id: WF05-IT-SCOPE`): HTTP 200, 반환 문서 ID `["security-incident", "security-incident", "privacy"]` (점수 `0.5544`, `0.5466`, `0.5394`) ➔ **IT 전용 규정 2건 정상 반환 (PASS)**.
+  - 일반 규정 검색(`C03-PASS-POLICY`, `C03-VPN-POLICY`)에서도 각각 `password-policy` 3건(최고 `0.6558`), `remote-work-vpn` 3건(최고 `0.5487`)이 누출 0건으로 정확히 반환되었으며, 인증 누락(`403`) 및 잘못된 `top_k`(`400 invalid_request`) 방어도 실서버에서 통과했다.
 
 ### 유사도 측정 및 0.40 기준
 
@@ -131,4 +140,4 @@ VM PostgreSQL 재시작 후 8문서/33청크 보존은 [실행 결과](EXECUTION
 
 운영 기록에는 원본 버전·문서별 SHA-256·권한 출처·청킹 설정·모델·차원·색인시각·DB 대상·실패 문서 목록을 연결한다. 권한·모델·차원·청킹 변경은 별도 검토와 회귀 측정을 거친다. 토큰 통계는 `cl100k_base`를 이용한 텍스트 추정치이며 API에서 보고된 실제 사용량이나 비용과 동일시하지 않는다.
 
-참조: [데이터·DB 기준](DATA-AND-DB.md) · [API 계약](API-CONTRACT.md) · [평가·시나리오 기준](EVALUATION-GUIDE.md) · [전체 구성도](ARCHITECTURE.md) · [Step 2 RAG/QA 실측](../../4pj%20준비/orchestrator/status/STEP2-RAG-QA-MEASUREMENTS-2026-11-07.md)
+참조: [데이터·DB 기준](DATA-AND-DB.md) · [API 계약](API-CONTRACT.md) · [평가·시나리오 기준](EVALUATION-GUIDE.md) · [전체 구성도](ARCHITECTURE.md) · [실서버 RAG 검색 검증 영수증](../runs/rag-search-eval-20261107.json) · [실서버 검색 연동 관측 영수증](../runs/vm-search-observed-20261106.json)

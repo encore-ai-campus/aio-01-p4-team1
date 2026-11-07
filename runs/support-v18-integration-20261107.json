@@ -1,15 +1,15 @@
 {
-  "timestamp_utc": "2026-11-07T08:09:02Z",
+  "timestamp_utc": "2026-11-07T11:45:10Z",
   "target": "VM aio-t1 oke-support",
-  "pass": 1,
+  "pass": 3,
   "total": 4,
   "results": [
     {
       "case_id": "WF-01",
-      "request_id": "v18-wf-01-1794038924",
+      "request_id": "v18-wf-01-1794051894",
       "via": "direct",
       "http_status": 200,
-      "elapsed_sec": 11.916,
+      "elapsed_sec": 8.754,
       "route": "자동 답변",
       "expected_route": [
         "자동 답변"
@@ -33,10 +33,10 @@
     },
     {
       "case_id": "WF-02",
-      "request_id": "v18-wf-02-1794038924",
+      "request_id": "v18-wf-02-1794051894",
       "via": "direct",
       "http_status": 200,
-      "elapsed_sec": 2.01,
+      "elapsed_sec": 1.812,
       "route": "보완 질문",
       "expected_route": [
         "보완 질문"
@@ -49,58 +49,62 @@
     },
     {
       "case_id": "WF-02b",
-      "request_id": "v18-wf-02b-1794038924",
+      "request_id": "v18-wf-02b-1794051894",
       "via": "direct",
       "http_status": 200,
-      "elapsed_sec": 2.005,
+      "elapsed_sec": 2.188,
       "route": "담당자 이관",
       "expected_route": [
         "담당자 이관"
       ],
-      "matched": false,
-      "reason": "handoff_unavailable",
+      "matched": true,
+      "reason": "max_attempts",
       "sources": [],
-      "ticket": null,
-      "answer": "접수 결과를 확인할 수 없습니다. 같은 요청 ID로 다시 확인해 주세요."
+      "ticket": {
+        "ticket_id": "T-2035",
+        "priority": "normal",
+        "duplicate": false
+      },
+      "answer": "IT팀 티켓이 접수되었습니다."
     },
     {
       "case_id": "WF-03",
-      "request_id": "v18-wf-03-1794038924",
+      "request_id": "v18-wf-03-1794051894",
       "via": "direct",
       "http_status": 200,
-      "elapsed_sec": 1.58,
+      "elapsed_sec": 3.004,
       "route": "담당자 이관",
       "expected_route": [
         "담당자 이관"
       ],
-      "matched": false,
-      "reason": "handoff_unavailable",
+      "matched": true,
+      "reason": "low_confidence",
       "sources": [],
-      "ticket": null,
-      "answer": "접수 결과를 확인할 수 없습니다. 같은 요청 ID로 다시 확인해 주세요."
+      "ticket": {
+        "ticket_id": "T-2036",
+        "priority": "normal",
+        "duplicate": false
+      },
+      "answer": "IT팀 티켓이 접수되었습니다."
     }
   ],
   "wf01_rerun": [
     {
-      "elapsed_sec": 7.0,
+      "elapsed_sec": 6.9,
       "route": "자동 답변"
     },
     {
-      "elapsed_sec": 4.3,
+      "elapsed_sec": 4.8,
       "route": "자동 답변"
     },
     {
-      "elapsed_sec": 6.2,
-      "route": "자동 답변"
-    },
-    {
-      "elapsed_sec": 4.0,
+      "elapsed_sec": 3.8,
       "route": "자동 답변"
     }
   ],
   "notes": [
-    "WF-01 첫 호출 11.9s(8s 초과), 재측정 7.0s·4.3s·6.2s·4.0s 모두 8s 이내 (콜드 스타트 추정)",
-    "WF-02b·WF-03 이관 판정은 맞으나 VM에서 C04 handoff 호출 실패(handoff_unavailable) → 티켓 미발급, 팀장님 확인 요청",
-    "VM 읽기 진단: oke-handoff 활성·등록됨, n8n 로그에 POST /webhook/oke-handoff 처리 중 Cannot read properties of null (reading 'disabled') 반복 → 웹훅 credential 누락 추정"
+    "2차 시험(20:45, oke-handoff H01 복구 후): WF-02b T-2035·WF-03 T-2036 티켓 발급 PASS",
+    "WF-01 첫 호출 8.754s(8s 초과), 이어서 3회 재측정 6.9, 4.8, 3.8s",
+    "1차 시험(17:09)은 VM oke-handoff H01 웹훅 노드 유실로 handoff_unavailable → 원본: support-v18-integration-20261107-before-fix.json"
   ]
 }

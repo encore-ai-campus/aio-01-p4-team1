@@ -115,7 +115,7 @@ python3 -m json.tool workflows/oke-support-02.json > /dev/null
 현재 `develop/dahyeok/tools/flow.py`는 P0-1~P0-3 번호판을 검사하는 별도 **로컬 검사기**다. P1-1~P1-2 번호판은 `tools/retrieval_check.py`로 검사한다. 아래 예정 명령의 80일차 평가 키트 `flow.py`를 대신하지 않으며, 두 결과를 보고에서 구별한다.
 
 ```bash
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support-13.json
+uv run tools/flow.py check develop/dahyeok/workflows/oke-support-15.json
 ```
 
 연결 검토 항목:
@@ -139,7 +139,7 @@ uv run tools/flow.py check develop/dahyeok/workflows/oke-support-13.json
 예정 CLI 형식(키트 제공 후 확인, 현재 실행 불가):
 
 ```bash
-uv run tools/flow.py push develop/dahyeok/workflows/oke-support-13.json
+uv run tools/flow.py push develop/dahyeok/workflows/oke-support-15.json
 uv run tools/flow.py test develop/dahyeok/cases/support-input.json --webhook oke-support -v
 uv run tools/flow.py test develop/wonmin/cases/common.json --webhook oke-support --repeat 3
 uv run tools/flow.py bench oke-support develop/dahyeok/requests/input-valid.json -n 5

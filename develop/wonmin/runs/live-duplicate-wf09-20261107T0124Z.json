@@ -1,0 +1,28 @@
+{
+  "scope": "derived_not_official_common_suite",
+  "selection": "live_request_candidates",
+  "origin": "https://aio-t1.isitsoft.kr:5678",
+  "deploy_sha": "af82c3b",
+  "suite_sha256": "0a856384abbd9ad2da16b12f09e72eeabb47bd2bcd402ecdffdfdc4be5d5e41e",
+  "runner_sha256": "0fa9755b6cfea961082718d6112dde6fa73ac0c28262596dd1a3a3cbcefcfa3d",
+  "category_count": null,
+  "aborted_on_baseline_failure": true,
+  "abort_http_status": 403,
+  "cases": [
+    {
+      "case_id": "WF-09",
+      "call_index": 1,
+      "request_id": "p7-8a31351ee7394f54997b5dd2cc8fc078",
+      "http_status": 403,
+      "elapsed_seconds": 0.057,
+      "observed": {
+        "response_shape": "non_json_or_non_object"
+      },
+      "checks": {
+        "same_ticket_id": false
+      },
+      "unobserved": [],
+      "verdict": "FAIL_OR_INCOMPLETE"
+    }
+  ]
+}

@@ -2015,8 +2015,7 @@
     }
   },
   "settings": {
-    "executionOrder": "v1",
-    "errorWorkflow": "okeErrorsFlow01"
+    "executionOrder": "v1"
   },
   "active": false
 }

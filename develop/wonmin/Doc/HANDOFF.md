@@ -213,3 +213,33 @@ VM 내부 직접대조(2026-11-06): Orca Computer Use로 로그인된 실제 Ubu
 - `request_id=real-qa-36352d26c53e48eab65a42c4a0c5ec85`, `route=담당자 이관`, `sources=[]`, elapsed 7.341초. 인증/role·employee admin 403·문의 생성/직원 목록/재로그인·관리자 처리와 재조회 API sequence는 PASS. 이는 검색 성공/정상 자동답변/WF-01 8초 PASS가 아니다.
 - 같은 고유 request_id로 독립 read-only DB 검증: inquiry 1행, matching ticket request_key 1행, `T-2005`; inquiry/ticket/requester ID 연결, `in_progress`, 관리 답변 일치. 전체 row count 증가분을 단건 증거로 쓰지 않았고, 기존/타인 데이터를 삭제하지 않았다. 자세한 비밀 없는 실행 결과는 `docs/EXECUTION-RESULT.md` 및 `daily/DAY81.md`에 있다.
 - 브라우저 시각/클릭 검증은 자동화 host unavailable로 미실행. 공식 common-14, duplicate retry, alert/DLQ 연계, WF-01 normal answer/source evidence도 미실행이다.
+
+
+## oke-search VM 연결 조사 · 2026-11-06 17:23 KST
+
+- 변경 파일: `Doc/SEARCH-VM-DIAGNOSIS.md`, `runs/vm-search-observed-20261106.json`. 관측값은 실제 로그인된 팀 VM 콘솔 전사이며 raw stdout 자동 수집이 아니다.
+- 확인 방법/실제 결과: 실제 검색 함수 임베딩 200·근거 3건·1.404초, 백엔드 컨테이너의 실제 웹훅 키로 n8n 운영 검색 호출 HTTP 200·ok=true·근거 3건·2.227초. 문서 8개/청크 33개, 모델/3072차원 일치. 검색 서비스 키로 n8n 수신 웹훅을 호출한 별도 경계 검사는 403이며 실제 백엔드 호출 장애의 증거가 아니다.
+- 판정: 현재 장애 미재현. 편집기 입력/출력 없음·UI 환경변수 미리보기 제한·실행 저장 none을 운영 장애로 판단하지 않는다. 간헐 실패 원인은 미확정이며 실제 실패 시각/응답 수집이 필요하다.
+- 다음 연결 상대: 유빈님(RAG/Search), 다혁님(본체 C03 호출), 팀장(VM 진단 기록 정책). 워크플로우/키/설정/서비스 변경·재배포는 수행하지 않았다.
+
+
+## [최종 통합 제출] 이원민 (QA · 안정성 · 티켓/DLQ/Error) 핵심 검증 및 설계 근거
+
+### 1. [팀 시나리오 1개] 내가 직접 기획·검증한 장애 복구/멱등성 시나리오
+| 항목 | 작성 내용 |
+| :--- | :--- |
+| **시나리오 이름** | 네트워크 재시도·더블클릭으로 동일 request_id가 중복 이관돼도 티켓 1건을 보장(WF-09)하고, 티켓 저장소 장애 시에도 알림과 DLQ를 서로 독립 격리(WF-04) |
+| **기획 의도 (왜 필요한가?)** | 응답이 느릴 때 사용자가 버튼을 두 번 누르거나 상위 워크플로우가 재시도하면 같은 문의로 티켓과 알림이 중복되는 운영 사고가 난다. 이를 막고, 티켓 저장소가 죽어도 문의가 유실되지 않게 DLQ에 격리하려는 것이다. |
+| **입력 조건 및 테스트 방법** | 동일 request_id로 `/webhook/oke-handoff`를 2회 연속 호출하고, PostgreSQL `app.tickets`(`request_key`)·`app.alerts`·`app.dlq` 행수를 호출 전·중·후로 비교한다. |
+| **기대 결과 vs 실제 검증 결과** | • **기대 결과**: 1차 `duplicate=false` 신규 티켓, 2차 `duplicate=true`와 동일 `ticket_id`, DB 티켓 +1건만 유지<br>• **실제 결과(공용 VM, 2026-11-07)**: **FAIL.** 두 호출 모두 HTTP 500 `Cannot read properties of null (reading 'disabled')`, 티켓/알림/DLQ 변화 0건(32/35/8 유지). 멱등성은 실서버에서 판정하지 못했고 PASS로 집계하지 않는다. 원인은 VM 게시본 `okeHandoffFlow01`에 웹훅 노드 H01이 없는 것(29노드, main 원본은 30노드)이며 근거는 `runs/live-integration-qa-20261107.json`이다.<br>• **참고(로컬 Ubuntu 랩, 공용 VM 아님)**: 같은 요청 2회에서 1차 `T-2005 duplicate=false`, 2차 `T-2005 duplicate=true`를 확인했다. |
+
+### 2. [실패 및 해결 사례 6칸 표] 안정성·QA 개발 및 통합 중 겪은 난관과 해결책 (1건)
+| ① 현상 (문제점) | ② 재현 조건 | ③ 원인 및 근거 | ④ 조치 내용 (해결책) | ⑤ 재시험 결과 | ⑥ 잔여 위험 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| oke-handoff를 n8n에 가져오자 계약 경로 `/webhook/oke-handoff`가 아닌 workflow·노드 이름이 붙은 다른 경로로 등록됐다. | 로컬 Ubuntu 랩(n8n 2.46.6)에 JSON을 CLI로 import하고 게시했을 때(2026-11-05). | Webhook 노드에 `webhookId`가 없으면 n8n이 fallback 경로를 만든다. 등록된 실제 경로를 조회해 확인했다. | 원본 handoff의 Webhook 노드에 `webhookId`를 추가하고 회귀 테스트를 보강했다. | 재가져오기·게시·재시작 뒤 계약 경로 HTTP 200을 확인했고 Node 회귀 89개가 통과했다(`Doc/UBUNTU-INTEGRATION-RESULT.md`). | **공용 VM은 별개 문제로 미해결이다.** VM 게시본에 웹훅 노드가 없어 500이 나고, 재게시는 팀장 권한이라 재시험은 재배포 이후에 한다. |
+
+### 3. [아키텍처 설계 근거 (Why?)] 심사위원 질의응답 방어용 2줄
+- **Q1. 티켓 생성 실패(`tickets_down`) 시 에러를 그대로 던지지 않고 `oke-handoff` 안에서 알림(`alerts`)과 DLQ를 독립 분기로 시도하는 이유는?**
+  - **내 답변**: 티켓 DB가 일시 중단돼도 문의의 마스킹된 요약을 DLQ에 보존해 사후에 수동 복구할 수 있다. 한 수습 Sink가 실패해도 다른 Sink(운영자 알림)는 끝까지 실행되도록 Fail-Safe로 격리했다. 이 격리는 로컬 테스트와 Ubuntu 랩에서 확인했다.
+- **Q2. 예상된 비즈니스 장애(`WF-04` 티켓 장애 등)와 예상 밖 런타임 예외(`oke-errors` Error Trigger)를 이원화한 이유는?**
+  - **내 답변**: 하위 API 503·타임아웃처럼 예측 가능한 장애는 워크플로우 안의 정상 제어 흐름으로 수습하고, 노드 오류 같은 예측 불가 예외만 Error Workflow가 받게 분리했다. errors는 오류를 다시 던지지 않아 재귀가 없다. 단 이번 VM의 handoff는 `errorWorkflow`가 비어 있어 이 연결이 실서버에서 동작하는지는 미확인이다.

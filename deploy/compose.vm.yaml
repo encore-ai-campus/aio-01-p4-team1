@@ -182,6 +182,8 @@ services:
     image: oke-team-frontend:unified
     environment:
       BACKEND_ORIGIN: http://backend:8000
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
     ports:
       - '3000:3000'
     depends_on:

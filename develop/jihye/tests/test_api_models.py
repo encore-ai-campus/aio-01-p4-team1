@@ -139,7 +139,8 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
                "password_hash": secrets.token_urlsafe(20), "token_hash": secrets.token_urlsafe(20)}
     ticket = {"id": 1, "ticket_id": "T-2001", "request_id": "req-fixture", "requester": user.name,
               "title": "합성 문의", "category": "network", "priority": "normal", "status": "open",
-              "assignee": None, "reply": None, "created_at": now, "updated_at": now}
+              "assignee": None, "reply": None, "question": "원문 질문", "created_at": now,
+              "updated_at": now}
     backend.results.update(
         login={"user": account, "_token": "fixture-only-token"}, logout={"ok": True},
         change_password={"ok": True, "must_change_password": False},
@@ -176,6 +177,10 @@ def test_all_route_signatures_with_fixture_services(contract_harness):
     for method, path, body, expected in cases:
         response = client.request(method, path, json=body) if body is not None else client.request(method, path)
         assert response.status_code == expected, (path, response.text)
+        if path == "/api/admin/tickets":
+            assert response.json()["items"][0]["question"] == "원문 질문"
+        elif path == "/api/admin/tickets/1":
+            assert response.json()["question"] == "원문 질문"
         for secret in [password, account["password_hash"], account["token_hash"]]:
             assert secret not in response.text
         if path == "/api/auth/login":

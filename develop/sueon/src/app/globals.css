@@ -12,3 +12,19 @@ button.profile{border:0;background:transparent;text-align:left;cursor:pointer}
 .admin-fields select:focus-visible,.admin-fields textarea:focus-visible{outline:3px solid #315efb;outline-offset:2px}
 .ticket-question{margin:0;padding:16px;border:1px solid #f0f1f3;border-radius:14px;background:#fbfcfd;color:#30363b;font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .ticket-question-note{margin:0;color:#9299a0;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.user-row{grid-template-columns:42px minmax(160px,1fr) auto auto auto auto}
+.user-identity{min-width:0}
+.user-identity b,.user-identity small{overflow-wrap:anywhere}
+.user-role{color:#6f7880;font-size:12px}
+.account-state{display:grid;justify-items:start;gap:5px}
+.account-status-badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750;white-space:nowrap}
+.account-status-badge.is-active{background:#e9f9f1;color:#0b8a5c}
+.account-status-badge.is-inactive{background:#f0f1f3;color:#626a72}
+.account-protection-note{color:#7b6b2a;font-size:10px;line-height:1.4}
+.account-empty-state{margin:16px 0 0;padding:14px 16px;border-radius:12px;background:#f4f8ff;color:#31538a;font-size:14px;line-height:1.6}
+.user-toggle.deactivate{background:#fff1ed;color:#c83b4b}
+.user-toggle.activate{background:#e9f9f1;color:#0b8a5c}
+.user-toggle:disabled,.user-reset:disabled{cursor:not-allowed;opacity:.55}
+.user-toggle:focus-visible,.user-reset:focus-visible,.reset-password-panel button:focus-visible{outline:3px solid #315efb;outline-offset:2px}
+@media(max-width:900px){.user-row{grid-template-columns:38px minmax(130px,1fr) auto auto auto auto;gap:10px}.user-toggle,.user-reset{padding:7px 9px}}
+@media(max-width:640px){.user-row{grid-template-columns:36px minmax(0,1fr);gap:10px}.user-row .user-avatar{grid-column:1;grid-row:1/span 5;align-self:start}.user-identity{grid-column:2;grid-row:1}.user-role{grid-column:2;grid-row:2}.account-state{grid-column:2;grid-row:3}.user-row .user-toggle{grid-column:2;grid-row:4;width:max-content}.user-row .user-reset{grid-column:2;grid-row:5;width:max-content;display:inline-flex}.reset-password-panel{scroll-margin-block:24px}}

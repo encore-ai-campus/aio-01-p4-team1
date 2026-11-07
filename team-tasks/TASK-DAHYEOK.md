@@ -31,6 +31,7 @@
 python3 - <<'PY'
 import os, json, time, urllib.request
 from pathlib import Path
+import ssl; ssl._create_default_https_context = ssl._create_unverified_context
 
 for _p in (Path(".env"), Path("../.env"), Path("../../.env")):
     if _p.is_file():

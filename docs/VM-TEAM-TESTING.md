@@ -127,8 +127,8 @@
 
 | 구분 | 로그인 ID | 비밀번호 | 이름 / 소속 | 역할 | 상태 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **관리자** | `minji.admin` | `63KvIc0uttRWx5ht1W0yHUmG?IuWNlTedOZf%qf9` | 김민지 (IT팀) | `admin` | `must_change_password=false` 검증 완료 |
-| **직원 (테스트용)** | `teamtest.employee1` | `eXn_*0sbV*Gi1HvNXr1O9L@kNvvV` | 이준호 (영업팀, 사번 1) | `employee` | 첫 비밀번호 변경 및 권한 검증 완료 |
+| **관리자** | `minji.admin` | <팀장 비공개 인계> | 김민지 (IT팀) | `admin` | `must_change_password=false` 검증 완료 |
+| **직원 (테스트용)** | `teamtest.employee1` | <팀장 비공개 인계> | 이준호 (영업팀, 사번 1) | `employee` | 첫 비밀번호 변경 및 권한 검증 완료 |
 
 ### 3. 브라우저 실서비스 테스트 방법
 세션 충돌 방지를 위해 **일반 창과 시크릿 창(또는 다른 브라우저)**으로 분리하여 로그인합니다:

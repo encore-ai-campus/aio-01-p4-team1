@@ -44,9 +44,9 @@ VM_PASSWORD=<팀장님이_개인DM으로_전달한_VM_비밀번호>
 API_BASE=https://aio-t1.isitsoft.kr
 N8N_BASE=https://aio-t1.isitsoft.kr:5678
 TEAM_KEY=<팀장님이_개인DM으로_전달한_TEAM_KEY>
-EMP_USER=teamtest.employee1
+EMP_USER=user1
 EMP_PASS=<팀장님이_개인DM으로_전달한_직원_비밀번호>
-ADM_USER=minji.admin
+ADM_USER=admin
 ADM_PASS=<팀장님이_개인DM으로_전달한_관리자_비밀번호>
 ```
 

@@ -30,6 +30,7 @@
 python3 - <<'PY'
 import os, json, time, urllib.request
 from pathlib import Path
+import ssl; ssl._create_default_https_context = ssl._create_unverified_context
 
 for _p in (Path(".env"), Path("../.env"), Path("../../.env")):
     if _p.is_file():
@@ -86,7 +87,7 @@ print(f"WF-09 Idempotency: 1st={t1}, 2nd={t2}, same_ticket_id={report['wf09_same
 PY
 
 # 2) VM 웹 터미널(https://aio-t1.isitsoft.kr/ssh/)로 DB 티켓/알림/DLQ 행수 및 최신 티켓 영수증 확인
-python3 tools/vm_web_terminal.py run "docker exec -i oke-postgres-1 psql -U oke -d oke -c '
+python3 tools/vm_web_terminal.py run "docker exec -e PGPASSWORD=postgres oke-postgres-1 psql -U postgres -d postgres -c '
 SELECT (SELECT count(*) FROM app.tickets) AS tickets,
        (SELECT count(*) FROM app.alerts)  AS alerts,
        (SELECT count(*) FROM app.dlq)     AS dlq;

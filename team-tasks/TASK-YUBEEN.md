@@ -30,6 +30,7 @@
 python3 - <<'PY'
 import os, json, time, urllib.request
 from pathlib import Path
+import ssl; ssl._create_default_https_context = ssl._create_unverified_context
 
 for _p in (Path(".env"), Path("../.env"), Path("../../.env")):
     if _p.is_file():
@@ -85,7 +86,7 @@ print("Saved receipt:", out)
 PY
 
 # 2) VM 웹 터미널(https://aio-t1.isitsoft.kr/ssh/)로 pgvector 8문서/33청크 및 vector(3072) 무결성 확인
-python3 tools/vm_web_terminal.py run "docker exec -i oke-postgres-1 psql -U oke -d oke -c '
+python3 tools/vm_web_terminal.py run "docker exec -e PGPASSWORD=postgres oke-postgres-1 psql -U postgres -d postgres -c '
 SELECT d.access_level, count(DISTINCT d.doc_id) AS docs, count(c.chunk_id) AS chunks,
        min(vector_dims(c.embedding)) AS min_dim, max(vector_dims(c.embedding)) AS max_dim
 FROM rag.documents d JOIN rag.chunks c ON d.doc_id = c.doc_id GROUP BY d.access_level ORDER BY d.access_level;'"

@@ -32,6 +32,7 @@
 python3 - <<'PY'
 import os, json, time, subprocess, urllib.request, urllib.error, http.cookiejar
 from pathlib import Path
+import ssl; ssl._create_default_https_context = ssl._create_unverified_context
 
 # 1) 루트 .env 자동 로드 (매번 비밀번호 입력 불필요)
 for _p in (Path(".env"), Path("../.env"), Path("../../.env")):
@@ -42,9 +43,9 @@ for _p in (Path(".env"), Path("../.env"), Path("../../.env")):
                 os.environ.setdefault(_k.strip(), _v.strip().strip("\"'"))
 
 BASE = os.environ.get("API_BASE", "https://aio-t1.isitsoft.kr").rstrip("/")
-EMP_U = os.environ.get("EMP_USER") or os.environ.get("OKE_EMP_USER", "teamtest.employee1")
+EMP_U = os.environ.get("EMP_USER") or os.environ.get("OKE_EMP_USER", "user1")
 EMP_P = os.environ.get("EMP_PASS") or os.environ.get("OKE_EMP_PASS", "")
-ADM_U = os.environ.get("ADM_USER") or os.environ.get("OKE_ADM_USER", "minji.admin")
+ADM_U = os.environ.get("ADM_USER") or os.environ.get("OKE_ADM_USER", "admin")
 ADM_P = os.environ.get("ADM_PASS") or os.environ.get("OKE_ADM_PASS", "")
 
 def make_session():
@@ -104,7 +105,7 @@ print(json.dumps(report["checks"], ensure_ascii=False, indent=2))
 PY
 
 # VM 웹 터미널(https://aio-t1.isitsoft.kr/ssh/)을 통해 DB 1:1 조인 영수증 즉시 확인
-python3 tools/vm_web_terminal.py run "docker exec -i oke-postgres-1 psql -U oke -d oke -c '
+python3 tools/vm_web_terminal.py run "docker exec -e PGPASSWORD=postgres oke-postgres-1 psql -U postgres -d postgres -c '
 SELECT i.id AS inquiry_id, i.route, i.ticket_id AS inq_ticket,
        t.ticket_id AS db_ticket, t.request_id, t.status AS ticket_status,
        a.id AS alert_id, a.status AS alert_status

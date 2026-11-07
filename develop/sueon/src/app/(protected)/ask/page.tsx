@@ -112,7 +112,7 @@ export default function AskPage() {
     <aside className="ask-sidebar">
       <div className="brand"><span className="brand-mark">●</span><div><strong>오케퐁</strong><small>IT HELPDESK</small></div></div>
       <div className="side-section"><span className="side-label">WORKSPACE</span><a className="side-link active" href="/ask">▤ <span>질문하기</span></a><a className="side-link" href="/my-requests">▤ <span>내 문의</span></a></div>
-      <button className="profile" type="button" onClick={() => void signOut()}><span>{displayName.slice(0, 1)}</span><div><b>{displayName}</b><small>{displayDept}</small></div><i>로그아웃</i></button>
+      <button className="profile" type="button" onClick={() => void signOut()} aria-label={`${displayName} · ${displayDept} 로그아웃`}><span>{displayName.slice(0, 1)}</span><div className="profile-identity"><b>{displayName}</b><small>{displayDept}</small></div><i>로그아웃</i></button>
     </aside>
     <section className="ask-main">
       <header className="ask-header"><div>IT 헬프데스크 <b>/ 질문하기</b></div></header>

@@ -16,6 +16,10 @@ export default function AdminUsersPage() {
   const [employeeId, setEmployeeId] = useState("");
   const [loginId, setLoginId] = useState("");
   const [temporaryPassword, setTemporaryPassword] = useState("");
+  const [newEmployeeName, setNewEmployeeName] = useState("");
+  const [newEmployeeDept, setNewEmployeeDept] = useState("");
+  const [newEmployeeLoginId, setNewEmployeeLoginId] = useState("");
+  const [newEmployeePassword, setNewEmployeePassword] = useState("");
   const [resetId, setResetId] = useState<number | null>(null);
   const [resetPassword, setResetPassword] = useState("");
   const [error, setError] = useState("");
@@ -67,9 +71,13 @@ export default function AdminUsersPage() {
     resetPasswordRef.current?.focus({ preventScroll: true });
   }, [resetId]);
 
-  function protectsCurrentAdmin(user: AccountView) {
-    return user.role === "admin" && user.is_active
+  function isCurrentAdmin(user: AccountView) {
+    return user.role === "admin"
       && (!identityReady || identityError || currentAdminId === null || currentAdminId === user.id);
+  }
+
+  function protectsCurrentAdmin(user: AccountView) {
+    return user.is_active && isCurrentAdmin(user);
   }
 
   async function create(event: FormEvent) {
@@ -90,6 +98,50 @@ export default function AdminUsersPage() {
       else setError("계정 발급은 성공했지만 목록 재조회에 실패했습니다. 중복 발급하지 말고 새로고침으로 목록만 다시 확인해 주세요.");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "계정을 발급하지 못했습니다.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function createEmployeeAndAccount(event: FormEvent) {
+    event.preventDefault();
+    setError("");
+    setNotice("");
+    const name = newEmployeeName.trim();
+    const dept = newEmployeeDept.trim();
+    const newLoginId = newEmployeeLoginId.trim();
+    if (busyId !== null || !name || !dept || !newLoginId || !newEmployeePassword) {
+      if (!name || !dept || !newLoginId || !newEmployeePassword) setError("직원 이름, 부서, 로그인 ID, 임시 비밀번호를 모두 입력해 주세요.");
+      return;
+    }
+
+    setBusyId(-2);
+    let createdEmployee: EmployeeAdminView | null = null;
+    try {
+      createdEmployee = await adminUsersApi.createEmployee({ name, dept });
+      await adminUsersApi.create({ employee_id: createdEmployee.id, login_id: newLoginId, temporary_password: newEmployeePassword });
+      setNewEmployeeName("");
+      setNewEmployeeDept("");
+      setNewEmployeeLoginId("");
+      setNewEmployeePassword("");
+      if (await load()) setNotice(`${name} 님의 직원 정보와 계정을 등록하고 최신 목록을 불러왔습니다.`);
+      else setError("직원 정보와 계정 등록은 성공했지만 목록 재조회에 실패했습니다. 중복 등록하지 말고 새로고침으로 목록만 확인해 주세요.");
+    } catch (cause) {
+      if (createdEmployee) {
+        setNewEmployeeName("");
+        setNewEmployeeDept("");
+        setNewEmployeeLoginId("");
+        setNewEmployeePassword("");
+        setEmployeeId(String(createdEmployee.id));
+        setLoginId(newLoginId);
+        setTemporaryPassword(newEmployeePassword);
+        const refreshed = await load();
+        setError(refreshed
+          ? `${name} 님의 직원 등록은 완료됐지만 계정 발급에 실패했습니다. 미발급 직원에서 대상자를 확인하고 계정 발급을 다시 진행해 주세요.`
+          : `${name} 님의 직원 등록은 완료됐지만 계정 발급과 목록 재조회에 실패했습니다. 중복 직원 등록 대신 새로고침 후 미발급 직원으로 계정을 발급해 주세요.`);
+      } else {
+        setError(cause instanceof Error ? cause.message : "신규 직원 등록에 실패했습니다.");
+      }
     } finally {
       setBusyId(null);
     }
@@ -133,6 +185,29 @@ export default function AdminUsersPage() {
     }
   }
 
+  async function removeAccount(user: AccountView) {
+    if (busyId !== null || loading || isCurrentAdmin(user)) return;
+    const confirmed = window.confirm(`정말 ${user.name} 님의 계정을 삭제하시겠습니까? 계정 삭제 시 로그인 정보만 삭제되며 미발급 상태로 초기화됩니다.`);
+    if (!confirmed) return;
+
+    setBusyId(user.id);
+    setError("");
+    setNotice("");
+    try {
+      await adminUsersApi.deleteAccount(user.id);
+      if (resetId === user.id) {
+        setResetId(null);
+        setResetPassword("");
+      }
+      if (await load()) setNotice(`${user.name} 님의 계정을 삭제하고 최신 목록을 다시 불러왔습니다.`);
+      else setError("계정 삭제는 완료됐지만 목록 재조회에 실패했습니다. 다시 삭제하지 말고 새로고침으로 목록만 확인해 주세요.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "계정을 삭제하지 못했습니다.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   function openResetForm(user: AccountView) {
     if (busyId !== null || loading) return;
     setResetId(user.id);
@@ -154,7 +229,19 @@ export default function AdminUsersPage() {
     </div>
     {error && <p className="error" role="alert">{error}</p>}
     {notice && <p role="status">{notice}</p>}
-    {identityError && <p className="error" role="alert">관리자 계정을 확인하지 못해 활성 관리자 계정의 비활성화를 잠갔습니다. 다시 새로고침해 주세요.</p>}
+    {identityError && <p className="error" role="alert">관리자 계정을 확인하지 못해 관리자 계정의 비활성화와 삭제를 잠갔습니다. 다시 새로고침해 주세요.</p>}
+
+    <section className="admin-panel new-employee-panel">
+      <h2>신규 직원 및 계정 발급</h2>
+      <p className="muted">직원 정보 등록 후 해당 직원의 계정을 발급합니다.</p>
+      <form className="admin-fields new-employee-fields" onSubmit={createEmployeeAndAccount}>
+        <label>직원 이름<input disabled={busyId !== null} value={newEmployeeName} onChange={(event) => setNewEmployeeName(event.target.value)} autoComplete="off" /></label>
+        <label>소속 부서<input disabled={busyId !== null} value={newEmployeeDept} onChange={(event) => setNewEmployeeDept(event.target.value)} autoComplete="organization" /></label>
+        <label>로그인 ID<input disabled={busyId !== null} value={newEmployeeLoginId} onChange={(event) => setNewEmployeeLoginId(event.target.value)} autoComplete="off" /></label>
+        <label>임시 비밀번호<input disabled={busyId !== null} type="password" value={newEmployeePassword} onChange={(event) => setNewEmployeePassword(event.target.value)} autoComplete="new-password" /></label>
+        <button className="admin-primary" disabled={busyId !== null}>{busyId === -2 ? "등록 중…" : "직원 등록 및 계정 발급"}</button>
+      </form>
+    </section>
 
     <section className="admin-panel">
       <h2>계정 발급</h2>
@@ -188,6 +275,7 @@ export default function AdminUsersPage() {
                 </span>
                 <button type="button" className={`user-toggle ${user.is_active ? "deactivate" : "activate"}`} disabled={busyId !== null || loading || protectsSelf} title={protectsSelf ? "현재 로그인한 관리자 계정은 비활성화할 수 없습니다." : undefined} onClick={() => void toggle(user)}>{busyId === user.id ? "변경 중…" : user.is_active ? "비활성화하기" : "활성화하기"}</button>
                 <button type="button" className="user-reset" disabled={busyId !== null || loading} onClick={() => openResetForm(user)}>임시 비밀번호 설정</button>
+                <button type="button" className="user-delete" disabled={busyId !== null || loading || isCurrentAdmin(user)} title={isCurrentAdmin(user) ? "현재 로그인한 관리자 계정은 삭제할 수 없습니다." : undefined} onClick={() => void removeAccount(user)}>{busyId === user.id ? "삭제 중…" : "계정 삭제"}</button>
               </div>;
             })}
     </section>

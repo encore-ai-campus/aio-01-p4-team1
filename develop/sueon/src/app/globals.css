@@ -12,7 +12,7 @@ button.profile{border:0;background:transparent;text-align:left;cursor:pointer}
 .admin-fields select:focus-visible,.admin-fields textarea:focus-visible{outline:3px solid #315efb;outline-offset:2px}
 .ticket-question{margin:0;padding:16px;border:1px solid #f0f1f3;border-radius:14px;background:#fbfcfd;color:#30363b;font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .ticket-question-note{margin:0;color:#9299a0;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
-.user-row{grid-template-columns:42px minmax(160px,1fr) auto auto auto auto}
+.user-row{grid-template-columns:42px minmax(160px,1fr) auto auto auto auto auto}
 .user-identity{min-width:0}
 .user-identity b,.user-identity small{overflow-wrap:anywhere}
 .user-role{color:#6f7880;font-size:12px}
@@ -24,7 +24,16 @@ button.profile{border:0;background:transparent;text-align:left;cursor:pointer}
 .account-empty-state{margin:16px 0 0;padding:14px 16px;border-radius:12px;background:#f4f8ff;color:#31538a;font-size:14px;line-height:1.6}
 .user-toggle.deactivate{background:#fff1ed;color:#c83b4b}
 .user-toggle.activate{background:#e9f9f1;color:#0b8a5c}
-.user-toggle:disabled,.user-reset:disabled{cursor:not-allowed;opacity:.55}
-.user-toggle:focus-visible,.user-reset:focus-visible,.reset-password-panel button:focus-visible{outline:3px solid #315efb;outline-offset:2px}
-@media(max-width:900px){.user-row{grid-template-columns:38px minmax(130px,1fr) auto auto auto auto;gap:10px}.user-toggle,.user-reset{padding:7px 9px}}
-@media(max-width:640px){.user-row{grid-template-columns:36px minmax(0,1fr);gap:10px}.user-row .user-avatar{grid-column:1;grid-row:1/span 5;align-self:start}.user-identity{grid-column:2;grid-row:1}.user-role{grid-column:2;grid-row:2}.account-state{grid-column:2;grid-row:3}.user-row .user-toggle{grid-column:2;grid-row:4;width:max-content}.user-row .user-reset{grid-column:2;grid-row:5;width:max-content;display:inline-flex}.reset-password-panel{scroll-margin-block:24px}}
+.user-delete{border:0;border-radius:14px;padding:7px 11px;background:#fff1ed;color:#c83b4b;font-size:11px;font-weight:700}
+.user-toggle:disabled,.user-reset:disabled,.user-delete:disabled{cursor:not-allowed;opacity:.55}
+.user-toggle:focus-visible,.user-reset:focus-visible,.user-delete:focus-visible,.reset-password-panel button:focus-visible{outline:3px solid #315efb;outline-offset:2px}
+@media(max-width:900px){.user-row{grid-template-columns:38px minmax(0,1fr) auto;gap:10px}.user-row .user-avatar{grid-column:1;grid-row:1/span 4;align-self:start}.user-identity{grid-column:2;grid-row:1}.user-role{grid-column:2;grid-row:2}.account-state{grid-column:3;grid-row:1/span 2}.user-row .user-toggle{grid-column:2;grid-row:3;width:max-content}.user-row .user-reset{grid-column:2;grid-row:4;width:max-content;display:inline-flex}.user-row .user-delete{grid-column:3;grid-row:3;width:max-content}.user-toggle,.user-reset,.user-delete{padding:7px 9px}}
+@media(max-width:640px){.user-row{grid-template-columns:36px minmax(0,1fr);gap:10px}.user-row .user-avatar{grid-column:1;grid-row:1/span 6;align-self:start}.user-identity{grid-column:2;grid-row:1}.user-role{grid-column:2;grid-row:2}.account-state{grid-column:2;grid-row:3}.user-row .user-toggle{grid-column:2;grid-row:4;width:max-content}.user-row .user-reset{grid-column:2;grid-row:5;width:max-content;display:inline-flex}.user-row .user-delete{grid-column:2;grid-row:6;width:max-content;display:inline-flex}.reset-password-panel{scroll-margin-block:24px}}
+.employee-header,.admin-header{gap:16px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;overscroll-behavior-inline:contain}
+.employee-header .header-user-summary,.admin-header .header-user-summary,.employee-header .header-logout,.admin-header .header-logout{flex:0 0 auto;white-space:nowrap}
+.profile{gap:16px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;max-width:100%}
+.profile>span,.profile>div,.profile>i{flex-shrink:0;white-space:nowrap}
+.profile>div{min-width:0}
+.profile-identity{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.profile-identity b,.profile-identity small{display:inline;white-space:nowrap}
+.employee-header .header-logout,.admin-header .header-logout{padding:8px 0}

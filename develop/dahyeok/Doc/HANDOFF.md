@@ -281,15 +281,17 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 > 로컬 전체 시험 기록: `develop/dahyeok/Doc/LOCAL-TEST.md` 5·6장
 
 ### 0. 실서버 VM 결과 요약 (2026-11-07)
-| 케이스 | 결과 | 비고 |
+| 케이스 | 1차 17:09 | 2차 20:45 (handoff 복구 후) |
 | :--- | :--- | :--- |
-| WF-01 정상 자동답변 | 자동 답변 · sources=password-policy · 1회차 11.9s → 재측정 7.0s·4.3s·6.2s·4.0s | 첫 호출만 8s 초과 (콜드 스타트 추정) |
-| WF-02 보완 질문 | 보완 질문 · 티켓 없음 · 2.0s | PASS |
-| WF-02b 한도 도달 | 담당자 이관 · **ticket=null, reason=handoff_unavailable** · 2.0s | 이관 판정은 맞음, 티켓 발급 실패 |
-| WF-03 무근거 | 담당자 이관 · sources=[] · **ticket=null, reason=handoff_unavailable** · 1.6s | 이관 판정은 맞음, 티켓 발급 실패 |
+| WF-01 정상 자동답변 | 자동 답변 · password-policy · 11.9s (재측정 4.0~7.0s) | 자동 답변 · password-policy · 첫 호출 8.754s → 재측정 6.9s·4.8s·3.8s |
+| WF-02 보완 질문 | 보완 질문 · 티켓 없음 · 2.0s | 보완 질문 · 티켓 없음 · 1.8s |
+| WF-02b 한도 도달 | 이관 판정 OK, ticket=null (handoff_unavailable) | **PASS** · 이관 · T-2035 · reason=max_attempts · 2.2s |
+| WF-03 무근거 | 이관 판정 OK, ticket=null (handoff_unavailable) | **PASS** · 이관 · sources=[] · T-2036 · reason=low_confidence · 3.0s |
 
-- `handoff_unavailable` = support의 N20 C04 HTTP(`http://n8n:5678/webhook/oke-handoff`)가 VM에서 정상 응답을 받지 못함. 같은 v18이 로컬(app·practice 모드)에서는 티켓 발급 정상(T-2051 등). 읽기 전용 진단(17:17, VM 수정 없음): oke-handoff는 활성·웹훅 등록 상태(SERVICE_MODE=app)지만 n8n 로그에 `Error in handling webhook request POST /webhook/oke-handoff: Cannot read properties of null (reading 'disabled')`가 반복됨 → handoff 웹훅 노드의 인증(Header Auth) credential을 VM n8n에서 찾지 못하는 상태로 추정. VM n8n에서 oke-handoff 웹훅 credential 재지정 필요(원민님·팀장님 확인 요청).
-- 그래도 워크플로우는 죽지 않고 HTTP 200 + 이관 + 사유 코드로 안전 종료함 (하위 워크플로우 장애 격리 동작 확인).
+- 1차 실패 원인: VM n8n의 `oke-handoff`에서 요청을 받는 `H01 Handoff Webhook` 노드가 빠져 있었음(저장소 30노드 → VM 29노드, 로그 `Cannot read properties of null (reading 'disabled')`, 마지막 성공 실행 11/7 10:49). 읽기 전용으로 원인을 찾아 공유했고, 팀장님이 30노드 정상본으로 재게시한 뒤 2차 시험에서 티켓 발급 정상.
+- 1차 장애 중에도 support는 멈추지 않고 HTTP 200 + 이관 + `handoff_unavailable` 사유 코드로 안전 종료함 (하위 워크플로우 장애 격리 동작을 실서버에서 확인).
+- 남은 관찰: 한동안 호출이 없다가 들어오는 첫 WF-01 호출은 8s를 넘김(11.9s, 8.754s). 이어지는 호출은 기준 이내.
+- 원본: 2차 `runs/support-v18-integration-20261107.json`, 1차 `runs/support-v18-integration-20261107-before-fix.json`
 
 ### 1. [팀 시나리오 1개] 내가 직접 기획·검증한 오케스트레이션 분기 시나리오
 | 항목 | 작성 내용 |
@@ -297,7 +299,7 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 | **시나리오 이름** | 모호한 질문 반복 시 무한 되묻기 방지: attempt 1~2 보완 질문 → attempt 3 자동 이관(WF-02 → WF-02b) |
 | **기획 의도 (왜 필요한가?)** | "접속이 안 돼요"처럼 대상·오류·시점이 없는 질문은 근거 검색을 해도 답을 지어낼 위험만 커진다. 그래서 검색 전에 부족한 정보(접속 대상·오류 메시지·발생 시점)를 정해진 질문으로만 되묻고, 3회차에도 정보가 없으면 더 묻지 않고 담당자에게 넘겨 사용자가 루프에 갇히지 않게 했다. |
 | **입력 조건 및 테스트 방법** | 같은 질문을 attempt=1과 attempt=3으로 각각 호출해 분기 비교 (VM: 이준호 "로그인이 안 돼요 도와주세요", 로컬: 이준호 "접속이 안 돼요"). 로컬은 3회 반복으로 판정 안정성도 확인. |
-| **기대 결과 vs 실제 검증 결과** | • **기대 결과**: attempt 1~2는 보완 질문(티켓 미생성), attempt 3은 즉시 담당자 이관 및 티켓 발급<br>• **실제 결과**: 로컬 v18 — attempt 1 보완 질문 3/3(1.4~1.9s, 대상·오류·시점 질문), attempt 3 이관 T-2051, reason=max_attempts(1.9s). VM — attempt 1 보완 질문 2.0s(티켓 없음), attempt 3 이관 판정은 맞으나 티켓 발급 실패(reason=handoff_unavailable, 위 0장). |
+| **기대 결과 vs 실제 검증 결과** | • **기대 결과**: attempt 1~2는 보완 질문(티켓 미생성), attempt 3은 즉시 담당자 이관 및 티켓 발급<br>• **실제 결과**: 로컬 v18 — attempt 1 보완 질문 3/3(1.4~1.9s, 대상·오류·시점 질문), attempt 3 이관 T-2051, reason=max_attempts(1.9s). VM 2차(handoff 복구 후) — attempt 1 보완 질문 1.8s(티켓 없음), attempt 3 이관 T-2035, reason=max_attempts(2.2s). (1차는 VM handoff 노드 유실로 티켓 미발급, 위 0장) |
 
 ### 2. [실패 및 해결 사례 6칸 표] 메인 워크플로우 개발·통합 중 겪은 난관과 해결책 (1건)
 | ① 현상 (문제점) | ② 재현 조건 | ③ 원인 및 근거 | ④ 조치 내용 (해결책) | ⑤ 재시험 결과 | ⑥ 잔여 위험 |

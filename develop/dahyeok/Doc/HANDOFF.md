@@ -201,6 +201,66 @@ P0 기반 → P1 필수 MVP(후속 P1-4 중복/동시성·P1-5 실제 통합/시
 - 팀 VM(조회만, 변경 없음): 08:27 재반영 후 oke-support(13과 동일)·handoff·errors는 Credential 연결됨. 실행 #8에서 본체 → C04(T-2001)까지 동작했다. oke-search는 main 루트 `workflows/oke-search.json`과 같아 `["all"]`만 허용(IT 400), 주소 `http://127.0.0.1:8765/search`(유빈님 서버는 `/webhook/oke-search`만 받음, 호스트 실행 예정이라 n8n의 127.0.0.1로는 닿지 않음), 인증 none이다. VM 설정은 리드 담당으로 전달했다.
 - 남은 본체 작업: 자동 답변 잠금(N12 점수 기준·N15) 해제는 실측 임계값 승인 후. `agents` 실제 실행 목록 반영.
 
+## 14: 자동 답변 잠금 구조와 agents 실제 실행 목록 · 2026-11-05
+
+- 파일: `workflows/oke-support-14.json`. `13`(`bb2fa1f`)을 보존하고 아래 변경만 14에 반영했다. 노드·연결선은 13과 같다(61노드). 로컬 시험 당시 이름은 13 사본(`okeSupport13LocA/B`)이었다.
+
+- N12 Evidence gate: 실제 모드 자동 답변 기준을 상수 `APPROVED_MIN_SCORE` 하나로 둔다. 현재 `null`이다. `threshold_mode`는 Mock이면 `mock`, 실제 모드에서 값이 있으면 `approved`, 없으면 `unset`이다. `unset`일 때는 기존처럼 Mock 기준 0.8로 writer·verifier를 실행해 관찰만 한다. 공통 환경변수 목록을 바꾸지 않으려고 env가 아닌 본체 상수로 두었다. 측정값이 승인되면 이 값만 바꾸면 된다.
+- N15 Decide answer: Mock 모드는 기존과 같이 Mock writer·verifier일 때만 허용한다. 실제 모드는 `threshold_mode=approved`이고 실제 writer·verifier가 통과할 때만 자동 답변한다. `unset`이면 기존 잠금과 동작이 같다.
+- N22 Finalize: `agents`를 실제 모드에서 실행된 단계로 만든다. triage, C03 또는 본인 조회가 실제로 실행되면 retriever, 실제 writer·verifier Agent가 실행되면 각각 writer·verifier. Mock 단계는 넣지 않는다(기존 Mock 사례의 `agents: []` 유지).
+- 확인: 로컬 Mock 검사 결과 동일(12/12, 14/14, 13/13, 9/9, 20/20, 6/6). 검색(합성 근거)·이관 연결 로컬 n8n:
+  - 저장소 버전(`null`, `okeSupport13LocA` execution 1699~1716, 모두 success): 일반·IT VPN은 기존대로 `low_confidence` 이관이고 agents `[triage, retriever, writer, verifier]`. 본인 T-1002 상태 안내, 식당 `no_evidence`, 타인 권한 없음, WF-12, 보완 질문(`[triage]`), 주입 차단(`[]`)이 기존과 같다.
+  - 임시 사본(`APPROVED_MIN_SCORE=0.8`, 커밋하지 않음, `okeSupport13LocB` execution 1717~1732): 일반·IT VPN이 `자동 답변`, sources `remote-work-vpn` 0.86, 새 티켓 0. 본인 T-1002는 writer 답으로 상태를 안내했다. 나머지 경로는 저장소 버전과 같다. 시험 후 로컬 n8n은 저장소 버전으로 되돌렸다.
+- 남은 일: 실제 pgvector 점수 분포 측정과 기준값 승인(유빈님·팀장님). 승인 후 `APPROVED_MIN_SCORE`만 바꾸고 WF-01·TM-01·12·13을 재시험한다. 합성 근거 0.86은 측정값이 아니다.
+
+## 14 로컬 시험: WF-10 LLM 장애와 LLM 3회 반복 · 2026-11-06
+
+사전 점검이다. 공식 PASS는 원민님이 공식 키트(`flow.py test --repeat 3`)로 기록한다. 로컬 n8n 2.42.6, practice, 원민님 handoff·유빈님 oke-search·합성 근거 검색 서버 연결. 14 파일은 그대로이고 시험용 사본의 Credential만 바꿨다. 장애용 OpenAI Credential은 로컬 전용 가짜 값(닫힌 포트 주소, 잘못된 키)이다.
+
+- WF-10-a 전체 LLM 중단(triage·writer·verifier 모두 닫힌 포트, `okeSupport14LlmD`): 일반 VPN·IT VPN·본인 T-1002·보완 대상·피싱 5건 모두 HTTP 200, `담당자 이관`, `reason=llm_down`, normal 티켓 1건씩. 주입은 LLM 전 `차단`, 티켓 0. 응답 0.5~3.8초. → WF-10 기대 충족.
+- WF-10-b writer·verifier만 중단(잘못된 키, `okeSupport14WvDn`): 일반·IT VPN `llm_down` 이관, 본인 T-1002는 상태 안내 자동 답변(티켓 0), 보완 질문 그대로, 피싱 `urgent` high + WF-12 안내. → 무검증 자동 답변 없음.
+- 3회 반복(정상 Credential, `okeSupport14LocA`): 원민님 team.json TM-01·02·03·04·05·08·11·12·13과 추가 5건(VPN, 식당, 본인 상태, 피싱, 보완 2회차) 14건 × 3회. route·reason·priority·sources·새 티켓 수가 14건 모두 3/3 같았다. 응답 1.1~5.6초.
+- 발견 1 (TM-13): "VPN 비밀번호를 잊어버렸어요"가 3/3 `action_required` 이관. 팀 기대는 자동 답변 또는 보완 질문이다. FAQ-001(포털 '비밀번호 찾기'로 직접 재설정)이 있어 IT 조치 요청이 아니다. triage가 "계정 잠금 해제" 규칙으로 판단한 것으로 보인다. 수정 후보: N06 프롬프트에 "비밀번호 분실·재설정처럼 직원이 FAQ·규정 절차로 직접 할 수 있는 문제는 needs_action=false" 한 줄. 미반영.
+- 발견 2: LLM 전체 중단 때 피싱 신고도 normal로 접수된다. 긴급도를 triage만 판단하기 때문이다. WF-10 기대(일반 문의)에는 해당하지 않지만, 보안 사고가 high·알림을 놓친다. 수정 후보: triage 실패 시에만 피싱·감염·랜섬웨어·분실·유출 단어로 priority high를 정하는 규칙. 설계 추가라 미반영.
+- 그대로인 기존 차이: TM-01·12 잠금으로 이관(기준값 대기), TM-05 sources 없음(WF-12 결정). `agents`는 실행을 시도한 단계를 넣어 LLM이 실패해도 `triage`·`writer`가 들어간다.
+
+## main 구성 실제 데이터 로컬 시험 · 2026-11-06
+
+- 구성: main `66d4890` `deploy/compose.vm.yaml`+`compose.local.yaml`(`oke-local`, 로컬 전용 비밀값, VM·개발 n8n 변경 없음). 루트 workflows 5개, app 모드, 실제 규정 8개·33청크 색인(`security-incident`=it). 준비 중 `setup.py repair-rag-dsn` 실행(검색·색인 DSN 형식). 화면 제외.
+- 실제 점수(C03 직접, 15문항): 정답 문서 hit@3 13/13(프린터만 3위 0.226). 정답 1위 최저 0.394, 근거 없음 1위 최고 0.349(일반 직원 피싱)·0.300(식당)·0.280(주차). 검색은 근거 없음에도 `no_evidence`를 주지 않는다. 일반 직원 결과에 it 문서 0. 기준값 후보 0.37(차이 0.045, 시연용).
+- main 본체(13+N03·N10 인증 제거, 기준값 없음) 14문항: WF-02·02b·03·06·07·08·09·12(일반 직원 고정 안내)·주입·본인 상태가 기대대로. 근거가 있어도 전부 `low_confidence` 이관(WF-01 실패). 응답 0.3~5.2초.
+- 14 사본(N03·N10 main과 같게, `APPROVED_MIN_SCORE=0.37`, 미커밋) 19문항: WF-01 자동 답변 통과, 식당·주차는 이관. 발견:
+  - F1: TM-01(오류 809)에서 writer가 근거에 없는 방화벽·라우터·클라이언트 업데이트 안내를 보탰고 verifier가 통과시켰다.
+  - F2: TM-12(김민지 관리자 문서)에서 "근거에 없어 안내하기 어렵다"는 답이 자동 답변+sources 3개로 나갔다.
+  - F3: "비밀번호를 잊어버렸어요" → 보완 질문 "접속 대상은?", "VPN 비밀번호" → `action_required`, "계정이 잠겼어요" → 보완 3개.
+  - F5: 김민지 피싱은 writer 근거 보강 안내만 있고 사내망 분리 문장이 없다(일반 직원과 다름).
+- 기타: 루트 support·search·handoff에 `settings.errorWorkflow` 없음. n8n 경유 oke-index 실행은 CLI 포트 충돌로 미확인(색인 서비스 직접 호출은 성공).
+- 결론: 기준값만 넣어 열지 않는다. F1~F3 수정(15 후보, N03·N10 main 수정 포함) 후 같은 구성에서 3회 반복 재시험. 결과 문서: 팀장 전달용 `dahyeok-real-data-local-result.md`(로컬 다운로드 폴더, 저장소 밖).
+
+## 15: 실제 데이터 품질 수정과 보안 키워드 긴급 고정 · 2026-11-06
+
+오현님 승인(2026-11-06, 15 작업·보안 키워드 high 고정·브랜치 push). `14`를 보존하고 아래만 15에 반영했다. 노드·연결선은 14와 같다(61노드).
+
+- N03·N10 HTTP: main(오현님)과 같게 인증 없음, Credential 참조 제거. C03·C04는 그대로 `SUPPORT_X_TEAM_KEY`.
+- N07 Route triage (팀장 승인 규칙): 질문·context에 랜섬웨어·악성코드·바이러스·감염·해킹·계정 탈취·유출이 있거나, 피싱·스미싱·의심/수상한 메일·링크·첨부와 함께 눌렀/클릭/열었/입력했/실행했/다운로드가 있으면 triage 결과와 무관하게 `type=security`, `urgency=high`, 긴급 선이관. LLM 장애로 triage가 없으면 질문의 `T-숫자`만 ticket_id로 쓴다. "피싱 메일을 받으면 어떻게 신고하나요?", "보안 점검 일정이 언제인가요?"는 해당하지 않는다(Code 시뮬레이션 16문장 확인).
+- F1 writer·verifier 프롬프트: 모든 문장은 evidence.text만 옮기고, 근거에 없는 오류 번호 의미·메뉴·프로그램/장비 이름·점검 단계·부서·기한을 만들지 않는다. verifier는 문장 단위로 확인해 하나라도 없으면 `grounded=false`.
+- F2 writer 출력에 `answerable` 추가. `false`이거나 답이 "근거에 없다·안내하기 어렵다" 형태면 자동 답변하지 않고 `low_confidence` 이관(`verification_failure=writer_unanswerable`). Writer MOCK도 `answerable:true`를 낸다.
+- F3 triage: 프롬프트에 비밀번호 분실·재설정·계정 잠김은 `missing=[]`, `needs_action=false` 예시 추가. N06 Parse triage에서도 같은 질문은 `missing=[]`, "풀어 주세요·초기화해 주세요·요청합니다" 같은 직접 요청이 없으면 `needs_action=false`로 고정.
+- `APPROVED_MIN_SCORE`는 그대로 `null`(기준값 승인 전 자동 답변 잠금).
+- 확인(`oke-local`, 위 main `66d4890` 구성, 실제 규정 33청크, 실제 OpenAI): `flow.py check-live` 통과, Code 문법 확인.
+  - 시험 사본 `APPROVED_MIN_SCORE=0.37`(미커밋) 24문항 × 3회: 24문항 모두 route·reason·priority 3/3 같음. 응답 1.0~11.6초(첫 호출 1건만 11.6초, 나머지 6초 이하).
+    - 자동 답변: WF-01 VPN 끊김, 계정 잠김, 메일함, 소프트웨어 설치, 개인정보 메일, 본인 T-1002·T-1003 상태. 답변이 근거 문장만 담았다(14의 방화벽·라우터 같은 추가 내용 없음).
+    - 근거 부족 이관(writer `answerable=false`): TM-01 오류 809, IT VPN 오류 확인, 비밀번호 분실, TM-13 VPN 비밀번호, 회의실 화면 연결, TM-12, 보안 점검 일정, 피싱 신고 방법. 실제 규정에 해당 절차가 없다(비밀번호 재설정·809·화면 연결 문장 없음).
+    - 긴급 high: WF-12(사내망 분리+본인 T-1002 상태), 랜섬웨어 감염, 김민지 피싱. 식당·주차·프린터는 점수 미달 이관, 접속 안 됨은 보완 질문.
+    - "계정이 잠겼어요. 잠금을 풀어 주세요"는 첫 시험에서 자동 답변이 나와 직접 요청 규칙을 고쳤고, 재시험 3/3 `action_required` 이관. 계정 잠김·비밀번호 분실·TM-13도 재시험 3/3 같음.
+  - 저장소 버전(`null`) 6문항 × 3회: WF-01·메일함은 잠금으로 `low_confidence` 이관, 본인 T-1003 상태 자동 답변, WF-12·랜섬웨어 `urgent` high, 접속 안 됨 보완 질문. 시험 후 `oke-local`은 main support로 되돌렸다.
+  - 미확인: LLM 장애 중 키워드 high는 Code 시뮬레이션만(실행 미확인). VM·공식 키트 시험 전이다.
+- 팀 사례와 다른 점(기대값 변경 요청 아님, 원민님·팀장님 확인 필요):
+  - TM-01은 자동 답변 기대지만 실제 `remote-work-vpn`에 809 점검 절차가 없어 이관된다. 14의 자동 답변은 근거에 없는 내용이었다(F1).
+  - TM-13은 자동 답변 또는 보완 질문 기대지만 실제 규정에 비밀번호 재설정 절차가 없어 이관된다. FAQ-001이 색인되면 달라질 수 있다.
+  - TM-12는 실제 색인에 관리자 전용 운영 문서가 없어 이관된다.
+- 남은 일: 기준값 승인(0.37 후보) 후 `APPROVED_MIN_SCORE`만 바꿔 재시험. F5(IT팀 피싱의 사내망 분리 문장)는 팀장 결정 대기.
+
 ## 워크플로우 설계서 공통 반영 요청 · 2026-11-05
 
 - 담당 원고: `Doc/WORKFLOW-DESIGN-DRAFT.md` 1~8절과 `Doc/SUBMISSION-NOTES.md`. 오현님이 소유한 `docs/WORKFLOW-DESIGN.md`의 기존 “구현 예정” 설명을 실제 번호판·노드·로컬 검증 상태와 대조해 반영해 주시기 바란다.

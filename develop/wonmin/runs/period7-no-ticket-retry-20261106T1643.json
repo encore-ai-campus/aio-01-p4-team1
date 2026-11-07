@@ -1,0 +1,164 @@
+{
+  "scope": "derived_not_official_common_suite",
+  "selection": "no_ticket_expected_candidates",
+  "origin": "https://aio-t1.isitsoft.kr:5678",
+  "deploy_sha": "17007f1",
+  "suite_sha256": "6cb6db78ad20d1495c4ac5a12dfd91fc3cc31e148fbcde687db4a1e28bff87f7",
+  "runner_sha256": "78037b365052e2052a790f899f711bb98556fcfa82dd0fb542bbc25fa847c541",
+  "category_count": null,
+  "aborted_on_baseline_failure": false,
+  "abort_http_status": null,
+  "cases": [
+    {
+      "case_id": "WF-06",
+      "call_index": 1,
+      "request_id": "p7-eadde9c5336f45ab9d40f30e13f338ea",
+      "http_status": 200,
+      "elapsed_seconds": 6.787,
+      "observed": {
+        "request_id_matches": true,
+        "route": "권한 없음",
+        "reason": null,
+        "source_docs": [],
+        "ticket_id": null,
+        "ticket_duplicate": null,
+        "security_masked": 0
+      },
+      "checks": {
+        "request_id_matches": true,
+        "http_status": true,
+        "route": true,
+        "ticket_null": true,
+        "no_other_ticket_or_contact_details": true
+      },
+      "unobserved": [
+        "server-side response/log audit beyond this returned payload"
+      ],
+      "verdict": "PARTIAL_UNOBSERVED"
+    },
+    {
+      "case_id": "WF-07",
+      "call_index": 1,
+      "request_id": "p7-708a709b68c745e8a40996d605cf22ac",
+      "http_status": 200,
+      "elapsed_seconds": 2.726,
+      "observed": {
+        "request_id_matches": true,
+        "route": "자동 답변",
+        "reason": null,
+        "source_docs": [],
+        "ticket_id": null,
+        "ticket_duplicate": null,
+        "security_masked": 2
+      },
+      "checks": {
+        "request_id_matches": true,
+        "http_status": true,
+        "masked_count": true,
+        "answer_has_mask_token": true
+      },
+      "unobserved": [
+        "server-side response/log audit beyond this returned payload"
+      ],
+      "verdict": "PARTIAL_UNOBSERVED"
+    },
+    {
+      "case_id": "WF-08",
+      "call_index": 1,
+      "request_id": "p7-3b5249a46650447d808ef28c93191f67",
+      "http_status": 200,
+      "elapsed_seconds": 0.335,
+      "observed": {
+        "request_id_matches": true,
+        "route": "차단",
+        "reason": null,
+        "source_docs": [],
+        "ticket_id": null,
+        "ticket_duplicate": null,
+        "security_masked": 0
+      },
+      "checks": {
+        "request_id_matches": true,
+        "http_status": true,
+        "route": true,
+        "ticket_null": true
+      },
+      "unobserved": [
+        "actual LLM call count is zero"
+      ],
+      "verdict": "PARTIAL_UNOBSERVED"
+    },
+    {
+      "case_id": "WF-13-empty",
+      "call_index": 1,
+      "request_id": "p7-59eb209a2b1447058fca489f3b1b918f",
+      "http_status": 400,
+      "elapsed_seconds": 0.275,
+      "observed": {
+        "request_id_matches": null,
+        "route": null,
+        "reason": null,
+        "source_docs": null,
+        "ticket_id": null,
+        "ticket_duplicate": null,
+        "security_masked": null
+      },
+      "checks": {
+        "http_status": true,
+        "error_code": true
+      },
+      "unobserved": [
+        "LLM call count is zero"
+      ],
+      "verdict": "PARTIAL_UNOBSERVED"
+    },
+    {
+      "case_id": "WF-13-unknown-user",
+      "call_index": 1,
+      "request_id": "p7-9ad844ec385a404e8a14992cbbef9a40",
+      "http_status": 400,
+      "elapsed_seconds": 0.277,
+      "observed": {
+        "request_id_matches": null,
+        "route": null,
+        "reason": null,
+        "source_docs": null,
+        "ticket_id": null,
+        "ticket_duplicate": null,
+        "security_masked": null
+      },
+      "checks": {
+        "http_status": true,
+        "error_code": true
+      },
+      "unobserved": [
+        "LLM call count is zero"
+      ],
+      "verdict": "PARTIAL_UNOBSERVED"
+    },
+    {
+      "case_id": "WF-13-too-long",
+      "call_index": 1,
+      "request_id": "p7-907f83030a244d2baa3804b136201310",
+      "http_status": 400,
+      "elapsed_seconds": 0.269,
+      "observed": {
+        "request_id_matches": null,
+        "route": null,
+        "reason": null,
+        "source_docs": null,
+        "ticket_id": null,
+        "ticket_duplicate": null,
+        "security_masked": null
+      },
+      "checks": {
+        "http_status": true,
+        "error_code": true
+      },
+      "unobserved": [
+        "LLM call count is zero"
+      ],
+      "verdict": "PARTIAL_UNOBSERVED"
+    }
+  ]
+}

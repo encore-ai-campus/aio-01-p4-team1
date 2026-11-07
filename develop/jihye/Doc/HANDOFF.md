@@ -259,3 +259,12 @@ P0-2 보완 기준은 fdcd265이며 origin/feat/jihye-p0와 같은 해시임을 
 기존 `app.cli seed-employees`가 API key/header를 항상 강제해 검증된 내부 no-auth source를 사용할 수 없었다. 통합 변경으로 `DATA_API_EMPLOYEES_NO_AUTH=true`일 때만 `http://data-api:8800` origin을 허용하고 key/header를 하나라도 함께 설정하면 실패하도록 제한한다. 일반 인증 모드는 기존 key+명시 header 경로 그대로 유지한다. seed는 계속 `fetch_employees`의 원본 6명 검증과 `seed_employees` 서비스 함수를 사용하며 직접 SQL·직원값 변경은 하지 않는다. `tests/test_bootstrap.py`: 18 passed, 1 기존 경고.
 
 VM `.env.backend`에는 이 고정 origin no-auth flag만 추가한 뒤 official CLI를 실행할 계획이다. 첫 관리자 이름/login ID는 정책상 미고정이며 controller 답변 대기 중이다. 선택 후 기존 `bootstrap_admin`만 사용하고 비밀번호는 VM mode 600 인계 경로에만 둔다. bootstrap 완료와 로그인·첫 비밀번호 변경을 별도 실측한다.
+
+## 관리자 직원 생성·계정 삭제 API · 2026-11-07
+
+- **구현 요청 출처:** 팀장 관제탑의 명시적 작업 지시. 개인 백엔드 코드·테스트에 API를 추가했으며 DB migration은 만들지 않았다. 공통 계약 반영·통합 커밋·배포 상태는 별도 검토 전이다.
+- **기존 기준:** C01에는 `GET /api/admin/employees`, `GET/POST/PATCH /api/admin/users`가 정의되어 있고 employee roster는 기존 6명으로 설명된다. 직원 신규 등록 POST와 사용자 DELETE는 정의되어 있지 않다.
+- **제안/구현 계약:** IT팀 관리자가 `POST /api/admin/employees`에 `{name,dept}`를 보내면 새 employee를 만들고 `201 {id,name,dept,user_id:null}`을 받는다. 이어 기존 `POST /api/admin/users`의 `employee_id,login_id,temporary_password`로 계정을 발급한다. `DELETE /api/admin/users/{id}` 성공은 `200 {ok:true,message:"계정이 삭제되었습니다."}`이다. 호출자 본인 또는 `role=admin` 대상은 400 `관리자 본인 계정은 삭제할 수 없습니다.`로 거절한다. 삭제는 같은 DB transaction에서 연결 sessions를 먼저 제거한 뒤 user만 제거하며 employee와 문의·티켓 이력은 보존한다. 새 이름 충돌은 거절한다.
+- **영향:** C01 소비자는 사원 등록 다음 계정 발급의 두 단계와 새 DELETE 응답/400 오류를 알아야 한다. migration은 필요 없고 제공 고정 6명 데이터는 변경하지 않는다.
+- **검토 상대:** 수언님(C01 화면·API 소비/관리자 UI), 오현님(공통 `docs/API-CONTRACT.md` 갱신 및 통합 승인). 이 기록은 상대 검토 요청이며 동의나 공통 반영 완료를 뜻하지 않는다. 외부 메시지는 전송하지 않았다.
+- **확인 상태:** `uv run pytest -q` **163 passed, 67 skipped, 1 기존 Starlette/httpx warning**. OpenAPI와 POST employee/DELETE user 성공 응답·일반 직원 403 fixture는 실행 통과했다. 계정 생성/삭제, 세션 선삭제, employee·문의·티켓 보존을 확인하는 새 격리 PostgreSQL 통합 테스트는 추가했으나 DB opt-in 미설정으로 실행되지 않았다. VM 계정·데이터에는 적용하지 않았다.

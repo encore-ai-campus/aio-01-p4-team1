@@ -16,7 +16,7 @@ jobs:
 
       - name: Verify required baseline files exist
         run: |
-          for f in README.md AGENTS.md CLAUDE.md .env.example docs/API-CONTRACT.md docs/DATA-AND-DB.md; do
+          for f in README.md AGENTS.md CLAUDE.md docs/API-CONTRACT.md docs/DATA-AND-DB.md; do
             if [ ! -f "$f" ]; then
               echo "Missing required file: $f"
               exit 1

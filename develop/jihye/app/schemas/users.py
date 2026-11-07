@@ -13,6 +13,11 @@ class EmployeeAdminView(ContractModel):
     user_id: EntityId | None
 
 
+class EmployeeCreateRequest(ContractModel):
+    name: NonEmpty
+    dept: NonEmpty
+
+
 class AccountView(UserSummary):
     employee_id: EntityId
     login_id: NonEmpty
@@ -39,3 +44,7 @@ class ResetPasswordRequest(ContractModel):
 
 class ResetPasswordResponse(OkResponse):
     must_change_password: Literal[True] = True
+
+
+class DeleteAccountResponse(OkResponse):
+    message: Literal["계정이 삭제되었습니다."]

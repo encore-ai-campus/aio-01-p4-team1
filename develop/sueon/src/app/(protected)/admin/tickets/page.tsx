@@ -5,6 +5,10 @@ import { ApiRequestError } from "../../../../lib/api/client";
 import type { TicketView, TicketStatus, TicketPatch } from "../../../../lib/api/types";
 
 const labels: Record<string, string> = { open: "접수", in_progress: "처리 중", resolved: "완료" };
+function originalQuestion(ticket: TicketView): string | null {
+  const question = ticket.question;
+  return typeof question === "string" && question.trim() ? question : null;
+}
 export default function AdminTicketsPage() {
   const [tickets, setTickets] = useState<TicketView[]>([]); const [selectedId, setSelectedId] = useState<number | null>(null);
   const [status, setStatus] = useState<TicketStatus>("open"); const [assignee, setAssignee] = useState(""); const [reply, setReply] = useState("");
@@ -16,6 +20,27 @@ export default function AdminTicketsPage() {
   async function save() { if (!selected || saving || loading) return; const parsed = assignee.trim() ? Number(assignee) : null; if (parsed !== null && (!Number.isInteger(parsed) || parsed < 1)) { setError("담당자는 IT팀 직원 번호 또는 미지정으로 입력해 주세요."); return; } const patch: TicketPatch = { status, assignee: parsed, reply }; setSaving(true); setError(""); setNotice(""); try { await adminTicketsApi.update(selected.id, patch); if (await load(selected.id)) setNotice("저장 후 최신 티켓 내용을 다시 불러왔습니다."); else setError("티켓 저장은 성공했지만 목록 재조회에 실패했습니다. 중복 저장하지 말고 새로고침으로 목록만 다시 확인해 주세요."); } catch (cause) { setError(cause instanceof Error ? cause.message : "저장하지 못했습니다. 입력한 내용은 화면에 유지했습니다."); } finally { setSaving(false); } }
   return <main className="admin-content"><div className="admin-title"><div><span className="eyebrow">ADMIN WORKSPACE</span><h1>티켓 관리</h1><p>실제 저장된 문의의 담당자·상태·답변을 관리합니다.</p></div><span className="admin-count">전체 {tickets.length}건</span></div>
     {error && <p className="error" role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
-    <div className="admin-ticket-grid"><section className="admin-panel"><div className="panel-heading"><h2>문의 티켓</h2><button type="button" disabled={loading || saving} onClick={() => void load()}>새로고침</button></div>{loading ? <p role="status">티켓을 불러오는 중입니다…</p> : error ? null : tickets.length === 0 ? <p>표시할 티켓이 없습니다.</p> : tickets.map((ticket) => <button key={ticket.id} type="button" disabled={saving || loading} className={`ticket-list-row ${ticket.id === selected?.id ? "selected" : ""}`} onClick={() => select(ticket)}><span className="ticket-code">{ticket.ticket_id}</span><span><b>{ticket.title}</b><small>{ticket.requester} · {ticket.category}</small></span><em className="admin-status">{labels[ticket.status] ?? ticket.status}</em></button>)}</section>
-      <section className="admin-panel ticket-editor"><div className="panel-heading"><div><span className="ticket-code">{selected?.ticket_id ?? "선택 없음"}</span><h2>{selected?.title ?? "티켓을 선택해 주세요"}</h2></div></div>{loading && <p role="status">티켓을 불러오는 중입니다…</p>}{selected && !loading && !error && <div className="admin-fields"><p>요청자: {selected.requester} · 우선순위: {selected.priority === "high" ? "긴급" : "보통"}</p><label>처리 상태<select disabled={saving} value={status} onChange={(event) => setStatus(event.target.value as TicketStatus)}><option value="open">접수</option><option value="in_progress">처리 중</option><option value="resolved">완료</option></select></label><label>담당 직원 내부 번호<input disabled={saving} inputMode="numeric" value={assignee} onChange={(event) => setAssignee(event.target.value)} placeholder="미지정은 비워 두세요" /></label><label>답변<textarea disabled={saving} value={reply} onChange={(event) => setReply(event.target.value)} placeholder="직원에게 전달할 답변을 입력해 주세요." /></label><button className="admin-primary" type="button" disabled={saving} onClick={() => void save()}>{saving ? "저장 중…" : "변경 저장"}</button></div>}</section></div></main>;
+    <div className="admin-ticket-grid">
+      <section className="admin-panel">
+        <div className="panel-heading"><h2>문의 티켓</h2><button type="button" disabled={loading || saving} onClick={() => void load()}>새로고침</button></div>
+        {loading ? <p role="status">티켓을 불러오는 중입니다…</p> : error ? null : tickets.length === 0 ? <p>표시할 티켓이 없습니다.</p> : tickets.map((ticket) => <button key={ticket.id} type="button" disabled={saving || loading} aria-pressed={ticket.id === selected?.id} className={`ticket-list-row ${ticket.id === selected?.id ? "selected" : ""}`} onClick={() => select(ticket)}><span className="ticket-code">{ticket.ticket_id}</span><span><b>{ticket.title}</b><small>{ticket.requester} · {ticket.category}</small></span><em className="admin-status">{labels[ticket.status] ?? ticket.status}</em></button>)}
+      </section>
+      <section className="admin-panel ticket-editor">
+        <div className="panel-heading"><div><span className="ticket-code">{selected?.ticket_id ?? "선택 없음"}</span><h2>{selected?.title ?? "티켓을 선택해 주세요"}</h2></div></div>
+        {loading && <p role="status">티켓을 불러오는 중입니다…</p>}
+        {selected && !loading && !error && <div className="admin-fields">
+          <p>요청자: {selected.requester} · 우선순위: {selected.priority === "high" ? "긴급" : "보통"}</p>
+          <section aria-labelledby="ticket-question-heading"><h3 id="ticket-question-heading">문의 원문</h3>
+            {originalQuestion(selected)
+              ? <p className="ticket-question">{originalQuestion(selected)}</p>
+              : <p className="ticket-question-note">현재 티켓 API 응답에 문의 원문(question)이 없습니다. 문의 번호 {selected.request_id ?? "미제공"}의 원문을 보려면 서버 응답에 question 필드가 필요합니다.</p>}
+          </section>
+          <label>처리 상태<select disabled={saving} value={status} onChange={(event) => setStatus(event.target.value as TicketStatus)}><option value="open">접수</option><option value="in_progress">처리 중</option><option value="resolved">완료</option></select></label>
+          <label>담당 직원 내부 번호<input disabled={saving} inputMode="numeric" value={assignee} onChange={(event) => setAssignee(event.target.value)} placeholder="미지정은 비워 두세요" /></label>
+          <label>답변<textarea disabled={saving} value={reply} onChange={(event) => setReply(event.target.value)} placeholder="직원에게 전달할 답변을 입력해 주세요." /></label>
+          <button className="admin-primary" type="button" disabled={saving} onClick={() => void save()}>{saving ? "저장 중…" : "변경 저장"}</button>
+        </div>}
+      </section>
+    </div>
+  </main>;
 }

@@ -78,6 +78,15 @@ def test_employee_cannot_read_or_modify_admin_tickets(contract_harness):
     assert backend.operations == []
 
 
+def test_employee_cannot_create_employee_or_delete_account(contract_harness):
+    _, client, backend, _ = contract_harness
+    client.cookies.set("oke_session", "fixture")
+    assert client.post("/api/admin/employees", json={
+        "name": "신규 직원", "dept": "영업팀"}).status_code == 403
+    assert client.delete("/api/admin/users/2").status_code == 403
+    assert backend.operations == []
+
+
 def test_unconfigured_session_secret_fails_closed():
     app = create_app(Settings(_env_file=None, database_url=None, session_secret=None))
     with TestClient(app) as client:

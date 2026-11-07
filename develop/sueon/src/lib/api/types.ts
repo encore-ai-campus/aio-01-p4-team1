@@ -9,6 +9,7 @@ export type TicketStatus = "open" | "in_progress" | "resolved";
 export type TicketView = { id: number; ticket_id: string; request_id?: string | null; requester: string; title: string; category: string; priority: "normal" | "high"; status: TicketStatus | string; assignee: number | null; reply?: string | null; created_at: string; updated_at: string; [key: string]: unknown };
 export type TicketPatch = { status: TicketStatus; assignee?: number | null; reply?: string | null };
 export type EmployeeAdminView = { id: number; name: string; dept: string; user_id: number | null };
+export type CreateEmployeeRequest = { name: string; dept: string };
 export type AccountView = { id: number; employee_id: number; login_id: string; name: string; dept: string; role: Role; is_active: boolean; must_change_password: boolean };
 export type CreateAccountRequest = { employee_id: number; login_id: string; temporary_password: string };
 export type AlertView = { id: number; ticket_id: string | null; workflow: string; node: string; message: string; severity: string; created_at: string };

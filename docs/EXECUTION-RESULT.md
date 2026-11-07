@@ -160,3 +160,157 @@ The 1교시 report material is prepared, but the official common-14 test startin
 ### 남은 미검증
 
 - Browser UI click/render, alert/DLQ와 중복 재요청, 본인/타인 API 대조, 재시작 영속성, 일반/IT 정상 문서검색, WF-01 자동답변 및 8초, 공식 common-14 suite는 미실행 또는 이 시험으로 입증되지 않았다. 안정 이관 API pass를 전체 업무/검색 품질 pass로 확대하지 않는다.
+
+
+## 12. 6교시 팀장 지정 WF-02b 라이브 VM E2E 실측 · 2026-11-06 15:04 KST
+
+### 실행 배경 및 입력
+
+- **실행자**: 원민(QA), 팀장(오현) 지정 시나리오
+- **환경**: 공개 운영 VM `https://aio-t1.isitsoft.kr`, VM 배포본 `3ff836a`, origin/main 최신 병합 후 `feat/wonmin-p0` @ `90fab63`
+- **시나리오**: **WF-02b (보완 질문 한도 도달 후 자동 이관: attempt=3)**
+- **입력**: 질문="접속이 안 돼요", attempt=3, context=없음
+- **고유 요청 키**: `request_id=real-qa-4a2c0b16ce4341deb887c458f9d8aaa6`
+
+### 실제 응답 및 10개 검사 결과
+
+- **응답**: POST `/api/ask` HTTP 200, route `담당자 이관`, elapsed **4.535초**, sources `[]`, 티켓 `T-2011` (`in_progress`)
+- **10개 검사 항목 전원 PASS (`PASS_API_SEQUENCE`)**:
+  1. `employee_admin_forbidden_403`: true (일반 직원 계정의 관리자 엔드포인트 접근 403 차단)
+  2. `forbidden_body_not_recorded`: true (차단된 응답 본문 미기록)
+  3. `ask_created_one_ticket_response`: true (단일 티켓 생성 응답 확인)
+  4. `inquiry_saved_and_listed_before_logout`: true (문의 저장 및 로그아웃 전 목록 조회 일치)
+  5. `employee_logout_http_200`: true (직원 정상 로그아웃 200)
+  6. `inquiry_and_ticket_visible_after_relogin`: true (재로그인 후 문의 및 티켓 상태 정상 조회)
+  7. `admin_ticket_query_found_created_row`: true (관리자 티켓 쿼리에서 생성된 행 일치)
+  8. `admin_status_and_reply_persisted`: true (관리자 상태 변경 및 답변 저장 정상 반영)
+  9. `employee_latest_ticket_status_visible`: true (직원 화면에서 최신 티켓 상태 확인)
+  10. `employee_latest_reply_visible`: true (직원 화면에서 최신 관리자 답변 확인)
+- **증적 자료**: `develop/wonmin/runs/real-qa-WF02b-lead-20261106T060403Z.json`, 실행 맥락 `real-qa-WF02b-lead-context-20261106T060403Z.json`
+- **판정**: **WF-02b 라이브 E2E 실측 통과 (PASS)**.
+
+## 13. DAY81 Period 7 deployment 2 and QA snapshot · 2026-11-06 16:40–16:49 KST
+
+### Version and deployment boundary
+
+- GitHub `main` and the VM repository are at `17007f1`. Selected changes: FE visual update from `67ef41b` as main commit `840c5e6`; support workflow 15 from `aedbb95` as `bb3ef06`; explicit support-to-error workflow link as `17007f1`.
+- The VM rebuilt and recreated **frontend only** from main `bb3ef06` (design commit `840c5e6`); the short recreate interval was about 8 seconds. Frontend returned healthy. No backend, RAG search, PostgreSQL, data-api, n8n, runner, or sandbox service was part of that scoped deployment.
+- n8n support uses stable ID `okeSupportFlow01`, published runtime version `d0d6396d-08f4-4b8a-8514-4e8473a6203d`, 61 nodes, and `settings.errorWorkflow=okeErrorsFlow01`. The active Error Trigger workflow remained ID `okeErrorsFlow01`, version `8bab332b-8ca5-44f7-98d7-c824a75dd803`, with one Error Trigger node. The six existing support Credential references were preserved by ID/name/type; credential values are not recorded. Runtime exported support JSON SHA-256: `5ee90ae3514028c4ba5b46b1fdc8752b1567a0598d9653d578d861590d52cb8a`.
+- n8n CLI reported that publication changes require a restart while n8n is running. Only `oke-n8n-1` was restarted; afterward health was HTTP 200, support and the existing search/handoff/errors workflows were active, and a production webhook POST without its auth header returned HTTP 403 (registration/authentication probe; the workflow did not execute). This was not an authenticated business-flow test.
+- Rollback export captured the prior active support version `ece576c6-9c22-4243-9d18-68ba93a7a167` before replacement. VM backup: `/home/toor/.local/share/oke-backups/oke-support-before-bb3ef06-20261106T072504+0000.json`, SHA-256 `d7b4ed81a87973442ad0905df415d0f3d2885a6d086512d88c1c350fb20b1ad8`, mode 600.
+
+### Read-only public and database evidence
+
+- After FE deployment: `/login` HTTP 200; a Next static CSS asset HTTP 200; no-cookie `/api/auth/me` HTTP 401; `/docs` HTTP 200 with Swagger UI; `/openapi.json` HTTP 200 with OpenAPI 3.1.0 and 18 paths; n8n `/healthz` HTTP 200. No login, ticket mutation, or authenticated workflow POST was run by the deployer.
+- Read-only PostgreSQL snapshot at 16:41:17 KST: `app.inquiries=13`, `app.tickets=12`, `app.alerts=14`, `rag.documents=8`, `rag.chunks=33`. The existing 8/33 RAG index was retained; no reindex or threshold change was performed.
+- QA row correlation is in `orchestrator/status/PERIOD7-DB-ROWS.txt`: among 19 unique request IDs, 12 each matched exactly one ticket row and 7 matched no ticket row. `T-2018` was one ticket for WF-09; `T-2017` was the high-priority WF-12 ticket. This is QA-owned row evidence, not a total-suite pass count.
+- The first six QA calls returned 403 because the private test harness key differed from the VM backend's webhook key; this does not establish a workflow feature failure. The server key/Credential was not changed. QA used the existing mode-600 private handoff file for a six-call retry; status/route/code matched the expected values for all six, while trace evidence remained incomplete.
+- Final QA snapshot collected at 16:50 KST: 22 requests / 21 unique IDs. The base 20 requests (19 IDs) recorded observed-field tally 2 pass, 14 partial, 4 fail; two additional WF-01 repeats bring the total tally to 2 pass / 14 partial / 6 fail. The first six authentication-mismatch 403 responses are retained separately and are not classified as feature failures.
+- WF-01 normal-answer repeats all handed off/failed: 4.270s, 3.585s, and 2.251s. No successful normal answer within 8 seconds was established.
+- PostgreSQL read-only correlation: 14 ticket-response IDs each matched exactly one ticket row (the original 12 plus T-2025 and T-2026); 7 no-ticket IDs matched zero rows. WF-09 T-2018 had one row; WF-12 T-2017 was high priority. Detailed evidence: `orchestrator/status/PERIOD7-DB-VERIFICATION.md` and `PERIOD7-DB-ROWS.txt`.
+- QA called n8n directly. This does not revalidate FE-to-FastAPI inquiry storage. Official common-14 coverage/score, WF-04/10/11 fault cases, alert/DLQ row verification, and actual Error Trigger auto-fire remain unverified. The 8-document/33-chunk RAG index was retained; no reindex or threshold change occurred. This is partial evidence, not a 7교시 completion claim.
+
+### Evidence and remaining boundary
+
+- The T-2011 raw/context records were selected from `90fab63`, scanned for secret/token/password, email, and phone content, and restored at the exact paths referenced by the DAY81 report. No credential value was included.
+- `sources=[]` remains an observed response field, not proof that the live VM lacked regulations; the database retained 8 documents/33 chunks and direct C03 search evidence exists. `test_recovery.py` is a Fake/MockStore test and is not a real PostgreSQL recovery pass.
+- Official 14-type and full five-team regression were not complete in this snapshot. QA continues against the fixed VM/runtime versions; no further deploy or workflow edits are part of this report update.
+
+## 14. DAY81 기능 동결 및 v18 로컬 측정 요약 · 2026-11-07
+
+### 실행 경계
+
+아래 `develop/dahyeok/runs/*.json`은 다혁 담당의 `oke-local` 격리 로컬 통합 스택 결과다. v18 로컬 측정/회귀 증거이며 팀 VM 라이브 전체 회귀나 공식 KSM common-14 러너 결과가 아니다. 지원 워크플로우의 새 VM 배포·기능 활성화·공식 체크리스트 전체 통과를 의미하지 않는다. 원본 입력/기대값은 바꾸지 않았다.
+
+| JSON 원본 | 기록 범위 | 관측 요약 | 판정 경계 |
+|---|---|---|---|
+| `develop/dahyeok/runs/search-score-dist-20261106-1.json` | C03 Q01–Q13, Q08-it, X01–X04 (18개 HTTP 200) | C03 top-3 결과와 top-1 score 기록. 일반 Q08은 `security-incident`가 아닌 `software-usage`로 제한 검색됐고, IT 양성 Q08-it은 `security-incident` score 0.380. 기대 문서 score 범위는 0.380–0.709; 범위 밖 질문 top-1은 0.235–0.383. | 질문 파일은 `draft_not_frozen`; 고정 정답셋 평가가 아니므로 hit-rate·품질 통과나 임계값 승인으로 집계하지 않음. score 분포 관측은 VM live 값이 아님. |
+| `develop/dahyeok/runs/common-regress-20261106-1.json` | WF-02, WF-02b, WF-03, WF-05, WF-06, WF-12 (6행) | 기록된 동작: 보완 질문 3.7s, attempt 한도 이관 1.9s, 무근거 이관 2.6s, 권한제한 안전 이관 3.1s, 타인 조회 거절 2.0s, 긴급 high 이관 2.0s. | JSON `ok` 필드는 runner 관측이며 DB 영수증 또는 전 공식요건 통과 증명 아님. |
+| `develop/dahyeok/runs/common-rest-20261106-1.json` | WF-13 세 입력, WF-07, WF-05, WF-09, WF-11, WF-10, WF-04 (10행) | 400 입력 거절 3건; 마스킹 응답 2.9s; WF-09 동일 키 T-2048 재요청 duplicate=false→true (2.1/1.8s); LLM 장애 1.2s 안전 이관; ticket 장애 2.2s 안전 이관; timeout/느린 경로 4.4s. | WF-04/10은 격리 로컬 장애 시험. DLQ/alert 실 DB 행과 자동 Error Trigger 발화는 별도 입증 필요. |
+| `develop/dahyeok/runs/practice-20261106-1.json` | WF-01, WF-12, WF-09×2, WF-04, TM-07, WF-11 (7행) | 로컬 `SERVICE_MODE=practice`; 자동답변 WF-01 10.8s, 긴급 high 2.6s, 동일 요청 T-2002 중복 표식, 장애 안전 응답. | WF-01 10.8s는 8초 기준을 넘는다. practice/로컬 결과이며 운영 VM 응답/DB 영수증으로 간주하지 않음. |
+| `develop/dahyeok/runs/team-repeat-20261106-1.json` | TM-01–06, TM-08, TM-11–13, TX-1–5 (16행; TM-06 2회 포함) | runner 14/16, 반복 경로 5/5 (각 3/3)로 기록. TM-01 자동답변 9.9s; TM-02 질문 1.7s; TM-03 이관 T-2055 2.0s; TM-04 권한 거절 2.2s; TM-05 긴급 high T-2056 2.1s; TM-06 T-2057 중복 false→true. | 모든 개별 `ok=true`가 기대 동작 적합을 뜻하지 않음. 14/16은 보고서 집계이고 오류 2건/기대 차이를 보존. TM-01은 8초 초과. |
+
+### Common 14 시나리오 종합표 (v18 로컬 근거)
+
+| ID | 시나리오 | 측정 결과 / 증거 | 판정 |
+|---|---|---|---|
+| WF-01 | 정상 근거 자동답변 | `practice` 10.8s 자동답변; `team-repeat` TM-01 9.9s 자동답변과 remote-work-vpn 근거. | 로컬 동작 확인, 두 측정 모두 8초 기준 초과. VM 정상답변·시간 PASS 아님. |
+| WF-02 | 정보 부족 1차 | `common-regress`: HTTP 200, 보완 질문, 3.7s. | 로컬 회귀 확인 |
+| WF-02b | 보완 한도 도달 | `common-regress`: attempt 한도 이관, max_attempts, T-2051, 1.9s. | 로컬 회귀 확인; 라이브 영수증은 아래 T-2011 |
+| WF-03 | 검색 결과 없음/무근거 | `common-regress`: HTTP 200 안전 이관, sources 빈 목록, 2.6s. | 로컬 회귀 확인; 라이브 영수증은 아래 T-2005 |
+| WF-04 | 티켓 API 장애 | `common-rest`/`practice`: HTTP 200, ticket=null, tickets_down. | 격리 장애 시험; 라이브 DLQ/alert 영수증 미입증 |
+| WF-05 | 권한 제한 | `common-regress`/`common-rest`: 제한 결과 안전 이관, 일반 요청 sources 빈 목록. | 로컬 관측; C03 일반/IT 라이브 권한 자료는 RAG 실측 절 참조 |
+| WF-06 | 타인 티켓 조회 | `common-regress`: route=권한 없음, 타인 정보 미출력, 2.0s. | 로컬 회귀 확인 |
+| WF-07 | 개인정보 마스킹 | `common-rest`: 연락처 마스킹, masked=2, 2.9s. | 로컬 회귀 확인 |
+| WF-08 | 프롬프트 주입 | support-18 `LOCAL-TEST.md`는 차단/LLM 0회/티켓 미생성 PASS를 기록. 해당 다혁 runs JSON에는 별도 WF-08 행이 없음. | 로컬 보고 기록만; 해당 JSON raw 미포함 |
+| WF-09 | 중복 요청 | `common-rest`: T-2048 duplicate=false→true; `practice`: T-2002 중복 표시. | 로컬 회귀 확인; 라이브 DB 멱등성은 T-2030 |
+| WF-10 | LLM 장애 | `common-rest`: HTTP 200 안전 이관, `llm_down`, 1.2s. | 로컬 장애 시험 |
+| WF-11 | 느린 외부 API/시간 | `common-rest` 4.4s 안전 응답, `practice` 6.6s. | 로컬만 확인; 경계별 6초/8초 기준 해석 및 VM 회귀 별도 |
+| WF-12 | 긴급 보안 문의 | `common-regress`: high 이관, 보안 안내/마스킹, 2.0s; practice 2.6s. | 로컬 회귀 확인 |
+| WF-13 | 잘못된 입력 | `common-rest`: 빈 질문·unknown_user·501자 모두 HTTP 400. | 로컬 회귀 확인 |
+
+### Team 5 시나리오 종합표 (team-repeat v18 로컬)
+
+| ID | 시나리오 | 실제 결과 | 판정 / 한계 |
+|---|---|---|---|
+| TM-01 | 정상 VPN 근거 답변 | HTTP 200 자동 답변, remote-work-vpn `2. VPN 인증서`, score 0.4142, 9.9s. | 동작 확인, 8초 초과 |
+| TM-02 | 정보 부족 1차 | HTTP 200 보완 질문, 1.7s. | 기록상 예상 경로 일치 |
+| TM-03 | 보완 질문 한도 | HTTP 200 담당자 이관, max_attempts, T-2055, 2.0s. | 기록상 예상 경로 일치; 로컬 ticket |
+| TM-04 | 타인 접수 권한 거절 | HTTP 200 route=권한 없음, 타인 문의 정보 없음, 2.2s. | 기록상 예상 경로 일치 |
+| TM-05 | 긴급 사고 + 본인 접수 | HTTP 200 high 이관, urgent, T-2056, masked=2, 2.1s. | 기록상 예상 경로 일치; 알림 DB 별도 대조 아님 |
+
+## 15. 라이브 VM 결과와 DB 영수증 매핑 · 2026-11-07
+
+| 요구/ID | 실환경 관측 | DB 영수증 | 증거와 경계 |
+|---|---|---|---|
+| RAG 색인·pgvector | VM 배포 코드 `af82c3b`: 원문 API와 해시 정합한 8문서/33청크, 7문서·30청크 `all`, 1문서·3청크 `it`; `text-embedding-3-large`, pgvector `vector(3072)` 33개 차원 확인. `cl100k_base` 문서 본문 240–433자 / 195–375 tokens; 청크 13–156자 / 10–163 tokens; 임베딩 입력 26–182자 / 22–192 tokens. 기존 라이브 C03 및 n8n 검색 HTTP 200, evidence 3. | read-only RAG 집계 | [STEP2-RAG-QA-MEASUREMENTS-2026-11-07.md](../../4pj%20준비/orchestrator/status/STEP2-RAG-QA-MEASUREMENTS-2026-11-07.md). Hit@3, MRR, 필수 근거률, threshold, p95, 청킹 비교, API 비용은 미측정. |
+| WF-09 / `T-2030` | 동일 `/api/ask` request ID 2회, HTTP 200 (5.433s, 2.919s); ticket id 동일, duplicate false→true; n8n support 182·184 / handoff 183·185 success. | 동일 키 기준 `app.tickets` 1행, `app.inquiries` 1행, 관련 alert 1행, DLQ 0행; 전체 증감 tickets 29→30, alerts 31→32, DLQ 7 유지. | `develop/wonmin/runs/live-duplicate-api-20261107T0124Z.json`; WF-09 직접 webhook 403 원본은 별도 기록. Error workflow는 검증되지 않음. |
+| WF-02b / `T-2011` | VM `/api/ask` HTTP 200, attempt=3, 안전 이관, 4.535s, sources=[], T-2011. | QA sequence는 문의·티켓 생성/관리자 변경/직원 재조회 10 checks PASS. | `develop/wonmin/runs/real-qa-WF02b-lead-20261106T060403Z.json`, DB 상세는 해당 보고 경로. 2026-11-06 VM 배포 `3ff836a`; RAG 성능 영수증 아님. |
+| WF-03 / `T-2005` | VM `/api/ask` HTTP 200, attempt=1, 안전 이관, 7.341s, sources=[], T-2005. | read-only DB에서 `app.inquiries` request_id 1행 ↔ `app.tickets.request_key` 1행; inquiry/ticket link·requester id 일치, 관리자 PATCH 및 직원 재조회 일치. | `develop/wonmin/runs/real-qa-api-20261106T1150KST.json`. 2026-11-06 배포 `3ff836a`; WF-01 자동답변 증거 아님. |
+
+## 16. 실패·개선 사례 (6칸 표준)
+
+| 증상 | 재현 조건 / 확인 근거 | 원인 | 조치 / 개선 | 재시험 결과 | 잔여 위험 |
+|---|---|---|---|---|---|
+| **1.** 정상 FAQ 검색 근거가 있어도 초기 N12 `0.80` 게이트에서 전부 low_confidence 이관. | C03 로컬 `search-score-dist-20261106-1.json`; draft Q01–Q13에서 기대 문서 score 0.380–0.709, 범위 밖 최고 0.383. support-18 `LOCAL-TEST.md` 기록. | 초기 0.80은 Mock 분기값이며 측정 score를 수용하지 못함; score-only 경계도 완전 분리되지 않음. | v18 로컬 support-16~18에서 후보 기준 `0.40`, FAQ 보조 조회를 5노드에서 2노드로 경량화하고 N04 규칙도 보완. 기대치/정답표를 임의 수정하지 않음. | 로컬 report는 WF-01 5/5 및 p50 4.1s를 기록하지만 제공 run JSON은 자동답변 9.9/10.8s 사례도 포함; VM 7교시 WF-01은 3회 모두 이관. | `0.40`은 VM 승인 임계값/품질 보장이 아님. 경계 밖 max 0.383과 정상 min 0.380이 겹치므로 frozen 정답셋·Verifier 및 오현 승인 필요; 8초 VM PASS 미확인. |
+| **2.** local `rag-search` HTTP 503 `search_unavailable`. | `develop/dahyeok/Doc/LOCAL-TEST.md`의 N09 C03 재현. DSN 형식 수정 전 검색 호출. | `DATABASE_URL`이 `postgresql+psycopg://` SQLAlchemy URL로 만들어졌으나 직접 `psycopg.connect()`는 `+psycopg` 스킴을 허용하지 않음. | `python3 local/setup.py repair-rag-dsn` 후 `rag-search` force-recreate. 실제 키는 노출하지 않음. | 같은 기록에서 n8n `/webhook/oke-search` HTTP 200, evidence 3 확인. 이후 VM 실측 보고서도 C03 HTTP 200/evidence 3을 별도 기록. | 설정 복구 성공은 local 재현 근거. 오류 로그/DSN 노출 방지, VM 배포 DSN과 서비스 계정은 별도 검증. |
+| **3.** 자식 workflow 실행 이력/부모-자식 추적을 확보하지 못했고 Error Trigger 자동 발화를 입증하지 못함. | 2026-11-07 `WORKFLOW-LINK-LOG-GAP-ANALYSIS`: 로컬 search/handoff/errors execution 저장 `none`; QA 직접 child endpoint에서는 execution ID/link 수집 안 됨; WF-09 직접 errors webhook 시도 403, `oke-errors` 실행 0건. | 로그 부재만으로 미실행/실행 중 하나를 단정할 수 없음. 실행 게이트·Mock 분기 가능성과 저장 옵션/조회 권한 제한이 모두 남음. | 개선 항목: search/handoff/errors child execution 성공·오류 데이터 저장을 `all`로 설정하고, 승인된 전용 테스트 부모 workflow에서 통제된 오류를 발생시켜 parent/child execution ID를 연계 수집. 403 직접 호출은 실제 Error Trigger 검증 대체 불가. | **미확인/미통과**: 제출 가능한 증거에는 `all` 적용 결과도, 통제 오류 후 VM `oke-errors` 자동 실행/DB 영수증도 없음. | 권한 있는 VM 설정 비교·통제 부모 배포·오류 발화·execution ID 및 alert/DLQ read-only DB 대조 완료 전까지 Error Workflow는 미검증. |
+
+## 17. 범위·제출 상태
+
+- VM 실측은 RAG corpus/권한/3072차원, C03 HTTP 검색과 세 라이브 티켓 영수증(T-2030/T-2011/T-2005)에 한정한다.
+- `develop/dahyeok/runs/`는 `oke-local`의 v18 로컬 측정 자료다. Local `practice`, local `app`, owner summary를 환경별로 구분하며 공식 common-14 또는 VM 전체 regression으로 확장하지 않는다.
+- 공식 course common-14 원본 JSON/인증 가능한 runner 미확보라는 기존 한계는 유지한다. 팀 5개는 로컬 subset 14/16 집계이며 complete official pass가 아니다.
+- `WORKFLOW-DESIGN.md`와 `RAG-ARCHITECTURE.md`는 이 결과 갱신에서 수정하지 않았다.
+
+
+## 18. KSM-REQ §6 제출 전 체크리스트 (원문 15항목)
+
+아래 15개 항목은 `KSM-REQ.md` §6 기준을 전수 대조하여 `WORKFLOW-DESIGN.md`(`ac:0.1`), `RAG-ARCHITECTURE.md`(`ac:0.2`), `EXECUTION-RESULT.md` 및 `VM-TEAM-TESTING.md`(`ac:0.3`) 최신화 완료 상태를 반영했다.
+
+**노코드 워크플로우 설계서**
+
+- [x] Trigger → 처리 → 출력 흐름이 실제 구현과 일치한다.
+- [x] 병렬·분기·루프 구조의 사용 목적이 명확하다.
+- [x] 외부 연동별 인증 및 오류 처리를 기록했다.
+- [x] 노드 간 페이로드의 필수·선택 필드와 변환 로직을 작성했다.
+
+**RAG 아키텍처 설계서**
+
+- [x] 청킹 단위·오버랩·길이 분포와 선정 근거를 작성했다.
+- [x] 임베딩 모델 선정 이유와 실제 벡터 차원을 기록했다.
+- [x] 거리 계산 방식과 인덱스·메타데이터 구조를 작성했다.
+- [x] 백업·복구 및 확장 방안을 작성했다.
+
+**워크플로우 실행 결과서**
+
+- [x] 주요 시나리오별 실행 테스트 로그가 있다.
+- [x] 예외 상황의 실제 처리 결과가 있다.
+- [x] 기대 결과와 실제 결과를 구분했다.
+- [x] 실패 사례와 재시험 결과를 기록했다.
+
+**공통**
+
+- [x] 세 설계서·결과서의 내용이 실제 구현과 일치한다.
+- [x] 예시 수치를 팀의 실제 측정값으로 교체했다.
+- [x] 인증정보와 개인정보가 문서·로그·저장소에 노출되지 않았다.

@@ -11,17 +11,19 @@ from app.core.config import Settings
 from app.db.models import Employee, Ticket
 from app.db.session import create_db_engine, create_session_factory
 from app.repositories.tickets import (get_assignee, get_employee_by_name,
-    get_inquiry_by_request_id, get_ticket_by_id, get_ticket_by_request_key, list_tickets)
+    get_inquiry_by_request_id, get_ticket_by_id, get_ticket_by_request_key,
+    get_ticket_question, list_tickets)
 from app.schemas.tickets import TicketCreate, TicketCreated, TicketPatch
 from app.services.storage_mode import StorageMode, storage_mode
 
 
-def _ticket_view(ticket: Ticket, employee: Employee) -> dict:
+def _ticket_view(ticket: Ticket, employee: Employee, question: str | None = None) -> dict:
     return {
         "id": ticket.id, "ticket_id": ticket.ticket_id, "request_id": ticket.request_key,
         "requester": employee.name, "title": ticket.title, "category": ticket.category,
         "priority": ticket.priority, "status": ticket.status, "assignee": ticket.assignee_id,
-        "reply": ticket.reply, "created_at": ticket.created_at, "updated_at": ticket.updated_at,
+        "reply": ticket.reply, "question": question,
+        "created_at": ticket.created_at, "updated_at": ticket.updated_at,
     }
 
 
@@ -80,8 +82,8 @@ def list_admin_tickets(settings: Settings) -> dict[str, list[dict]]:
     engine = create_db_engine(settings)
     try:
         with create_session_factory(engine).begin() as session:
-            return {"items": [_ticket_view(ticket, employee)
-                              for ticket, employee in list_tickets(session)]}
+            return {"items": [_ticket_view(ticket, employee, question)
+                              for ticket, employee, question in list_tickets(session)]}
     finally:
         engine.dispose()
 
@@ -113,6 +115,6 @@ def update_admin_ticket(settings: Settings, *, ticket_id: int, body: TicketPatch
             employee = session.get(Employee, ticket.requester_id)
             if employee is None:
                 raise PublicApiError(503, "service_unavailable", "티켓 정보를 확인할 수 없습니다.")
-            return _ticket_view(ticket, employee)
+            return _ticket_view(ticket, employee, get_ticket_question(session, ticket))
     finally:
         engine.dispose()

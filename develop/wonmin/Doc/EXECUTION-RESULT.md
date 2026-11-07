@@ -4,15 +4,15 @@
 
 ## 1. 실행 및 환경 관측
 
-| 항목 | 직접 관측 | 한계 |
-| --- | --- | --- |
-| 조작/실행 | 사용자 로그인된 Ubuntu 웹SSH 셸에 Orca Computer Use로 실제 명령 입력 | 기본 Sky는 native pipe 시작오류, 대체스킬로 진행 |
-| 시각 | VM date 2026-11-06T06:48:39Z, metadata 06:49:14Z; 이후SQL/n8n 조회 | 캡처 UTC·해시는 증거JSON에 기록 |
-| OS | Ubuntu26.04.1LTS x86_64, Linux7.0.0-42-generic | 로컬 Orb Ubuntu 관측 아님 |
-| 배포 HEAD | 3ff836af8b0be1bc5f81d0483c5b78272fec6c6a | 개인 브랜치/main 최신HEAD와 동일하다고 추정하지 않음 |
-| 컨테이너 | VM oke 프로젝트9개 실행, backend/frontend/PostgreSQL/RAG/sandbox API healthy 관측 | 전체 부하/품질 통과 아님 |
-| 내부 HTTP | backend 컨테이너127.0.0.1:8000/health/ready →200 | 외부 공개 API의 대체 관측 아님 |
-| PostgreSQL | 기존 backend 설정으로 접속, schema0005, READ ONLY·5초 제한·rollback 종료 | DSN/계정암호/문의원문 출력하지 않음 |
+| 항목         | 직접 관측                                                                    | 한계                                 |
+| ---------- | ------------------------------------------------------------------------ | ---------------------------------- |
+| 조작/실행      | 사용자 로그인된 Ubuntu 웹SSH 셸에 Orca Computer Use로 실제 명령 입력                      | 기본 Sky는 native pipe 시작오류, 대체스킬로 진행 |
+| 시각         | VM date 2026-11-06T06:48:39Z, metadata 06:49:14Z; 이후SQL/n8n 조회           | 캡처 UTC·해시는 증거JSON에 기록              |
+| OS         | Ubuntu26.04.1LTS x86_64, Linux7.0.0-42-generic                           | 로컬 Orb Ubuntu 관측 아님                |
+| 배포 HEAD    | 3ff836af8b0be1bc5f81d0483c5b78272fec6c6a                                 | 개인 브랜치/main 최신HEAD와 동일하다고 추정하지 않음  |
+| 컨테이너       | VM oke 프로젝트9개 실행, backend/frontend/PostgreSQL/RAG/sandbox API healthy 관측 | 전체 부하/품질 통과 아님                     |
+| 내부 HTTP    | backend 컨테이너127.0.0.1:8000/health/ready →200                             | 외부 공개 API의 대체 관측 아님                |
+| PostgreSQL | 기존 backend 설정으로 접속, schema0005, READ ONLY·5초 제한·rollback 종료              | DSN/계정암호/문의원문 출력하지 않음              |
 
 [내부 관측 JSON](../runs/vm-internal-observed-20261106.json)은 콘솔 JSON을 화면에서 읽어 전사한 자료다. 자동 stdout 다운로드 원본은 아니다. 원 화면은 사용자 탭 정보가 포함돼 비공개 보존하고 해시를 기록했다. [실행 세부](VM-INTERNAL-VERIFICATION.md).
 
@@ -24,12 +24,12 @@
 
 ### 기존 WF-02b 실제 요청의 직접 SQL/n8n 대조
 
-| 요청 티켓 | PostgreSQL 직접 결과 | n8n 직접 결과 |
-| --- | --- | --- |
+| 요청 티켓  | PostgreSQL 직접 결과                                                                        | n8n 직접 결과                        |
+| ------ | --------------------------------------------------------------------------------------- | -------------------------------- |
 | T-2008 | attempt3·in_progress·ticket_rows1·linked/result_matches/reply_matches=true·alerts1·DLQ0 | 요청ID와 본체 실행37 일치·success/webhook |
-| T-2009 | 동일 검사항목 통과 | 본체 실행39 일치·success/webhook |
-| T-2010 | 동일 검사항목 통과 | 본체 실행42 일치·success/webhook |
-| T-2011 | 동일 검사항목 통과 | 본체 실행44 일치·success/webhook |
+| T-2009 | 동일 검사항목 통과                                                                              | 본체 실행39 일치·success/webhook       |
+| T-2010 | 동일 검사항목 통과                                                                              | 본체 실행42 일치·success/webhook       |
+| T-2011 | 동일 검사항목 통과                                                                              | 본체 실행44 일치·success/webhook       |
 
 각 request_id는 내부 증거JSON에 있으며 [기존 API3회](../runs/vm-retest-summary-20261106T054458Z.json) 및 [후속 API1회](../runs/real-qa-WF02b-lead-20261106T060403Z.json)의 값과 대조했다. 이4개는 이번에 새로 생성한4건이 아니다. 이번 새관측은 기존 문의/티켓의 실DB 연결·소유자·저장응답티켓·관리자답변일치·알림/DLQ 관계 및 n8n 실행 연관이다.
 

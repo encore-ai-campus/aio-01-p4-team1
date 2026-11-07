@@ -139,8 +139,8 @@ services:
     ports:
       - '127.0.0.1:8800:8800'
     volumes:
-      - /home/toor/aio-01d4-stu/Last3Mon/79/data-api/server.py:/app/server.py:ro
-      - /home/toor/aio-01d4-stu/Last3Mon/79/data-api/data:/data:ro
+      - ../data-api/server.py:/app/server.py:ro
+      - ../data-api/data:/data:ro
     restart: unless-stopped
     networks: [internal]
   backend:
@@ -238,7 +238,7 @@ services:
       RAG_DOCS_DIR: /rag-docs
       RAG_PERMISSIONS_FILE: /app/develop/yubeen/rag-permissions.json
     volumes:
-      - /home/toor/aio-01d4-stu/Last3Mon/79/data-api/data/docs:/rag-docs:ro
+      - ../data-api/data/docs:/rag-docs:ro
       - ../develop/yubeen/rag-permissions.json:/app/develop/yubeen/rag-permissions.json:ro
     expose: ['8766']
     depends_on:

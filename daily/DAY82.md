@@ -1,6 +1,6 @@
-# DAY 82 · 최종 제출 준비 및 전 팀원 실서버 통합 검증 마감 요약 (2026-11-07 23:40 KST 갱신)
+# DAY 82 · 최종 제출 준비 및 전 팀원 실서버 통합 검증 마감 요약 (2026-11-08 00:04 KST 갱신)
 
-> 본 문서는 2026-11-07(토) 23:40 KST 기준 실서버(`https://aio-t1.isitsoft.kr`) 복구·검증 및 전 팀원(권오현·이수언·박지혜·임다혁·신유빈·이원민) 산출물 `main` 병합·루트 `runs/` 영수증 7종 취합 결과를 반영한 최종 제출 준비 기록이다.
+> 본 문서는 2026-11-08(일) 00:04 KST 기준 실서버(`https://aio-t1.isitsoft.kr`) 복구·검증, 잔여 보안·실서버 안정화 마감 및 전 팀원(권오현·이수언·박지혜·임다혁·신유빈·이원민) 산출물 `main` 병합·루트 `runs/` 영수증 7종 취합 결과를 반영한 최종 제출 준비 기록이다.
 
 ## 1. 목표 및 통합 달성 현황
 
@@ -36,7 +36,7 @@
 | WF-01 / WF-02 / WF-02b / WF-03 메인 v18 실측 | `oke-support` v18 (63노드, 기준값 `0.40`) 2차 재시험 전원 **PASS**: WF-01 자동 답변(재측정 **6.9s · 4.8s · 3.8s** ≤ 8s), WF-02 보완 질문 **1.812s**, **WF-02b 이관 `T-2035` 발급(2.188s)**, **WF-03 무근거 이관 `T-2036` 발급(3.004s)** | [`runs/support-v18-integration-20261107.json`](../runs/support-v18-integration-20261107.json), [`runs/support-v18-integration-20261107-before-fix.json`](../runs/support-v18-integration-20261107-before-fix.json) |
 | WF-09 멱등성 및 핸드오프 복구 | `oke-handoff` 정본 **30노드(H01 복구)** 재게시 후 총괄 스모크(`T-2033`) 및 원민 님 WF-09 재시험(`T-2034`, 1차 `duplicate: false` 2.257s ➔ 2차 `duplicate: true` 0.594s, DB `tickets +1→+0`, `alerts +1→+0`) **7/7 PASS** | [`runs/live-integration-qa-20261107T113546Z.json`](../runs/live-integration-qa-20261107T113546Z.json), [`runs/live-integration-qa-20261107.json`](../runs/live-integration-qa-20261107.json) |
 
-## 4. 통합 마감 기입란 (2026-11-07 23:40 KST 최종 확정)
+## 4. 통합 마감 기입란 (2026-11-08 00:04 KST 최종 확정)
 
 | 확인 항목 | 당일 실행 결과 및 확보 증거 |
 |---|---|
@@ -46,6 +46,7 @@
 | VM n8n 핸드오프 복구 및 2차 재시험 전원 PASS | VM `oke-handoff` 30노드 정본 재게시 후: ① 총괄 스모크 `T-2033` PASS, ② 원민 님 WF-09 멱등성 `T-2034` 7/7 PASS, ③ 다혁 님 WF-02b `T-2035` · WF-03 `T-2036` 이관 티켓 발급 PASS |
 | 백엔드 RBAC 및 DB 트랜잭션 검증 | 지혜 님 실서버 세션/RBAC(`401/200/403/200`) 및 PostgreSQL 읽기 전용 트랜잭션(`app.inquiries` `status=completed`) 검증 완료 |
 | 핵심 3대 산출물 최종 마감 갱신 | [`docs/RAG-ARCHITECTURE.md`](../docs/RAG-ARCHITECTURE.md), [`docs/WORKFLOW-DESIGN.md`](../docs/WORKFLOW-DESIGN.md), [`docs/EXECUTION-RESULT.md`](../docs/EXECUTION-RESULT.md)(§15 영수증 매핑, §16 6칸 표준 표 **4건**, §18 15항목 체크리스트 `[x]`) 최종 갱신 완료 |
+| 잔여 보안 및 실서버 안정화 마감 (11-08 00:04 KST) | ① n8n 3개 워크플로우(support/search/handoff) `settings.errorWorkflow = "okeErrorsFlow01"` 영구 바인딩(`0b848e7`), ② FE 컨테이너 `init=true`·`pids_limit=100`·`/tmp,/var/tmp tmpfs(noexec,nosuid,size64m)` 보안 방어벽 구축(`e09d3f9`, ELF 실행 거절 EACCES 검증), ③ Next15.5.29 / React19.1.10 / sharp0.35.5 / PostCSS8.5.32 핀 고정으로 운영 의존성 audit 취약점 0건 달성(`d23642f`, `15ab6c9`), ④ 실서버 VM 12개 검증 항목 전원 통과 및 다른 8개 컨테이너 무중단 보존 확인 | [`SECURITY-STABILIZATION-RESULT-20261108.json`](../../4pj%20준비/orchestrator/status/SECURITY-STABILIZATION-RESULT-20261108.json), [`TSCAN-SECURITY-REPORT.md`](../../4pj%20준비/orchestrator/status/TSCAN-SECURITY-REPORT.md) |
 
 ## 5. 운영 및 보안 준수 원칙
 
@@ -58,3 +59,4 @@
 - [`docs/EXECUTION-RESULT.md`](../docs/EXECUTION-RESULT.md) §14–18: v18 로컬/실서버 실행 결과, Common 14/Team 5 표, 실서버 DB 영수증 매핑, 6칸 실패·개선 사례(4건), KSM-REQ §6 15항목 체크리스트.
 - [`docs/RAG-ARCHITECTURE.md`](../docs/RAG-ARCHITECTURE.md): 8문서 33청크 3072차원 실측, 절 단위 청킹 및 SQL 사전 필터 선정 근거, WF-05 권한 격리 검증.
 - [`docs/WORKFLOW-DESIGN.md`](../docs/WORKFLOW-DESIGN.md): v18 63노드 아키텍처, 백엔드 RBAC 세션 경계, 다단계 안전 파이프라인, 하위 워크플로우 타임아웃 및 `oke-handoff` 30노드 실서버 복구 명세.
+- [`SECURITY-STABILIZATION-RESULT-20261108.json`](../../4pj%20준비/orchestrator/status/SECURITY-STABILIZATION-RESULT-20261108.json): 11-08 00:04 KST 잔여 보안·실서버 컨테이너 12개 검증 통과 증빙.

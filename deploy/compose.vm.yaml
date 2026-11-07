@@ -180,6 +180,11 @@ services:
       args:
         BACKEND_ORIGIN: http://backend:8000
     image: oke-team-frontend:unified
+    init: true
+    pids_limit: 100
+    tmpfs:
+      - /tmp:noexec,nosuid,size=64m
+      - /var/tmp:noexec,nosuid,size=64m
     environment:
       BACKEND_ORIGIN: http://backend:8000
     security_opt: [no-new-privileges:true]

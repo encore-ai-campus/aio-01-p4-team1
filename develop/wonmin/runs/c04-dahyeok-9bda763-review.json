@@ -1,0 +1,241 @@
+{
+  "scope": "Pinned peer JSON Code/expression local adapter; not n8n or live C04",
+  "dahyeok_commit": "9bda7639aaeee3f6dca59f6aabd91e61fa05a847",
+  "reviewed_development_file": "develop/dahyeok/workflows/oke-support-02.json",
+  "source_sha256": {
+    "workflows/oke-support-02.json": "5c2dffc9cf8981911afbcc857c9f9cf6ba9dd4d6b263133e88981a30f112933c",
+    "Doc/SPEC.md": "b257af1ad82d5ac9da0c346bd1ef367ef6aadca9c83133227a74156db9838e61"
+  },
+  "own_workflow_sha256": "f011b9342175b37d34dde8c58f2ac413d9121ce5b8761c4c09ef5066df62e443",
+  "documented_c04_sample": {
+    "body": {
+      "request_id": "dh-urgent-001",
+      "requester": "박서연",
+      "title": "피싱 링크 클릭 신고 및 VPN 접수 문의",
+      "category": "security",
+      "priority": "high",
+      "reason": "urgent",
+      "evidence_summary": "보안 사고 문의. 세부 개인정보는 제외."
+    },
+    "producer_status": "SPEC example only; N20 not implemented",
+    "own_validator": "accepted",
+    "c05_projection": {
+      "key": "dh-urgent-001",
+      "title": "피싱 링크 클릭 신고 및 VPN 접수 문의",
+      "requester": "박서연",
+      "category": "security",
+      "priority": "high"
+    }
+  },
+  "observations": [
+    {
+      "scenario": "attempt-1",
+      "input_source": "requests/clarify-1.json",
+      "response": {
+        "request_id": "dh-clarify-001",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "보완 질문",
+        "answer": "접속 대상은 무엇인가요? 어떤 오류 메시지가 표시되나요? 언제부터 발생했나요?"
+      },
+      "decision": "clarify",
+      "decision_reason": null,
+      "priority": null,
+      "outgoing_http_calls": 0,
+      "trace": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Triage gate",
+        "N05 Triage mode",
+        "N06 Triage MOCK",
+        "N06 Parse triage",
+        "N07 Route triage",
+        "N22 Finalize P0-2",
+        "N23 Respond"
+      ]
+    },
+    {
+      "scenario": "attempt-2",
+      "input_source": "requests/clarify-2.json",
+      "response": {
+        "request_id": "dh-clarify-002",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "보완 질문",
+        "answer": "접속 대상은 무엇인가요? 어떤 오류 메시지가 표시되나요? 언제부터 발생했나요?"
+      },
+      "decision": "clarify",
+      "decision_reason": null,
+      "priority": null,
+      "outgoing_http_calls": 0,
+      "trace": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Triage gate",
+        "N05 Triage mode",
+        "N06 Triage MOCK",
+        "N06 Parse triage",
+        "N07 Route triage",
+        "N22 Finalize P0-2",
+        "N23 Respond"
+      ]
+    },
+    {
+      "scenario": "attempt-3",
+      "input_source": "requests/clarify-3.json",
+      "response": {
+        "request_id": "dh-clarify-003",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "개발 중이며 접수하지 않았습니다.",
+        "reason": "not_implemented"
+      },
+      "decision": "handoff_mock",
+      "decision_reason": "max_attempts",
+      "priority": "normal",
+      "outgoing_http_calls": 0,
+      "trace": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Triage gate",
+        "N05 Triage mode",
+        "N06 Triage MOCK",
+        "N06 Parse triage",
+        "N07 Route triage",
+        "N22 Finalize P0-2",
+        "N23 Respond"
+      ]
+    },
+    {
+      "scenario": "context-resolved",
+      "input_source": "requests/clarify-context.json",
+      "response": {
+        "request_id": "dh-clarify-004",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "개발 중이며 접수하지 않았습니다.",
+        "reason": "not_implemented"
+      },
+      "decision": "pending",
+      "decision_reason": null,
+      "priority": null,
+      "outgoing_http_calls": 0,
+      "trace": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Triage gate",
+        "N05 Triage mode",
+        "N06 Triage MOCK",
+        "N06 Parse triage",
+        "N07 Route triage",
+        "N22 Finalize P0-2",
+        "N23 Respond"
+      ]
+    },
+    {
+      "scenario": "urgent",
+      "input_source": "own synthetic urgent probe",
+      "response": {
+        "request_id": "wm-c04-urgent-review",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "개발 중이며 접수하지 않았습니다.",
+        "reason": "not_implemented"
+      },
+      "decision": "handoff_mock",
+      "decision_reason": "urgent",
+      "priority": "high",
+      "outgoing_http_calls": 0,
+      "trace": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Triage gate",
+        "N05 Triage mode",
+        "N06 Triage MOCK",
+        "N06 Parse triage",
+        "N07 Route triage",
+        "N22 Finalize P0-2",
+        "N23 Respond"
+      ]
+    },
+    {
+      "scenario": "injection",
+      "input_source": "requests/injection.json",
+      "response": {
+        "request_id": "dh-p0-injection-001",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "rule",
+          "reason": "prompt_injection",
+          "masked": 0
+        },
+        "route": "차단",
+        "answer": "보안 정책상 처리할 수 없는 요청입니다. IT 문의 창구로 연락해 주세요."
+      },
+      "outgoing_http_calls": 0,
+      "trace": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Triage gate",
+        "N22 Finalize P0-2",
+        "N23 Respond"
+      ]
+    }
+  ],
+  "conclusion": {
+    "local_probes": "6/6 expected P0-2 observations",
+    "outgoing_http_node_count": 0,
+    "c04_http_call": "not_implemented",
+    "c04_header_auth_at_caller": "not_implemented",
+    "c04_timeout_at_caller": "not_implemented",
+    "c04_response_mapping_at_caller": "not_implemented",
+    "real_n8n_connection": "not_run"
+  }
+}

@@ -1,0 +1,381 @@
+{
+  "scope": "real Jihye HTTP backend + actual PostgreSQL, not the practice Mock",
+  "stamp": "20261105T053604Z",
+  "test_prefix": "wm-c05-20261105T053604Z",
+  "groups": {
+    "/tickets_missing_key": {
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "unauthorized",
+          "message": "로그인이 필요합니다."
+        }
+      }
+    },
+    "/tickets_invalid_key": {
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "not_implemented",
+          "message": "아직 구현되지 않은 기능입니다."
+        }
+      }
+    },
+    "/alerts_missing_key": {
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "unauthorized",
+          "message": "로그인이 필요합니다."
+        }
+      }
+    },
+    "/alerts_invalid_key": {
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "not_implemented",
+          "message": "아직 구현되지 않은 기능입니다."
+        }
+      }
+    },
+    "/dlq_missing_key": {
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "unauthorized",
+          "message": "로그인이 필요합니다."
+        }
+      }
+    },
+    "/dlq_invalid_key": {
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "not_implemented",
+          "message": "아직 구현되지 않은 기능입니다."
+        }
+      }
+    },
+    "tickets_sequential_same_key": [
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      }
+    ],
+    "tickets_high": {
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "not_implemented",
+          "message": "아직 구현되지 않은 기능입니다."
+        }
+      }
+    },
+    "tickets_concurrent_same_key_8": [
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      }
+    ],
+    "alerts_sequential_same_event_key": [
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      }
+    ],
+    "alerts_concurrent_same_event_key_8": [
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      }
+    ],
+    "alerts_event_key_absent_twice": [
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      }
+    ],
+    "alerts_event_key_null_twice": [
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      },
+      {
+        "status": 501,
+        "body": {
+          "error": {
+            "code": "not_implemented",
+            "message": "아직 구현되지 않은 기능입니다."
+          }
+        }
+      }
+    ],
+    "dlq_request_id": {
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "not_implemented",
+          "message": "아직 구현되지 않은 기능입니다."
+        }
+      }
+    },
+    "dlq_null_request_id": {
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "not_implemented",
+          "message": "아직 구현되지 않은 기능입니다."
+        }
+      }
+    }
+  },
+  "storage_verified": false,
+  "deployed_source_hashes": {
+    "app/api/deps.py": "b7efec6b7fbcd5273570f850711b76731b7957fc67f50ad5e9dd5d328ad1a26c",
+    "app/api/routes/tickets.py": "46fc13d3d4d83193d3a2df154dbcc3b1982705122363d67dc70de6d1ba4e5801",
+    "app/api/routes/alerts.py": "78219a2c40ba4ad5f8f98330d93e825ad8c506b4ec003010b4cb99601ab174d2",
+    "app/schemas/alerts.py": "b2c0db66960e86bd85a073b7e108be539985f03121583c12c774ede88feed5dc"
+  },
+  "backend_live": {
+    "status": 200,
+    "body": {
+      "status": "ok"
+    }
+  },
+  "db_before": {
+    "tickets": 0,
+    "alerts": 0,
+    "dlq": 0,
+    "employees_total": 0,
+    "revision": "0004"
+  },
+  "stored_response_model": {
+    "fields": [
+      "stored",
+      "count"
+    ],
+    "serialized_duplicate_ack": {
+      "stored": 0,
+      "count": 1
+    }
+  },
+  "n8n_app_check": {
+    "workflow_id": "wmc05cb68a33c02",
+    "mode_override": "app in this private deployment copy only",
+    "response": {
+      "status": 200,
+      "body": {
+        "ok": false,
+        "ticket": null,
+        "reason": "tickets_down",
+        "alerted": false,
+        "dlq": false
+      }
+    },
+    "cleanup_unpublished": true
+  },
+  "db_after": {
+    "tickets": 0,
+    "alerts": 0,
+    "dlq": 0,
+    "employees_total": 0,
+    "revision": "0004"
+  },
+  "blocked_requirements": [
+    "real key verification",
+    "new/duplicate ticket ACK and single row",
+    "alert duplicate field and same-key concurrency",
+    "DLQ HTTP200 stored ACK",
+    "ticket retained after alert failure",
+    "real saved record persistence after restart"
+  ],
+  "verdict": "BLOCKED_BY_BACKEND_NOT_IMPLEMENTED",
+  "http_status_counts": {
+    "401": 3,
+    "501": 30
+  }
+}

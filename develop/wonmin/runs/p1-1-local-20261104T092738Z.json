@@ -1,0 +1,169 @@
+{
+  "scope": "local Code/expression adapter + real HTTP Mock; not n8n",
+  "production_api": "not_run",
+  "n8n_auth": "not_run",
+  "official_flow_check": "not_run",
+  "normal": {
+    "response": {
+      "ok": true,
+      "ticket": {
+        "ticket_id": "T-2001",
+        "priority": "normal",
+        "duplicate": false
+      },
+      "reason": null,
+      "alerted": true,
+      "dlq": false
+    },
+    "observed_ticket_count": 1
+  },
+  "sequential": {
+    "first": {
+      "ok": true,
+      "ticket": {
+        "ticket_id": "T-2003",
+        "priority": "normal",
+        "duplicate": false
+      },
+      "reason": null,
+      "alerted": true,
+      "dlq": false
+    },
+    "second": {
+      "ok": true,
+      "ticket": {
+        "ticket_id": "T-2003",
+        "priority": "normal",
+        "duplicate": true
+      },
+      "reason": null,
+      "alerted": true,
+      "dlq": false
+    },
+    "observed_ticket_count": 1
+  },
+  "concurrent": {
+    "requests": 8,
+    "responses": [
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      },
+      {
+        "ok": true,
+        "ticket": {
+          "ticket_id": "T-2004",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "reason": null,
+        "alerted": true,
+        "dlq": false
+      }
+    ],
+    "observed_ticket_count": 1
+  },
+  "app_mode_mock": {
+    "first": {
+      "ok": true,
+      "ticket": {
+        "ticket_id": "T-2001",
+        "priority": "normal",
+        "duplicate": false
+      },
+      "reason": null,
+      "alerted": true,
+      "dlq": false
+    },
+    "second": {
+      "ok": true,
+      "ticket": {
+        "ticket_id": "T-2001",
+        "priority": "normal",
+        "duplicate": true
+      },
+      "reason": null,
+      "alerted": true,
+      "dlq": false
+    },
+    "observed_ticket_count": 1,
+    "observed_alert_count": 1,
+    "practice_unchanged": true
+  },
+  "workflow_sha256": "f011b9342175b37d34dde8c58f2ac413d9121ce5b8761c4c09ef5066df62e443",
+  "created_at": "2026-11-04T09:27:38.717Z",
+  "node_version": "v26.12.1"
+}

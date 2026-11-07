@@ -1,0 +1,48 @@
+✔ workflow is inactive, Header Auth protected and has one response node (62.67325ms)
+✔ normal ticket uses C05 key and restores priority absent from store response (21.731916ms)
+✔ high priority is preserved and alert severity is high (5.267917ms)
+✔ sequential same key returns same ticket ID and duplicate=true (9.926666ms)
+✔ eight simultaneous same-key requests create exactly one ticket (29.061333ms)
+✔ app mode writes only app store and sends an idempotent alert event_key (9.462709ms)
+✔ payload cannot select app or override store URL (4.907792ms)
+✔ invalid C04 missing request_id does not call storage (1.640208ms)
+✔ invalid C04 blank title does not call storage (1.506417ms)
+✔ invalid C04 unknown requester does not call storage (1.54625ms)
+✔ invalid C04 invalid priority does not call storage (1.628083ms)
+✔ invalid C04 non-string reason does not call storage (1.562ms)
+✔ invalid C04 65-char ID does not call storage (1.545ms)
+✔ invalid C04 non-string evidence_summary does not call storage (1.472208ms)
+✔ invalid body null does not call storage (1.505291ms)
+✔ invalid body [] does not call storage (1.475167ms)
+✔ invalid body "text" does not call storage (1.633375ms)
+✔ 64-codepoint request ID is preserved (3.781125ms)
+✔ unknown mode fails closed without writes or leaking configuration (2.253917ms)
+✔ validation strips headers, secrets, raw contact and unnecessary evidence before C05 (0.388167ms)
+✔ unconfirmed ticket is never reported successful ({"statusCode":200,"body":{"ticket_id":"T-9001","duplicate":"false"}}) (0.303458ms)
+✔ unconfirmed ticket is never reported successful ({"statusCode":201,"body":{"ticket_id":"T-9001","duplicate":true}}) (0.277417ms)
+✔ unconfirmed ticket is never reported successful ({"statusCode":503,"body":{"ticket_id":"T-9001","duplicate":false}}) (0.266125ms)
+✔ unconfirmed ticket is never reported successful ({"statusCode":201,"body":{"ticket_id":"","duplicate":false}}) (0.255541ms)
+✔ alert failure keeps confirmed ticket and does not fabricate ACK (5.975209ms)
+✔ C05 mock rejects wrong API key with zero writes (1.559833ms)
+✔ C05 mock returns 201 then 200 with no priority response field (0.940083ms)
+✔ C05 same key with different owner/body returns 409 without ticket disclosure (1.113375ms)
+✔ C05 mock validates before storage and observations omit raw payload and key (1.436917ms)
+✔ store selection works without URL global or external modules (0.269792ms)
+✔ deployment URL is rejected safely: http://user:[redacted]@localhost:18800 (1.957375ms)
+✔ deployment URL is rejected safely: http://localhost:18800/tickets (1.721791ms)
+✔ deployment URL is rejected safely: http://localhost:18800?token=[redacted] (1.824959ms)
+✔ deployment URL is rejected safely: file:///tmp/store (1.846417ms)
+✔ deployment URL is rejected safely: http://localhost:99999 (1.740584ms)
+✔ ticket HTTP failure returns unconfirmed ticket and no invented storage success (2.136292ms)
+✔ invalid alert ACK does not become success: {"stored":true,"count":1} (3.152208ms)
+✔ invalid alert ACK does not become success: {"stored":1,"count":"1"} (3.199875ms)
+✔ invalid alert ACK does not become success: {"stored":0,"count":1} (3.06525ms)
+✔ C05 parallel HTTP calls themselves enforce atomic 201/200 semantics (2.279375ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 276.629625

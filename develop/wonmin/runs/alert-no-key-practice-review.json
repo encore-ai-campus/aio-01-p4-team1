@@ -1,0 +1,571 @@
+{
+  "scope": "own ephemeral HTTP Mock + local Code adapter; actual practice data-api/PG/n8n not run",
+  "created_at": "2026-11-05T03:08:14.804Z",
+  "source_sha256": {
+    "workflows/oke-handoff.json": "21971b003cd26d8573b5d3997b0bbfc81a175284c351e7f97bc7dd1b1e212939",
+    "workflows/oke-errors.json": "11420039a735670ad73b56ff36e6cb0468eb3cb1620b574fe315e029272724f0",
+    "tools/mock-store.py": "3c8af57ac4786c214056a5bd0ffe9d34d91d7c1e9ccb8ab19aee25b23feb1dc0"
+  },
+  "observations": [
+    {
+      "scenario": "no_key_sequential_2",
+      "request": {
+        "workflow": "oke-handoff",
+        "node": "C05 ACK review",
+        "message": "합성 알림 확인",
+        "severity": "normal"
+      },
+      "responses": [
+        {
+          "stored": 1,
+          "count": 1,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 2,
+          "duplicate": false
+        }
+      ],
+      "stored_alerts": 2
+    },
+    {
+      "scenario": "no_key_parallel_8",
+      "responses": [
+        {
+          "stored": 1,
+          "count": 3,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 4,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 5,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 6,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 7,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 8,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 9,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 10,
+          "duplicate": false
+        }
+      ],
+      "observed_alert_count": 10
+    },
+    {
+      "scenario": "null_key_sequential_2",
+      "responses": [
+        {
+          "stored": 1,
+          "count": 11,
+          "duplicate": false
+        },
+        {
+          "stored": 1,
+          "count": 12,
+          "duplicate": false
+        }
+      ]
+    },
+    {
+      "scenario": "keyed_sequential_2",
+      "request": {
+        "workflow": "oke-handoff",
+        "node": "C05 ACK review",
+        "message": "합성 알림 확인",
+        "severity": "normal",
+        "event_key": "wm-ack-review:ticket-created"
+      },
+      "responses": [
+        {
+          "stored": 1,
+          "count": 13,
+          "duplicate": false
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        }
+      ]
+    },
+    {
+      "scenario": "existing_key_parallel_8",
+      "responses": [
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        },
+        {
+          "stored": 0,
+          "count": 13,
+          "duplicate": true
+        }
+      ],
+      "observed_alert_count": 13
+    },
+    {
+      "scenario": "practice_same_ticket_twice",
+      "outgoing_alert": {
+        "workflow": "oke-handoff",
+        "node": "H06 Keep Ticket",
+        "message": "담당자 이관 티켓이 접수되었습니다.",
+        "severity": "normal",
+        "ticket_id": "T-2001"
+      },
+      "responses": [
+        {
+          "ok": true,
+          "ticket": {
+            "ticket_id": "T-2001",
+            "priority": "normal",
+            "duplicate": false
+          },
+          "reason": null,
+          "alerted": true,
+          "dlq": false
+        },
+        {
+          "ok": true,
+          "ticket": {
+            "ticket_id": "T-2001",
+            "priority": "normal",
+            "duplicate": true
+          },
+          "reason": null,
+          "alerted": true,
+          "dlq": false
+        }
+      ],
+      "alert_acks": [
+        {
+          "http_status": 200,
+          "body": {
+            "stored": 1,
+            "count": 14,
+            "duplicate": false
+          }
+        },
+        {
+          "http_status": 200,
+          "body": {
+            "stored": 1,
+            "count": 15,
+            "duplicate": false
+          }
+        }
+      ],
+      "ticket_count": 1,
+      "alerts_added": 2
+    },
+    {
+      "scenario": "errors_missing_parent_id_twice",
+      "event_key": "omitted",
+      "outcomes": [
+        {
+          "workflow": "oke-errors",
+          "outcome": "success",
+          "request_id": null,
+          "execution_ref": null,
+          "source_workflow": "oke-handoff",
+          "source_node": "unknown",
+          "error_kind": "trigger_error",
+          "alerted": true,
+          "dlq": true
+        },
+        {
+          "workflow": "oke-errors",
+          "outcome": "success",
+          "request_id": null,
+          "execution_ref": null,
+          "source_workflow": "oke-handoff",
+          "source_node": "unknown",
+          "error_kind": "trigger_error",
+          "alerted": true,
+          "dlq": true
+        }
+      ],
+      "alerts_added": 2
+    },
+    {
+      "scenario": "legacy_and_keyed_ack_consumer_matrix",
+      "synthetic_probes": [
+        {
+          "body": {
+            "stored": 1,
+            "count": 1
+          },
+          "mode": "practice",
+          "accepted": true
+        },
+        {
+          "body": {
+            "stored": 1,
+            "count": 1,
+            "duplicate": false
+          },
+          "mode": "practice",
+          "accepted": true
+        },
+        {
+          "body": {
+            "count": 1
+          },
+          "mode": "practice",
+          "accepted": false
+        },
+        {
+          "body": {
+            "stored": 0,
+            "count": 1
+          },
+          "mode": "practice",
+          "accepted": false
+        },
+        {
+          "body": {
+            "stored": "1",
+            "count": 1
+          },
+          "mode": "practice",
+          "accepted": false
+        },
+        {
+          "body": {
+            "stored": 0,
+            "count": 1,
+            "duplicate": true
+          },
+          "mode": "app",
+          "accepted": true
+        },
+        {
+          "body": {
+            "stored": 0,
+            "count": 1,
+            "duplicate": true
+          },
+          "mode": "practice",
+          "accepted": false
+        }
+      ]
+    }
+  ],
+  "final_observed": {
+    "mock": true,
+    "ephemeral": true,
+    "ticket_count": 1,
+    "alert_count": 17,
+    "dlq_count": 2,
+    "calls": {
+      "tickets": 2,
+      "alerts": 26,
+      "dlq": 2
+    },
+    "tickets": [
+      {
+        "ticket_id": "T-2001",
+        "key_hash": "52a7b8abf173d493c07b15630be51bd36e6860417f335ba02c990c75a6c6a72d",
+        "priority": "normal"
+      }
+    ],
+    "alerts": [
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "normal"
+      },
+      {
+        "ticket_id": "T-2001",
+        "severity": "normal"
+      },
+      {
+        "ticket_id": "T-2001",
+        "severity": "normal"
+      },
+      {
+        "ticket_id": null,
+        "severity": "high"
+      },
+      {
+        "ticket_id": null,
+        "severity": "high"
+      }
+    ],
+    "dlqs": [
+      {
+        "request_id_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "execution_ref": null,
+        "safe_payload": {
+          "stage": "unexpected",
+          "source_workflow": "oke-handoff",
+          "error_kind": "trigger_error"
+        }
+      },
+      {
+        "request_id_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "execution_ref": null,
+        "safe_payload": {
+          "stage": "unexpected",
+          "source_workflow": "oke-handoff",
+          "error_kind": "trigger_error"
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "b055f3c00fa2f30d9cd9e808a1236971e817a292d363379a3e8d2618f9f9c92d",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "ddeaab4871aee8494c3dbf6ad29753c2799180eed64cd44e628276ee84acb519",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "ddeaab4871aee8494c3dbf6ad29753c2799180eed64cd44e628276ee84acb519",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "df24e1e1ee7c05ab3bfc8d714dc8e3e202860a5e0909036aef432bc5ec2e7f12",
+        "key_hash": null
+      },
+      {
+        "endpoint": "tickets",
+        "payload_hash": "8d6682f122289b458c2efc0ddfafa2fd6b6fb8acb1f40cb6616f6295c825973a",
+        "key_hash": "52a7b8abf173d493c07b15630be51bd36e6860417f335ba02c990c75a6c6a72d"
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "ff0e24e381700659fd16f4d698586d856998f75532d20bf67ac9cd0f3f1319c5",
+        "key_hash": null
+      },
+      {
+        "endpoint": "tickets",
+        "payload_hash": "8d6682f122289b458c2efc0ddfafa2fd6b6fb8acb1f40cb6616f6295c825973a",
+        "key_hash": "52a7b8abf173d493c07b15630be51bd36e6860417f335ba02c990c75a6c6a72d"
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "ff0e24e381700659fd16f4d698586d856998f75532d20bf67ac9cd0f3f1319c5",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "f8dce8008d2de9d2a1087d13f6626f9018bebfdcdff10f7acb578137c335c053",
+        "key_hash": null
+      },
+      {
+        "endpoint": "dlq",
+        "payload_hash": "41298004b3283467af8493eba8b14d3fcdf78fa6210e54e8916acd4121456ea1",
+        "key_hash": null
+      },
+      {
+        "endpoint": "alerts",
+        "payload_hash": "f8dce8008d2de9d2a1087d13f6626f9018bebfdcdff10f7acb578137c335c053",
+        "key_hash": null
+      },
+      {
+        "endpoint": "dlq",
+        "payload_hash": "41298004b3283467af8493eba8b14d3fcdf78fa6210e54e8916acd4121456ea1",
+        "key_hash": null
+      }
+    ]
+  },
+  "actual_practice_data_api": "unverified",
+  "actual_jihye_DB": "not_run"
+}

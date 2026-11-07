@@ -1,0 +1,57 @@
+{
+  "scope": "existing unmodified support workflow with its current upstream identity provider",
+  "response": {
+    "status": 200,
+    "body": {
+      "request_id": "wm-c04-preflight-193513",
+      "sources": [],
+      "ticket": null,
+      "agents": [],
+      "security": {
+        "blocked_by": "",
+        "reason": "",
+        "masked": 0
+      },
+      "route": "담당자 이관",
+      "answer": "직원 정보를 확인하지 못해 접수하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "reason": "identity_unavailable"
+    }
+  },
+  "configured_live_data_api_url": false,
+  "configured_live_data_api_key": false,
+  "models": [
+    {
+      "node": "N06 Triage model",
+      "model": {
+        "__rl": true,
+        "mode": "id",
+        "value": "qwen2.5-coder:latest"
+      },
+      "credential_ids": {
+        "openAiApi": "wonminLabOllama"
+      }
+    },
+    {
+      "node": "N13 Writer model",
+      "model": {
+        "__rl": true,
+        "mode": "id",
+        "value": "qwen2.5-coder:latest"
+      },
+      "credential_ids": {
+        "openAiApi": "wonminLabOllama"
+      }
+    },
+    {
+      "node": "N14 Verifier model",
+      "model": {
+        "__rl": true,
+        "mode": "id",
+        "value": "qwen2.5-coder:latest"
+      },
+      "credential_ids": {
+        "openAiApi": "wonminLabOllama"
+      }
+    }
+  ]
+}

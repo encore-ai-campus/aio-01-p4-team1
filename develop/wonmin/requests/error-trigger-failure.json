@@ -1,0 +1,12 @@
+{
+  "workflow": {
+    "id": "parent-example",
+    "name": "oke-support"
+  },
+  "trigger": {
+    "error": {
+      "name": "WorkflowActivationError",
+      "message": "고정 비민감 시험 오류"
+    }
+  }
+}

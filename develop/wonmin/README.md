@@ -1,5 +1,32 @@
 # 원민님 · 이관·오류 수습·시험
 
+현재 [실제 Ubuntu VM 내부 실행 결과서](Doc/EXECUTION-RESULT.md): T-2008~2011 PostgreSQL 연결·소유권·알림/DLQ와 n8n 본체실행37/39/42/44를 직접 대조했다. 하위trace/전체품질시험은미완료.
+
+현재 실서비스 재시험: 평가결과보고서는 사용자 요청으로 삭제했다. 이전 작업 결과5개 삭제 후 실제 VM에서 WF-02b API3/3(T-2008~2010), WF-02 브라우저1회3항목 질문 확인. 공식전체평가·SQL·모델trace·bench는 별도다.
+
+
+현재 P1-4 일부(2026-11-05): [독립3회·이관 bench·기대 불일치](Doc/P1-4-PARTIAL-RESULT.md). TM-02/03/06의 app 변형을 새 ID로3회씩 실행했다. TM-02는 오류/발생시점 질문 누락으로3회 모두 실패, TM-03/06은각3회 통과. 이관 경로5회 bench p50=0.771초·p95=0.849초. 실제 data-api/공식80키트 미확보로 전체평가는 대기다. 기대를 줄이지 않았고 상대 정본/기존workflow는 수정하지 않았다.
+
+현재 C04→C05 app 연결(2026-11-05): [본체 실제 HTTP·저장 시험](Doc/C04-APP-INTEGRATION-RESULT.md). 다혁bb2fa1f·실제 로컬 LLM→C04→지혜ec6a735/PG의 13개 그룹 통과. 직원은 명시적 fixture이며 원래 본체는 실제 data-api 미설정으로 identity_unavailable이다. 긴급 분류의 코드 블록 출력 실패를 보존하고 시험 사본의 JSON 출력 설정으로 재시험했다. [시험용 본체](http://127.0.0.1:15678/workflow/wmc0417676ce1ea)는 게시 중이다. 실제 신원 제공자·C03/기존 티켓·팀 VM/공식 평가는 남아 있다.
+
+현재 오류 수습(2026-11-05): [oke-errors 실제 app 저장 결과](Doc/ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 Error Trigger 5조건 포함 10개 시험 그룹·관련 Node24개 통과. 알림/DLQ 독립 저장·부분/전체 실패·복구, 중복 ACK와 재진입 차단을 확인했다. 임시 부모/probe는 게시 해제하고 프록시를 복구했다. 다음은 본체 C04→handoff→C05 전체 app 연결이다.
+
+현재 C05 상태(2026-11-05): [지혜 ec6a735 실제 app 연동 결과](Doc/C05-APP-INTEGRATION-RESULT.md). 실제 n8n→FastAPI→PostgreSQL 15개 시험 그룹 통과. 신규/중복·동시8회·부분 실패·PG 재시작 보존을 확인했다. [n8n app 시험 workflow](http://127.0.0.1:15678/workflow/wmc05livecf8ca714f5)는 게시 중이다. 전용 DB/직원 fixture 기준이며 원래 practice 설정·기본 DB는 유지했다. 아래 501/미실행 기록은 과거 시점이다. 팀 VM·실제 data-api·공식 키트·본체 전체 연결은 별도 확인이 필요하다.
+
+다혁 요청 보완(2026-11-05): [WF-12 기대·배포 출처 정합성 수정](Doc/WF12-ALIGNMENT-RESULT.md). 공통/원민 TM-05의 sources=[]·색인 조건을 맞추고 b975286의 Git 원본을 배포하도록 수정했다. 로컬 n8n N22 갱신 및 Credential/모델 보존 확인, Node97·Python3 통과. 실제 전체 WF-12 HTTP·저장 ACK는 미실행이다.
+
+현재 실행 환경(2026-11-05): [병합 소스 n8n·Compose 재배포 결과](Doc/TEAM-REDEPLOY-RESULT.md). 5개 팀 workflow를 n8n에서 확인할 수 있다. 본체/검색/이관/errors 게시, index 수동 Mock 실행35 성공, DB0004·실제 PG48·원민89 통과. 직원 API·실제 저장·임베딩 연결은 미완료다. 기존 사용자/Assistant/볼륨은 유지했다.
+
+최종 실환경 확인(2026-11-05): [Ubuntu Compose·로컬 모델·자동 Error Trigger 결과](Doc/UBUNTU-INTEGRATION-RESULT.md). 실제 errors ID를 부모에 연결하고 정상/부분/전체 수습 4조건을 확인했다. Ollama 실제 HTTP 200, PostgreSQL 시험 45개·원민 회귀 89개 통과. **실제 C05 저장 API는 501로 미완료**이며 공용 VM 배포·업무 LLM 통합은 별도다. 아래 미실행 표기는 이전 단계 당시 기록이다.
+
+최신 P1-3(2026-11-05): [Error Trigger 수습 결과·부모 연결 절차](Doc/P1-3-RESULT.md). oke-errors.json을 구현했고 전체 로컬89개 통과. 실제 부모 errorWorkflow ID 설정·자동 오류 발화 및 n8n/backend/DB는 미실행이다.
+
+최신(2026-11-05): [P1-2 수습 구현 결과·다음 진행 가이드](Doc/P1-2-RESULT.md). 알림 duplicate·DLQ HTTP200 승인 적용, 티켓 제한 재시도와 알림/DLQ 부분·전체 실패 수습을 구현했다. 실제 n8n/백엔드 연결은 대기다.
+
+다혁님 C04 최신 재확인(2026-11-05): [aac0dbf/P1-2 본체와 로컬 경계 연결](Doc/C04-PAIR-REVIEW.md). 요청 생성·응답 매핑 구현을 확인했고 정상/중복/긴급/부분실패 등 17개 로컬 관측이 일치했다. 실제 발신 노드는 아직 Mock이며 n8n HTTP 연결은 미확인이다.
+
+지혜님 C05 모델 대조 결과: [요청 표본·응답 호환 검토](Doc/C05-MODEL-REVIEW.md). 요청 7/7 적합, 중복 알림 ACK 불일치 1건 및 DLQ HTTP 기대 정리 항목을 기록했다. 실제 API 연결은 미확인이다.
+
 **목표:** 티켓 중복과 저장 실패를 안전하게 처리하고 시험으로 동작을 증명한다. 작업 폴더는 develop/wonmin. 아래 그림은 구현 전 설계다.
 
 <img src="../../docs/images/planned/flow-handoff.svg" width="620" alt="이관 설계">
@@ -46,3 +73,60 @@
     입력·기대·부작용·정리와 미정 정책을 구분해서 보고해.
 
 상세: [TODO](Doc/TODO.md) · [SPEC](Doc/SPEC.md) · [IMP-PLAN](Doc/IMP-PLAN.md) · [HANDOFF](Doc/HANDOFF.md).
+
+## P0 입력 준비 결과 · 2026-11-04
+
+팀 사례 12개, handoff 사례 13개, 시연/bench 요청 6개와 app 통합 확인 절차를 작성했다. [실제 확인·대기 색인](runs/INDEX.md), [정적 확인 출력](runs/p0-validation.txt)을 참조한다. 기능 시험은 아직 미실행이다.
+
+로컬 JSON 문법 재확인(저장소 루트 기준):
+
+```bash
+cd develop/wonmin
+python3 -m json.tool cases/team.json > /dev/null
+python3 -m json.tool cases/handoff.json > /dev/null
+python3 -m json.tool requests/demo-normal.json > /dev/null
+python3 -m json.tool requests/demo-clarify.json > /dev/null
+python3 -m json.tool requests/demo-handoff.json > /dev/null
+python3 -m json.tool requests/demo-urgent.json > /dev/null
+python3 -m json.tool requests/demo-failure.json > /dev/null
+python3 -m json.tool requests/bench-normal.json > /dev/null
+```
+
+`cases/*.json`은 현재 수동 검토 명세다. 공식 키트 suite 형식과의 호환은 원본 확보 후 확인한다. common.json과 flow.py를 임의로 만들지 않는다. P0는 환경변수나 서버 연결을 쓰지 않으므로 루트 .env는 생성하지 않았다.
+
+시연은 정상 → 보완 → 이관(같은 body 2회로 중복 확인) → 긴급 순서다. 장애 요청은 전용 practice의 tickets=error를 먼저 확인한 뒤 보내고 실패해도 fault를 해제한다. 모든 독립 시연·bench 실행에는 새 request_id를 사용한다. `bench-normal.json` 동일 ID 반복은 캐시 측정과 구분한다. 요청 JSON에 장애 주입 옵션·키·주소를 넣지 않는다.
+
+참고 예제의 key 기반 티켓 처리·HTTP 결과 분기, Error Trigger와 성공한 항목만 재처리 해제하는 구조를 검토했다. P1에서는 C04/C05, 모드 선택, ACK, 마스킹, 독립 알림/DLQ를 적용한다. 예제의 알림 전용 오류 처리와 전체 replay를 그대로 복사하지 않는다.
+
+다음 단계는 P1-1 `workflows/oke-handoff.json` 정상·중복 및 C05 Mock 구현이다. n8n 게시·시험은 팀 규칙대로 사람이 수행하고 실제 결과를 기록한다.
+
+## P1-1 로컬 구현 결과 · 2026-11-04
+
+`workflows/oke-handoff.json`의 정상·중복 경로와 `tools/mock-store.py`의 C05 HTTP Mock을 구현했다. 설정·Credential·남은 범위는 [워크플로우 안내](workflows/README.md), 실제 증거는 [runs/INDEX.md](runs/INDEX.md)를 따른다.
+
+로컬 검증(저장소 루트):
+
+```bash
+node --test
+python3 -B develop/wonmin/tools/mock-store.py --help
+```
+
+Node.js 22 이상(내장 test/fetch/VM), Python 3.10 이상(표준 라이브러리)으로 별도 의존성 설치 없이 실행한다. 실제 검증 환경은 Node v26.12.1·Python 3.15.1이다. 테스트는 임시 키를 메모리에서 만들고 127.0.0.1의 임의 포트에 독립 Mock 두 개를 기동·종료한다. 프로젝트 서버·DB·공유 데이터를 호출/초기화하지 않는다.
+
+수동 Mock 실행(저장소 루트, INTERNAL_API_KEY가 로컬 환경에 준비된 상태):
+
+```bash
+python3 -B develop/wonmin/tools/mock-store.py --port 18800
+```
+
+기본 바인딩은 127.0.0.1이다. Docker에서 호출하는 전용 시험은 실행자가 `--host 0.0.0.0`와 올바른 호스트 매핑을 명시한다. 키는 환경에만 두고 명령/보고서에 값이나 셸 추적을 출력하지 않는다. `/tickets`, `/alerts`, `/dlq`, `GET /_mock/ops` 모두 X-Api-Key가 필요하다. `/_mock/ops`는 Mock 전용 관측이며 실제 app/data-api ops가 아니다. 서버 재시작 시 상태가 사라지고 삭제/reset API는 없다.
+
+로컬 검증은 40개 통과했다. 신규·긴급·순차 중복·동시 8건, 단일 저장소 선택, 입력 오류 쓰기 차단, 티켓/알림 응답 검증, 인증/충돌 경계와 제한된 마스킹을 확인했다. 테스트 어댑터는 저장된 JSON의 Code·표현식·분기를 실행하고 HTTP는 실제 Mock에 전송한다. n8n 자체의 Header Auth/노드 import/실행 연결을 재현한 도구가 아니므로 실제 n8n 통과는 미확인이다.
+
+재실행 증거가 필요하면 기존 결과를 덮어쓰지 않는 새 basename을 사용한다. 아래 환경변수는 키가 아니라 보고서 파일명이다.
+
+```bash
+WONMIN_TEST_REPORT_BASENAME=p1-1-local-new-run.json node --test
+```
+
+실제 n8n/백엔드/DB/VM 연결과 공식 flow.py 검사는 미실행이다. P1-1은 로컬 구현·Mock 검증 완료, 실제 연결 확인 대기이며 P1-2/P1-3은 미구현이다.

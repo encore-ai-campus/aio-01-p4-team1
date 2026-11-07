@@ -1,5 +1,26 @@
 # 원민 실행 증거 색인
 
+실제 VM 내부대조: [선별 관측 JSON](vm-internal-observed-20261106.json), [새 결과서](../Doc/EXECUTION-RESULT.md). 실제 VM 셸·repo3ff836a·내부HTTP/PG READ ONLY·n8n SQLite readOnly 실행. T-2008~2011/본체37,39,42,44 연관확인. 콘솔화면전사이며 자동stdout다운로드원본아님; 원화면비공개보존·해시기록. 추가노드조회 미확인, 하위trace미완료.
+
+팀장 지정 최신 QA: [WF-02b raw](real-qa-WF02b-lead-20261106T060403Z.json), [실행 맥락](real-qa-WF02b-lead-context-20261106T060403Z.json). main95d8af3 병합 후 실제 공개VM HTTPS API에 attempt3 실행, T-2011·4.535초·10checks통과. 로컬클라이언트 실행이며 VM OS/SQL/n8n trace는 미실행. 평가결과보고서 생성 없음.
+
+실제 VM 재시험: 평가결과보고서는 사용자 요청으로 삭제했으며 raw 증거는 보존한다. [3회 요약](vm-retest-summary-20261106T054458Z.json), [r1](vm-retest-WF02b-20261106T054458Z-r1.json), [r2](vm-retest-WF02b-20261106T054458Z-r2.json), [r3](vm-retest-WF02b-20261106T054458Z-r3.json), [UI 관측](vm-browser-WF02-retest.json), [UI 캡처](vm-browser-WF02-retest.png), [검증 집계](vm-retest-validation.json). 기존 작업 결과파일5개는 사용자 요청으로 삭제했고 이번 새 실행만 집계한다.
+
+
+현재 P1-4 일부 실행: [새 ID3회·기능 실패 포함](llm-fresh-app-20261105.json), [TM-03 이관 fresh bench5회](bench-fresh-app-20261105.json), [증거 정합성·기능 실패 분리](p1-4-evidence-audit-20261105.json), [준비물/실제 기존본체차단](p1-4-readiness-20261105.json), [Python20 회귀](p1-4-regression-20261105.json), [해석·재현·인계](../Doc/P1-4-PARTIAL-RESULT.md). 고유3사례·9회차/HTTP12회 중 TM-02 3회 실패(대상만 질문), TM-03/06 각3회 통과. 별도bench는 실제모델5회·p50=0.771119/p95=0.849413초. 실제 data-api/공식키트/정상근거답변bench/팀VM은 미완료다.
+
+현재 본체 C04→C05 app 시험: [기존 본체 identity_unavailable 차단](c04-app-preflight-20261105.json), [최초 긴급 JSON형식 실패](c04-app-integration-20261105T103935Z.json), [JSON 출력 설정 보완 후13그룹](c04-app-integration-20261105T104124Z.json), [원인·게시·복구·소스해시](c04-app-final-state-20261105.json), [Node113/Python11](c04-app-regression-20261105.json), [해석·재현·후속 인계](../Doc/C04-APP-INTEGRATION-RESULT.md). 직원은 계약 fixture, triage는 실제 qwen, C04/C05/PG는 실제다. 최종실행 PG 티켓10→16/알림19→26/DLQ9→11·기본DB0→0, 기존workflow보존·프록시복구. 실제data-api/C03검색성공/기존티켓/팀VM/공식평가 통과로 쓰지 않는다.
+
+현재 P1-3 실제 app 수습: [자동 Error Trigger·HTTP·SQL 10그룹](errors-app-integration-20261105T102508Z.json), [실제 신규/중복·DLQ ACK와 throw 제거 확인](errors-app-acks-20261105.json), [관련 Node24개](errors-app-regression-20261105.json), [범위·재현·다음 업무](../Doc/ERRORS-APP-INTEGRATION-RESULT.md). 실제 자동 발화는5조건이며 자기재진입·중복재처리·ID누락은별도인증probe다. 시험 DB 티켓8→8/알림13→17/DLQ4→9, 기본DB0→0. 기존workflow보존·시험웹훅404·프록시정상복구. 아래 과거미실행/501기록과구별한다.
+
+현재 C05 실제 app 연동: [15개 그룹의 HTTP·SQL 증거](c05-app-integration-20261105T095248Z.json), [종료 후 게시·건강·복구 상태](c05-app-final-state-20261105.json), [회귀97/8 집계](c05-app-regression-20261105.json), [결과·재현·후속 전달](../Doc/C05-APP-INTEGRATION-RESULT.md). 지혜ec6a735/DB0005에서 티켓·알림 동시8회 각1건, 부분 실패와 PG 재시작(티켓8/알림13/DLQ4) 보존을 확인했다. [전체backend 최초221통과/1실패](jihye-ec6a735-full-20261105T094636Z.json)와 [시험 자식 환경 격리 후222통과/경고1](jihye-ec6a735-isolated-tests-20261105T094954Z.json)를 함께 보존한다. 전용 DB의 합성 직원 fixture를 사용했고 실제 data-api/팀 VM은 미시험이다. 기존 아래 501 기록은 당시 상태다.
+
+WF-12 최신 결정 보완: [합성 Code·회귀 집계](wf12-alignment-20261105T074522Z.json), [실제 n8n 코드 갱신·보존](wf12-n8n-update-20261105T074133Z.json), [결과/범위](../Doc/WF12-ALIGNMENT-RESULT.md). TM-05 기대 수정·b975286 pin/Git blob 일치, Node97/Python3 및 다혁 adapter12/retrieval9 통과. 실제 WF-12 전체 HTTP·티켓/알림 ACK와 공식 flow.py는 미실행이다.
+
+지혜1902a2b 후속 실측: [전체 backend180](jihye-1902a2b-full-20261105T055426Z.json), [실제 C05 재시험](c05-live-20261105T055450Z.json), [판정/다음 연결](../Doc/C05-LIVE-1902a2b-RESULT.md). 최신 backend를 실제 교체하고 새CLI/bootstrap 파일까지 해시 대조했다. 전체180 및 원민89 통과와 실제 C05저장 미구현(401×3/501×30·DB0→0)을 구분한다.
+
+최신 C05 실제 저장 검증: [c05-live-20261105T053604Z.json](c05-live-20261105T053604Z.json), [해석·지혜님 후속 요청](../Doc/C05-LIVE-RESULT.md). 실제 backend33회(401×3/501×30), 시험 접두사 DB0→0, 별도 n8n app 응답 tickets_down 및 시험 workflow 게시 해제. 저장 미구현으로 차단됐으며 동시8건 호출 자체를 중복 처리 성공으로 표시하지 않는다. 유빈 최신3커밋 병합 후 원민89/유빈172 회귀 통과.
+
 현재 팀 소스 재배포(2026-11-05): [배포/PG48](team-redeploy-20261105T045828Z.json), [최종 HTTP·RAG 도달·index 실행35](team-http-check-20261105T051103Z.json), [브라우저 확인·제약·다음 연결](../Doc/TEAM-REDEPLOY-RESULT.md). 팀 workflow5개 UI 표시,4개 게시/index 수동 Mock 성공. 직원 API/실제 저장/임베딩은 미연결로 업무 통합 성공과 구분한다.
 
 최종 Ubuntu 실환경(2026-11-05): [실제 자동 오류 5조건](ubuntu-errors-matrix.json), [최종 복구·Ollama·PG45](ubuntu-final-restoration.json), [해석·재현·다음 연결](../Doc/UBUNTU-INTEGRATION-RESULT.md). 전용 Mock 4조건의 자동 Error Trigger 수습을 확인했고 실제 backend 조건은 501로 저장 실패다. 매트릭스 종료 시 준비 지연으로 복구 확인이 중단된 사실과 이후 별도 복구 성공을 구분했다. 일반 handoff와 errors 연결 유지, 오류 시험 부모 비활성/404, 로컬 모델 HTTP200, 원민 회귀89 통과. 아래 미실행 표기는 이전 시점 결과다.

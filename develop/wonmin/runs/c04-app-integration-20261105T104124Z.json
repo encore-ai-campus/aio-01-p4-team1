@@ -1,0 +1,2643 @@
+{
+  "scope": "actual support local LLM, C04 HTTP, C05 FastAPI and PG; identity uses provided contract fixtures, not live data-api",
+  "cases": [
+    {
+      "case": "authentication",
+      "support_no_key": 403,
+      "handoff_no_key": 403,
+      "fixture_no_key": 401
+    },
+    {
+      "case": "unknown_user",
+      "response": {
+        "status": 400,
+        "body": {
+          "error": "invalid request",
+          "codes": [
+            "unknown_user"
+          ]
+        }
+      },
+      "storage": {
+        "tickets": [],
+        "alerts": [],
+        "dlq": []
+      }
+    },
+    {
+      "case": "injection_blocked",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-blocked",
+          "sources": [],
+          "ticket": null,
+          "agents": [],
+          "security": {
+            "blocked_by": "rule",
+            "reason": "prompt_injection",
+            "masked": 0
+          },
+          "route": "차단",
+          "answer": "보안 정책상 처리할 수 없는 요청입니다. IT 문의 창구로 연락해 주세요."
+        }
+      }
+    },
+    {
+      "case": "normal_and_duplicate",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "request_id": "c04-20261105T104124Z-41db-normal",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2011",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "action_required"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "request_id": "c04-20261105T104124Z-41db-normal",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2011",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "action_required"
+          }
+        }
+      ],
+      "traces": {
+        "support": [
+          {
+            "id": 107,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-normal",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2011",
+                  "priority": "normal",
+                  "duplicate": false
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-normal",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2011",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "action_required"
+            }
+          },
+          {
+            "id": 109,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-normal",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2011",
+                  "priority": "normal",
+                  "duplicate": true
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-normal",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2011",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "action_required"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 108,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-normal",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2011",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          },
+          {
+            "id": 110,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-normal",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2011",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2011",
+            "priority": "normal",
+            "category": "account"
+          }
+        ],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-normal:ticket-created"
+          }
+        ],
+        "dlq": []
+      }
+    },
+    {
+      "case": "urgent_security",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-urgent",
+          "sources": [],
+          "ticket": {
+            "ticket_id": "T-2012",
+            "priority": "high",
+            "duplicate": false
+          },
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "긴급 보안 문의가 접수되었습니다(T-2012). 피해 확산을 막기 위해 해당 PC의 사내망 연결(유선·Wi-Fi·VPN)을 바로 끊고 IT팀 연락을 기다려 주세요.",
+          "reason": "urgent"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 111,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-urgent",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 C03 HTTP",
+              "N09 Capture C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "security",
+                "urgency": "high",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": false
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2012",
+                  "priority": "high",
+                  "duplicate": false
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-urgent",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2012",
+                "priority": "high",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "긴급 보안 문의가 접수되었습니다(T-2012). 피해 확산을 막기 위해 해당 PC의 사내망 연결(유선·Wi-Fi·VPN)을 바로 끊고 IT팀 연락을 기다려 주세요.",
+              "reason": "urgent"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 112,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-urgent",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2012",
+                "priority": "high",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2012",
+            "priority": "high",
+            "category": "security"
+          }
+        ],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-urgent:ticket-created"
+          }
+        ],
+        "dlq": []
+      }
+    },
+    {
+      "case": "alerts_down",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-alerts_down",
+          "sources": [],
+          "ticket": {
+            "ticket_id": "T-2013",
+            "priority": "normal",
+            "duplicate": false
+          },
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "IT팀 티켓은 접수되었으나 알림 전송에 실패했습니다.",
+          "reason": "alerts_down"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 114,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-alerts_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": false,
+                "ticket": {
+                  "ticket_id": "T-2013",
+                  "priority": "normal",
+                  "duplicate": false
+                },
+                "reason": "alerts_down",
+                "alerted": false,
+                "dlq": true
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-alerts_down",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2013",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓은 접수되었으나 알림 전송에 실패했습니다.",
+              "reason": "alerts_down"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 115,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-alerts_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H09b App DLQ Store",
+              "H09 Store DLQ App",
+              "H09 Check DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": false,
+              "ticket": {
+                "ticket_id": "T-2013",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": "alerts_down",
+              "alerted": false,
+              "dlq": true
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2013",
+            "priority": "normal",
+            "category": "account"
+          }
+        ],
+        "alerts": [],
+        "dlq": [
+          {
+            "reason": "alerts_down",
+            "safe_payload": {
+              "stage": "alert",
+              "attempts": 1,
+              "priority": "normal",
+              "ticket_id": "T-2013",
+              "last_status": 201
+            }
+          }
+        ]
+      },
+      "observed": {
+        "scope": "fault injector forwarding to real FastAPI",
+        "calls": {
+          "tickets": 1,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "forwarded": {
+          "tickets": 1,
+          "alerts": 0,
+          "dlq": 1
+        },
+        "forced": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 0
+        }
+      }
+    },
+    {
+      "case": "alerts_recovered",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-alerts_down",
+          "sources": [],
+          "ticket": {
+            "ticket_id": "T-2013",
+            "priority": "normal",
+            "duplicate": true
+          },
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "IT팀 티켓이 접수되었습니다.",
+          "reason": "action_required"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 114,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-alerts_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": false,
+                "ticket": {
+                  "ticket_id": "T-2013",
+                  "priority": "normal",
+                  "duplicate": false
+                },
+                "reason": "alerts_down",
+                "alerted": false,
+                "dlq": true
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-alerts_down",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2013",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓은 접수되었으나 알림 전송에 실패했습니다.",
+              "reason": "alerts_down"
+            }
+          },
+          {
+            "id": 116,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-alerts_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2013",
+                  "priority": "normal",
+                  "duplicate": true
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-alerts_down",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2013",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "action_required"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 115,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-alerts_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H09b App DLQ Store",
+              "H09 Store DLQ App",
+              "H09 Check DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": false,
+              "ticket": {
+                "ticket_id": "T-2013",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": "alerts_down",
+              "alerted": false,
+              "dlq": true
+            }
+          },
+          {
+            "id": 117,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-alerts_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2013",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2013",
+            "priority": "normal",
+            "category": "account"
+          }
+        ],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-alerts_down:ticket-created"
+          }
+        ],
+        "dlq": [
+          {
+            "reason": "alerts_down",
+            "safe_payload": {
+              "stage": "alert",
+              "attempts": 1,
+              "priority": "normal",
+              "ticket_id": "T-2013",
+              "last_status": 201
+            }
+          }
+        ]
+      }
+    },
+    {
+      "case": "tickets_down",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-tickets_down",
+          "sources": [],
+          "ticket": null,
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "티켓 접수 여부를 확인하지 못했습니다. 같은 요청 ID로 다시 확인해 주세요.",
+          "reason": "tickets_down"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 118,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-tickets_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": false,
+                "ticket": null,
+                "reason": "tickets_down",
+                "alerted": true,
+                "dlq": true
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-tickets_down",
+              "sources": [],
+              "ticket": null,
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "티켓 접수 여부를 확인하지 못했습니다. 같은 요청 ID로 다시 확인해 주세요.",
+              "reason": "tickets_down"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 119,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-tickets_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Wait",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05b App Retry Store",
+              "H04 Retry Ticket App",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H09b App DLQ Store",
+              "H09 Store DLQ App",
+              "H09 Check DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": false,
+              "ticket": null,
+              "reason": "tickets_down",
+              "alerted": true,
+              "dlq": true
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-tickets_down:tickets-down"
+          }
+        ],
+        "dlq": [
+          {
+            "reason": "tickets_down",
+            "safe_payload": {
+              "stage": "ticket",
+              "attempts": 2,
+              "priority": "normal",
+              "last_status": 503
+            }
+          }
+        ]
+      },
+      "observed": {
+        "scope": "fault injector forwarding to real FastAPI",
+        "calls": {
+          "tickets": 2,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "forwarded": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "forced": {
+          "tickets": 2,
+          "alerts": 0,
+          "dlq": 0
+        }
+      }
+    },
+    {
+      "case": "dlq_down",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-dlq_down",
+          "sources": [],
+          "ticket": null,
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "티켓 접수 여부를 확인하지 못했습니다. 같은 요청 ID로 다시 확인해 주세요.",
+          "reason": "tickets_down"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 120,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-dlq_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": false,
+                "ticket": null,
+                "reason": "tickets_down",
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-dlq_down",
+              "sources": [],
+              "ticket": null,
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "티켓 접수 여부를 확인하지 못했습니다. 같은 요청 ID로 다시 확인해 주세요.",
+              "reason": "tickets_down"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 121,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-dlq_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Wait",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05b App Retry Store",
+              "H04 Retry Ticket App",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H09b App DLQ Store",
+              "H09 Store DLQ App",
+              "H09 Check DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": false,
+              "ticket": null,
+              "reason": "tickets_down",
+              "alerted": true,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-dlq_down:tickets-down"
+          }
+        ],
+        "dlq": []
+      },
+      "observed": {
+        "scope": "fault injector forwarding to real FastAPI",
+        "calls": {
+          "tickets": 2,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "forwarded": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 0
+        },
+        "forced": {
+          "tickets": 2,
+          "alerts": 0,
+          "dlq": 1
+        }
+      }
+    },
+    {
+      "case": "both_sinks_down",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-both_sinks_down",
+          "sources": [],
+          "ticket": {
+            "ticket_id": "T-2014",
+            "priority": "normal",
+            "duplicate": false
+          },
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "IT팀 티켓은 접수되었으나 알림 전송에 실패했습니다.",
+          "reason": "alerts_down"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 122,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-both_sinks_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": false,
+                "ticket": {
+                  "ticket_id": "T-2014",
+                  "priority": "normal",
+                  "duplicate": false
+                },
+                "reason": "alerts_down",
+                "alerted": false,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-both_sinks_down",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2014",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓은 접수되었으나 알림 전송에 실패했습니다.",
+              "reason": "alerts_down"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 123,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-both_sinks_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H09b App DLQ Store",
+              "H09 Store DLQ App",
+              "H09 Check DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": false,
+              "ticket": {
+                "ticket_id": "T-2014",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": "alerts_down",
+              "alerted": false,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2014",
+            "priority": "normal",
+            "category": "account"
+          }
+        ],
+        "alerts": [],
+        "dlq": []
+      },
+      "observed": {
+        "scope": "fault injector forwarding to real FastAPI",
+        "calls": {
+          "tickets": 1,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "forwarded": {
+          "tickets": 1,
+          "alerts": 0,
+          "dlq": 0
+        },
+        "forced": {
+          "tickets": 0,
+          "alerts": 1,
+          "dlq": 1
+        }
+      }
+    },
+    {
+      "case": "all_down",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-all_down",
+          "sources": [],
+          "ticket": null,
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "티켓 접수 여부를 확인하지 못했습니다. 같은 요청 ID로 다시 확인해 주세요.",
+          "reason": "tickets_down"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 124,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-all_down",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": false,
+                "ticket": null,
+                "reason": "tickets_down",
+                "alerted": false,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-all_down",
+              "sources": [],
+              "ticket": null,
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "티켓 접수 여부를 확인하지 못했습니다. 같은 요청 ID로 다시 확인해 주세요.",
+              "reason": "tickets_down"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 125,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-all_down",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Wait",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05b App Retry Store",
+              "H04 Retry Ticket App",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H09b App DLQ Store",
+              "H09 Store DLQ App",
+              "H09 Check DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": false,
+              "ticket": null,
+              "reason": "tickets_down",
+              "alerted": false,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [],
+        "alerts": [],
+        "dlq": []
+      },
+      "observed": {
+        "scope": "fault injector forwarding to real FastAPI",
+        "calls": {
+          "tickets": 2,
+          "alerts": 1,
+          "dlq": 1
+        },
+        "forwarded": {
+          "tickets": 0,
+          "alerts": 0,
+          "dlq": 0
+        },
+        "forced": {
+          "tickets": 2,
+          "alerts": 1,
+          "dlq": 1
+        }
+      }
+    },
+    {
+      "case": "transient_ticket_failure",
+      "response": {
+        "status": 200,
+        "body": {
+          "request_id": "c04-20261105T104124Z-41db-flaky",
+          "sources": [],
+          "ticket": {
+            "ticket_id": "T-2015",
+            "priority": "normal",
+            "duplicate": false
+          },
+          "agents": [
+            "triage"
+          ],
+          "security": {
+            "blocked_by": "",
+            "reason": "",
+            "masked": 0
+          },
+          "route": "담당자 이관",
+          "answer": "IT팀 티켓이 접수되었습니다.",
+          "reason": "action_required"
+        }
+      },
+      "traces": {
+        "support": [
+          {
+            "id": 126,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-flaky",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2015",
+                  "priority": "normal",
+                  "duplicate": false
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-flaky",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2015",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "action_required"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 127,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-flaky",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Wait",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05b App Retry Store",
+              "H04 Retry Ticket App",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2015",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2015",
+            "priority": "normal",
+            "category": "account"
+          }
+        ],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-flaky:ticket-created"
+          }
+        ],
+        "dlq": []
+      },
+      "observed": {
+        "scope": "fault injector forwarding to real FastAPI",
+        "calls": {
+          "tickets": 2,
+          "alerts": 1,
+          "dlq": 0
+        },
+        "forwarded": {
+          "tickets": 1,
+          "alerts": 1,
+          "dlq": 0
+        },
+        "forced": {
+          "tickets": 1,
+          "alerts": 0,
+          "dlq": 0
+        }
+      }
+    },
+    {
+      "case": "concurrent_same_request_2",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "request_id": "c04-20261105T104124Z-41db-parallel",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2016",
+              "priority": "normal",
+              "duplicate": true
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "action_required"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "request_id": "c04-20261105T104124Z-41db-parallel",
+            "sources": [],
+            "ticket": {
+              "ticket_id": "T-2016",
+              "priority": "normal",
+              "duplicate": false
+            },
+            "agents": [
+              "triage"
+            ],
+            "security": {
+              "blocked_by": "",
+              "reason": "",
+              "masked": 0
+            },
+            "route": "담당자 이관",
+            "answer": "IT팀 티켓이 접수되었습니다.",
+            "reason": "action_required"
+          }
+        }
+      ],
+      "traces": {
+        "support": [
+          {
+            "id": 128,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-parallel",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2016",
+                  "priority": "normal",
+                  "duplicate": true
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-parallel",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2016",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "action_required"
+            }
+          },
+          {
+            "id": 129,
+            "workflow_id": "wmc0417676ce1ea",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-parallel",
+            "nodes": [
+              "N01 Support webhook",
+              "N02 Normalize input",
+              "N03 Employee mode",
+              "N03 Get employees HTTP",
+              "N03 Capture employee",
+              "N04 Injection rules",
+              "N05 Replay MOCK",
+              "N05 Parse replay",
+              "N05 Route replay",
+              "N05 Triage gate",
+              "N05 Triage mode",
+              "N06 Triage model",
+              "N06 Triage Agent",
+              "N06 Parse triage",
+              "N07 Route triage",
+              "N07 Route urgent",
+              "N08 Build search input",
+              "N09 Search mode",
+              "N09 Mock C03",
+              "N09 Normalize search",
+              "N10 Build ticket lookup",
+              "N10 Ticket mode",
+              "N10 Mock ticket",
+              "N10 Normalize ticket",
+              "N11 Collect retrieval",
+              "N11 Join retrieval",
+              "N12 Evidence gate",
+              "N12 Route evidence",
+              "N21 Already handed off",
+              "N20 Prepare handoff",
+              "N20 Handoff gate",
+              "N20 Handoff mode",
+              "N20 C04 HTTP",
+              "N20 Capture C04",
+              "N20 Map handoff",
+              "N20 After handoff",
+              "N22 Finalize P0-3",
+              "N22 Output filter",
+              "N23 Respond"
+            ],
+            "employee_lookup": "ok",
+            "triage": {
+              "executed": true,
+              "error": null,
+              "value": {
+                "type": "account",
+                "urgency": "normal",
+                "missing": [],
+                "ticket_id": null,
+                "needs_action": true
+              }
+            },
+            "c04": {
+              "http_status": 200,
+              "body": {
+                "ok": true,
+                "ticket": {
+                  "ticket_id": "T-2016",
+                  "priority": "normal",
+                  "duplicate": false
+                },
+                "reason": null,
+                "alerted": true,
+                "dlq": false
+              },
+              "mock": false
+            },
+            "result": {
+              "request_id": "c04-20261105T104124Z-41db-parallel",
+              "sources": [],
+              "ticket": {
+                "ticket_id": "T-2016",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "agents": [
+                "triage"
+              ],
+              "security": {
+                "blocked_by": "",
+                "reason": "",
+                "masked": 0
+              },
+              "route": "담당자 이관",
+              "answer": "IT팀 티켓이 접수되었습니다.",
+              "reason": "action_required"
+            }
+          }
+        ],
+        "handoff": [
+          {
+            "id": 130,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-parallel",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2016",
+                "priority": "normal",
+                "duplicate": false
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          },
+          {
+            "id": 131,
+            "workflow_id": "wmc0426f3465344",
+            "status": "success",
+            "request_id": "c04-20261105T104124Z-41db-parallel",
+            "nodes": [
+              "H01 Handoff Webhook",
+              "H02 Validate and Map",
+              "H02a Valid Input",
+              "H03 Select Store",
+              "H03a Store Ready",
+              "H03b App Ticket Store",
+              "H04 Create Ticket App",
+              "H05 Retry Gate",
+              "H05a Retry Allowed",
+              "H05 Recheck Budget",
+              "H05c Retry Still Allowed",
+              "H05 Restore First Result",
+              "H06 Keep Ticket",
+              "H07 Failure Context",
+              "H08a App Alert Store",
+              "H08 Store Alert App",
+              "H08 Check Alert",
+              "H09a Needs DLQ",
+              "H10 Build Result",
+              "H11 Respond"
+            ],
+            "employee_lookup": null,
+            "triage": null,
+            "c04": null,
+            "result": {
+              "ok": true,
+              "ticket": {
+                "ticket_id": "T-2016",
+                "priority": "normal",
+                "duplicate": true
+              },
+              "reason": null,
+              "alerted": true,
+              "dlq": false
+            }
+          }
+        ]
+      },
+      "storage": {
+        "tickets": [
+          {
+            "ticket_id": "T-2016",
+            "priority": "normal",
+            "category": "account"
+          }
+        ],
+        "alerts": [
+          {
+            "event_key": "c04-20261105T104124Z-41db-parallel:ticket-created"
+          }
+        ],
+        "dlq": []
+      }
+    }
+  ],
+  "run_prefix": "c04-20261105T104124Z-41db",
+  "workflow_ids": {
+    "c04_support_app": "wmc0417676ce1ea",
+    "c04_handoff_app": "wmc0426f3465344"
+  },
+  "support_commit": "bb2fa1fcc43ead160bda6330e3fdc11207492eee",
+  "verdict": "PASS_C04_C05_APP_WITH_FIXTURE_IDENTITY_AND_REAL_LOCAL_LLM",
+  "restored": true,
+  "existing_before": [
+    {
+      "id": "wmc05livecf8ca714f5",
+      "name": "wonmin-c05-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "8ebada99-752f-4483-8e6a-3538b65a23b6"
+    },
+    {
+      "id": "wmerr84aab85722",
+      "name": "oke-errors",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "8fc0ae40-d522-4cf4-a133-a1dc0f592117"
+    },
+    {
+      "id": "wmerrapp1f0e60f5e7",
+      "name": "wonmin-errors-app-guard",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp586c99abd2",
+      "name": "wonmin-errors-app-parent",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp7a38cad3f6",
+      "name": "wonmin-errors-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "1bffe3b0-5cb0-4cc7-afd1-33f8dd1ed63d"
+    },
+    {
+      "id": "wmfai82080ebab7",
+      "name": "oke-handoff",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmhanecca84e267",
+      "name": "oke-handoff",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "7e3fa453-c5b4-4c1d-905e-44a849fef4e8"
+    },
+    {
+      "id": "wmind533d9aa4ec",
+      "name": "oke-index",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"all\",\"saveDataErrorExecution\":\"all\",\"saveManualExecutions\":true,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmllm12c4cbcae0",
+      "name": "wonmin-local-llm-probe",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerr84aab85722\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": "b38efbc8-671d-4e54-b6c1-023cb1699473"
+    },
+    {
+      "id": "wmsea8d8275d1c1",
+      "name": "oke-search",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"none\",\"saveDataErrorExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "40f8c5ff-2659-40d7-8c90-5d7c542f478a"
+    },
+    {
+      "id": "wmsup6dde10727e",
+      "name": "oke-support",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "c4824ab3-4437-4932-bf29-d6b3e4edac78"
+    }
+  ],
+  "main_db_before": {
+    "tickets": 0,
+    "alerts": 0,
+    "dlq": 0
+  },
+  "test_db_before": {
+    "tickets": 10,
+    "alerts": 19,
+    "dlq": 9
+  },
+  "backend_commit": "ec6a735ea93edacef97f15696bd84cd4e8055241",
+  "support_source_sha256": "fe0b70730fe6b350046fcfc11654d7b889c698ab74a99e53eb3697e82345b12b",
+  "triage_model": {
+    "model": {
+      "__rl": true,
+      "mode": "id",
+      "value": "qwen2.5-coder:latest"
+    },
+    "response_format": "json_object",
+    "scope": "test copy only; canonical parser and model untouched"
+  },
+  "handoff_source_sha256": "1037df70a0358cb0ca42f99b96c321c57d9ac8890c57e3734c28767e53c3e77e",
+  "main_db_after": {
+    "tickets": 0,
+    "alerts": 0,
+    "dlq": 0
+  },
+  "test_db_after": {
+    "tickets": 16,
+    "alerts": 26,
+    "dlq": 11
+  },
+  "final_workflows": [
+    {
+      "id": "wmc0417676ce1ea",
+      "name": "wonmin-c04-support-app",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveManualExecutions\":false}",
+      "activeVersionId": "2b52c244-fd93-4aa5-a204-d60e5e646c92"
+    },
+    {
+      "id": "wmc0426f3465344",
+      "name": "wonmin-c04-handoff-app",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerrapp7a38cad3f6\"}",
+      "activeVersionId": "f845c64f-bbd1-4d74-874a-14d986813547"
+    }
+  ],
+  "existing_after": [
+    {
+      "id": "wmc05livecf8ca714f5",
+      "name": "wonmin-c05-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "8ebada99-752f-4483-8e6a-3538b65a23b6"
+    },
+    {
+      "id": "wmerr84aab85722",
+      "name": "oke-errors",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "8fc0ae40-d522-4cf4-a133-a1dc0f592117"
+    },
+    {
+      "id": "wmerrapp1f0e60f5e7",
+      "name": "wonmin-errors-app-guard",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp586c99abd2",
+      "name": "wonmin-errors-app-parent",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerrapp7a38cad3f6\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmerrapp7a38cad3f6",
+      "name": "wonmin-errors-app-real",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"all\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"\"}",
+      "activeVersionId": "1bffe3b0-5cb0-4cc7-afd1-33f8dd1ed63d"
+    },
+    {
+      "id": "wmfai82080ebab7",
+      "name": "oke-handoff",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmhanecca84e267",
+      "name": "oke-handoff",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveExecutionProgress\":false,\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "7e3fa453-c5b4-4c1d-905e-44a849fef4e8"
+    },
+    {
+      "id": "wmind533d9aa4ec",
+      "name": "oke-index",
+      "active": 0,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"all\",\"saveDataErrorExecution\":\"all\",\"saveManualExecutions\":true,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": null
+    },
+    {
+      "id": "wmllm12c4cbcae0",
+      "name": "wonmin-local-llm-probe",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"errorWorkflow\":\"wmerr84aab85722\",\"saveDataErrorExecution\":\"all\",\"saveDataSuccessExecution\":\"none\"}",
+      "activeVersionId": "b38efbc8-671d-4e54-b6c1-023cb1699473"
+    },
+    {
+      "id": "wmsea8d8275d1c1",
+      "name": "oke-search",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataSuccessExecution\":\"none\",\"saveDataErrorExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\"}",
+      "activeVersionId": "40f8c5ff-2659-40d7-8c90-5d7c542f478a"
+    },
+    {
+      "id": "wmsup6dde10727e",
+      "name": "oke-support",
+      "active": 1,
+      "settings": "{\"executionOrder\":\"v1\",\"saveDataErrorExecution\":\"none\",\"saveDataSuccessExecution\":\"none\",\"saveManualExecutions\":false,\"errorWorkflow\":\"wmerr84aab85722\",\"binaryMode\":\"separate\"}",
+      "activeVersionId": "c4824ab3-4437-4932-bf29-d6b3e4edac78"
+    }
+  ],
+  "health": {
+    "15678": 200,
+    "18001": 200,
+    "18802": 200
+  }
+}

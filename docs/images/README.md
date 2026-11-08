@@ -1,15 +1,8 @@
 # 제출 캡처
 
-## 예상 화면·설계 그림
+실제 실행 근거는 `live/`의 웹 화면 8장과 n8n 실행 화면 6장이다. 아래 목록에서 이미지와 해당 시험 기록을 함께 확인할 수 있다.
 
-planned/는 개발 전에 그린 화면과 노드 설계다. [PREVIEW](../PREVIEW.md)와 [워크플로우 설계](../WORKFLOW-DESIGN.md)에서 사용하며 실제 구현·시험 증거로 집계하지 않는다. 화면 원본은 previews/screens.html, SVG 생성 원본은 previews/generate_diagrams.py다.
-
-## 실제 실행 증거
-
-- **작성:** 설계·실행 결과서와 발표에 실제 사용하는 n8n·웹 화면 캡처.
-- **규칙:** 비밀번호·키·연락처를 가리고, 파일명에 시나리오와 장면을 드러낸다. 사용하지 않는 캡처는 넣지 않는다.
-- **결과:** 관련 문서에서 각 캡처를 링크하고, 캡처가 실제 실행 보고서와 같은 결과를 보여야 한다.
-- **기준 문서:** [제출 취합 안내](../../SUBMISSION.md), [실행 결과서](../EXECUTION-RESULT.md).
+캡처에는 비밀번호·키·연락처를 넣지 않으며, 실제 응답·티켓·실행 ID가 원본 보고서와 일치해야 한다. 제출 기준과 시험 범위는 [제출 취합 안내](../../SUBMISSION.md), [실행 결과서](../EXECUTION-RESULT.md)를 따른다.
 
 ## 실제 배포 서비스 화면
 
@@ -39,3 +32,16 @@ planned/는 개발 전에 그린 화면과 노드 설계다. [PREVIEW](../PREVIE
 | 긴급 이관 · ID 276 | [실행 흐름](live/13-n8n-handoff-execution.png) | [응답](live/14-n8n-handoff-result.png) | 담당자 접수, 긴급 티켓 `T-2039` |
 
 실행 ID·요청 ID·기존 시험 근거·이미지 해시·로그인/로그아웃·워크플로우 변경 없음은 [n8n 캡처 기록](../../runs/n8n-ui-captures-20261108.json)에서 확인한다. n8n의 노드 실행 시간과 호출자의 HTTP 응답 시간은 측정 구간이 다르다.
+
+## 과거 화면 설계안
+
+`planned/`의 4장은 구현 전 화면 설계 이력이다. [화면 설계 설명](../PREVIEW.md)에서 사용하며, 실제 구현·시험 증거에는 포함하지 않는다.
+
+| 설계 화면 | 파일 |
+| --- | --- |
+| 직원 질문·내 문의 | [ui-employee.png](planned/ui-employee.png) |
+| 관리자 티켓·알림 | [ui-admin.png](planned/ui-admin.png) |
+| 관리자 계정 발급 | [ui-accounts.png](planned/ui-accounts.png) |
+| 로그인 | [ui-login.png](planned/ui-login.png) |
+
+화면 설계 원본은 [미리보기 HTML](../previews/screens.html)이다. 현재 워크플로우 구조는 [워크플로우 설계서](../WORKFLOW-DESIGN.md)에서 확인한다.

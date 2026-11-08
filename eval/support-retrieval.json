@@ -1,0 +1,240 @@
+{
+  "purpose": "P1-1 통합 로컬 Mock 및 P0 입력·차단 회귀. 실제 n8n/C03/C04/DB 호출 아님.",
+  "cases": [
+    {
+      "id": "P1-R01-no-evidence",
+      "request_file": "requests/input-valid.json",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "no_evidence",
+        "search_state": "empty",
+        "retrieval_reason": "no_evidence",
+        "handoff_reason": "no_evidence",
+        "lookup_state": "skipped"
+      }
+    },
+    {
+      "id": "P1-R02-search-down",
+      "request_file": "requests/input-valid.json",
+      "search_result": "unavailable",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "search_unavailable",
+        "search_state": "unavailable",
+        "retrieval_reason": "search_unavailable"
+      }
+    },
+    {
+      "id": "P1-R03-found-conservative",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "reason": "low_confidence",
+        "search_state": "found",
+        "retrieval_reason": "low_confidence"
+      }
+    },
+    {
+      "id": "P1-R04-own-masked",
+      "request_file": "requests/own-ticket.json",
+      "lookup_result": "own_ok",
+      "expect": {
+        "http_status": 200,
+        "lookup_state": "ok",
+        "mask_count": 2,
+        "contact_absent": true,
+        "lookup_requester": "박서연"
+      }
+    },
+    {
+      "id": "P1-R05-other-forbidden",
+      "request_file": "requests/other-ticket.json",
+      "lookup_result": "other_forbidden",
+      "expect": {
+        "http_status": 200,
+        "route": "권한 없음",
+        "ticket": null,
+        "lookup_state": "forbidden",
+        "contact_absent": true,
+        "retrieval_decision": "forbidden"
+      }
+    },
+    {
+      "id": "P1-R06-not-found",
+      "request_file": "requests/not-found-ticket.json",
+      "lookup_result": "not_found",
+      "expect": {
+        "http_status": 200,
+        "lookup_state": "not_found"
+      }
+    },
+    {
+      "id": "P1-R07-lookup-down",
+      "request_file": "requests/own-ticket.json",
+      "lookup_result": "unavailable",
+      "expect": {
+        "http_status": 200,
+        "lookup_state": "unavailable"
+      }
+    },
+    {
+      "id": "P1-R08-invalid-search",
+      "request_file": "requests/input-valid.json",
+      "search_result": "invalid_score",
+      "expect": {
+        "http_status": 200,
+        "search_state": "invalid",
+        "reason": "search_unavailable"
+      }
+    },
+    {
+      "id": "P1-R09-c04-normal",
+      "request_file": "requests/input-valid.json",
+      "handoff_result": "normal",
+      "expect": {
+        "http_status": 200,
+        "handoff_state": "created",
+        "ticket_id": "T-2101",
+        "duplicate": false,
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "P1-R10-c04-duplicate",
+      "request_file": "requests/input-valid.json",
+      "handoff_result": "duplicate",
+      "expect": {
+        "http_status": 200,
+        "handoff_state": "created",
+        "ticket_id": "T-2101",
+        "duplicate": true,
+        "reason": "no_evidence"
+      }
+    },
+    {
+      "id": "P1-R11-c04-alerts-down",
+      "request_file": "requests/input-valid.json",
+      "handoff_result": "alerts_down",
+      "expect": {
+        "http_status": 200,
+        "handoff_state": "alerts_down",
+        "ticket_id": "T-2101",
+        "reason": "alerts_down"
+      }
+    },
+    {
+      "id": "P1-R12-c04-tickets-down",
+      "request_file": "requests/input-valid.json",
+      "handoff_result": "tickets_down",
+      "expect": {
+        "http_status": 200,
+        "handoff_state": "tickets_down",
+        "ticket": null,
+        "reason": "tickets_down"
+      }
+    },
+    {
+      "id": "P1-R13-empty-input",
+      "request_file": "requests/input-empty.json",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "question_required"
+        ],
+        "search_skipped": true
+      }
+    },
+    {
+      "id": "P1-R14-injection",
+      "request_file": "requests/injection.json",
+      "expect": {
+        "http_status": 200,
+        "route": "차단",
+        "ticket": null,
+        "search_skipped": true
+      }
+    },
+    {
+      "id": "P1-R15-normal-admin-word",
+      "request_file": "requests/normal-admin-contact.json",
+      "expect": {
+        "http_status": 200,
+        "route": "담당자 이관",
+        "search_state": "empty"
+      }
+    },
+    {
+      "id": "P1-R16-it-access",
+      "request_file": "requests/search-it.json",
+      "expect": {
+        "http_status": 200,
+        "access_levels": [
+          "all",
+          "it"
+        ],
+        "top_k": 3
+      }
+    },
+    {
+      "id": "P1-R17-claimed-access",
+      "request_file": "requests/search-claim.json",
+      "expect": {
+        "http_status": 200,
+        "access_levels": [
+          "all"
+        ],
+        "top_k": 3
+      }
+    },
+    {
+      "id": "P1-R18-too-long",
+      "request_file": "requests/input-too-long.json",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "too_long"
+        ],
+        "search_skipped": true
+      }
+    },
+    {
+      "id": "P1-R19-unknown-user",
+      "request_file": "requests/input-unknown-user.json",
+      "expect": {
+        "http_status": 400,
+        "codes": [
+          "unknown_user"
+        ],
+        "search_skipped": true
+      }
+    },
+    {
+      "id": "P1-R20-clarify",
+      "request_file": "requests/clarify-1.json",
+      "expect": {
+        "http_status": 200,
+        "route": "보완 질문",
+        "ticket": null,
+        "search_state": "skipped",
+        "lookup_state": "skipped",
+        "retrieval_decision": "skipped"
+      }
+    },
+    {
+      "id": "P1-R21-search-contact-redacted",
+      "request_file": "requests/input-valid.json",
+      "search_result": "found_contact",
+      "expect": {
+        "http_status": 200,
+        "search_state": "found",
+        "reason": "low_confidence",
+        "security_masked": 1,
+        "evidence_redacted": true
+      }
+    }
+  ]
+}

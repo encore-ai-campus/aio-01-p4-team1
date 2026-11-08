@@ -45,6 +45,56 @@ flowchart TD
 
 설계 문서: [전체 시스템 구조](docs/ARCHITECTURE.md) · [문의 자동화 흐름](docs/WORKFLOW-DESIGN.md) · [규정 검색 방식](docs/RAG-ARCHITECTURE.md)
 
+## 실행 방법
+
+팀 VM에서 운영 중인 서비스에 아래 주소로 접속합니다.
+
+### 1. 직원 로그인
+
+- **주소:** <https://aio-t1.isitsoft.kr/login>
+- **아이디:** `teamtest.employee1` — 직원 계정 예시이며, 실제 발급받은 ID를 사용합니다.
+- **비밀번호:** 관리자에게 받기
+- **이용 기능:** IT 문제 질문, 답변·규정 근거 확인, 내 문의·처리 결과 조회
+
+### 2. IT팀 관리자 로그인
+
+- **주소:** <https://aio-t1.isitsoft.kr/login> — 직원과 같은 로그인 주소입니다.
+- **아이디:** `minji.admin` — 관리자 계정 예시
+- **비밀번호:** 팀장에게 받기
+- **이용 기능:** 티켓 확인·답변·상태 변경, 긴급 알림 확인, 직원 계정 관리
+
+### 3. 백엔드 API 확인
+
+- **주소:** <https://aio-t1.isitsoft.kr/docs>
+- **확인 내용:** 로그인, 질문 전송, 내 문의 조회, 관리자 티켓·계정 관리 API의 입력값과 응답 형식
+- **사용 방법:** Swagger 화면에서 API 명세를 확인하고 요청을 실행할 수 있습니다. 보호된 API는 해당 사용자 로그인이나 내부 API 인증이 필요합니다.
+- **추가 주소:** <https://aio-t1.isitsoft.kr/openapi.json> — API 명세 원본 JSON
+
+### 4. n8n 워크플로우 확인
+
+- **주소:** <https://aio-t1.isitsoft.kr:5678/>
+- **아이디·비밀번호:** 팀장에게 n8n 전용 계정 받기
+- **확인 내용:** 워크플로우 연결과 실행 이력, 각 단계의 입력·결과·오류
+
+확인할 워크플로우는 다음과 같습니다.
+
+- `oke-support`: 질문 분류, 답변 생성·검증, 자동 답변·보완 질문·이관 결정
+- `oke-search`: 사내 규정 검색 연결
+- `oke-handoff`: 티켓 접수, 알림, 저장 실패 처리
+- `oke-errors`: 예상 밖 실행 오류와 알림·실패 기록 처리
+- `oke-index`: 규정 색인 — 필요할 때 수동 실행
+
+상태 확인 주소는 <https://aio-t1.isitsoft.kr:5678/healthz>입니다. 이 응답은 n8n 서버 상태를 확인하며, 전체 문의 기능의 성공을 뜻하지는 않습니다.
+
+### 5. 선생님이 제공한 VM 웹 SSH
+
+- **주소:** <https://aio-t1.isitsoft.kr/ssh/>
+- **접속 정보:** 선생님이 제공한 VM 계정 정보 사용
+- **이용 목적:** 서버 터미널 접속, 컨테이너 상태·로그 확인, 배포 작업
+- **저장소 위치:** `/home/toor/Aio-4pj-1team/`
+
+서버 기동·재배포 명령은 [VM 배포 안내](deploy/README.md), 계정·접속의 상세 기준은 [팀 VM 안내](docs/VM-TEAM-TESTING.md)를 따릅니다. PostgreSQL·RAG 검색 서비스·data-api는 VM 내부에서 연결하므로 별도 공개 접속 주소를 안내하지 않습니다.
+
 ## 주요 기능
 
 서비스는 **팀 VM**에서 운영합니다. 아래 순서로 직원 문의부터 IT팀 처리 결과 확인까지 이용할 수 있습니다.
@@ -92,34 +142,6 @@ IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다.
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 </blockquote>
-
-## 실행 방법
-
-팀 VM의 저장소에서 Docker Compose로 설정 확인 → 서비스 기동 → 상태 확인 순서로 실행합니다. Docker·Compose, 운영용 비공개 환경 파일, 기존 DB·n8n 볼륨과 네트워크가 준비돼 있어야 합니다.
-
-```sh
-cd /home/toor/Aio-4pj-1team
-
-# 1. 설정 확인
-SERVICE_MODE=app docker compose \
-  --env-file /home/toor/n8n/day65-n8n/.env \
-  --env-file backend/deploy/.env \
-  -f deploy/compose.vm.yaml -p oke config --quiet
-
-# 2. 이미지 빌드 및 서비스 기동
-SERVICE_MODE=app docker compose \
-  --env-file /home/toor/n8n/day65-n8n/.env \
-  --env-file backend/deploy/.env \
-  -f deploy/compose.vm.yaml -p oke up -d --build
-
-# 3. 컨테이너 상태 확인
-SERVICE_MODE=app docker compose \
-  --env-file /home/toor/n8n/day65-n8n/.env \
-  --env-file backend/deploy/.env \
-  -f deploy/compose.vm.yaml -p oke ps
-```
-
-상태 확인 후 [서비스 로그인](https://aio-t1.isitsoft.kr/login)에 접속합니다. 비공개 환경 파일의 준비 위치와 색인·복구 절차는 [VM 배포 안내](deploy/README.md), 계정 안내는 [팀 VM 안내](docs/VM-TEAM-TESTING.md)를 따릅니다. 명령은 기존 VM 구성의 기동 절차이며, 현재 main의 VM 재배포·재시험 여부는 실행 기록으로 확인해야 합니다.
 
 ## 웹훅
 

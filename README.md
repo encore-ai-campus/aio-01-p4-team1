@@ -13,6 +13,35 @@
 - **신유빈:** 규정 색인, 임베딩, 권한별 검색
 - **이원민:** 이관, 오류 처리, 멱등성, 시험·결과 집계
 
+## 서비스 구성
+
+```mermaid
+flowchart TD
+    A[직원·관리자 화면 · Next.js] --> B[인증·권한·저장 API · FastAPI]
+    subgraph N["n8n · 업무 자동화"]
+        C[문의 분류·답변·검증 · oke-support]
+        S[검색 연결 · oke-search]
+        H[티켓 이관·알림 · oke-handoff]
+        E[실행 오류·알림·DLQ · oke-errors]
+        C --> S
+        C --> H
+        C -. 실행 오류 .-> E
+    end
+    B --> C
+    S --> R[RAG 검색 서비스]
+    H --> B
+    E --> B
+    B --> P[(PostgreSQL + pgvector)]
+    R --> P
+```
+
+- **n8n:** 분류 → 권한별 검색 → 답변 생성·검증 → 자동 답변 또는 이관을 처리합니다. 이관 시 티켓·알림을 요청하며, `oke-errors`는 support·search·handoff의 실행 오류를 처리합니다.
+- **FastAPI:** 로그인·권한을 확인하고, n8n의 저장 요청을 받아 문의·티켓·알림·DLQ를 업무 DB에 저장합니다. 관리자 처리와 직원 재조회도 담당합니다.
+- **RAG 검색 서비스:** 권한이 허용된 규정을 PostgreSQL의 pgvector로 검색합니다.
+- **PostgreSQL:** `app` 스키마에 계정·세션·문의·티켓·알림·DLQ를, `rag` 스키마에 규정 문서·청크·임베딩을 저장합니다.
+
+상세 내용: [시스템 아키텍처](docs/ARCHITECTURE.md) · [워크플로우 설계](docs/WORKFLOW-DESIGN.md) · [RAG 설계](docs/RAG-ARCHITECTURE.md)
+
 ## 주요 기능
 
 서비스는 **팀 VM**에서 운영합니다. 아래 순서로 직원 문의부터 IT팀 처리 결과 확인까지 이용할 수 있습니다.
@@ -60,35 +89,6 @@ IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다.
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 </blockquote>
-
-## 서비스 구성
-
-```mermaid
-flowchart TD
-    A[직원·관리자 화면 · Next.js] --> B[인증·권한·저장 API · FastAPI]
-    subgraph N["n8n · 업무 자동화"]
-        C[문의 분류·답변·검증 · oke-support]
-        S[검색 연결 · oke-search]
-        H[티켓 이관·알림 · oke-handoff]
-        E[실행 오류·알림·DLQ · oke-errors]
-        C --> S
-        C --> H
-        C -. 실행 오류 .-> E
-    end
-    B --> C
-    S --> R[RAG 검색 서비스]
-    H --> B
-    E --> B
-    B --> P[(PostgreSQL + pgvector)]
-    R --> P
-```
-
-- **n8n:** 분류 → 권한별 검색 → 답변 생성·검증 → 자동 답변 또는 이관을 처리합니다. 이관 시 티켓·알림을 요청하며, `oke-errors`는 support·search·handoff의 실행 오류를 처리합니다.
-- **FastAPI:** 로그인·권한을 확인하고, n8n의 저장 요청을 받아 문의·티켓·알림·DLQ를 업무 DB에 저장합니다. 관리자 처리와 직원 재조회도 담당합니다.
-- **RAG 검색 서비스:** 권한이 허용된 규정을 PostgreSQL의 pgvector로 검색합니다.
-- **PostgreSQL:** `app` 스키마에 계정·세션·문의·티켓·알림·DLQ를, `rag` 스키마에 규정 문서·청크·임베딩을 저장합니다.
-
-상세 내용: [시스템 아키텍처](docs/ARCHITECTURE.md) · [워크플로우 설계](docs/WORKFLOW-DESIGN.md) · [RAG 설계](docs/RAG-ARCHITECTURE.md)
 
 ## 실행 방법
 

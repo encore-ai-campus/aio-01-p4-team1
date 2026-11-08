@@ -1,0 +1,97 @@
+{
+  "schema": "oke-app-ticket-fault-v1",
+  "target": "https://aio-t1.isitsoft.kr",
+  "started_at_utc": "2026-11-08T11:04:10.738414+00:00",
+  "runner_source_commit": "f425fad6b829901c3399fc8d0ce9e921addc3030",
+  "runner_source_sha256": "33454fd7df0b95378a00d1e25ebbef5bf339676e6925f0610ffd8447d0dfea0c",
+  "checks": {
+    "app_mode_and_readonly_gate": true,
+    "employee_login": true,
+    "fault_safe_response": true,
+    "no_false_success_message": true,
+    "fault_inquiry_saved_once": true,
+    "fault_no_ticket": true,
+    "fault_alert_saved_once": true,
+    "fault_dlq_saved_once": true,
+    "other_request_unaffected": true,
+    "fault_disarmed": true,
+    "same_id_recovery": true,
+    "recovery_one_linked_ticket": true,
+    "recovery_one_ticket_alert": true,
+    "original_dlq_retained": true,
+    "employee_sees_recovered_ticket": true,
+    "employee_logout": true
+  },
+  "errors": [],
+  "scope": "real authenticated FastAPI -> n8n -> app PostgreSQL; one scoped ticket-write fault",
+  "limits": [
+    "This injects a ticket API 503 before its database write; the database remains available.",
+    "No browser clicks or whole-database outage tested.",
+    "Recovery is an explicit same-ID retry; existing DLQ records are not automatically drained."
+  ],
+  "request_id": "audit-fault-ad4bae475eb442be9de11051ca082f84",
+  "deployment": {
+    "service_mode": "app",
+    "image_id": "sha256:5c39654c430a03a583d0fde8a34e05acddce52814ad06d33940be11359b87aad",
+    "readonly_fault_mount": true
+  },
+  "switch": {
+    "armed": true,
+    "expires_in_seconds": 300
+  },
+  "fault_response": {
+    "http_status": 200,
+    "elapsed_sec": 3.156,
+    "route": "담당자 이관",
+    "source_count": 0,
+    "source_docs": [],
+    "ticket_id": null,
+    "duplicate": null,
+    "reason": "tickets_down"
+  },
+  "fault_db": {
+    "inquiries": 1,
+    "completed": 1,
+    "tickets": 0,
+    "failure_alerts": 1,
+    "ticket_alerts": 0,
+    "dlq": 1,
+    "pending_dlq": 1,
+    "linked": 0
+  },
+  "unrelated_request": {
+    "http_status": 200,
+    "elapsed_sec": 4.782,
+    "route": "자동 답변",
+    "source_count": 1,
+    "source_docs": [
+      "password-policy"
+    ],
+    "ticket_id": null,
+    "duplicate": null
+  },
+  "disarm": {
+    "disarmed": true
+  },
+  "recovery_response": {
+    "http_status": 200,
+    "elapsed_sec": 1.827,
+    "route": "담당자 이관",
+    "source_count": 0,
+    "source_docs": [],
+    "ticket_id": "T-2040",
+    "duplicate": false
+  },
+  "recovery_db": {
+    "inquiries": 1,
+    "completed": 1,
+    "tickets": 1,
+    "failure_alerts": 1,
+    "ticket_alerts": 1,
+    "dlq": 1,
+    "pending_dlq": 1,
+    "linked": 1
+  },
+  "verdict": "PASS_APP_TICKET_FAULT",
+  "finished_at_utc": "2026-11-08T11:04:24.758578+00:00"
+}

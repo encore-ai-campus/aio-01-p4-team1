@@ -94,3 +94,7 @@ python3 -m unittest discover -s eval -p 'test_live_check.py'
 ```
 
 이 회귀 검사는 합성 HTTP 서버를 사용한다. 위 실제 VM 시험과 구분한다.
+
+## 5. 배포된 서비스의 요청 한 건에만 티켓 저장 장애 적용
+
+`SERVICE_MODE=app`을 유지한 채 실제 티켓 API 실패와 알림·DLQ 저장, 동일 ID 재접수를 확인하려면 [티켓 저장 실패 시험](TICKET-FAULT.md)을 따른다. 운영자 전용 파일과 읽기 전용 연결이 배포되어 있어야 하며, data-api의 연습 모드 장애 스위치를 사용하지 않는다.

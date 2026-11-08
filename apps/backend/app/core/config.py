@@ -1,6 +1,7 @@
 """P0-1 permits startup without DB or external service credentials."""
 
 from typing import Literal
+from pathlib import Path
 
 from pydantic import AnyHttpUrl, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -15,6 +16,7 @@ class Settings(BaseSettings):
     )
 
     service_mode: Literal["practice", "app"] = "app"
+    ticket_fault_file: Path = Path("/run/oke-ticket-fault/active.json")
     database_url: SecretStr | None = Field(default=None, repr=False, exclude=True)
     n8n_webhook_url: AnyHttpUrl | None = None
     n8n_webhook_key: SecretStr | None = Field(default=None, repr=False, exclude=True)

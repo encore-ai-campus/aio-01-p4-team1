@@ -1,0 +1,82 @@
+{
+  "checks": {
+    "oke-n8n-1_unchanged": true,
+    "oke-runners-1_unchanged": true,
+    "oke-postgres-1_unchanged": true,
+    "oke-frontend-1_unchanged": true,
+    "oke-data-api-1_unchanged": true,
+    "oke-rag-search-1_unchanged": true,
+    "oke-sandbox-api-1_unchanged": true,
+    "oke-sandbox-runner-1-1_unchanged": true,
+    "app_mode": true,
+    "readonly_gate_mount": true,
+    "fault_disabled": true,
+    "overlay_explicit_app": true,
+    "deployed_sources_match": true,
+    "backend_ready": true
+  },
+  "after": {
+    "oke-backend-1": {
+      "id": "f17fcdf82b3c4f3165e4548965f796bfdfbc00615014e4d1739bbbf0ca1ec413",
+      "image_id": "sha256:5c39654c430a03a583d0fde8a34e05acddce52814ad06d33940be11359b87aad",
+      "started_at": "2026-11-08T11:03:47.380353385Z"
+    },
+    "oke-n8n-1": {
+      "id": "f743f3518ebe2b2be1982abcb643e9fce4c4bd42730dfae410ec17983a70e6e4",
+      "image_id": "sha256:526daa38b68e923cc00c5280d18b4da5d489f115a73bdbf3b8e452b184197a9a",
+      "started_at": "2026-11-07T14:33:48.051229832Z"
+    },
+    "oke-runners-1": {
+      "id": "ddba960d4a5f78aea0088c7780f54b3c12cd97836359fcf8d7fb890508a522c5",
+      "image_id": "sha256:b78816286beb0a14e874abfda31eb4621d47f5ebb38f194271df7e39b7bd63a7",
+      "started_at": "2026-11-08T07:57:14.218531596Z"
+    },
+    "oke-postgres-1": {
+      "id": "1b66b3e34257e95c168861b187816c9a311820fbb7a8611dfe3e2649d7e3c019",
+      "image_id": "sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b",
+      "started_at": "2026-11-05T14:44:59.362137201Z"
+    },
+    "oke-frontend-1": {
+      "id": "d2771074492625fab6c530ccf91cf28625b31c7008344bf2daed918f37b2cc7a",
+      "image_id": "sha256:0993738eb9d022a95b97744504ebfdbcd2e71a1836e8525eb050a5437945bfe2",
+      "started_at": "2026-11-07T15:02:06.219838037Z"
+    },
+    "oke-data-api-1": {
+      "id": "2aa928e320f89b8d9cb12698990c9d220085f36affb24cf998f6c5ca8f759241",
+      "image_id": "sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+      "started_at": "2026-11-07T07:14:28.713563843Z"
+    },
+    "oke-rag-search-1": {
+      "id": "a500a366b08148fb3e61bb06538800ee6a19c87ba155e63728c54c84ae57c96f",
+      "image_id": "sha256:733516ff7822cf41f9455a096e2ee3899c338e3d7188b90cfa271ea87ec52dba",
+      "started_at": "2026-11-05T14:45:05.527399716Z"
+    },
+    "oke-sandbox-api-1": {
+      "id": "7eb4bc8f0f2305f42a1053b89b3d1d307dca3daf3c828bb02222a1d5662de2dc",
+      "image_id": "sha256:3ac19681cae36f3d1fb879cc572d3488088d03c45c4c96b6ff4f0bbdd2d00e7e",
+      "started_at": "2026-11-05T14:44:59.090388417Z"
+    },
+    "oke-sandbox-runner-1-1": {
+      "id": "192a7924e7f52f076a02ae13e155fa5d8f025297b7e9b9047caf0ee3d7fb44ac",
+      "image_id": "sha256:b744471997bbaf1bf75b5ca667d0931352bdb4d59ecc7935ceab7e742829a117",
+      "started_at": "2026-11-05T14:45:05.826949471Z"
+    }
+  },
+  "source_hashes": {
+    "app/core/config.py": "ef98cd10b59b3ea8031219c1610dfb8ff8bd5a8d54b409bf009f176cfb1e1162",
+    "app/core/ticket_fault.py": "2ec320c288a23818c6d8d2b957778b65d224751558c17c524194788e599367a5",
+    "app/services/tickets.py": "60a527a427bf46816711f0d2f08183f397bcbdf5e78decc4c1b5f27579e0bce2"
+  },
+  "image_tag": "oke-team-backend:ticket-fault-2d565df7bf29",
+  "schema": "oke-ticket-fault-final-deploy-v1",
+  "verified_at_utc": "2026-11-08T11:05:59.181558+00:00",
+  "scope": "backend patch deployment final verification after explicitly restoring app mode",
+  "rollback_image_tag": "oke-team-backend:before-ticket-fault-2d565df7bf29",
+  "runtime_overlay": "/home/toor/.config/oke/ticket-fault.yaml",
+  "verdict": "PASS",
+  "notes": [
+    "The initial recreate inherited practice mode from the retained VM Compose defaults. The overlay now explicitly sets SERVICE_MODE=app.",
+    "Earlier failed/partial deployment and test attempts are retained and are not counted as app-mode fault successes.",
+    "Rollback must retain SERVICE_MODE=app as well."
+  ]
+}

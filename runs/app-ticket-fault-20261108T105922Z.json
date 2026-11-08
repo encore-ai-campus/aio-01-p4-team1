@@ -1,0 +1,43 @@
+{
+  "schema": "oke-app-ticket-fault-v1",
+  "target": "https://aio-t1.isitsoft.kr",
+  "started_at_utc": "2026-11-08T10:59:23.001495+00:00",
+  "runner_source_commit": "f425fad6b829901c3399fc8d0ce9e921addc3030",
+  "runner_source_sha256": "00718d84d5f92e2a71477321a1ad2da8f5bdec372bfb009a331d63f83262e4c6",
+  "checks": {
+    "employee_login": true,
+    "fault_safe_response": true,
+    "no_false_success_message": true,
+    "fault_disarmed": true,
+    "employee_logout": true
+  },
+  "errors": [
+    "RuntimeError"
+  ],
+  "scope": "real authenticated FastAPI -> n8n -> app PostgreSQL; one scoped ticket-write fault",
+  "limits": [
+    "This injects a ticket API 503 before its database write; the database remains available.",
+    "No browser clicks or whole-database outage tested.",
+    "Recovery is an explicit same-ID retry; existing DLQ records are not automatically drained."
+  ],
+  "request_id": "audit-fault-b79d6455d51c4d97881aa3c861ce8bc5",
+  "switch": {
+    "armed": true,
+    "expires_in_seconds": 300
+  },
+  "fault_response": {
+    "http_status": 200,
+    "elapsed_sec": 4.215,
+    "route": "담당자 이관",
+    "source_count": 0,
+    "source_docs": [],
+    "ticket_id": null,
+    "duplicate": null,
+    "reason": "tickets_down"
+  },
+  "disarm": {
+    "disarmed": true
+  },
+  "verdict": "FAIL_OR_PARTIAL",
+  "finished_at_utc": "2026-11-08T10:59:30.714528+00:00"
+}

@@ -95,6 +95,8 @@ FastAPI 내부 API는 X-Api-Key 인증을 사용하며 웹 로그인 쿠키와 �
 운영 새 업무 기록은 PostgreSQL, 공통 고장 시험 모드는 data-api에 연결한다. 설정으로 선택하고 같은 티켓을 양쪽에 동시 생성하지 않는다.
 fault/reset/ops와 실제 호출 대상이 맞는지 원민님이 확인한다.
 
+배포된 `app` 모드의 티켓 저장 실패 시험은 [운영자 전용 요청별 장애 설정](../eval/TICKET-FAULT.md)을 사용한다. 인증·C05 입력/응답은 유지한다. 운영자 파일에 지정된 `audit-fault-<32자리 16진수>` 요청만 최대 300초간 `/tickets`에서 503을 반환하며, 알림·DLQ·다른 요청은 대상이 아니다. 공개 장애 설정 API나 전역 장애 설정은 추가하지 않는다.
+
 ## 6. RAG ↔ PostgreSQL+pgvector (C06)
 
 [DATA-AND-DB](DATA-AND-DB.md)의 app/rag 테이블 기준을 따른다.

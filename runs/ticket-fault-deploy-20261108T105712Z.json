@@ -1,0 +1,130 @@
+{
+  "schema": "oke-ticket-fault-deploy-v1",
+  "started_at_utc": "2026-11-08T10:57:12.828110+00:00",
+  "base_source_commit": "f425fad6b829901c3399fc8d0ce9e921addc3030",
+  "source_hashes": {
+    "app/core/config.py": "ef98cd10b59b3ea8031219c1610dfb8ff8bd5a8d54b409bf009f176cfb1e1162",
+    "app/core/ticket_fault.py": "2ec320c288a23818c6d8d2b957778b65d224751558c17c524194788e599367a5",
+    "app/services/tickets.py": "60a527a427bf46816711f0d2f08183f397bcbdf5e78decc4c1b5f27579e0bce2"
+  },
+  "stages": [
+    "baseline",
+    "building_scoped_backend_image",
+    "recreating_backend_only"
+  ],
+  "errors": [
+    {
+      "type": "RuntimeError",
+      "trace_lines": [
+        64
+      ]
+    }
+  ],
+  "checks": {
+    "backend_ready": true,
+    "other_eight_containers_unchanged": true,
+    "backend_environment_preserved": false,
+    "readonly_fault_mount": true,
+    "fault_initially_disabled": true,
+    "runtime_cannot_arm_fault": true
+  },
+  "before": {
+    "oke-backend-1": {
+      "id": "8810320dc463f1cebc2412036c294b74ff174e00c3c2ec5d6f6b0b1178693e65",
+      "image_id": "sha256:9bfad77bb7e4748284beb8db7e04c94b86e1bc5e2b728e714b96ec95e304f810",
+      "started_at": "2026-11-07T05:07:13.51903951Z"
+    },
+    "oke-n8n-1": {
+      "id": "f743f3518ebe2b2be1982abcb643e9fce4c4bd42730dfae410ec17983a70e6e4",
+      "image_id": "sha256:526daa38b68e923cc00c5280d18b4da5d489f115a73bdbf3b8e452b184197a9a",
+      "started_at": "2026-11-07T14:33:48.051229832Z"
+    },
+    "oke-runners-1": {
+      "id": "ddba960d4a5f78aea0088c7780f54b3c12cd97836359fcf8d7fb890508a522c5",
+      "image_id": "sha256:b78816286beb0a14e874abfda31eb4621d47f5ebb38f194271df7e39b7bd63a7",
+      "started_at": "2026-11-08T07:57:14.218531596Z"
+    },
+    "oke-postgres-1": {
+      "id": "1b66b3e34257e95c168861b187816c9a311820fbb7a8611dfe3e2649d7e3c019",
+      "image_id": "sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b",
+      "started_at": "2026-11-05T14:44:59.362137201Z"
+    },
+    "oke-frontend-1": {
+      "id": "d2771074492625fab6c530ccf91cf28625b31c7008344bf2daed918f37b2cc7a",
+      "image_id": "sha256:0993738eb9d022a95b97744504ebfdbcd2e71a1836e8525eb050a5437945bfe2",
+      "started_at": "2026-11-07T15:02:06.219838037Z"
+    },
+    "oke-data-api-1": {
+      "id": "2aa928e320f89b8d9cb12698990c9d220085f36affb24cf998f6c5ca8f759241",
+      "image_id": "sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+      "started_at": "2026-11-07T07:14:28.713563843Z"
+    },
+    "oke-rag-search-1": {
+      "id": "a500a366b08148fb3e61bb06538800ee6a19c87ba155e63728c54c84ae57c96f",
+      "image_id": "sha256:733516ff7822cf41f9455a096e2ee3899c338e3d7188b90cfa271ea87ec52dba",
+      "started_at": "2026-11-05T14:45:05.527399716Z"
+    },
+    "oke-sandbox-api-1": {
+      "id": "7eb4bc8f0f2305f42a1053b89b3d1d307dca3daf3c828bb02222a1d5662de2dc",
+      "image_id": "sha256:3ac19681cae36f3d1fb879cc572d3488088d03c45c4c96b6ff4f0bbdd2d00e7e",
+      "started_at": "2026-11-05T14:44:59.090388417Z"
+    },
+    "oke-sandbox-runner-1-1": {
+      "id": "192a7924e7f52f076a02ae13e155fa5d8f025297b7e9b9047caf0ee3d7fb44ac",
+      "image_id": "sha256:b744471997bbaf1bf75b5ca667d0931352bdb4d59ecc7935ceab7e742829a117",
+      "started_at": "2026-11-05T14:45:05.826949471Z"
+    }
+  },
+  "image_tag": "oke-team-backend:ticket-fault-a57e942b5ead",
+  "rollback_image_tag": "oke-team-backend:before-ticket-fault-a57e942b5ead",
+  "after": {
+    "oke-backend-1": {
+      "id": "a640751f080aeb75385a2f3d3ce220f08dbaf127aa12cdcd5f56cb0e82805e77",
+      "image_id": "sha256:6101a89e5569ebfb5d839f7f7f627a3391219e650efd7f9c39bb98695157ec6b",
+      "started_at": "2026-11-08T10:57:22.989468028Z"
+    },
+    "oke-n8n-1": {
+      "id": "f743f3518ebe2b2be1982abcb643e9fce4c4bd42730dfae410ec17983a70e6e4",
+      "image_id": "sha256:526daa38b68e923cc00c5280d18b4da5d489f115a73bdbf3b8e452b184197a9a",
+      "started_at": "2026-11-07T14:33:48.051229832Z"
+    },
+    "oke-runners-1": {
+      "id": "ddba960d4a5f78aea0088c7780f54b3c12cd97836359fcf8d7fb890508a522c5",
+      "image_id": "sha256:b78816286beb0a14e874abfda31eb4621d47f5ebb38f194271df7e39b7bd63a7",
+      "started_at": "2026-11-08T07:57:14.218531596Z"
+    },
+    "oke-postgres-1": {
+      "id": "1b66b3e34257e95c168861b187816c9a311820fbb7a8611dfe3e2649d7e3c019",
+      "image_id": "sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b",
+      "started_at": "2026-11-05T14:44:59.362137201Z"
+    },
+    "oke-frontend-1": {
+      "id": "d2771074492625fab6c530ccf91cf28625b31c7008344bf2daed918f37b2cc7a",
+      "image_id": "sha256:0993738eb9d022a95b97744504ebfdbcd2e71a1836e8525eb050a5437945bfe2",
+      "started_at": "2026-11-07T15:02:06.219838037Z"
+    },
+    "oke-data-api-1": {
+      "id": "2aa928e320f89b8d9cb12698990c9d220085f36affb24cf998f6c5ca8f759241",
+      "image_id": "sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+      "started_at": "2026-11-07T07:14:28.713563843Z"
+    },
+    "oke-rag-search-1": {
+      "id": "a500a366b08148fb3e61bb06538800ee6a19c87ba155e63728c54c84ae57c96f",
+      "image_id": "sha256:733516ff7822cf41f9455a096e2ee3899c338e3d7188b90cfa271ea87ec52dba",
+      "started_at": "2026-11-05T14:45:05.527399716Z"
+    },
+    "oke-sandbox-api-1": {
+      "id": "7eb4bc8f0f2305f42a1053b89b3d1d307dca3daf3c828bb02222a1d5662de2dc",
+      "image_id": "sha256:3ac19681cae36f3d1fb879cc572d3488088d03c45c4c96b6ff4f0bbdd2d00e7e",
+      "started_at": "2026-11-05T14:44:59.090388417Z"
+    },
+    "oke-sandbox-runner-1-1": {
+      "id": "192a7924e7f52f076a02ae13e155fa5d8f025297b7e9b9047caf0ee3d7fb44ac",
+      "image_id": "sha256:b744471997bbaf1bf75b5ca667d0931352bdb4d59ecc7935ceab7e742829a117",
+      "started_at": "2026-11-05T14:45:05.826949471Z"
+    }
+  },
+  "rollback": "restored_original_image",
+  "verdict": "FAIL",
+  "finished_at_utc": "2026-11-08T10:57:27.659611+00:00"
+}

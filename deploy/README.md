@@ -88,3 +88,9 @@ docker compose --env-file /home/toor/n8n/day65-n8n/.env \
 The `.env.vm` file above belongs to the retained **old VM runtime**. New deployment of current main uses the root paths documented above. Do not substitute the latest root Compose on the old checkout without first provisioning its root sources and private environment paths. Rollback of this scoped setting on the old checkout is the same command without the overlay, which restores its original 15-second idle timeout.
 
 Measurements and container preservation are in [the follow-up receipt](../runs/integration-followup-20261108.json). This is a scoped runtime setting change, not a full main deployment or proof of whole-stack cold-start performance.
+
+## Scoped ticket failure verification · 2026-11-08
+
+The current backend has a request-scoped operator fault gate. The [test and recovery guide](../eval/TICKET-FAULT.md) explains its read-only directory, 300-second expiry and actual app-mode test. No public fault-setting endpoint was added.
+
+The retained old VM checkout uses `/home/toor/.config/oke/ticket-fault.yaml` for the backend image, read-only gate directory, and **explicit `SERVICE_MODE=app`**. Preserve that overlay when recreating only the backend. The old Compose defaults can otherwise select practice storage. Runner-only recreation continues to use its separate latency overlay. The [final deployment receipt](../runs/ticket-fault-deploy-final-20261108.json) records the rollback image, source hashes and unchanged other eight containers. This is not a full current-main deployment.

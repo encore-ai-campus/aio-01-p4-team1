@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.errors import PublicApiError
 from app.clients.practice_store import PracticeStoreClient
 from app.core.config import Settings
+from app.core.ticket_fault import ticket_fault_active
 from app.db.models import Employee, Ticket
 from app.db.session import create_db_engine, create_session_factory
 from app.repositories.tickets import (get_assignee, get_employee_by_name,
@@ -39,6 +40,8 @@ def _existing_ticket(session: Session, request_key: str, requester_id: int) -> T
 def create_ticket(settings: Settings, body: TicketCreate) -> TicketCreated:
     if storage_mode(settings) is StorageMode.PRACTICE:
         return PracticeStoreClient(settings).create_ticket(body)
+    if ticket_fault_active(settings.ticket_fault_file, body.key):
+        raise PublicApiError(503, "service_unavailable", "티켓을 저장할 수 없습니다.")
     if not settings.database_url:
         raise PublicApiError(503, "service_unavailable", "티켓을 저장할 수 없습니다.")
 

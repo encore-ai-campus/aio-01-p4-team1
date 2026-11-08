@@ -163,6 +163,8 @@ services:
       - '127.0.0.1:8000:8000'
     read_only: true
     tmpfs: [/tmp]
+    volumes:
+      - ${TICKET_FAULT_DIR:-./local/.private/ticket-fault}:/run/oke-ticket-fault:ro
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     depends_on:

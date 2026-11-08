@@ -13,6 +13,43 @@
 - **신유빈:** 규정 색인, 임베딩, 권한별 검색
 - **이원민:** 이관, 오류 처리, 멱등성, 시험·결과 집계
 
+## 폴더 구조
+
+폴더·파일 이름을 누르면 해당 내용으로 이동합니다. 아래는 현재 main의 실제 배치입니다.
+
+<pre>
+Aio-4pj-1team/
+├── <a href="README.md">README.md</a>                       # 프로젝트 안내
+├── <a href="AGENTS.md">AGENTS.md</a>                       # 코딩 에이전트 규칙
+├── <a href="docs/">docs/</a>                           # 기획·설계·실행 결과
+│   ├── <a href="docs/TOPIC.md">TOPIC.md</a>                    # 주제 제안서
+│   ├── <a href="docs/TEAM-CHARTER.md">TEAM-CHARTER.md</a>             # 팀 헌장
+│   ├── <a href="docs/WORKFLOW-DESIGN.md">WORKFLOW-DESIGN.md</a>          # 워크플로우 설계서
+│   ├── <a href="docs/RAG-ARCHITECTURE.md">RAG-ARCHITECTURE.md</a>         # RAG 설계서
+│   ├── <a href="docs/EXECUTION-RESULT.md">EXECUTION-RESULT.md</a>         # 실행 결과서
+│   └── <a href="docs/images/">images/</a>                     # 화면·설계 그림
+├── <a href="daily/">daily/</a>                          # DAY80·81·82 기록
+├── <a href="workflows/">workflows/</a>                      # n8n 워크플로우
+│   ├── <a href="workflows/oke-support.json">oke-support.json</a>            # 문의 처리
+│   ├── <a href="workflows/oke-index.json">oke-index.json</a>              # 규정 색인
+│   ├── <a href="workflows/oke-search.json">oke-search.json</a>             # 규정 검색
+│   ├── <a href="workflows/oke-handoff.json">oke-handoff.json</a>            # 담당자 접수
+│   └── <a href="workflows/oke-errors.json">oke-errors.json</a>             # 오류 처리
+├── <a href="knowledge/">knowledge/</a>                      # 사내 규정 원문
+├── <a href="data/">data/</a>                           # 가상 초기 데이터·스키마
+├── <a href="prompts/">prompts/</a>                        # 제공 프롬프트
+├── <a href="cases/">cases/</a>                          # 공통·팀 시험 시나리오
+├── <a href="requests/">requests/</a>                       # 질문·시험 요청
+├── <a href="runs/">runs/</a>                           # 실제 시험 결과
+├── <a href="frontend/">frontend/</a>                       # 직원·관리자 화면
+├── <a href="backend/">backend/</a>                        # 업무 API·DB
+├── <a href="rag/">rag/</a>                            # 규정 색인·검색 서비스
+├── <a href="data-api/">data-api/</a>                       # 제공 데이터 API
+├── <a href="deploy/">deploy/</a>                         # Compose·Dockerfile·배포
+├── <a href="eval/">eval/</a>                           # 평가·검사 도구
+└── <a href=".github/">.github/</a>                        # CI·PR 양식
+</pre>
+
 ## 서비스 구성
 
 ```mermaid
@@ -252,36 +289,3 @@ IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다.
 현재 인계된 옛 계정 정보로는 로그인되지 않아, 새 직원 세션을 통한 전체 API 재시험은 최신 비공개 로그인 정보 확인 후 수행해야 합니다. 위 DB 확인은 기존 요청 조회이며 새 로그인 시험으로 집계하지 않습니다.
 
 공식 제출 안내의 `flow.py push workflows/*.json` → `flow.py test cases/team.json` 재현 요구와 팀 전용 검사는 구분합니다. 인증·판정 호환성의 차이와 검사 범위는 [검사 안내](eval/LIVE-CHECKS.md#판정과-공식-도구와의-차이)에 기록했습니다.
-
-## 제출 자료와 폴더 안내
-
-**핵심 산출물:** [워크플로우 설계서](docs/WORKFLOW-DESIGN.md) · [RAG 설계서](docs/RAG-ARCHITECTURE.md) · [실행 결과서](docs/EXECUTION-RESULT.md)
-
-**사용 데이터:** 가상 직원 6명, 규정 8종, FAQ 6종, 기존 티켓 4건
-
-main의 모든 루트 폴더를 아래에서 열어볼 수 있습니다.
-
-### 서비스 구현·배포
-
-- [frontend/](frontend/) — 직원·관리자 웹 화면
-- [backend/](backend/) — FastAPI 인증·업무 API, DB 모델·마이그레이션
-- [rag/](rag/) — 규정 색인·임베딩·권한별 검색 서비스
-- [workflows/](workflows/) — n8n 문의·검색·색인·이관·오류 워크플로우
-- [data-api/](data-api/) — 제공 데이터 조회와 연습 모드 API
-- [deploy/](deploy/) — 팀 VM Compose·Dockerfile·배포 안내
-
-### 데이터·평가
-
-- [knowledge/](knowledge/) — 규정 원문
-- [data/](data/) — 가상 직원·FAQ·기존 티켓과 스키마
-- [prompts/](prompts/) — 문의 처리 프롬프트
-- [cases/](cases/) — 공통·팀·RAG 시험 시나리오
-- [requests/](requests/) — 시연·벤치마크·오류 시험 요청
-- [eval/](eval/) — 실서버 검사·평가 도구·합성 fixture·Mock 검사
-- [runs/](runs/) — 실제 시험·측정 기록
-
-### 문서·협업
-
-- [docs/](docs/) — 주제·헌장·계약·설계·실행 결과·화면 자료
-- [daily/](daily/) — DAY80·81·82 진행 기록
-- [.github/](.github/) — CI 설정·PR 양식

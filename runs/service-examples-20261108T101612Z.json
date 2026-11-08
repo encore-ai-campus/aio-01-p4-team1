@@ -1,0 +1,161 @@
+{
+  "schema": "oke-service-examples-v1",
+  "started_at_utc": "2026-11-08T10:16:12.006821+00:00",
+  "target": "https://aio-t1.isitsoft.kr",
+  "scope": "deployed service API calls, SSH read-only database receipts; no browser clicking",
+  "account_scope": "All three questions use the same supplied employee account; named employees in README are not individually tested.",
+  "runner_source_commit": "b4c1546e2c9147b6489445e851f9dc227de0a8a6",
+  "checks": {
+    "app_storage_mode": true,
+    "employee_login": true,
+    "admin_login": true,
+    "employee_role": true,
+    "admin_role": true,
+    "employee_admin_access_denied": true,
+    "normal_vpn": true,
+    "clarification": true,
+    "no_evidence": true,
+    "normal_vpn_inquiry_saved_once": true,
+    "clarification_inquiry_saved_once": true,
+    "no_evidence_inquiry_saved_once": true,
+    "handoff_ready_for_admin_sequence": true,
+    "db_before_replay": true,
+    "duplicate_replay": true,
+    "db_after_replay": true,
+    "admin_finds_new_ticket_once": true,
+    "new_ticket_entity_id_valid": true,
+    "admin_reply_update": true,
+    "admin_reply_persisted": true,
+    "admin_alert_visible_once": true,
+    "employee_logout_before_relogin": true,
+    "employee_relogin": true,
+    "employee_sees_completed_status_after_relogin": true,
+    "employee_sees_admin_reply_after_relogin": true,
+    "employee_final_logout": true,
+    "admin_final_logout": true
+  },
+  "examples": {
+    "normal_vpn": {
+      "request_id": "svc-normal-vpn-786bc012594a47f39e8b5cc7c89fb632",
+      "question": "Windows VPN 연결 오류 809가 나요. 점검 절차를 알려주세요.",
+      "attempt": 1,
+      "expected_route": "자동 답변",
+      "http_status": 200,
+      "elapsed_sec": 6.268,
+      "route": "자동 답변",
+      "source_count": 1,
+      "source_docs": [
+        "remote-work-vpn"
+      ],
+      "ticket_id": null,
+      "duplicate": null,
+      "checks": {
+        "http_200": true,
+        "request_id_matches": true,
+        "expected_route": true,
+        "answer_present": true,
+        "vpn_source": true,
+        "no_ticket": true
+      },
+      "functional_pass": true,
+      "within_8_seconds": true
+    },
+    "clarification": {
+      "request_id": "svc-clarification-b548b58fdb9e477488dfacb8c01bd0f2",
+      "question": "접속이 안 돼요",
+      "attempt": 1,
+      "expected_route": "보완 질문",
+      "http_status": 200,
+      "elapsed_sec": 1.743,
+      "route": "보완 질문",
+      "source_count": 0,
+      "source_docs": [],
+      "ticket_id": null,
+      "duplicate": null,
+      "checks": {
+        "http_200": true,
+        "request_id_matches": true,
+        "expected_route": true,
+        "answer_present": true,
+        "no_ticket": true
+      },
+      "functional_pass": true,
+      "within_8_seconds": true
+    },
+    "no_evidence": {
+      "request_id": "svc-no-evidence-3cea051e3b1d4de7abe16e2633e6a988",
+      "question": "사내 식당 앱이 열리지 않아요",
+      "attempt": 1,
+      "expected_route": "담당자 이관",
+      "http_status": 200,
+      "elapsed_sec": 3.866,
+      "route": "담당자 이관",
+      "source_count": 0,
+      "source_docs": [],
+      "ticket_id": "T-2037",
+      "duplicate": false,
+      "checks": {
+        "http_200": true,
+        "request_id_matches": true,
+        "expected_route": true,
+        "answer_present": true,
+        "ticket_created": true
+      },
+      "functional_pass": true,
+      "within_8_seconds": true
+    }
+  },
+  "errors": [],
+  "verdict": "PASS_SERVICE_API_EXAMPLES",
+  "limits": [
+    "No browser layout or click verification.",
+    "No fault injection, deployment, restart, credential change, or official full-suite execution.",
+    "Response times are public FastAPI API times, not browser rendering times."
+  ],
+  "vm": {
+    "checkout_commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49",
+    "backend_service_mode": "app"
+  },
+  "db_before_replay": {
+    "inquiries": 1,
+    "tickets": 1,
+    "alerts": 1,
+    "completed": 1,
+    "linked": 1,
+    "response_match": 1,
+    "ticket_ids": [
+      "T-2037"
+    ],
+    "dlq": 0,
+    "vm_checkout_commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49"
+  },
+  "duplicate_replay": {
+    "http_status": 200,
+    "elapsed_sec": 3.809,
+    "route": "담당자 이관",
+    "source_count": 0,
+    "source_docs": [],
+    "ticket_id": "T-2037",
+    "duplicate": true
+  },
+  "db_after_replay": {
+    "inquiries": 1,
+    "tickets": 1,
+    "alerts": 1,
+    "completed": 1,
+    "linked": 1,
+    "response_match": 1,
+    "ticket_ids": [
+      "T-2037"
+    ],
+    "dlq": 0,
+    "vm_checkout_commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49"
+  },
+  "admin_sequence": {
+    "request_id": "svc-no-evidence-3cea051e3b1d4de7abe16e2633e6a988",
+    "ticket_id": "T-2037",
+    "final_status": "resolved",
+    "only_new_test_ticket_modified": true
+  },
+  "finished_at_utc": "2026-11-08T10:16:32.898319+00:00"
+}

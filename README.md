@@ -1,10 +1,16 @@
 # 오케퐁 · 사내 IT 헬프데스크
 
-**엔코아 4차 단위 프로젝트 · 1팀**
+## 팀 소개
 
-사내 IT 문의에 규정 근거로 답하고, 자동으로 해결하기 어려운 문의는 IT팀 티켓으로 이관합니다. 직원은 문의 결과를 확인하고, 관리자는 티켓에 답변하고 처리 상태를 관리합니다.
+오케퐁은 **엔코아 4차 단위 프로젝트 1팀**으로, 권오현 팀장을 포함한 6명이 사내 IT 헬프데스크를 개발합니다.
 
-**[서비스 접속](https://aio-t1.isitsoft.kr/login)** · **[API 문서](https://aio-t1.isitsoft.kr/docs)** · **[실행 결과](docs/EXECUTION-RESULT.md)**
+화면, 업무 API·DB, 문의 자동화, RAG 검색, 이관·오류 처리로 역할을 나누고 팀장이 통합·배포를 담당합니다. 각 파트를 연결해 직원 문의부터 IT팀 처리 결과 확인까지 이어지는 서비스를 만드는 것이 팀의 목표입니다.
+
+## 프로젝트 소개
+
+반복되는 사내 IT 문의는 규정 근거로 안내하고, 자동으로 해결하기 어려운 문의는 담당자에게 연결하는 헬프데스크입니다.
+
+직원은 질문에 대한 답변과 근거를 확인하며, IT팀은 이관된 티켓을 처리합니다. 관리자가 등록한 답변과 처리 상태는 직원이 다시 조회할 수 있습니다.
 
 ## 주요 기능
 
@@ -130,7 +136,7 @@ SERVICE_MODE=app docker compose \
 
 웹훅은 `X-Team-Key`로 인증합니다. 키는 비공개로 인계합니다. 화면은 웹훅을 직접 호출하지 않고 FastAPI의 `POST /api/ask`를 사용합니다.
 
-요청 예시: [정상 문의 JSON](requests/demo-normal.json) · 전체 명세: [API 계약](docs/API-CONTRACT.md)
+요청 예시: [정상 문의 JSON](requests/demo-normal.json) · 명세: [API 계약](docs/API-CONTRACT.md) · API 실행: [Swagger 문서](https://aio-t1.isitsoft.kr/docs)
 
 ## 기능 시연 순서
 

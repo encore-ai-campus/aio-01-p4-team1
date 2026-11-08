@@ -39,6 +39,8 @@ Aio-4pj-1team/
 ├── <a href="data/">data/</a>                           # 가상 초기 데이터·스키마
 ├── <a href="prompts/">prompts/</a>                        # 제공 프롬프트
 ├── <a href="cases/">cases/</a>                          # 공통·팀 시험 시나리오
+│   ├── <a href="cases/common.json">common.json</a>                 # 공통 시험 14개
+│   └── <a href="cases/team.json">team.json</a>                   # 팀 추가 시험 12개
 ├── <a href="requests/">requests/</a>                       # 질문·시험 요청
 ├── <a href="runs/">runs/</a>                           # 실제 시험 결과
 ├── <a href="frontend/">frontend/</a>                       # 직원·관리자 화면

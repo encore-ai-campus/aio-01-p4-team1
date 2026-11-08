@@ -147,6 +147,8 @@ IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다.
 
 ### 웹훅 경로
 
+워크플로우는 5개지만 웹훅으로 시작하는 것은 아래 3개입니다. `oke-index`는 관리자가 수동으로 실행하고, `oke-errors`는 다른 워크플로우에서 실행 오류가 발생하면 자동으로 실행됩니다.
+
 - **문의 처리:** `POST /webhook/oke-support`
 - **내부 규정 검색:** `POST /webhook/oke-search`
 - **내부 티켓 이관:** `POST /webhook/oke-handoff`

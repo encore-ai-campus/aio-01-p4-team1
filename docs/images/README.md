@@ -28,4 +28,14 @@ planned/는 개발 전에 그린 화면과 노드 설계다. [PREVIEW](../PREVIE
 
 캡처 파일 해시·요청 ID·로그인/로그아웃·쓰기 차단 확인은 [캡처 기록](../../runs/ui-captures-20261108.json)에 있다. 실제 응답·DB 근거는 캡처 기록의 evidence 경로로 연결한다.
 
-n8n 콘솔의 정상·예외·이관 실행 화면은 전용 로그인 정보가 없어 아직 캡처하지 않았다. 기존 JSON 실행 기록을 n8n UI 캡처로 표시하지 않는다.
+## 실제 n8n 실행 화면
+
+기존 `oke-support` 실행 이력 3건을 열어 흐름과 `N23 Respond` 최종 응답을 각각 촬영했다. 새 실행·재시도·편집·게시를 하지 않았다.
+
+| 기존 실행 | 흐름 화면 | 최종 응답 화면 | 확인한 결과 |
+| --- | --- | --- | --- |
+| 정상 · ID 256 | [실행 흐름](live/09-n8n-normal-execution.png) | [응답](live/10-n8n-normal-result.png) | `password-policy` 근거, 자동 답변, 티켓 없음 |
+| 인젝션 차단 · ID 271 | [실행 흐름](live/11-n8n-injection-execution.png) | [응답](live/12-n8n-injection-result.png) | 차단 응답, 티켓 없음 |
+| 긴급 이관 · ID 276 | [실행 흐름](live/13-n8n-handoff-execution.png) | [응답](live/14-n8n-handoff-result.png) | 담당자 접수, 긴급 티켓 `T-2039` |
+
+실행 ID·요청 ID·기존 시험 근거·이미지 해시·로그인/로그아웃·워크플로우 변경 없음은 [n8n 캡처 기록](../../runs/n8n-ui-captures-20261108.json)에서 확인한다. n8n의 노드 실행 시간과 호출자의 HTTP 응답 시간은 측정 구간이 다르다.

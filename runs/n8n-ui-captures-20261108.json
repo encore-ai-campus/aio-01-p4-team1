@@ -1,0 +1,102 @@
+{
+  "schema": "oke-n8n-ui-capture-v1",
+  "started_at_utc": "2026-11-08T13:29:47.451392+00:00",
+  "origin": "https://aio-t1.isitsoft.kr:5678",
+  "workflow_id": "okeSupportFlow01",
+  "scope": "Read existing executions only; no workflow execution, editing, publication or service changes.",
+  "source_commit": "17128025670495c0086442993eb3dd99628aca5d",
+  "screenshots": [
+    {
+      "file": "09-n8n-normal-execution.png",
+      "repository_path": "docs/images/live/09-n8n-normal-execution.png",
+      "view": "execution overview",
+      "execution_id": 256,
+      "request_id": "audit-webhook-881537e52d6d486fb7b2f47f62f30db6",
+      "url": "https://aio-t1.isitsoft.kr:5678/workflow/okeSupportFlow01/executions/256",
+      "evidence": "runs/workflow-node-timings-20261108.json",
+      "sha256": "a80b5090a711cfebca844f215545b9e0e3002a70e1e8adf9b4d1ef66e635393a"
+    },
+    {
+      "file": "10-n8n-normal-result.png",
+      "repository_path": "docs/images/live/10-n8n-normal-result.png",
+      "view": "N23 Respond input and output",
+      "execution_id": 256,
+      "request_id": "audit-webhook-881537e52d6d486fb7b2f47f62f30db6",
+      "url": "https://aio-t1.isitsoft.kr:5678/workflow/okeSupportFlow01/executions/256",
+      "evidence": "runs/workflow-node-timings-20261108.json",
+      "expected_result_visible": "자동 답변",
+      "sha256": "f406bcc49302c9571b08ca691a03434fc73d1acdb17a0f60349dd17aa989404e"
+    },
+    {
+      "file": "11-n8n-injection-execution.png",
+      "repository_path": "docs/images/live/11-n8n-injection-execution.png",
+      "view": "execution overview",
+      "execution_id": 271,
+      "request_id": "svc-extra-injection-33b64a5e1c2249cfaac22cf4c692d918",
+      "url": "https://aio-t1.isitsoft.kr:5678/workflow/okeSupportFlow01/executions/271",
+      "evidence": "runs/service-additional-examples-20261108T102125Z.json",
+      "sha256": "583784bbd79e07d2fd3e4ccb7b9370d51544cd6af6ec8f2fc4b47cae0758a90e"
+    },
+    {
+      "file": "12-n8n-injection-result.png",
+      "repository_path": "docs/images/live/12-n8n-injection-result.png",
+      "view": "N23 Respond input and output",
+      "execution_id": 271,
+      "request_id": "svc-extra-injection-33b64a5e1c2249cfaac22cf4c692d918",
+      "url": "https://aio-t1.isitsoft.kr:5678/workflow/okeSupportFlow01/executions/271",
+      "evidence": "runs/service-additional-examples-20261108T102125Z.json",
+      "expected_result_visible": "차단",
+      "sha256": "b5867d38d6b3af5f805ba62bed5d1e3a82a2bd4543d471303b30948c9a68b572"
+    },
+    {
+      "file": "13-n8n-handoff-execution.png",
+      "repository_path": "docs/images/live/13-n8n-handoff-execution.png",
+      "view": "execution overview",
+      "execution_id": 276,
+      "request_id": "svc-extra-urgent-f7f1f136cb754856ae5f71485ebb5144",
+      "url": "https://aio-t1.isitsoft.kr:5678/workflow/okeSupportFlow01/executions/276",
+      "evidence": "runs/service-additional-examples-20261108T102125Z.json",
+      "sha256": "10d6809d833baea7747f7357f1286d35079b5c3d9dac03c5e739f42911aa305e"
+    },
+    {
+      "file": "14-n8n-handoff-result.png",
+      "repository_path": "docs/images/live/14-n8n-handoff-result.png",
+      "view": "N23 Respond input and output",
+      "execution_id": 276,
+      "request_id": "svc-extra-urgent-f7f1f136cb754856ae5f71485ebb5144",
+      "url": "https://aio-t1.isitsoft.kr:5678/workflow/okeSupportFlow01/executions/276",
+      "evidence": "runs/service-additional-examples-20261108T102125Z.json",
+      "expected_result_visible": "T-2039",
+      "sha256": "89ef100335bb2adc6e5a51046c03a2372b02f8acd72caac1701289fdee7206a4"
+    }
+  ],
+  "checks": {
+    "login_http_200": true,
+    "execution_256_result_matches": true,
+    "execution_271_result_matches": true,
+    "execution_276_result_matches": true,
+    "workflow_definition_unchanged": true,
+    "known_private_values_absent_from_visible_text": true,
+    "logout_http_200": true,
+    "no_workflow_mutation_sent": true,
+    "six_images_captured": true
+  },
+  "blocked_requests": {
+    "POST /rest/telemetry/proxy/v1/identify": 5,
+    "POST /rest/telemetry/proxy/v1/page": 5,
+    "POST /rest/telemetry/proxy/v1/track": 67,
+    "POST /rest/workflow-dependencies/counts": 3
+  },
+  "errors": [],
+  "workflow_before_sha256": "ff5af0ba5f96af4364d436fd7d387d0aa7537cbbd6e759dfe9744df0b97f64ec",
+  "workflow_after_sha256": "ff5af0ba5f96af4364d436fd7d387d0aa7537cbbd6e759dfe9744df0b97f64ec",
+  "finished_at_utc": "2026-11-08T13:30:07.435807+00:00",
+  "verdict": "PASS_READ_ONLY_N8N_CAPTURES",
+  "visual_review": "All six images visually reviewed: execution IDs and final response match the cited existing records; no owner email, password, token or key visible. Supplied fake employee name is allowed.",
+  "limits": [
+    "Screenshots view stored executions; no new functional run.",
+    "n8n node execution duration differs from caller HTTP duration; do not equate these measurements.",
+    "Overview and final response are separate views of the same execution.",
+    "Read-only POST workflow-dependencies/counts and telemetry requests were blocked; no workflow or execution mutation was sent."
+  ]
+}

@@ -98,7 +98,13 @@
   "finished_at_utc": "2026-11-08T13:10:54.477413+00:00",
   "visual_review": "all eight final screenshots visually reviewed; no password, key, token or login ID visible; names belong to supplied fake employees",
   "n8n_execution_ui": {
-    "status": "NOT_CAPTURED_MISSING_N8N_LOGIN",
-    "reason": "private handoff has VM and service accounts, no n8n console password; user asked for private file path"
+    "status": "CAPTURED_EXISTING_EXECUTIONS",
+    "report": "runs/n8n-ui-captures-20261108.json",
+    "execution_ids": [
+      256,
+      271,
+      276
+    ],
+    "image_count": 6
   }
 }

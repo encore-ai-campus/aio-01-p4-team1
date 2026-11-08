@@ -17,3 +17,4 @@ coverage/
 /apps/rag/*.env
 /apps/rag/*.env.*
 *.tsbuildinfo
+/tools/.cache/

@@ -1,0 +1,10 @@
+{
+  "source_repository": "https://gt.isitsoft.kr/publicproj/aio-01d4-stu",
+  "source_snapshot_commit": "22869a9ace4f59e5afd0e0ac05e5c9b3ae4a39d0",
+  "source_path": "Last3Mon/79/tools/flow.py",
+  "source_file_last_commit": "6f0ecd59a926e9868ac91b14827084bab0d14f82",
+  "bundled_path": "tools/flow.py",
+  "sha256": "6b0059cb3af135b08954559d0e6b757991fc2fc42a0624244d129e618284fb6f",
+  "modified": false,
+  "stage": "Original source bundled only; authentication and scenario compatibility not reviewed or changed in this step."
+}

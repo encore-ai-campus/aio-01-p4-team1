@@ -50,6 +50,7 @@ Aio-4pj-1team/
 │   └── <a href="apps/data-api/">data-api/</a>                   # 제공 데이터 API
 ├── <a href="deploy/">deploy/</a>                         # Compose·Dockerfile·배포
 ├── <a href="eval/">eval/</a>                           # 평가·검사 도구
+├── <a href="tools/">tools/</a>                          # 공식 수업 시험 도구 원본
 └── <a href=".github/">.github/</a>                        # CI·PR 양식
 </pre>
 

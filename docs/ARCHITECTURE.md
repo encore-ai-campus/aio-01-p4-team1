@@ -98,11 +98,13 @@ Aio-4pj-1team/
 ├─ workflows/     # n8n 본체·색인·검색·이관·오류 5종
 ├─ cases/         # 공통·팀·RAG 시나리오와 합성 fixture
 ├─ requests/      # 시연·측정·오류 입력
-├─ eval/          # 오프라인 평가·Mock 회귀 검사
+├─ eval/          # 실서버 검사·오프라인 평가·Mock 회귀 검사
 ├─ runs/          # 실제 시험·측정 영수증
 ├─ deploy/        # VM·격리 로컬 Compose·Dockerfile·초기화
-├─ docs/          # 계약·설계·실행 결과
-└─ daily/         # 당시 일일 기록
+├─ .github/       # CI·PR 양식
+└─ docs/          # 계약·설계·실행 결과
+   ├─ daily/      # DAY80·81·82 기록
+   └─ images/     # 화면·설계 그림
 ```
 
 현재 실행·검증 경로는 [SUBMISSION](../SUBMISSION.md)을 따른다. 과거 개발 당시 경로는 일일 기록과 영수증의 이력이며 런타임 의존성이 아니다.

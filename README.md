@@ -27,8 +27,8 @@ Aio-4pj-1team/
 │   ├── <a href="docs/WORKFLOW-DESIGN.md">WORKFLOW-DESIGN.md</a>          # 워크플로우 설계서
 │   ├── <a href="docs/RAG-ARCHITECTURE.md">RAG-ARCHITECTURE.md</a>         # RAG 설계서
 │   ├── <a href="docs/EXECUTION-RESULT.md">EXECUTION-RESULT.md</a>         # 실행 결과서
+│   ├── <a href="docs/daily/">daily/</a>                      # DAY80·81·82 기록
 │   └── <a href="docs/images/">images/</a>                     # 화면·설계 그림
-├── <a href="daily/">daily/</a>                          # DAY80·81·82 기록
 ├── <a href="workflows/">workflows/</a>                      # n8n 워크플로우
 │   ├── <a href="workflows/oke-support.json">oke-support.json</a>            # 문의 처리
 │   ├── <a href="workflows/oke-index.json">oke-index.json</a>              # 규정 색인

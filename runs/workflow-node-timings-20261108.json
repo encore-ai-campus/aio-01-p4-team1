@@ -1,0 +1,1756 @@
+{
+  "schema": "oke-node-timing-v1",
+  "observed_at_utc": "2026-11-08T08:00:18.190199+00:00",
+  "scope": "read-only n8n node timings, no inputs, answers or credentials",
+  "runner_source_commit": "2e5a24e3cfed873284aa72a758d79d224bec02ad",
+  "executions": [
+    {
+      "request_id": "audit-webhook-290313d09c324580a1453ce9a78d785f",
+      "execution_id": 260,
+      "started_at": "2026-11-08 07:59:38.076",
+      "stopped_at": "2026-11-08 07:59:41.883",
+      "status": "success",
+      "nodes": [
+        {
+          "name": "N01 Support webhook",
+          "durations_ms": [
+            0
+          ]
+        },
+        {
+          "name": "N02 Normalize input",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N03 Employee mode",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N03 Get employees HTTP",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N03 Capture employee",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N04 Injection rules",
+          "durations_ms": [
+            18
+          ]
+        },
+        {
+          "name": "N05 Replay MOCK",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N05 Parse replay",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N05 Route replay",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N05 Triage gate",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N05 Triage mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N06 Triage model",
+          "durations_ms": [
+            672
+          ]
+        },
+        {
+          "name": "N06 Triage Agent",
+          "durations_ms": [
+            687
+          ]
+        },
+        {
+          "name": "N06 Parse triage",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N07 Route triage",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N07 Route urgent",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N08 Build search input",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N09 Search mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N09 C03 HTTP",
+          "durations_ms": [
+            376
+          ]
+        },
+        {
+          "name": "N09 Capture C03",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N09 Normalize search",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N10 Build ticket lookup",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N10 Ticket mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N10 Mock ticket",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N10 Normalize ticket",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N10b FAQ HTTP",
+          "durations_ms": [
+            6
+          ]
+        },
+        {
+          "name": "N10b Match FAQ",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N11 Collect retrieval",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N11 Join retrieval",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N12 Evidence gate",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N12 Route evidence",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Prepare writer",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N13 Writer mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Writer model",
+          "durations_ms": [
+            1427
+          ]
+        },
+        {
+          "name": "N13 Writer Agent",
+          "durations_ms": [
+            1444
+          ]
+        },
+        {
+          "name": "N13 Parse writer",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N13 Writer valid",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N14 Prepare verifier",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N14 Verifier mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N14 Verifier model",
+          "durations_ms": [
+            738
+          ]
+        },
+        {
+          "name": "N14 Verifier Agent",
+          "durations_ms": [
+            772
+          ]
+        },
+        {
+          "name": "N14 Parse verifier",
+          "durations_ms": [
+            31
+          ]
+        },
+        {
+          "name": "N15 Decide answer",
+          "durations_ms": [
+            26
+          ]
+        },
+        {
+          "name": "N15 Route answer",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N22 Finalize P0-3",
+          "durations_ms": [
+            33
+          ]
+        },
+        {
+          "name": "N22 Output filter",
+          "durations_ms": [
+            88
+          ]
+        },
+        {
+          "name": "N23 Respond",
+          "durations_ms": [
+            19
+          ]
+        }
+      ]
+    },
+    {
+      "request_id": "audit-webhook-5af5a04c3bac4ad09b28955d02b9c7b5",
+      "execution_id": 258,
+      "started_at": "2026-11-08 07:59:14.260",
+      "stopped_at": "2026-11-08 07:59:17.989",
+      "status": "success",
+      "nodes": [
+        {
+          "name": "N01 Support webhook",
+          "durations_ms": [
+            0
+          ]
+        },
+        {
+          "name": "N02 Normalize input",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N03 Employee mode",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N03 Get employees HTTP",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N03 Capture employee",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N04 Injection rules",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N05 Replay MOCK",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N05 Parse replay",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N05 Route replay",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N05 Triage gate",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N05 Triage mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N06 Triage model",
+          "durations_ms": [
+            685
+          ]
+        },
+        {
+          "name": "N06 Triage Agent",
+          "durations_ms": [
+            701
+          ]
+        },
+        {
+          "name": "N06 Parse triage",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N07 Route triage",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N07 Route urgent",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N08 Build search input",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N09 Search mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N09 C03 HTTP",
+          "durations_ms": [
+            363
+          ]
+        },
+        {
+          "name": "N09 Capture C03",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N09 Normalize search",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N10 Build ticket lookup",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N10 Ticket mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N10 Mock ticket",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N10 Normalize ticket",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N10b FAQ HTTP",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N10b Match FAQ",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N11 Collect retrieval",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N11 Join retrieval",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N12 Evidence gate",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N12 Route evidence",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N13 Prepare writer",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N13 Writer mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Writer model",
+          "durations_ms": [
+            1523
+          ]
+        },
+        {
+          "name": "N13 Writer Agent",
+          "durations_ms": [
+            1537
+          ]
+        },
+        {
+          "name": "N13 Parse writer",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N13 Writer valid",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Prepare verifier",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N14 Verifier mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Verifier model",
+          "durations_ms": [
+            754
+          ]
+        },
+        {
+          "name": "N14 Verifier Agent",
+          "durations_ms": [
+            774
+          ]
+        },
+        {
+          "name": "N14 Parse verifier",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N15 Decide answer",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N15 Route answer",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N22 Finalize P0-3",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N22 Output filter",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N23 Respond",
+          "durations_ms": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "request_id": "audit-webhook-881537e52d6d486fb7b2f47f62f30db6",
+      "execution_id": 256,
+      "started_at": "2026-11-08 07:58:46.973",
+      "stopped_at": "2026-11-08 07:58:54.122",
+      "status": "success",
+      "nodes": [
+        {
+          "name": "N01 Support webhook",
+          "durations_ms": [
+            0
+          ]
+        },
+        {
+          "name": "N02 Normalize input",
+          "durations_ms": [
+            2464
+          ]
+        },
+        {
+          "name": "N03 Employee mode",
+          "durations_ms": [
+            6
+          ]
+        },
+        {
+          "name": "N03 Get employees HTTP",
+          "durations_ms": [
+            6
+          ]
+        },
+        {
+          "name": "N03 Capture employee",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N04 Injection rules",
+          "durations_ms": [
+            24
+          ]
+        },
+        {
+          "name": "N05 Replay MOCK",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N05 Parse replay",
+          "durations_ms": [
+            29
+          ]
+        },
+        {
+          "name": "N05 Route replay",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N05 Triage gate",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N05 Triage mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N06 Triage model",
+          "durations_ms": [
+            1179
+          ]
+        },
+        {
+          "name": "N06 Triage Agent",
+          "durations_ms": [
+            1220
+          ]
+        },
+        {
+          "name": "N06 Parse triage",
+          "durations_ms": [
+            21
+          ]
+        },
+        {
+          "name": "N07 Route triage",
+          "durations_ms": [
+            31
+          ]
+        },
+        {
+          "name": "N07 Route urgent",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N08 Build search input",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N09 Search mode",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N09 C03 HTTP",
+          "durations_ms": [
+            879
+          ]
+        },
+        {
+          "name": "N09 Capture C03",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N09 Normalize search",
+          "durations_ms": [
+            21
+          ]
+        },
+        {
+          "name": "N10 Build ticket lookup",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N10 Ticket mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N10 Mock ticket",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N10 Normalize ticket",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N10b FAQ HTTP",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N10b Match FAQ",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N11 Collect retrieval",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N11 Join retrieval",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N12 Evidence gate",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N12 Route evidence",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Prepare writer",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N13 Writer mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N13 Writer model",
+          "durations_ms": [
+            1371
+          ]
+        },
+        {
+          "name": "N13 Writer Agent",
+          "durations_ms": [
+            1387
+          ]
+        },
+        {
+          "name": "N13 Parse writer",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N13 Writer valid",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Prepare verifier",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N14 Verifier mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Verifier model",
+          "durations_ms": [
+            722
+          ]
+        },
+        {
+          "name": "N14 Verifier Agent",
+          "durations_ms": [
+            739
+          ]
+        },
+        {
+          "name": "N14 Parse verifier",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N15 Decide answer",
+          "durations_ms": [
+            17
+          ]
+        },
+        {
+          "name": "N15 Route answer",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N22 Finalize P0-3",
+          "durations_ms": [
+            25
+          ]
+        },
+        {
+          "name": "N22 Output filter",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N23 Respond",
+          "durations_ms": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "request_id": "audit-webhook-7703047255434f2cb74168c908ae2afd",
+      "execution_id": 254,
+      "started_at": "2026-11-08 07:52:03.659",
+      "stopped_at": "2026-11-08 07:52:07.201",
+      "status": "success",
+      "nodes": [
+        {
+          "name": "N01 Support webhook",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N02 Normalize input",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N03 Employee mode",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N03 Get employees HTTP",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N03 Capture employee",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N04 Injection rules",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N05 Replay MOCK",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N05 Parse replay",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N05 Route replay",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N05 Triage gate",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N05 Triage mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N06 Triage model",
+          "durations_ms": [
+            624
+          ]
+        },
+        {
+          "name": "N06 Triage Agent",
+          "durations_ms": [
+            636
+          ]
+        },
+        {
+          "name": "N06 Parse triage",
+          "durations_ms": [
+            15
+          ]
+        },
+        {
+          "name": "N07 Route triage",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N07 Route urgent",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N08 Build search input",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N09 Search mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N09 C03 HTTP",
+          "durations_ms": [
+            411
+          ]
+        },
+        {
+          "name": "N09 Capture C03",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N09 Normalize search",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N10 Build ticket lookup",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N10 Ticket mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N10 Mock ticket",
+          "durations_ms": [
+            15
+          ]
+        },
+        {
+          "name": "N10 Normalize ticket",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N10b FAQ HTTP",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N10b Match FAQ",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N11 Collect retrieval",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N11 Join retrieval",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N12 Evidence gate",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N12 Route evidence",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Prepare writer",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N13 Writer mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Writer model",
+          "durations_ms": [
+            1379
+          ]
+        },
+        {
+          "name": "N13 Writer Agent",
+          "durations_ms": [
+            1396
+          ]
+        },
+        {
+          "name": "N13 Parse writer",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N13 Writer valid",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Prepare verifier",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N14 Verifier mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N14 Verifier model",
+          "durations_ms": [
+            744
+          ]
+        },
+        {
+          "name": "N14 Verifier Agent",
+          "durations_ms": [
+            762
+          ]
+        },
+        {
+          "name": "N14 Parse verifier",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N15 Decide answer",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N15 Route answer",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N22 Finalize P0-3",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N22 Output filter",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N23 Respond",
+          "durations_ms": [
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "request_id": "audit-webhook-5fca12c4708747759f5afb3ccb3d3fd1",
+      "execution_id": 252,
+      "started_at": "2026-11-08 07:51:59.153",
+      "stopped_at": "2026-11-08 07:52:03.565",
+      "status": "success",
+      "nodes": [
+        {
+          "name": "N01 Support webhook",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N02 Normalize input",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N03 Employee mode",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N03 Get employees HTTP",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N03 Capture employee",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N04 Injection rules",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N05 Replay MOCK",
+          "durations_ms": [
+            16
+          ]
+        },
+        {
+          "name": "N05 Parse replay",
+          "durations_ms": [
+            17
+          ]
+        },
+        {
+          "name": "N05 Route replay",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N05 Triage gate",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N05 Triage mode",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N06 Triage model",
+          "durations_ms": [
+            751
+          ]
+        },
+        {
+          "name": "N06 Triage Agent",
+          "durations_ms": [
+            769
+          ]
+        },
+        {
+          "name": "N06 Parse triage",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N07 Route triage",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N07 Route urgent",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N08 Build search input",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N09 Search mode",
+          "durations_ms": [
+            1
+          ]
+        },
+        {
+          "name": "N09 C03 HTTP",
+          "durations_ms": [
+            910
+          ]
+        },
+        {
+          "name": "N09 Capture C03",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N09 Normalize search",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N10 Build ticket lookup",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N10 Ticket mode",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N10 Mock ticket",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N10 Normalize ticket",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N10b FAQ HTTP",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N10b Match FAQ",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N11 Collect retrieval",
+          "durations_ms": [
+            3
+          ]
+        },
+        {
+          "name": "N11 Join retrieval",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N12 Evidence gate",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N12 Route evidence",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Prepare writer",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N13 Writer mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N13 Writer model",
+          "durations_ms": [
+            1534
+          ]
+        },
+        {
+          "name": "N13 Writer Agent",
+          "durations_ms": [
+            1550
+          ]
+        },
+        {
+          "name": "N13 Parse writer",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N13 Writer valid",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Prepare verifier",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N14 Verifier mode",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N14 Verifier model",
+          "durations_ms": [
+            812
+          ]
+        },
+        {
+          "name": "N14 Verifier Agent",
+          "durations_ms": [
+            830
+          ]
+        },
+        {
+          "name": "N14 Parse verifier",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N15 Decide answer",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N15 Route answer",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N22 Finalize P0-3",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N22 Output filter",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N23 Respond",
+          "durations_ms": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "request_id": "audit-webhook-8c60ea253b77449f9da82d36f4b0ed7c",
+      "execution_id": 250,
+      "started_at": "2026-11-08 07:51:47.489",
+      "stopped_at": "2026-11-08 07:51:58.952",
+      "status": "success",
+      "nodes": [
+        {
+          "name": "N01 Support webhook",
+          "durations_ms": [
+            2
+          ]
+        },
+        {
+          "name": "N02 Normalize input",
+          "durations_ms": [
+            2944
+          ]
+        },
+        {
+          "name": "N03 Employee mode",
+          "durations_ms": [
+            115
+          ]
+        },
+        {
+          "name": "N03 Get employees HTTP",
+          "durations_ms": [
+            24
+          ]
+        },
+        {
+          "name": "N03 Capture employee",
+          "durations_ms": [
+            15
+          ]
+        },
+        {
+          "name": "N04 Injection rules",
+          "durations_ms": [
+            31
+          ]
+        },
+        {
+          "name": "N05 Replay MOCK",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N05 Parse replay",
+          "durations_ms": [
+            17
+          ]
+        },
+        {
+          "name": "N05 Route replay",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N05 Triage gate",
+          "durations_ms": [
+            7
+          ]
+        },
+        {
+          "name": "N05 Triage mode",
+          "durations_ms": [
+            4
+          ]
+        },
+        {
+          "name": "N06 Triage model",
+          "durations_ms": [
+            1466
+          ]
+        },
+        {
+          "name": "N06 Triage Agent",
+          "durations_ms": [
+            2593
+          ]
+        },
+        {
+          "name": "N06 Parse triage",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N07 Route triage",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N07 Route urgent",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N08 Build search input",
+          "durations_ms": [
+            34
+          ]
+        },
+        {
+          "name": "N09 Search mode",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N09 C03 HTTP",
+          "durations_ms": [
+            2262
+          ]
+        },
+        {
+          "name": "N09 Capture C03",
+          "durations_ms": [
+            15
+          ]
+        },
+        {
+          "name": "N09 Normalize search",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N10 Build ticket lookup",
+          "durations_ms": [
+            8
+          ]
+        },
+        {
+          "name": "N10 Ticket mode",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N10 Mock ticket",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N10 Normalize ticket",
+          "durations_ms": [
+            19
+          ]
+        },
+        {
+          "name": "N10b FAQ HTTP",
+          "durations_ms": [
+            16
+          ]
+        },
+        {
+          "name": "N10b Match FAQ",
+          "durations_ms": [
+            11
+          ]
+        },
+        {
+          "name": "N11 Collect retrieval",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N11 Join retrieval",
+          "durations_ms": [
+            16
+          ]
+        },
+        {
+          "name": "N12 Evidence gate",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N12 Route evidence",
+          "durations_ms": [
+            4
+          ]
+        },
+        {
+          "name": "N13 Prepare writer",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N13 Writer mode",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N13 Writer model",
+          "durations_ms": [
+            1919
+          ]
+        },
+        {
+          "name": "N13 Writer Agent",
+          "durations_ms": [
+            1943
+          ]
+        },
+        {
+          "name": "N13 Parse writer",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N13 Writer valid",
+          "durations_ms": [
+            6
+          ]
+        },
+        {
+          "name": "N14 Prepare verifier",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N14 Verifier mode",
+          "durations_ms": [
+            5
+          ]
+        },
+        {
+          "name": "N14 Verifier model",
+          "durations_ms": [
+            977
+          ]
+        },
+        {
+          "name": "N14 Verifier Agent",
+          "durations_ms": [
+            1000
+          ]
+        },
+        {
+          "name": "N14 Parse verifier",
+          "durations_ms": [
+            13
+          ]
+        },
+        {
+          "name": "N15 Decide answer",
+          "durations_ms": [
+            12
+          ]
+        },
+        {
+          "name": "N15 Route answer",
+          "durations_ms": [
+            9
+          ]
+        },
+        {
+          "name": "N22 Finalize P0-3",
+          "durations_ms": [
+            14
+          ]
+        },
+        {
+          "name": "N22 Output filter",
+          "durations_ms": [
+            10
+          ]
+        },
+        {
+          "name": "N23 Respond",
+          "durations_ms": [
+            14
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "missing_request_ids": []
+}

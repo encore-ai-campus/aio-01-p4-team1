@@ -285,6 +285,18 @@ The 1교시 report material is prepared, but the official common-14 test startin
 - 공통 14개 시나리오 정본([`cases/common.json`](../cases/common.json))과 팀 확장 시나리오([`cases/team.json`](../cases/team.json))가 루트 `cases/`에 완비되었으며, `WORKFLOW-DESIGN.md`·`RAG-ARCHITECTURE.md`·`EXECUTION-RESULT.md` 3대 핵심 산출물의 수치가 실서버 측정값과 1:1로 동기화되었다.
 
 
+### 11/08 후속 검증 · 문의 연결과 첫 응답 지연
+
+실서버 checkout은 `15ab6c9694acf7fbf692d54dd97309937c63ad49`이며, 아래는 11/07 원본 시험과 분리한 후속 관측이다. 원본 PASS/PARTIAL·실패 기록을 덮어쓰지 않는다.
+
+- **DB 연결:** 기존 API 실요청 `qa-idempotency-93f0e5f3de6549109a17245cd1e84121` / `T-2030`을 읽기 전용 트랜잭션으로 다시 대조했다. 문의·티켓·알림 각 1건, 완료 문의, 직원 소유권·문의 FK·요청 키·응답 티켓 일치, 해당 요청 DLQ 0건을 확인했다. [근거](../runs/db-link-followup-20261108.json). 새 로그인·API 전송을 한 시험은 아니다.
+- **지연 재현:** 비밀번호 규정 질문을 숨은 예열 없이 직접 `oke-support`에 전송해 12.425초·4.612초·3.633초를 관측했다. 첫 실행의 `N02 Normalize input`은 2944ms였다. 실행기 유휴 종료 값은 15초였다.
+- **조치:** main의 `deploy/compose.vm.yaml`에서 `N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=0`으로 설정했다. VM에는 `/home/toor/.config/oke/runner-latency.yaml` overlay를 적용해 `runners`만 재생성했다. 다른 8개 컨테이너 ID는 전후 동일했다. DB·n8n·FE·백엔드 재시작이나 전체 main 재배포는 하지 않았다.
+- **재측정:** 첫 측정 7.224초, 20초 유휴 간격 후 3.864초·3.887초로 모두 자동 답변·`password-policy` 근거·8초 이내를 확인했다. 첫 Code 노드는 2464ms였고 이후 두 번은 10ms·11ms였다. 전체 스택 콜드 재시작 조건이나 FE/API 전체 응답 시간을 보장하지 않는다.
+- **재현 자산:** [실서버 검사 안내](../eval/LIVE-CHECKS.md)에 main 안의 실행 도구와 범위를 기록했다. 기존 인계의 로그인 정보가 현재 거절돼, 새 직원 세션의 전체 API·DB 회귀는 최신 비공개 계정 정보가 필요하다. 계정·비밀번호는 수정하지 않았다.
+
+종합 기록: [후속 확인](../runs/integration-followup-20261108.json), [변경 전](../runs/workflow-latency-before-20261108.json), [변경 후](../runs/workflow-latency-after-20261108.json), [노드 시간](../runs/workflow-node-timings-20261108.json).
+
 ## 18. KSM-REQ §6 제출 전 체크리스트 (원문 15항목)
 
 아래 15개 항목은 `KSM-REQ.md` §6 및 `08-SUBMISSION.md` 기준을 전수 대조하여 `WORKFLOW-DESIGN.md`, `RAG-ARCHITECTURE.md`, `EXECUTION-RESULT.md` 및 루트 `runs/` 영수증 취합 완료 상태를 반영했다.

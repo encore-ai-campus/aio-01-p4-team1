@@ -1,0 +1,39 @@
+{
+  "schema": "oke-workflow-latency-v1",
+  "target": "https://aio-t1.isitsoft.kr:5678",
+  "scope": "real n8n webhook before runner configuration change; no API login or DB linkage test",
+  "captured_at_utc": "2026-11-08T07:52:07.196922+00:00",
+  "condition": "first observation retained; no hidden warm-up; no full-stack cold restart",
+  "idle_seconds_between_requests": 0,
+  "runner_idle_shutdown_seconds": 15,
+  "records": [
+    {
+      "request_id": "audit-webhook-8c60ea253b77449f9da82d36f4b0ed7c",
+      "http_status": 200,
+      "elapsed_sec": 12.425,
+      "route": "자동 답변",
+      "source_docs": [
+        "password-policy"
+      ]
+    },
+    {
+      "request_id": "audit-webhook-5fca12c4708747759f5afb3ccb3d3fd1",
+      "http_status": 200,
+      "elapsed_sec": 4.612,
+      "route": "자동 답변",
+      "source_docs": [
+        "password-policy"
+      ]
+    },
+    {
+      "request_id": "audit-webhook-7703047255434f2cb74168c908ae2afd",
+      "http_status": 200,
+      "elapsed_sec": 3.633,
+      "route": "자동 답변",
+      "source_docs": [
+        "password-policy"
+      ]
+    }
+  ],
+  "verdict": "FAIL_FIRST_RESPONSE_OVER_8_SECONDS"
+}

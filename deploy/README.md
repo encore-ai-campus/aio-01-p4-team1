@@ -70,3 +70,21 @@ This starts the existing containers with their original image IDs and mount bind
 | Resources | Before: RAM available 1347 MiB, swap used 392 MiB, disk free 41 GiB. After: RAM available 1433 MiB, swap used 235 MiB, disk free 41 GiB. The stopped old index/search/data-api containers reported exit 137 with `OOMKilled=false`; no OOM is inferred |
 
 All old `day65-n8n-*` containers remain stopped and available for rollback; the prior `oke-jihye-p0-postgres-1`, `day67-data-data-api-1`, and completed `day65-n8n-sandbox-certs-1` were also retained. No volume, image, backup, credential, course file, or container was deleted. Sandbox cert bootstrap exit 0 was a completed one-shot task. The official `flow.py`/common-14 kit was not run. Existing external FE root 502 / port 3000 timeout is outside this rename and remains unresolved; no HTTPS proxy or external route was changed.
+
+## Runner idle latency · 2026-11-08
+
+The root VM Compose sets `N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=0` to retain external Code-node workers between inquiries. The [official task runner documentation](https://docs.n8n.io/hosting/configuration/task-runners/) defines `0` as disabling idle shutdown. Isolation, authentication and execution timeouts remain configured as before. This increases idle worker memory use; the observed runners usage after the trial was about 84 MiB and VM available memory about 1163 MiB.
+
+The live VM still has checkout `15ab6c9`. For the scoped change it uses `/home/toor/.config/oke/runner-latency.yaml` as an additional Compose file, and only `runners` was recreated. Before the VM switches to the latest root Compose, preserve this overlay on runner recreation:
+
+```sh
+docker compose --env-file /home/toor/n8n/day65-n8n/.env \
+  --env-file /home/toor/Aio-4pj-1team/deploy/.env.vm \
+  -f /home/toor/Aio-4pj-1team/deploy/compose.vm.yaml \
+  -f /home/toor/.config/oke/runner-latency.yaml -p oke \
+  up -d --no-deps --no-build runners
+```
+
+The `.env.vm` file above belongs to the retained **old VM runtime**. New deployment of current main uses the root paths documented above. Do not substitute the latest root Compose on the old checkout without first provisioning its root sources and private environment paths. Rollback of this scoped setting on the old checkout is the same command without the overlay, which restores its original 15-second idle timeout.
+
+Measurements and container preservation are in [the follow-up receipt](../runs/integration-followup-20261108.json). This is a scoped runtime setting change, not a full main deployment or proof of whole-stack cold-start performance.

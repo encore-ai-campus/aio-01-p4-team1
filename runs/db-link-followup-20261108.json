@@ -1,0 +1,34 @@
+{
+  "schema": "oke-db-link-receipt-v1",
+  "target": "https://aio-t1.isitsoft.kr",
+  "scope": "read-only DB check of existing request; no API replay or login test",
+  "request_id": "qa-idempotency-93f0e5f3de6549109a17245cd1e84121",
+  "runner_source_commit": "2e5a24e3cfed873284aa72a758d79d224bec02ad",
+  "started_at_utc": "2026-11-08T07:58:45.502813+00:00",
+  "errors": [],
+  "checks": {
+    "one_inquiry": true,
+    "one_ticket": true,
+    "one_alert": true,
+    "inquiry_completed": true,
+    "owner_and_keys_match": true,
+    "response_ticket_matches": true,
+    "api_db_ticket_matches": true,
+    "no_dlq_for_request": true
+  },
+  "verdict": "PASS_DB_LINK_ONLY",
+  "db_receipt": {
+    "inquiries": 1,
+    "tickets": 1,
+    "alerts": 1,
+    "completed": 1,
+    "linked": 1,
+    "response_match": 1,
+    "ticket_ids": [
+      "T-2030"
+    ],
+    "dlq": 0,
+    "vm_checkout_commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49"
+  },
+  "finished_at_utc": "2026-11-08T07:58:46.853456+00:00"
+}

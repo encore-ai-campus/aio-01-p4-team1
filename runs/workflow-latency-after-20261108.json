@@ -1,0 +1,72 @@
+{
+  "schema": "oke-workflow-latency-v1",
+  "target": "https://aio-t1.isitsoft.kr:5678",
+  "runner_source_commit": "2e5a24e3cfed873284aa72a758d79d224bec02ad",
+  "runner_sha256": "f1e96991abdc18748075047d1192416db480d26a4fd6162bd4ebc0f579275b8f",
+  "started_at_utc": "2026-11-08T07:58:46.875697+00:00",
+  "scope": "real n8n webhook; no frontend, API session, or DB linkage test",
+  "condition": "no hidden warm-up; no full-stack cold restart; first observation retained",
+  "idle_seconds_between_requests": 20.0,
+  "records": [
+    {
+      "request_id": "audit-webhook-881537e52d6d486fb7b2f47f62f30db6",
+      "http_status": 200,
+      "elapsed_sec": 7.224,
+      "route": "자동 답변",
+      "source_count": 1,
+      "source_docs": [
+        "password-policy"
+      ],
+      "ticket_id": null,
+      "duplicate": null,
+      "checks": {
+        "http_200": true,
+        "automatic_answer": true,
+        "password_policy_source": true,
+        "no_ticket": true,
+        "within_8_seconds": true
+      }
+    },
+    {
+      "request_id": "audit-webhook-5af5a04c3bac4ad09b28955d02b9c7b5",
+      "http_status": 200,
+      "elapsed_sec": 3.864,
+      "route": "자동 답변",
+      "source_count": 1,
+      "source_docs": [
+        "password-policy"
+      ],
+      "ticket_id": null,
+      "duplicate": null,
+      "checks": {
+        "http_200": true,
+        "automatic_answer": true,
+        "password_policy_source": true,
+        "no_ticket": true,
+        "within_8_seconds": true
+      }
+    },
+    {
+      "request_id": "audit-webhook-290313d09c324580a1453ce9a78d785f",
+      "http_status": 200,
+      "elapsed_sec": 3.887,
+      "route": "자동 답변",
+      "source_count": 1,
+      "source_docs": [
+        "password-policy"
+      ],
+      "ticket_id": null,
+      "duplicate": null,
+      "checks": {
+        "http_200": true,
+        "automatic_answer": true,
+        "password_policy_source": true,
+        "no_ticket": true,
+        "within_8_seconds": true
+      }
+    }
+  ],
+  "errors": [],
+  "verdict": "PASS",
+  "finished_at_utc": "2026-11-08T07:59:41.878590+00:00"
+}

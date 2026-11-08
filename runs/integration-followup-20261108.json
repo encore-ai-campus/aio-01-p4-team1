@@ -1,0 +1,78 @@
+{
+  "schema": "oke-integration-followup-v1",
+  "recorded_at_utc": "2026-11-08T08:02:46.570578+00:00",
+  "target": "https://aio-t1.isitsoft.kr",
+  "vm_checkout_commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49",
+  "db_link": {
+    "verdict": "PASS_DB_LINK_ONLY",
+    "receipt": "runs/db-link-followup-20261108.json",
+    "new_api_request_sent": false
+  },
+  "latency": {
+    "before": "runs/workflow-latency-before-20261108.json",
+    "after": "runs/workflow-latency-after-20261108.json",
+    "node_timings": "runs/workflow-node-timings-20261108.json",
+    "before_seconds": [
+      12.425,
+      4.612,
+      3.633
+    ],
+    "after_seconds": [
+      7.224,
+      3.864,
+      3.887
+    ],
+    "after_idle_gap_seconds": 20,
+    "full_stack_cold_restart_tested": false
+  },
+  "runtime_change": {
+    "service": "runners",
+    "idle_shutdown_seconds_before": 15,
+    "idle_shutdown_seconds_after": 0,
+    "vm_override_file": "/home/toor/.config/oke/runner-latency.yaml",
+    "other_container_ids_unchanged": {
+      "oke-frontend-1": true,
+      "oke-data-api-1": true,
+      "oke-backend-1": true,
+      "oke-rag-search-1": true,
+      "oke-n8n-1": true,
+      "oke-sandbox-runner-1-1": true,
+      "oke-postgres-1": true,
+      "oke-sandbox-api-1": true
+    },
+    "before_containers": {
+      "oke-frontend-1": "d27710744926",
+      "oke-data-api-1": "2aa928e320f8",
+      "oke-backend-1": "8810320dc463",
+      "oke-runners-1": "e4120d26200e",
+      "oke-rag-search-1": "a500a366b081",
+      "oke-n8n-1": "f743f3518ebe",
+      "oke-sandbox-runner-1-1": "192a7924e7f5",
+      "oke-postgres-1": "1b66b3e34257",
+      "oke-sandbox-api-1": "7eb4bc8f0f23"
+    },
+    "after_containers": {
+      "oke-runners-1": "ddba960d4a5f",
+      "oke-frontend-1": "d27710744926",
+      "oke-data-api-1": "2aa928e320f8",
+      "oke-backend-1": "8810320dc463",
+      "oke-rag-search-1": "a500a366b081",
+      "oke-n8n-1": "f743f3518ebe",
+      "oke-sandbox-runner-1-1": "192a7924e7f5",
+      "oke-postgres-1": "1b66b3e34257",
+      "oke-sandbox-api-1": "7eb4bc8f0f23"
+    }
+  },
+  "api_replay": {
+    "verdict": "NOT_RUN_NEEDS_CURRENT_CREDENTIALS",
+    "legacy_employee_login_http_status": 401,
+    "legacy_admin_login_http_status": 401,
+    "accounts_modified": false,
+    "passwords_reset": false
+  },
+  "limits": [
+    "Existing DB relationship verified, not a fresh API/login replay.",
+    "Direct n8n performance measurement, not FE/API end-to-end latency.",
+    "Team focused checks, not official common-14 or full team suite."
+  ]
+}

@@ -28,3 +28,7 @@ python3 rag/rag_verify.py index --scenario initial-and-repeat --json
 `eval/`의 검색 Mock 검사는 합성 fixture·Mock workflow를 사용하며 실제 n8n·검색·티켓 API를 호출하지 않는다. 이를 실제 서비스 품질·공식 공통 시험 통과로 집계하지 않는다. 실제 실행 근거는 [runs/](runs/README.md), 판정과 한계는 [docs/EXECUTION-RESULT.md](docs/EXECUTION-RESULT.md)를 따른다.
 
 과거 문서의 개발 경로는 당시 기록이다. 현재 코드·설정·검증은 이 문서와 각 루트 README만으로 확인한다. 키·비밀번호·세션·DB 덤프·가상환경·빌드 캐시는 제출하지 않는다.
+
+## 실제 팀 VM 재검사
+
+별도 강의 체크아웃 없이 현재 저장소의 `eval/live_check.py`, `eval/webhook_latency.py`, `eval/execution_profile.py`를 사용한다. 비공개 설정, 실행 명령, 쓰기 범위와 판정은 [실서버 검사 안내](eval/LIVE-CHECKS.md)를 따른다. API 검사만으로 DB 연결 성공을 기록하지 않으며, 팀 전용 검사 결과를 공식 공통 14종 전체 통과로 집계하지 않는다.

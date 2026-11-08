@@ -40,15 +40,28 @@
 
 ```mermaid
 flowchart TD
-    A[직원·관리자 화면 · Next.js] --> B[인증·권한·업무 API · FastAPI]
-    B --> C[문의 처리 · n8n]
-    C --> D[규정 검색 · RAG / pgvector]
-    C --> E[티켓 이관·알림·오류 처리]
-    D --> C
+    A[직원·관리자 화면 · Next.js] --> B[인증·권한·저장 API · FastAPI]
+    subgraph N["n8n · 업무 자동화"]
+        C[문의 분류·답변·검증 · oke-support]
+        S[검색 연결 · oke-search]
+        H[티켓 이관·알림 · oke-handoff]
+        E[실행 오류·알림·DLQ · oke-errors]
+        C --> S
+        C --> H
+        C -. 실행 오류 .-> E
+    end
+    B --> C
+    S --> R[RAG 검색 서비스]
+    H --> B
     E --> B
+    B --> P[(PostgreSQL + pgvector)]
+    R --> P
 ```
 
-화면은 FastAPI를 통해 업무를 처리합니다. n8n은 분류·답변 작성·검증을 수행하고, RAG는 권한이 허용된 규정만 검색합니다. 업무 기록과 문서 벡터는 PostgreSQL에 저장합니다.
+- **n8n:** 문의 처리와 검색 연결, 티켓 이관·알림·오류 처리를 담당합니다. `oke-errors`는 support·search·handoff의 실행 오류에 연결돼 있습니다.
+- **FastAPI:** 로그인·권한을 확인하고, n8n의 저장 요청을 받아 문의·티켓·알림·DLQ를 업무 DB에 저장합니다. 관리자 처리와 직원 재조회도 담당합니다.
+- **RAG 검색 서비스:** 권한이 허용된 규정을 PostgreSQL의 pgvector로 검색합니다.
+- **PostgreSQL:** `app` 스키마에 계정·세션·문의·티켓·알림·DLQ를, `rag` 스키마에 규정 문서·청크·임베딩을 저장합니다.
 
 상세 내용: [시스템 아키텍처](docs/ARCHITECTURE.md) · [워크플로우 설계](docs/WORKFLOW-DESIGN.md) · [RAG 설계](docs/RAG-ARCHITECTURE.md)
 

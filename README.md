@@ -35,12 +35,15 @@ flowchart TD
     R --> P
 ```
 
-- **n8n:** 분류 → 권한별 검색 → 답변 생성·검증 → 자동 답변 또는 이관을 처리합니다. 이관 시 티켓·알림을 요청하며, `oke-errors`는 support·search·handoff의 실행 오류를 처리합니다.
-- **FastAPI:** 로그인·권한을 확인하고, n8n의 저장 요청을 받아 문의·티켓·알림·DLQ를 업무 DB에 저장합니다. 관리자 처리와 직원 재조회도 담당합니다.
-- **RAG 검색 서비스:** 권한이 허용된 규정을 PostgreSQL의 pgvector로 검색합니다.
-- **PostgreSQL:** `app` 스키마에 계정·세션·문의·티켓·알림·DLQ를, `rag` 스키마에 규정 문서·청크·임베딩을 저장합니다.
+각 구성요소는 다음 역할을 맡습니다.
 
-상세 내용: [시스템 아키텍처](docs/ARCHITECTURE.md) · [워크플로우 설계](docs/WORKFLOW-DESIGN.md) · [RAG 설계](docs/RAG-ARCHITECTURE.md)
+- **화면 · Next.js:** 직원이 질문하고, 관리자가 접수된 문의를 처리하는 화면입니다.
+- **업무 API · FastAPI:** 로그인한 사용자의 권한을 확인하고, 문의와 처리 결과를 저장하거나 불러옵니다.
+- **문의 자동화 · n8n:** 질문을 분류하고 답변을 만들며, 담당자 접수·알림과 오류 처리를 진행합니다.
+- **규정 검색 · RAG:** 질문과 관련된 규정 중 사용자가 볼 수 있는 내용을 찾아 답변의 근거로 제공합니다.
+- **데이터 저장 · PostgreSQL:** 계정·문의·처리 기록과 규정 검색에 필요한 데이터를 보관합니다.
+
+설계 문서: [전체 시스템 구조](docs/ARCHITECTURE.md) · [문의 자동화 흐름](docs/WORKFLOW-DESIGN.md) · [규정 검색 방식](docs/RAG-ARCHITECTURE.md)
 
 ## 주요 기능
 

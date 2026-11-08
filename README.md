@@ -54,12 +54,6 @@ IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다.
 <p>&nbsp;</p>
 </blockquote>
 
-**문의 자동화:** 분류 → 권한별 검색 → 답변 생성·검증 → 자동 답변 또는 담당자 이관
-
-제공된 가상 직원 6명·규정 8종·FAQ 6종·기존 티켓 4건을 사용합니다. 접속·계정 안내는 [팀 VM 안내](docs/VM-TEAM-TESTING.md), 운영자의 기동·재배포와 비공개 환경 설정은 [VM 배포 안내](deploy/README.md)를 따릅니다.
-
-main은 코드·데이터·배포 설정을 루트 경로에 모은 독립 제출본입니다. 개인 개발 폴더나 다른 브랜치에서 파일을 가져오지 않습니다. 실행 환경의 비공개 키·계정·DB 설정은 별도로 제공하며 저장소에 포함하지 않습니다.
-
 ## 서비스 구성
 
 ```mermaid
@@ -82,7 +76,7 @@ flowchart TD
     R --> P
 ```
 
-- **n8n:** 문의 처리와 검색 연결, 티켓 이관·알림·오류 처리를 담당합니다. `oke-errors`는 support·search·handoff의 실행 오류에 연결돼 있습니다.
+- **n8n:** 분류 → 권한별 검색 → 답변 생성·검증 → 자동 답변 또는 이관을 처리합니다. 이관 시 티켓·알림을 요청하며, `oke-errors`는 support·search·handoff의 실행 오류를 처리합니다.
 - **FastAPI:** 로그인·권한을 확인하고, n8n의 저장 요청을 받아 문의·티켓·알림·DLQ를 업무 DB에 저장합니다. 관리자 처리와 직원 재조회도 담당합니다.
 - **RAG 검색 서비스:** 권한이 허용된 규정을 PostgreSQL의 pgvector로 검색합니다.
 - **PostgreSQL:** `app` 스키마에 계정·세션·문의·티켓·알림·DLQ를, `rag` 스키마에 규정 문서·청크·임베딩을 저장합니다.
@@ -152,7 +146,7 @@ flow.py test cases/team.json
 
 **제출 마감: 2026-11-09(월) 14:50.** 기본 브랜치의 마지막 커밋을 기준으로 하며, 마감 후에는 수정하지 않습니다.
 
-문서·자료·시연 입력은 11/08에 미리 준비합니다. 이수언은 발표자료를 준비하고, 임다혁은 발표를 맡습니다. 발표는 20분, 질의는 5분이며 1팀 리허설은 82일차 3교시, 최종 발표는 6교시입니다.
+문서·자료·시연 입력은 11/08에 미리 준비합니다. 발표는 20분, 질의는 5분이며 1팀 리허설은 82일차 3교시, 최종 발표는 6교시입니다.
 
 제출 전에는 `tscan scan .`으로 키·실제 연락처 0건을 확인하고, 가상 연락처도 문서·로그에서 가립니다. [실행 결과서의 제출 체크리스트](docs/EXECUTION-RESULT.md#18-ksm-req-6-제출-전-체크리스트-원문-15항목)를 증거와 대조하고 저장소 비공개·강사 초대 상태를 확인합니다. 최종 변경 후 보안 검사와 시연 직전 환경 확인은 다시 수행하고 실제 확인 시각과 결과를 기록합니다.
 
@@ -160,7 +154,16 @@ flow.py test cases/team.json
 
 ## 제출 자료
 
+**사용 데이터:** 가상 직원 6명, 규정 8종, FAQ 6종, 기존 티켓 4건
+
 - **핵심 산출물:** [워크플로우 설계서](docs/WORKFLOW-DESIGN.md) · [RAG 설계서](docs/RAG-ARCHITECTURE.md) · [실행 결과서](docs/EXECUTION-RESULT.md)
 - **기획·기록:** [주제](docs/TOPIC.md) · [팀 헌장](docs/TEAM-CHARTER.md) · [데일리](daily/README.md)
 - **구현:** [화면](frontend/README.md) · [API·DB](backend/README.md) · [RAG](rag/README.md) · [워크플로우](workflows/README.md)
 - **데이터·시험:** [규정](knowledge/README.md) · [초기 데이터](data/README.md) · [프롬프트](prompts/README.md) · [시나리오](cases/README.md) · [요청](requests/README.md) · [실행 기록](runs/README.md)
+
+<details>
+<summary>운영자 실행 안내</summary>
+
+접속·계정은 [팀 VM 안내](docs/VM-TEAM-TESTING.md), 서비스 기동·재배포와 환경 설정은 [VM 배포 안내](deploy/README.md)를 따릅니다. main의 루트 코드·데이터·배포 설정을 사용하며, 비공개 키·계정·DB 설정은 별도로 제공합니다.
+
+</details>

@@ -70,23 +70,7 @@ flowchart TD
 - **사용 방법:** Swagger 화면에서 API 명세를 확인하고 요청을 실행할 수 있습니다. 보호된 API는 해당 사용자 로그인이나 내부 API 인증이 필요합니다.
 - **추가 주소:** <https://aio-t1.isitsoft.kr/openapi.json> — API 명세 원본 JSON
 
-### 4. n8n 워크플로우 확인
-
-- **주소:** <https://aio-t1.isitsoft.kr:5678/>
-- **아이디·비밀번호:** 팀장에게 n8n 전용 계정 받기
-- **확인 내용:** 워크플로우 연결과 실행 이력, 각 단계의 입력·결과·오류
-
-확인할 워크플로우는 다음과 같습니다.
-
-- `oke-support`: 질문 분류, 답변 생성·검증, 자동 답변·보완 질문·이관 결정
-- `oke-search`: 사내 규정 검색 연결
-- `oke-handoff`: 티켓 접수, 알림, 저장 실패 처리
-- `oke-errors`: 예상 밖 실행 오류와 알림·실패 기록 처리
-- `oke-index`: 규정 색인 — 필요할 때 수동 실행
-
-상태 확인 주소는 <https://aio-t1.isitsoft.kr:5678/healthz>입니다. 이 응답은 n8n 서버 상태를 확인하며, 전체 문의 기능의 성공을 뜻하지는 않습니다.
-
-### 5. 선생님이 제공한 VM 웹 SSH
+### 4. 선생님이 제공한 VM 웹 SSH
 
 - **주소:** <https://aio-t1.isitsoft.kr/ssh/>
 - **접속 정보:** 선생님이 제공한 VM 계정 정보 사용
@@ -143,9 +127,25 @@ IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다.
 <p>&nbsp;</p>
 </blockquote>
 
-## 웹훅
+## n8n 및 웹훅 경로
 
-팀 VM의 n8n 주소는 `https://aio-t1.isitsoft.kr:5678`입니다.
+### n8n 접속
+
+- **주소:** <https://aio-t1.isitsoft.kr:5678/>
+- **아이디·비밀번호:** 팀장에게 n8n 전용 계정 받기
+- **확인 내용:** 워크플로우 연결과 실행 이력, 각 단계의 입력·결과·오류
+
+### 워크플로우별 역할
+
+- `oke-support`: 질문 분류, 답변 생성·검증, 자동 답변·보완 질문·이관 결정
+- `oke-search`: 사내 규정 검색 연결
+- `oke-handoff`: 티켓 접수, 알림, 저장 실패 처리
+- `oke-errors`: 예상 밖 실행 오류와 알림·실패 기록 처리
+- `oke-index`: 규정 색인 — 필요할 때 수동 실행
+
+상태 확인 주소는 <https://aio-t1.isitsoft.kr:5678/healthz>입니다. 이 응답은 n8n 서버 상태를 확인하며, 전체 문의 기능의 성공을 뜻하지는 않습니다.
+
+### 웹훅 경로
 
 - **문의 처리:** `POST /webhook/oke-support`
 - **내부 규정 검색:** `POST /webhook/oke-search`

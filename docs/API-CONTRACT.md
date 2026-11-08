@@ -104,7 +104,7 @@ vector 차원·모델·메타데이터를 새로 협의하느라 시작을 기�
 
 ## 7. 실행 환경 (C07)
 
-Compose 파일 위치: develop/jihye/deploy/compose.yaml.
+Compose 파일 위치: backend/deploy/compose.yaml.
 기본 서비스명 frontend/backend/postgres/n8n/data-api, 내부 주소는 backend:8000·postgres:5432·n8n:5678·data-api:8800.
 브라우저는 frontend:3000이 아닌 localhost 또는 VM 공개 웹 주소를 사용하고 /api를 프론트 서버 프록시로 backend에 전달한다.
 브라우저 코드에 Docker 내부 호스트명을 쓰지 않는다.

@@ -45,6 +45,6 @@
 
 그림은 기능 설명용이며 규정에 없는 VPN 조치·응답시간·통과 수치를 주장하지 않는다.
 
-[전체 구조](ARCHITECTURE.md) · [워크플로우 5종](WORKFLOW-DESIGN.md) · [역할별 시작](../develop/README.md) · [상세 API](API-CONTRACT.md)
+[전체 구조](ARCHITECTURE.md) · [워크플로우 5종](WORKFLOW-DESIGN.md) · [실행·검증 시작](../SUBMISSION.md) · [상세 API](API-CONTRACT.md)
 
 화면 원본은 [미리보기 HTML](previews/screens.html)이다. 다운로드 후 브라우저에서 열어 직원/관리자/계정/로그인 탭으로 비교할 수 있다. API·로그인·저장을 실행하는 앱이 아니다.

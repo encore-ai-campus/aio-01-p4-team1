@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 48" role="img" aria-labelledby="title desc">
-  <title id="title">오케퐁</title><desc id="desc">오케퐁 IT 헬프데스크 로고</desc>
-  <rect x="2" y="2" width="44" height="44" rx="14" fill="#f4512a"/>
-  <path d="M13 17c0-3.3 2.7-6 6-6h10c3.3 0 6 2.7 6 6v7c0 3.3-2.7 6-6 6h-5l-5 5v-5h-1c-3.3 0-6-2.7-6-6z" fill="#fff"/>
-  <path d="m20 23 3 3 6-7" fill="none" stroke="#f4512a" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
-  <text x="58" y="31" fill="#1f2933" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="21" font-weight="800">오케퐁</text>
-</svg>

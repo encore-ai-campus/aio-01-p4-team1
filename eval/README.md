@@ -1,12 +1,12 @@
-# eval · 평가 스크립트·케이스 제출본
+# eval · 오프라인 평가·회귀 검사
 
-기준 커밋 `ca94191`에서 다음 4개 자산을 원문 그대로 복사했다.
+저장소 루트에서 실행한다.
 
-- `develop/yubeen/tools/rag_evaluate.py`: RAG 평가 집계
-- `develop/yubeen/tests/test_evaluation.py`: 평가 로직 회귀 검사
-- `develop/dahyeok/tools/retrieval_check.py`: 검색·조회 Mock 검사
-- `develop/dahyeok/cases/support-retrieval.json`: 검색 평가 케이스
+```sh
+python3 -m unittest discover -s eval -p 'test_evaluation.py'
+python3 eval/retrieval_check.py
+```
 
-원본의 `tools/`, `cases/`, `workflows/` 상대 경로 참조는 보존했다. 추가 자료가 필요한 평가·테스트 실행은 [유빈님 개발 안내](../develop/yubeen/README.md)와 [다혁님 개발 안내](../develop/dahyeok/README.md)의 원본 배치에서 수행한다. 이번 이관에서는 Python 컴파일과 JSON 구문 검사를 통과했으며 평가를 재실행하거나 새 품질 수치를 생성하지 않았다.
+첫 명령은 평가 집계 로직과 CLI의 30개 회귀 검사를 실행한다. RAG CLI·설정은 `rag/`, 평가 후보는 `cases/rag-search.json`을 사용한다. 두 번째 명령은 Node.js로 `workflows/oke-support-mock.json`과 `fixtures/`를 사용해 `support-retrieval.json`의 21개 합성 검색·조회·이관 사례를 실행한다. 여기의 상대 경로는 `eval/` 기준 자산이며 `request_file`은 저장소 루트 `requests/`를 가리킨다.
 
-평가 기준은 [EVALUATION-GUIDE](../docs/EVALUATION-GUIDE.md), 기존 결과와 측정 근거는 [EXECUTION-RESULT](../docs/EXECUTION-RESULT.md) 및 [runs/](../runs/)를 따른다.
+이 검사는 실제 n8n·검색·티켓 API를 호출하지 않는다. 실제 실행 자료는 [runs/](../runs/README.md), 기준과 한계는 [평가 가이드](../docs/EVALUATION-GUIDE.md)·[실행 결과](../docs/EXECUTION-RESULT.md)를 따른다. `rag_evaluate.py`는 관측 결과 집계 도구이며 단독 네트워크 호출을 만들지 않는다.

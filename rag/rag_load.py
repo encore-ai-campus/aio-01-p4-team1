@@ -26,7 +26,7 @@ def build_snapshot(docs_dir, permissions_file):
     approvals = manifest.get('documents') if isinstance(manifest, dict) else None
     if not isinstance(manifest, dict) or manifest.get('approval_status') != 'approved' or not isinstance(approvals, dict) or set(approvals) != rag_prepare.EXPECTED:
         raise LoadError('permissions_unconfirmed')
-    files = list(root.iterdir())
+    files = [p for p in root.iterdir() if p.name != 'README.md']
     if len(files) != len(rag_prepare.EXPECTED) or {p.name for p in files} != {k + '.md' for k in rag_prepare.EXPECTED}:
         raise LoadError('document_set_mismatch')
     listed, responses = [], {}

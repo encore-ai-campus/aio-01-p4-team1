@@ -16,8 +16,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DEPLOY = HERE.parent
 REPO = DEPLOY.parent
-MANIFEST = REPO / "develop/yubeen/rag-permissions.json"
-DEFAULT_DATA = Path.home() / "port-cli/Aio/aio-01d4-stu/Last3Mon/79/data-api"
+MANIFEST = REPO / "rag/rag-permissions.json"
+DOCS = REPO / "knowledge"
 
 
 def write_private(path: Path, content: str, *, preserve: bool = True) -> None:
@@ -36,9 +36,9 @@ def env(**values: str) -> str:
     return "".join(f"{name}={value}\n" for name, value in values.items())
 
 
-def verify_source(path: Path) -> list[dict]:
-    if not path.is_dir() or not (path / "server.py").is_file() or not (path / "data/docs").is_dir():
-        raise SystemExit("data-api source must contain server.py and data/docs")
+def verify_source() -> list[dict]:
+    if not (REPO / "data-api/server.py").is_file() or not DOCS.is_dir():
+        raise SystemExit("repository must contain data-api/server.py and knowledge/")
     entries = json.loads(MANIFEST.read_text(encoding="utf-8"))
     docs = entries.get("documents", entries) if isinstance(entries, dict) else entries
     if isinstance(docs, dict):
@@ -51,7 +51,7 @@ def verify_source(path: Path) -> list[dict]:
         expected = item.get("sha256") or item.get("hash")
         if not isinstance(rel, str) or not isinstance(expected, str):
             raise SystemExit("rag permissions manifest lacks path/sha256")
-        candidate = path / "data/docs" / rel
+        candidate = DOCS / rel
         if not candidate.is_file():
             raise SystemExit(f"source document missing: {rel}")
         digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
@@ -179,8 +179,7 @@ def repair_rag_dsn(_: argparse.Namespace) -> None:
 
 
 def init(args: argparse.Namespace) -> None:
-    source = args.data_api.expanduser().resolve()
-    verified = verify_source(source)
+    verified = verify_source()
     private = HERE / ".private"
     key = lambda: secrets.token_urlsafe(48)
     db_name, db_boot, app_login, search_login, index_login = (
@@ -192,7 +191,7 @@ def init(args: argparse.Namespace) -> None:
     sandbox_api_key, sandbox_registration, sandbox_runner_key = key(), key(), key()
     values = {
         "compose.env": env(
-            OKE_LOCAL_DATA_API_DIR=str(source), N8N_VERSION="2.42.6", N8N_SANDBOX_VERSION="1.8.1",
+            N8N_VERSION="2.42.6", N8N_SANDBOX_VERSION="1.8.1",
             POSTGRES_DB=db_name, POSTGRES_USER=db_boot, POSTGRES_PASSWORD=boot_password,
             SANDBOX_API_KEYS=sandbox_api_key,
             SANDBOX_API_RUNNER_REGISTRATION_TOKEN=sandbox_registration,
@@ -250,7 +249,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     setup = sub.add_parser("init", help="create private local settings; existing settings are preserved")
-    setup.add_argument("--data-api", type=Path, default=DEFAULT_DATA)
     setup.set_defaults(func=init)
     roles = sub.add_parser("provision-db-roles", help="provision separate app/search/index LOGINs")
     roles.set_defaults(func=provision_roles)

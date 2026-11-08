@@ -1,7 +1,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 RUN npm install --global pnpm@9.15.4
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 COPY ./ ./
 RUN pnpm install --frozen-lockfile
 ARG BACKEND_ORIGIN=http://backend:8000

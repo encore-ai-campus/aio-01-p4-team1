@@ -1,8 +1,0 @@
-# Reference for manual contexts; backend.Dockerfile.dockerignore is effective.
-.env*
-**/.env*
-.venv
-.git
-**/__pycache__
-tests
-Doc

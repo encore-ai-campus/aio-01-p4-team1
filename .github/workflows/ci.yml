@@ -37,8 +37,8 @@ jobs:
           import pathlib
           import sys
 
-          root = pathlib.Path("develop")
-          json_files = list(root.glob("*/workflows/*.json")) + list(root.glob("*/cases/*.json"))
+          root = pathlib.Path(".")
+          json_files = list(root.glob("workflows/*.json")) + list(root.glob("cases/*.json"))
           for path in json_files:
               try:
                   with path.open("r", encoding="utf-8") as fh:
@@ -58,15 +58,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        if: hashFiles('develop/jihye/**/*.py') != ''
+        if: hashFiles('backend/**/*.py') != ''
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Compile Python files
-        if: hashFiles('develop/jihye/**/*.py', 'develop/*/**/*.py') != ''
+        if: hashFiles('backend/**/*.py') != ''
         run: |
-          python3 -m compileall -q develop/
+          python3 -m compileall -q backend/ rag/ eval/
 
   frontend-check:
     name: Frontend Check (Next.js)
@@ -76,18 +76,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node.js
-        if: hashFiles('develop/sueon/package.json') != ''
+        if: hashFiles('frontend/package.json') != ''
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       - name: Install and build frontend
-        if: hashFiles('develop/sueon/package.json') != ''
-        working-directory: develop/sueon
+        if: hashFiles('frontend/package.json') != ''
+        working-directory: frontend
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-          npm run build --if-present
+          npx --yes pnpm@9.15.4 install --frozen-lockfile
+          npx --yes pnpm@9.15.4 typecheck
+          npx --yes pnpm@9.15.4 build

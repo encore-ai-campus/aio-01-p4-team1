@@ -1,3 +1,7 @@
+# Root deployment
+
+Application build contexts are `backend/`, `frontend/`, and `rag/`. Both Compose definitions use only files in this checkout for code and input data. [LOCAL-MAC](LOCAL-MAC.md) initializes an isolated local stack without a separate course checkout. This path migration changes repository configuration; it does not deploy or restart the VM.
+
 # Unified VM deployment
 
 For a separate Mac-local copy of this stack (isolated Compose project, local-only secrets and volumes, FE at port 3001), see [LOCAL-MAC.md](LOCAL-MAC.md). The Mac setup does not use the VM's volumes or mutate VM runtime/configuration/data.
@@ -8,20 +12,20 @@ The three critical data volumes are external and retain their exact existing nam
 
 ## Standard deployment
 
-From the repository root on the VM, use the existing private environment files and explicitly set the app mode. The deploy helper performs this same sequence. The operator command is `python3 deploy.py deploy` from the private `vm_deploy` folder on the Mac. It fast-forwards VM `main`, validates Compose, builds the three `oke-team-*` images while the old project is available, stops old containers without removing them, then starts project `oke` and checks local readiness. PostgreSQL and n8n never share their volumes concurrently.
+From the repository root on the VM, use the existing private environment files and explicitly set the app mode. The operator performs this sequence. The Compose commands below run directly from this checkout; no separate deployment helper is required. It fast-forwards VM `main`, validates Compose, builds the three `oke-team-*` images while the old project is available, stops old containers without removing them, then starts project `oke` and checks local readiness. PostgreSQL and n8n never share their volumes concurrently.
 
 ```sh
 SERVICE_MODE=app docker compose \
   --env-file /home/toor/n8n/day65-n8n/.env \
-  --env-file develop/jihye/deploy/.env \
+  --env-file backend/deploy/.env \
   -f deploy/compose.vm.yaml -p oke config --quiet
 SERVICE_MODE=app docker compose \
   --env-file /home/toor/n8n/day65-n8n/.env \
-  --env-file develop/jihye/deploy/.env \
+  --env-file backend/deploy/.env \
   -f deploy/compose.vm.yaml -p oke up -d --build
 ```
 
-The private n8n environment file, backend environment file, and RAG `search.env`/`index.env` remain at their established VM paths and are not committed. The n8n encryption key, user database, credentials, workflow history, PostgreSQL data, and app/RAG records are preserved in the existing external volumes. The backend uses the dedicated application LOGIN, never the PostgreSQL superuser.
+Backend private configuration belongs in `backend/deploy/.env.backend`; RAG configuration belongs in `rag/.env.openai`, `rag/search.env`, and `rag/index.env`. Existing installations must provision these root paths before their next recreation. These files are not committed. The private n8n env file is supplied by the deployment environment. The n8n encryption key, user database, credentials, workflow history, PostgreSQL data, and app/RAG records are preserved in the existing external volumes. The backend uses the dedicated application LOGIN, never the PostgreSQL superuser.
 
 ## Optional services
 
@@ -29,18 +33,18 @@ SearXNG is excluded from the default service set and retained for recoverable ma
 
 ```sh
 SERVICE_MODE=app docker compose --env-file /home/toor/n8n/day65-n8n/.env \
-  --env-file develop/jihye/deploy/.env -f deploy/compose.vm.yaml -p oke \
+  --env-file backend/deploy/.env -f deploy/compose.vm.yaml -p oke \
   --profile indexing up -d rag-index
 ```
 
-After indexing, stop that service without removing it: `docker compose ... --profile indexing stop rag-index`. Search remains continuously available at the internal `rag-search` service DNS. The indexer reads the existing course documents read-only and checks the committed permission/hash manifest.
+After indexing, stop that service without removing it: `docker compose ... --profile indexing stop rag-index`. Search remains continuously available at the internal `rag-search` service DNS. The indexer reads root `knowledge/` read-only and checks `rag/rag-permissions.json`. The data API reads root `data/`, `knowledge/`, and `prompts/`.
 
 ## Rollback
 
 Never run old and new Compose projects simultaneously: they intentionally reference the same n8n and PostgreSQL volumes and host ports. If target readiness fails, first stop project `oke`, then restart the retained old containers in dependency order. SearXNG and RAG index remain stopped as directed.
 
 ```sh
-docker compose --env-file /home/toor/n8n/day65-n8n/.env --env-file develop/jihye/deploy/.env \
+docker compose --env-file /home/toor/n8n/day65-n8n/.env --env-file backend/deploy/.env \
   -f deploy/compose.vm.yaml -p oke stop
 docker start day65-n8n-postgres-1 day65-n8n-data-api-1 day65-n8n-sandbox-api-1
 docker start day65-n8n-sandbox-runner-1-1 day65-n8n-backend-1 day65-n8n-rag-search-1 day65-n8n-frontend-1

@@ -78,7 +78,7 @@
 
 ## 5. 팀 시나리오 구성 기준 (5종 이상 · `cases/team.json`)
 
-우리 팀의 설계 범위와 경계 조건을 증명하기 위해 아래 5가지 유형을 각각 1개 이상 포함하여 `develop/wonmin/cases/team.json` (최종 취합 시 `cases/team.json`)에 작성한다.
+우리 팀의 설계 범위와 경계 조건을 증명하기 위해 아래 5가지 유형을 각각 1개 이상 포함하여 `cases/team.json`에 작성한다.
 
 1. **우리 범위의 정상 자동 답변**: 비밀번호 규정, 회의실 장비, 장비 반납 등 허용 규정 근거로 정확히 답변되는 케이스
 2. **분류 경계 · 모호한 문의**: 예: `"VPN 비밀번호를 잊어버렸어요"` (계정 vs 네트워크 경계에서 보완 질문 또는 명확한 규정 안내 동작 확인)
@@ -90,22 +90,17 @@
 
 ## 6. 검증 실행 순서 및 결과 집계 방법
 
-```bash
-# 1) 워크플로우 JSON 정적 문법 검사
-uv run tools/flow.py check develop/dahyeok/workflows/oke-support.json
+현재 제출본의 정적·오프라인 검사는 저장소 루트에서 실행한다.
 
-# 2) 공통 시나리오 14종 단건 검증 및 LLM 3회 반복 검증
-export FLOW_WEBHOOK_KEY=<팀_웹훅_키>
-uv run tools/flow.py test cases/common.json --webhook oke-support -v
-uv run tools/flow.py test cases/common.json --webhook oke-support --repeat 3
-
-# 3) 팀 시나리오 검증
-uv run tools/flow.py test develop/wonmin/cases/team.json --webhook oke-support -v
-
-# 4) 처리시간(p50 · p95) 벤치마크 및 저장 결과(티켓·알림·DLQ) 확인
-uv run tools/flow.py bench oke-support develop/wonmin/requests/wf01.json -n 5
-uv run tools/flow.py ops
+```sh
+python3 -m compileall -q backend/ rag/ eval/
+python3 -m unittest discover -s eval -p 'test_evaluation.py'
+python3 eval/retrieval_check.py
+python3 rag/rag_verify.py index --scenario initial-and-repeat --json
 ```
+
+실제 HTTP 시나리오는 `cases/`와 `requests/`의 입력·기대값을 사용해 [API 계약](API-CONTRACT.md)의 인증 헤더와 실행 모드를 적용하고, 응답·소요시간·DB 부작용을 `runs/`에 기록한다. LLM 경로는 같은 조건으로 3회 반복한다. 이 저장소의 Mock 검사는 공식 공통 시험 러너를 대체하지 않으며, 과거 강의 `flow.py`의 제한과 미실행 범위는 [실행 결과](EXECUTION-RESULT.md)에 남긴다. 위 오프라인 명령은 외부 강의 도구를 요구하지 않는다.
+
 
 - **판정 원칙**:
   - LLM이 포함된 시나리오는 **`--repeat 3` (3회 반복) 모두 통과(3/3)**해야 최종 PASS로 기록한다.

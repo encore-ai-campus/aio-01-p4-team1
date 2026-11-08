@@ -18,7 +18,7 @@
 | [RAG-ARCHITECTURE](RAG-ARCHITECTURE.md) | 필수 2: 실제 RAG 설계·비교 측정 |
 | [EXECUTION-RESULT](EXECUTION-RESULT.md) | 필수 3: 실제 시험·실패·재시험 |
 
-개인 개발·작업 지침 안내는 [develop/README](../develop/README.md)를 따른다.
+개인 개발·작업 지침 안내는 [SUBMISSION](../SUBMISSION.md)를 따른다.
 [daily](../daily/README.md)는 당일 기록 3장, [images](images/README.md)는 실제 제출 캡처다.
 확정된 계획은 워크플로우·RAG 설계서 초안에 반영했다. 실제 노드·측정·실행 자료는 구현 후 추가하고 실행 결과서는 실제 보고서로 채운다. 개인 TODO·SPEC·IMP-PLAN은 개발용 기준이다.
-80일차 주제 설명은 TOPIC의 1분 발표문, 팀장 준비·당일 점검은 [오현님 TODO](../develop/ohyun/Doc/TODO.md), 제출 형식·PDF 점검은 [SUBMISSION](../develop/ohyun/SUBMISSION.md)을 따른다.
+80일차 주제 설명은 TOPIC의 1분 발표문, 팀장 준비·당일 점검은 [제출 검증 안내](../SUBMISSION.md), 제출 형식·PDF 점검은 [SUBMISSION](../SUBMISSION.md)을 따른다.

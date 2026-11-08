@@ -50,8 +50,10 @@ services:
   data-api:
     ports: !override []
     volumes: !override
-      - ${OKE_LOCAL_DATA_API_DIR:?run deploy/local/setup.py init}/server.py:/app/server.py:ro
-      - ${OKE_LOCAL_DATA_API_DIR:?run deploy/local/setup.py init}/data:/data:ro
+      - ../data-api/server.py:/app/server.py:ro
+      - ../data:/data:ro
+      - ../knowledge:/knowledge:ro
+      - ../prompts:/prompts:ro
   backend:
     image: oke-team-backend:local
     env_file: !override
@@ -77,13 +79,13 @@ services:
       - path: local/.private/index.env
         required: true
     volumes: !override
-      - ${OKE_LOCAL_DATA_API_DIR:?run deploy/local/setup.py init}/data/docs:/rag-docs:ro
-      - ../develop/yubeen/rag-permissions.json:/app/develop/yubeen/rag-permissions.json:ro
+      - ../knowledge:/rag-docs:ro
+      - ../rag/rag-permissions.json:/app/rag/rag-permissions.json:ro
   db-migrate:
     profiles: [local-setup]
     image: oke-team-backend:local
     build:
-      context: ../develop/jihye
+      context: ../backend
       dockerfile: deploy/backend.Dockerfile
     env_file: !override
       - path: local/.private/migrate.env

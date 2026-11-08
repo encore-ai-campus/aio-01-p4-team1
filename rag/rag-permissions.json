@@ -1,7 +1,7 @@
 {
   "approval_status": "approved",
   "source_origin": "http://data-api:8800",
-  "source_path": "/home/toor/aio-01d4-stu/Last3Mon/79/data-api/data/docs",
+  "source_path": "knowledge",
   "permission_policy": "docs/DATA-AND-DB.md section 4: source metadata first; otherwise the eight standard policies are all, confirmed IT operational document security-incident is it; reject unknown documents",
   "documents": {
     "device-issue-return": {

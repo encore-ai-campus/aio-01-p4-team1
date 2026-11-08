@@ -1,9 +1,5 @@
-# cases · 시험 시나리오 제출 위치
+# cases · 시험·평가 입력
 
-현재는 폴더 안내만 있으며 common.json·team.json은 없다.
+`common.json`, `team.json`, `handoff.json`과 RAG 후보·합성 fixture(`rag-search.json`, `chunk-comparison-mock.json`, `source-inventory-mock.json`, `rag-integration-example.json`)를 포함한다. 시험 기대값은 이관 과정에서 바꾸지 않았다.
 
-- 받을 결과: 배포 키트 원본 기준의 공통 시나리오와 팀 시나리오 team.json 5개 이상. 입력·조건·기대·부작용·정리를 명시한다.
-- 개발 원본: main의 develop/wonmin/cases/ · 자료 제공 원민님 · 제출 취합 오현님.
-- 취합 후 확인: 공통 14유형의 기대값을 임의 변경하지 않는다. 데이터/API 모드, before/after·요청 파일 경로와 실제 호출 대상이 일치해야 한다.
-
-통과시키기 위한 시나리오 조정이나 실제 실행 전 PASS 표시는 하지 않는다. [브랜치 운영·문서 병합·최종 제출 기준](../SUBMISSION.md)을 따른다.
+공통 14유형의 판정은 [평가 가이드](../docs/EVALUATION-GUIDE.md), 오프라인 실행은 [eval/](../eval/README.md), 실제 시험 결과와 공식 러너 미실행 등 한계는 [실행 결과](../docs/EXECUTION-RESULT.md)를 따른다. 합성 fixture와 동결되지 않은 평가 후보를 실서비스 품질 PASS로 집계하지 않는다.

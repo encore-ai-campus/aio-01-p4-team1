@@ -482,7 +482,7 @@ def main(argv=None, *, transport=None):
     args = parser.parse_args(argv)
     output = args.output.resolve()
     if not output.is_relative_to(ROOT):
-        parser.error('output must be inside develop/yubeen')
+        parser.error('output must be inside the repository')
     if args.source == 'mock' and args.input is None:
         parser.error('--input required for mock')
     try:

@@ -23,7 +23,7 @@ Run from `deploy/` in this repository. Docker Desktop/Engine must already be run
 python3 local/setup.py init
 ```
 
-`init` verifies all eight approved source-document hashes and creates local-only environment files in `local/.private/` with directory mode `0700` and file mode `0600`. It creates new Mac-only database, app, RAG, n8n, runner, team, session, and initial admin secrets. It never copies a VM environment file, password, credential, or database dump. The original course `data-api/server.py` and `data` directory are mounted read-only from the detected Mac course path; pass `--data-api /path/to/Last3Mon/79/data-api` if the source is elsewhere.
+`init` verifies all eight approved source-document hashes and creates local-only environment files in `local/.private/` with directory mode `0700` and file mode `0600`. It creates new Mac-only database, app, RAG, n8n, runner, team, session, and initial admin secrets. It never copies a VM environment file, password, credential, or database dump. The repository root `data-api/server.py`, `data/`, `knowledge/`, and `prompts/` are mounted read-only. `init` verifies the eight local `knowledge/` documents against `rag/rag-permissions.json`; no course checkout or external source directory is required.
 
 If an approved OpenAI key is supplied as a macOS textClipping file, import it without printing its content:
 

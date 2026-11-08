@@ -99,7 +99,7 @@ SERVICE_MODE 하나가 상대 n8n Credential/URL까지 자동 변경한다고 �
 
 ## 초기 구현 계획의 로컬 확인 순서 · 실제 단계 결과는 IMP-PLAN 참조
 
-명령의 작업 디렉터리는 저장소 기준 `develop/jihye`다. 실제 비밀 파일은 로컬에서만 `deploy/.env`로 준비하는 계획이다. 명령 출력에 환경값을 펼치는 config 출력은 피한다.
+명령의 작업 디렉터리는 저장소 기준 `backend`다. 실제 비밀 파일은 로컬에서만 `deploy/.env`로 준비하는 계획이다. 명령 출력에 환경값을 펼치는 config 출력은 피한다.
 
 1. `uv sync --dev`로 본인 의존성만 설치하고 잠금 파일을 검증한다. 서버 개발 명령은 `uv run uvicorn app.main:app --host 127.0.0.1 --port 8000`로 계획한다. 이미지 내부는 host 0.0.0.0/8000이다.
 2. `docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet`로 경로·문법을 검사한다. 실제 .env·암호·키는 출력/보고서에 복사하지 않는다.
@@ -143,7 +143,7 @@ uv run python -m app.cli bootstrap-admin --employee-name <제공 IT팀 이름> -
 
 #### DB 적용 순서 · 새 격리 대상에서 승인 담당자가 수행
 
-작업 위치는 체크아웃한 저장소의 `develop/jihye`다. 마이그레이션용 `DATABASE_URL`은 비밀 관리에서 환경에 주입하고 출력하지 않는다. 이 URL은 SQLAlchemy용 `postgresql+psycopg` 드라이버를 사용한다.
+작업 위치는 체크아웃한 저장소의 `backend`다. 마이그레이션용 `DATABASE_URL`은 비밀 관리에서 환경에 주입하고 출력하지 않는다. 이 URL은 SQLAlchemy용 `postgresql+psycopg` 드라이버를 사용한다.
 
 ```bash
 uv sync --dev --locked
@@ -189,7 +189,7 @@ VM 배포 후 공통 시험·LLM 반복·실제 runs 결과는 원민님과 오�
 
 `seed_local_mock.sql`은 로컬 통합 화면과 업무 API를 확인할 합성 업무 행을 명시적으로 넣는다. Alembic revision·앱 시작·Compose 기동에서는 자동 실행하지 않는다. 스크립트가 DB명 `oke_jihye_p0`, migration owner `oke_migration`, head `0005`, pgvector 설치를 검사하고, 다른 DB/계정에서는 트랜잭션을 거절한다. 기존 직원의 부서가 팀 고정 6명 명단과 다르면 중단한다.
 
-로컬 개인 Compose가 실행 중이고 migration `0005` 적용이 확인된 경우에만 `develop/jihye`에서 실행한다. `.env` 값이나 비밀번호를 명령에 직접 넣거나 출력하지 않는다.
+로컬 개인 Compose가 실행 중이고 migration `0005` 적용이 확인된 경우에만 `backend`에서 실행한다. `.env` 값이나 비밀번호를 명령에 직접 넣거나 출력하지 않는다.
 
 ```bash
 docker compose --env-file deploy/.env -f deploy/compose.yaml exec -T postgres sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" psql -X -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < deploy/seed_local_mock.sql

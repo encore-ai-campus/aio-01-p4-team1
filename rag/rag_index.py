@@ -9,7 +9,7 @@ from pathlib import Path
 
 import rag_prepare as prepare
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parent
 
 
 class IndexError(ValueError):

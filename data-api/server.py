@@ -108,7 +108,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-DATA_DIR = Path(os.getenv("DATA_DIR", Path(__file__).resolve().parent / "data"))
+REPO = Path(__file__).resolve().parent.parent
+DATA_DIR = Path(os.getenv("DATA_DIR", REPO / "data"))
+DOCS_DIR = Path(os.getenv("DATA_DOCS_DIR", REPO / "knowledge"))
+PROMPTS_DIR = Path(os.getenv("DATA_PROMPTS_DIR", REPO / "prompts"))
 PORT = int(os.getenv("PORT", "8800"))
 
 LOCK = threading.Lock()
@@ -402,12 +405,12 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(404, {"error": "unknown employee", "name": name})
         if url.path == "/docs":
             docs = [{"name": f.stem, "title": f.read_text(encoding="utf-8").splitlines()[0].lstrip("# ").strip()}
-                    for f in sorted((DATA_DIR / "docs").glob("*.md"))]
+                    for f in sorted(DOCS_DIR.glob("*.md")) if f.name != "README.md"]
             return self.send_json(200, {"docs": docs})
         if url.path.startswith("/docs/"):
             name = unquote(url.path.removeprefix("/docs/")).strip()
-            path = DATA_DIR / "docs" / f"{name}.md"
-            if "/" in name or not path.exists():
+            path = DOCS_DIR / f"{name}.md"
+            if "/" in name or name == "README" or not path.exists():
                 return self.send_json(404, {"error": "doc not found", "name": name})
             text = path.read_text(encoding="utf-8")
             return self.send_json(200, {"name": name, "title": text.splitlines()[0].lstrip("# ").strip(), "text": text})
@@ -426,7 +429,7 @@ class Handler(BaseHTTPRequestHandler):
             if self.faulty("prompts"):
                 return None
             parts = [unquote(p) for p in url.path.removeprefix("/prompts/").split("/") if p]
-            folder = DATA_DIR / "prompts"
+            folder = PROMPTS_DIR
             if len(parts) == 1:
                 versions = sorted(f.stem.removeprefix(parts[0] + "-") for f in folder.glob(f"{parts[0]}-*.md"))
                 return self.send_json(200 if versions else 404, {"name": parts[0], "versions": versions})

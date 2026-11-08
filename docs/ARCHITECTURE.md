@@ -84,27 +84,25 @@ flowchart TB
 
 ---
 
-## 3. 역할별 폴더 소유권 구조
+## 3. 독립 제출본 폴더 구조
 
 ```text
 Aio-4pj-1team/
-├─ AGENTS.md / CLAUDE.md       # 모든 AI 코딩 에이전트 공통 작업 규칙
-├─ .env.example                # 환경변수 키 이름 기준표 (실제 값은 .env에 두고 Git 제외)
-├─ .github/                    # PR 템플릿 및 GitHub Actions CI 자동 검사
-├─ docs/                       # 팀 공통 기준 문서 및 최종 제출 산출물 (오현님 관리)
-│  ├─ ARCHITECTURE.md          # 전체 시스템 아키텍처 구성도 (본 문서)
-│  ├─ adr/                     # 아키텍처 의사결정 기록 (ADR)
-│  ├─ API-CONTRACT.md          # C01~C07 API·웹훅·환경 계약
-│  ├─ DATA-AND-DB.md           # PostgreSQL(app/rag) 및 data-api 스키마 기준
-│  ├─ COORDINATION.md          # 개발·협업·PR·통합 절차
-│  ├─ WORKFLOW-DESIGN.md       # [제출 필수 1] 워크플로우 설계서 (다혁님 초안 → 오현님 통합)
-│  ├─ RAG-ARCHITECTURE.md      # [제출 필수 2] RAG 설계서 (유빈님 초안 → 오현님 통합)
-│  └─ EXECUTION-RESULT.md      # [제출 필수 3] 실행 결과서 (원민님 집계·다혁님 확인 → 오현님 통합)
-└─ develop/                    # 6명 역할별 독립 작업 공간 (자기 폴더 안에서만 수정)
-   ├─ ohyun/                   # 팀장 · 계약/문서/배포/제출 통합
-   ├─ sueon/                   # 프런트엔드 (Next.js)
-   ├─ jihye/                   # 백엔드 (FastAPI) · DB 마이그레이션 · Docker Compose
-   ├─ dahyeok/                 # 메인 워크플로우 (oke-support.json)
-   ├─ yubeen/                  # RAG 파이프라인 (oke-index.json, oke-search.json)
-   └─ wonmin/                  # 이관·오류 워크플로우 (oke-handoff.json, oke-errors.json) · 통합 시험
+├─ backend/       # FastAPI·DB 모델·마이그레이션·검증
+├─ frontend/      # Next.js 직원·관리자 화면
+├─ rag/           # 색인·검색 서비스·config·권한 매핑
+├─ data-api/      # 제공 API 서버
+├─ data/          # 가상 초기 JSON·schemas
+├─ knowledge/     # 사내 규정 8종
+├─ prompts/       # 제공 프롬프트 3종
+├─ workflows/     # n8n 본체·색인·검색·이관·오류 5종
+├─ cases/         # 공통·팀·RAG 시나리오와 합성 fixture
+├─ requests/      # 시연·측정·오류 입력
+├─ eval/          # 오프라인 평가·Mock 회귀 검사
+├─ runs/          # 실제 시험·측정 영수증
+├─ deploy/        # VM·격리 로컬 Compose·Dockerfile·초기화
+├─ docs/          # 계약·설계·실행 결과
+└─ daily/         # 당시 일일 기록
 ```
+
+현재 실행·검증 경로는 [SUBMISSION](../SUBMISSION.md)을 따른다. 과거 개발 당시 경로는 일일 기록과 영수증의 이력이며 런타임 의존성이 아니다.

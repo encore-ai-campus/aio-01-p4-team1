@@ -134,22 +134,26 @@ services:
     command: python /app/server.py
     environment:
       DATA_DIR: /data
+      DATA_DOCS_DIR: /knowledge
+      DATA_PROMPTS_DIR: /prompts
       PYTHONUNBUFFERED: '1'
       TZ: KST-9
     ports:
       - '127.0.0.1:8800:8800'
     volumes:
       - ../data-api/server.py:/app/server.py:ro
-      - ../data-api/data:/data:ro
+      - ../data:/data:ro
+      - ../knowledge:/knowledge:ro
+      - ../prompts:/prompts:ro
     restart: unless-stopped
     networks: [internal]
   backend:
     build:
-      context: ../develop/jihye
+      context: ../backend
       dockerfile: deploy/backend.Dockerfile
     image: oke-team-backend:unified
     env_file:
-      - path: ${BACKEND_ENV_FILE:-../develop/jihye/deploy/.env.backend}
+      - path: ${BACKEND_ENV_FILE:-../backend/deploy/.env.backend}
         required: false
     environment:
       SERVICE_MODE: ${SERVICE_MODE:-app}
@@ -175,8 +179,8 @@ services:
     networks: [internal]
   frontend:
     build:
-      context: ../develop/sueon
-      dockerfile: ../../deploy/frontend.Dockerfile
+      context: ../frontend
+      dockerfile: ../deploy/frontend.Dockerfile
       args:
         BACKEND_ORIGIN: http://backend:8000
     image: oke-team-frontend:unified
@@ -204,14 +208,14 @@ services:
     networks: [internal]
   rag-search:
     build:
-      context: ../develop/yubeen
-      dockerfile: ../../deploy/rag.Dockerfile
+      context: ../rag
+      dockerfile: ../deploy/rag.Dockerfile
     image: oke-team-rag:unified
     command: [python, search_http.py, --host, 0.0.0.0, --port, '8765']
     env_file:
-      - path: ${RAG_OPENAI_ENV_FILE:-../develop/yubeen/.env.openai}
+      - path: ${RAG_OPENAI_ENV_FILE:-../rag/.env.openai}
         required: false
-      - path: ${SEARCH_ENV_FILE:-../develop/yubeen/search.env}
+      - path: ${SEARCH_ENV_FILE:-../rag/search.env}
         required: false
     environment:
       SEARCH_MODE: live
@@ -233,18 +237,18 @@ services:
     image: oke-team-rag:unified
     command: [python, index_http.py, --host, 0.0.0.0, --port, '8766']
     env_file:
-      - path: ${RAG_OPENAI_ENV_FILE:-../develop/yubeen/.env.openai}
+      - path: ${RAG_OPENAI_ENV_FILE:-../rag/.env.openai}
         required: false
-      - path: ${INDEX_ENV_FILE:-../develop/yubeen/index.env}
+      - path: ${INDEX_ENV_FILE:-../rag/index.env}
         required: false
     environment:
       INDEX_HOST: 0.0.0.0
       INDEX_PORT: '8766'
       RAG_DOCS_DIR: /rag-docs
-      RAG_PERMISSIONS_FILE: /app/develop/yubeen/rag-permissions.json
+      RAG_PERMISSIONS_FILE: /app/rag/rag-permissions.json
     volumes:
-      - ../data-api/data/docs:/rag-docs:ro
-      - ../develop/yubeen/rag-permissions.json:/app/develop/yubeen/rag-permissions.json:ro
+      - ../knowledge:/rag-docs:ro
+      - ../rag/rag-permissions.json:/app/rag/rag-permissions.json:ro
     expose: ['8766']
     depends_on:
       postgres:

@@ -1,5 +1,5 @@
 -- Explicit local-only application fixture seed. This is not an Alembic migration.
--- Target: the private develop/jihye Compose database named oke_jihye_p0.
+-- Target: the private backend Compose database named oke_jihye_p0.
 BEGIN;
 
 DO $local_seed_guard$

@@ -11,13 +11,17 @@ services:
     command: python /app/server.py
     environment:
       - DATA_DIR=/data
+      - DATA_DOCS_DIR=/knowledge
+      - DATA_PROMPTS_DIR=/prompts
       - PYTHONUNBUFFERED=1
       - TZ=KST-9            # live run logs get Korean time (class day), not UTC
     ports:
       - "8800:8800"
     volumes:
       - ./server.py:/app/server.py:ro
-      - ./data:/data:ro
+      - ../data:/data:ro
+      - ../knowledge:/knowledge:ro
+      - ../prompts:/prompts:ro
     networks:
       - n8n
     restart: unless-stopped

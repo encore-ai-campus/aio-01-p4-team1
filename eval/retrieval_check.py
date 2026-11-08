@@ -364,12 +364,12 @@ def run(flow, cases, container):
     has_verification = "N13 Prepare writer" in {node["name"] for node in flow["nodes"]}
     has_replay = "N05 Replay MOCK" in {node["name"] for node in flow["nodes"]}
     payload = json.dumps({"flow": flow, "chain": BASE_CHAIN + (TICKET_CHAIN if has_ticket else []) + TAIL,
-                          "tests": tests, "searchResults": read(ROOT / "fixtures/search-results.json")["results"],
-                          "ticketResults": read(ROOT / "fixtures/ticket-lookups.json")["results"] if has_ticket else {},
-                          "handoffResults": read(ROOT / "fixtures/c04-wonmin-samples.json")["results"] if has_merge else {},
-                          "writerResults": read(ROOT / "fixtures/writer-results.json")["results"] if has_verification else {},
-                          "verifierResults": read(ROOT / "fixtures/verifier-results.json")["results"] if has_verification else {},
-                          "replayResults": read(ROOT / "fixtures/replay-results.json")["results"] if has_replay else {}},
+                          "tests": tests, "searchResults": read(ROOT / "eval/fixtures/search-results.json")["results"],
+                          "ticketResults": read(ROOT / "eval/fixtures/ticket-lookups.json")["results"] if has_ticket else {},
+                          "handoffResults": read(ROOT / "eval/fixtures/c04-wonmin-samples.json")["results"] if has_merge else {},
+                          "writerResults": read(ROOT / "eval/fixtures/writer-results.json")["results"] if has_verification else {},
+                          "verifierResults": read(ROOT / "eval/fixtures/verifier-results.json")["results"] if has_verification else {},
+                          "replayResults": read(ROOT / "eval/fixtures/replay-results.json")["results"] if has_replay else {}},
                          ensure_ascii=False)
     if container:
         cmd = ["docker", "exec", "-i", container, "node", "-e", PARALLEL_RUNNER if has_merge else RUNNER]
@@ -463,8 +463,8 @@ def run(flow, cases, container):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("workflow", nargs="?", default="workflows/oke-support-04.json")
-    parser.add_argument("cases", nargs="?", default="cases/support-search.json")
+    parser.add_argument("workflow", nargs="?", default="eval/workflows/oke-support-mock.json")
+    parser.add_argument("cases", nargs="?", default="eval/support-retrieval.json")
     parser.add_argument("--node-container")
     args = parser.parse_args()
     try:

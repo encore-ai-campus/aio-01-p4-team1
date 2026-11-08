@@ -75,7 +75,7 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 
 ## 구현 후 확인 절차 · 단계별 실제 결과는 IMP-PLAN 참조
 
-작업 디렉터리는 저장소 기준 `develop/jihye`다. DATABASE_URL은 **개별 빈 검증 DB**를 가리키게 하고 공유/운영 DB에 downgrade를 실행하지 않는다.
+작업 디렉터리는 저장소 기준 `backend`다. DATABASE_URL은 **개별 빈 검증 DB**를 가리키게 하고 공유/운영 DB에 downgrade를 실행하지 않는다.
 
 1. `uv run alembic -c migrations/alembic.ini heads`와 `history`로 순서·단일 head를 확인한다.
 2. `uv run alembic -c migrations/alembic.ini upgrade head` 후 `current`가 적용 코드의 단일 head인지 확인한다. 현재 로컬 코드는 `0005` head다. 동일 upgrade 재실행에서 추가 DDL/데이터 변경이 없어야 한다.

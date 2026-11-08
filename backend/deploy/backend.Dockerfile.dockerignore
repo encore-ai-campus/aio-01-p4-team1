@@ -1,4 +1,4 @@
-# Dockerfile-specific ignore rules apply to the develop/jihye build context.
+# Dockerfile-specific ignore rules apply to the backend build context.
 **
 !app/
 !app/**

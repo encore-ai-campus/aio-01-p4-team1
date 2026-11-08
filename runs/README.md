@@ -16,11 +16,8 @@
 
 ---
 
-## 2. 팀원별 세부 실험 및 회귀 영수증 보관 위치
+## 2. 기록 범위
 
-- **박지혜 (Backend · DB · RBAC)**: [`develop/jihye/runs/`](../develop/jihye/runs/)
-- **신유빈 (RAG · Chunking · Vector Search)**: [`develop/yubeen/runs/`](../develop/yubeen/runs/)
-- **임다혁 (Support v18 로컬 회귀 · 점수 분포 · 3회 반복 · 실서버 1/2차)**: [`develop/dahyeok/runs/`](../develop/dahyeok/runs/)
-- **이원민 (C04/C05 앱 통합 · Error Trigger · WF-02b/WF-09 라이브 QA)**: [`develop/wonmin/runs/`](../develop/wonmin/runs/) (`runs/INDEX.md` 참조)
+이 폴더에는 위 표의 제출 영수증을 포함한다. 과거 결과서의 개인 개발 경로는 당시 실행 이력이며 현재 실행에 필요하지 않다. 제출본의 재현 명령과 검증 범위는 [SUBMISSION](../SUBMISSION.md)을 따른다.
 
 > 모든 수치는 [워크플로우 실행 결과서 (`docs/EXECUTION-RESULT.md`)](../docs/EXECUTION-RESULT.md), [RAG 아키텍처 설계서 (`docs/RAG-ARCHITECTURE.md`)](../docs/RAG-ARCHITECTURE.md), [워크플로우 설계서 (`docs/WORKFLOW-DESIGN.md`)](../docs/WORKFLOW-DESIGN.md)와 1:1로 대응합니다.

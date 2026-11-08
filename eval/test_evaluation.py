@@ -3,7 +3,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'rag'))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'apps/rag'))
 from rag_evaluate import evaluate, stats, compare_conditions
 
 class EvaluationTests(unittest.TestCase):
@@ -154,7 +154,7 @@ class ReviewRegressionTests(unittest.TestCase):
             cases.write_text(json.dumps(self.cases));raw=json.dumps(self.bundle)
             item=json.dumps(self.bundle['records']['section:F1:1']);needle='"section:F1:1": '+item
             results.write_text(raw.replace(needle,needle+', '+needle,1))
-            args=[sys.executable,str(root/'rag/rag_verify.py'),'evaluate','--cases',str(cases),'--results',str(results),'--output',str(output)]
+            args=[sys.executable,str(root/'apps/rag/rag_verify.py'),'evaluate','--cases',str(cases),'--results',str(results),'--output',str(output)]
             x=subprocess.run(args,capture_output=True,text=True,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'))
             self.assertEqual(x.returncode,2);self.assertIn('duplicate_json_key',x.stderr);self.assertEqual(output.read_text(),'sentinel')
     def test_cli_idempotent_append(self):
@@ -162,7 +162,7 @@ class ReviewRegressionTests(unittest.TestCase):
         root=Path(__file__).resolve().parents[1]
         with tempfile.TemporaryDirectory(dir=root) as tmp:
             p=Path(tmp);cases=p/'cases.json';output=p/'output.md';cases.write_text(json.dumps(self.cases));output.write_text('sentinel')
-            args=[sys.executable,str(root/'rag/rag_verify.py'),'evaluate','--cases',str(cases),'--output',str(output)]
+            args=[sys.executable,str(root/'apps/rag/rag_verify.py'),'evaluate','--cases',str(cases),'--output',str(output)]
             for _ in range(2):
                 x=subprocess.run(args,capture_output=True,text=True,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'));self.assertEqual(x.returncode,0,x.stderr)
             self.assertTrue(output.read_text().startswith('sentinel'));self.assertEqual(output.read_text().count('<!-- rag-evaluation:'),1)

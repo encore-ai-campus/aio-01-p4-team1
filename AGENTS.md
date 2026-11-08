@@ -2,7 +2,7 @@
 
 ## 시작과 경로
 
-`README.md`, `SUBMISSION.md`, `docs/TOPIC.md`, `docs/API-CONTRACT.md`, `docs/DATA-AND-DB.md`, `docs/TEAM-CHARTER.md`를 읽고 작업 경로·입출력·완료 기준을 정리한다. 현재 `main`의 구현 경로는 `frontend/`, `backend/`, `rag/`, `workflows/`이며 배포는 `deploy/`, 데이터는 `data/`, `knowledge/`, `prompts/`를 사용한다. 개인 개발 폴더·다른 브랜치·외부 강의 저장소를 실행 의존성으로 추가하지 않는다.
+`README.md`, `SUBMISSION.md`, `docs/TOPIC.md`, `docs/API-CONTRACT.md`, `docs/DATA-AND-DB.md`, `docs/TEAM-CHARTER.md`를 읽고 작업 경로·입출력·완료 기준을 정리한다. 현재 `main`의 구현 경로는 `apps/frontend/`, `apps/backend/`, `apps/rag/`, `apps/data-api/`, `workflows/`이며 배포는 `deploy/`, 데이터는 `data/`, `knowledge/`, `prompts/`를 사용한다. 개인 개발 폴더·다른 브랜치·외부 강의 저장소를 실행 의존성으로 추가하지 않는다.
 
 ## 계약과 보안
 

@@ -93,10 +93,10 @@
 현재 제출본의 정적·오프라인 검사는 저장소 루트에서 실행한다.
 
 ```sh
-python3 -m compileall -q backend/ rag/ eval/
+python3 -m compileall -q apps/ eval/
 python3 -m unittest discover -s eval -p 'test_evaluation.py'
 python3 eval/retrieval_check.py
-python3 rag/rag_verify.py index --scenario initial-and-repeat --json
+python3 apps/rag/rag_verify.py index --scenario initial-and-repeat --json
 ```
 
 실제 HTTP 시나리오는 `cases/`와 `requests/`의 입력·기대값을 사용해 [API 계약](API-CONTRACT.md)의 인증 헤더와 실행 모드를 적용하고, 응답·소요시간·DB 부작용을 `runs/`에 기록한다. LLM 경로는 같은 조건으로 3회 반복한다. 이 저장소의 Mock 검사는 공식 공통 시험 러너를 대체하지 않으며, 과거 강의 `flow.py`의 제한과 미실행 범위는 [실행 결과](EXECUTION-RESULT.md)에 남긴다. 위 오프라인 명령은 외부 강의 도구를 요구하지 않는다.

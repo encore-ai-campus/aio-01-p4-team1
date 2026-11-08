@@ -108,7 +108,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-REPO = Path(__file__).resolve().parent.parent
+SERVICE_DIR = Path(__file__).resolve().parent
+REPO = SERVICE_DIR.parent.parent if SERVICE_DIR.parent.name == "apps" else SERVICE_DIR.parent
 DATA_DIR = Path(os.getenv("DATA_DIR", REPO / "data"))
 DOCS_DIR = Path(os.getenv("DATA_DOCS_DIR", REPO / "knowledge"))
 PROMPTS_DIR = Path(os.getenv("DATA_PROMPTS_DIR", REPO / "prompts"))

@@ -142,7 +142,7 @@ services:
     ports:
       - '127.0.0.1:8800:8800'
     volumes:
-      - ../data-api/server.py:/app/server.py:ro
+      - ../apps/data-api/server.py:/app/server.py:ro
       - ../data:/data:ro
       - ../knowledge:/knowledge:ro
       - ../prompts:/prompts:ro
@@ -150,11 +150,11 @@ services:
     networks: [internal]
   backend:
     build:
-      context: ../backend
+      context: ../apps/backend
       dockerfile: deploy/backend.Dockerfile
     image: oke-team-backend:unified
     env_file:
-      - path: ${BACKEND_ENV_FILE:-../backend/deploy/.env.backend}
+      - path: ${BACKEND_ENV_FILE:-../apps/backend/deploy/.env.backend}
         required: false
     environment:
       SERVICE_MODE: ${SERVICE_MODE:-app}
@@ -180,8 +180,8 @@ services:
     networks: [internal]
   frontend:
     build:
-      context: ../frontend
-      dockerfile: ../deploy/frontend.Dockerfile
+      context: ../apps/frontend
+      dockerfile: ../../deploy/frontend.Dockerfile
       args:
         BACKEND_ORIGIN: http://backend:8000
     image: oke-team-frontend:unified
@@ -209,14 +209,14 @@ services:
     networks: [internal]
   rag-search:
     build:
-      context: ../rag
-      dockerfile: ../deploy/rag.Dockerfile
+      context: ../apps/rag
+      dockerfile: ../../deploy/rag.Dockerfile
     image: oke-team-rag:unified
     command: [python, search_http.py, --host, 0.0.0.0, --port, '8765']
     env_file:
-      - path: ${RAG_OPENAI_ENV_FILE:-../rag/.env.openai}
+      - path: ${RAG_OPENAI_ENV_FILE:-../apps/rag/.env.openai}
         required: false
-      - path: ${SEARCH_ENV_FILE:-../rag/search.env}
+      - path: ${SEARCH_ENV_FILE:-../apps/rag/search.env}
         required: false
     environment:
       SEARCH_MODE: live
@@ -238,9 +238,9 @@ services:
     image: oke-team-rag:unified
     command: [python, index_http.py, --host, 0.0.0.0, --port, '8766']
     env_file:
-      - path: ${RAG_OPENAI_ENV_FILE:-../rag/.env.openai}
+      - path: ${RAG_OPENAI_ENV_FILE:-../apps/rag/.env.openai}
         required: false
-      - path: ${INDEX_ENV_FILE:-../rag/index.env}
+      - path: ${INDEX_ENV_FILE:-../apps/rag/index.env}
         required: false
     environment:
       INDEX_HOST: 0.0.0.0
@@ -249,7 +249,7 @@ services:
       RAG_PERMISSIONS_FILE: /app/rag/rag-permissions.json
     volumes:
       - ../knowledge:/rag-docs:ro
-      - ../rag/rag-permissions.json:/app/rag/rag-permissions.json:ro
+      - ../apps/rag/rag-permissions.json:/app/rag/rag-permissions.json:ro
     expose: ['8766']
     depends_on:
       postgres:

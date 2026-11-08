@@ -16,7 +16,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DEPLOY = HERE.parent
 REPO = DEPLOY.parent
-MANIFEST = REPO / "rag/rag-permissions.json"
+MANIFEST = REPO / "apps/rag/rag-permissions.json"
 DOCS = REPO / "knowledge"
 
 
@@ -37,8 +37,8 @@ def env(**values: str) -> str:
 
 
 def verify_source() -> list[dict]:
-    if not (REPO / "data-api/server.py").is_file() or not DOCS.is_dir():
-        raise SystemExit("repository must contain data-api/server.py and knowledge/")
+    if not (REPO / "apps/data-api/server.py").is_file() or not DOCS.is_dir():
+        raise SystemExit("repository must contain apps/data-api/server.py and knowledge/")
     entries = json.loads(MANIFEST.read_text(encoding="utf-8"))
     docs = entries.get("documents", entries) if isinstance(entries, dict) else entries
     if isinstance(docs, dict):

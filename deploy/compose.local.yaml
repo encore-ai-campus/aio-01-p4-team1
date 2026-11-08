@@ -50,7 +50,7 @@ services:
   data-api:
     ports: !override []
     volumes: !override
-      - ../data-api/server.py:/app/server.py:ro
+      - ../apps/data-api/server.py:/app/server.py:ro
       - ../data:/data:ro
       - ../knowledge:/knowledge:ro
       - ../prompts:/prompts:ro
@@ -80,12 +80,12 @@ services:
         required: true
     volumes: !override
       - ../knowledge:/rag-docs:ro
-      - ../rag/rag-permissions.json:/app/rag/rag-permissions.json:ro
+      - ../apps/rag/rag-permissions.json:/app/rag/rag-permissions.json:ro
   db-migrate:
     profiles: [local-setup]
     image: oke-team-backend:local
     build:
-      context: ../backend
+      context: ../apps/backend
       dockerfile: deploy/backend.Dockerfile
     env_file: !override
       - path: local/.private/migrate.env

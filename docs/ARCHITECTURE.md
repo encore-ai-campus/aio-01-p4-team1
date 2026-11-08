@@ -14,12 +14,12 @@ flowchart TB
         Browser["Web Browser\n(http://localhost:3000 또는 VM 공개 주소)"]
     end
 
-    subgraph Compose["Docker Compose 내부 네트워크 (develop/jihye/deploy/compose.yaml)"]
-        subgraph FE["프런트엔드 계층 (수언님 · develop/sueon)"]
+    subgraph Compose["Docker Compose 내부 네트워크 (deploy/compose.vm.yaml)"]
+        subgraph FE["프런트엔드 계층 (수언님 · apps/frontend)"]
             NextJS["frontend (Next.js :3000)\n- 화면 렌더링 및 상태 표시\n- /api/* 서버 프록시 (BACKEND_ORIGIN)"]
         end
 
-        subgraph BE["백엔드 · 인증 · 업무 저장 계층 (지혜님 · develop/jihye)"]
+        subgraph BE["백엔드 · 인증 · 업무 저장 계층 (지혜님 · apps/backend)"]
             FastAPI["backend (FastAPI :8000)\n- 세션 쿠키(oke_session) 인증·권한 확인\n- 웹 API (/api/*)\n- 내부 저장 API (/tickets, /alerts, /dlq)"]
         end
 
@@ -88,10 +88,11 @@ flowchart TB
 
 ```text
 Aio-4pj-1team/
-├─ backend/       # FastAPI·DB 모델·마이그레이션·검증
-├─ frontend/      # Next.js 직원·관리자 화면
-├─ rag/           # 색인·검색 서비스·config·권한 매핑
-├─ data-api/      # 제공 API 서버
+├─ apps/          # 구현한 서비스
+│  ├─ backend/    # FastAPI·DB 모델·마이그레이션·검증
+│  ├─ frontend/   # Next.js 직원·관리자 화면
+│  ├─ rag/        # 색인·검색 서비스·config·권한 매핑
+│  └─ data-api/   # 제공 API 서버
 ├─ data/          # 가상 초기 JSON·schemas
 ├─ knowledge/     # 사내 규정 8종
 ├─ prompts/       # 제공 프롬프트 3종

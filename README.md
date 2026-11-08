@@ -43,10 +43,11 @@ Aio-4pj-1team/
 │   └── <a href="cases/team.json">team.json</a>                   # 팀 추가 시험 12개
 ├── <a href="requests/">requests/</a>                       # 질문·시험 요청
 ├── <a href="runs/">runs/</a>                           # 실제 시험 결과
-├── <a href="frontend/">frontend/</a>                       # 직원·관리자 화면
-├── <a href="backend/">backend/</a>                        # 업무 API·DB
-├── <a href="rag/">rag/</a>                            # 규정 색인·검색 서비스
-├── <a href="data-api/">data-api/</a>                       # 제공 데이터 API
+├── <a href="apps/">apps/</a>                           # 구현한 서비스
+│   ├── <a href="apps/frontend/">frontend/</a>                   # 직원·관리자 화면
+│   ├── <a href="apps/backend/">backend/</a>                    # 업무 API·DB
+│   ├── <a href="apps/rag/">rag/</a>                        # 규정 색인·검색 서비스
+│   └── <a href="apps/data-api/">data-api/</a>                   # 제공 데이터 API
 ├── <a href="deploy/">deploy/</a>                         # Compose·Dockerfile·배포
 ├── <a href="eval/">eval/</a>                           # 평가·검사 도구
 └── <a href=".github/">.github/</a>                        # CI·PR 양식

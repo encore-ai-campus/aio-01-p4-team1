@@ -104,13 +104,13 @@ vector 차원·모델·메타데이터를 새로 협의하느라 시작을 기�
 
 ## 7. 실행 환경 (C07)
 
-Compose 파일 위치: backend/deploy/compose.yaml.
+통합 VM Compose 파일 위치: deploy/compose.vm.yaml. 백엔드 전용 격리 검사는 apps/backend/deploy/compose.yaml을 사용한다.
 기본 서비스명 frontend/backend/postgres/n8n/data-api, 내부 주소는 backend:8000·postgres:5432·n8n:5678·data-api:8800.
 브라우저는 frontend:3000이 아닌 localhost 또는 VM 공개 웹 주소를 사용하고 /api를 프론트 서버 프록시로 backend에 전달한다.
 브라우저 코드에 Docker 내부 호스트명을 쓰지 않는다.
 공개 웹 포트 기본 3000, 로컬 개발 backend 8000·n8n 5678·data-api 8800. postgres는 내부5432, 외부 공개를 기본으로 하지 않는다.
 PostgreSQL은 pgvector를 포함한 이미지, named volume과 healthcheck를 사용한다. 이미지 실제 버전·digest는 지혜님이 설치 검증 뒤 고정한다.
-Compose build context는 backend=.., frontend=../../sueon.
+통합 Compose build context는 backend=../apps/backend, frontend=../apps/frontend, rag-search=../apps/rag이며 deploy/compose.vm.yaml 기준 상대 경로다.
 공통 환경변수 이름은 DATABASE_URL, N8N_WEBHOOK_URL, N8N_WEBHOOK_KEY, INTERNAL_API_KEY, DATA_API_URL, DATA_API_KEY, SERVICE_MODE, SESSION_SECRET, BOOTSTRAP_ADMIN_PASSWORD, BACKEND_ORIGIN이다.
 SERVICE_MODE는 practice 또는 app이며 DB/관측 모드가 혼동되지 않게 README에 기록한다. BACKEND_ORIGIN은 프런트 서버 프록시가 호출할 백엔드 주소(로컬 http://127.0.0.1:8000, Compose http://backend:8000)이며 브라우저 공개 변수로 노출하지 않는다.
 실제 환경값은 Git에 넣지 않는다. 기존 n8n/data-api를 재사용하면 동일 네트워크 연결과 충돌 포트를 지혜님이 조정해 기록한다.

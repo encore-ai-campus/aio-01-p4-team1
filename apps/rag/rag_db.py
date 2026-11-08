@@ -6,7 +6,8 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+SERVICE_DIR = Path(__file__).resolve().parent
+ROOT = SERVICE_DIR.parent.parent if SERVICE_DIR.parent.name == "apps" else SERVICE_DIR.parent
 
 
 def snapshot(connection):

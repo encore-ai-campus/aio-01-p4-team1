@@ -19,9 +19,9 @@ services:
       - "8800:8800"
     volumes:
       - ./server.py:/app/server.py:ro
-      - ../data:/data:ro
-      - ../knowledge:/knowledge:ro
-      - ../prompts:/prompts:ro
+      - ../../data:/data:ro
+      - ../../knowledge:/knowledge:ro
+      - ../../prompts:/prompts:ro
     networks:
       - n8n
     restart: unless-stopped

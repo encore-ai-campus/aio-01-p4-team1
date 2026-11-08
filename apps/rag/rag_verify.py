@@ -9,7 +9,8 @@ from pathlib import Path
 
 from rag_index import MockStore, index_snapshot, load_settings
 
-ROOT = Path(__file__).resolve().parents[1]
+SERVICE_DIR = Path(__file__).resolve().parent
+ROOT = SERVICE_DIR.parent.parent if SERVICE_DIR.parent.name == "apps" else SERVICE_DIR.parent
 
 
 def load_unique_json(path):

@@ -1,12 +1,12 @@
 # 지혜님 · 마이그레이션 작업 지시
 
-[IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 P0 단계에서 순서대로 생성·검증한다.
+[IMP-PLAN P0-3~6](../Doc/IMP-PLAN.md)에서 이 절차를 사용한다. 기준은 [DATA-AND-DB](../../../../docs/DATA-AND-DB.md)다. 아래 파일·명령·검사는 P0 단계에서 순서대로 생성·검증한다.
 
 ## 현재 상태 · 2026-11-06
 
 개인 로컬 migration head는 `0005`이며, P1-4에서 합성 app/RAG fixture의 전용 DB 재시작 후 유지가 확인됐다. **별도 로컬 DB backup/restore도 2026-11-06 실행 완료했다.** PostgreSQL 컨테이너 내부의 `pg_dump`·`pg_restore` 16.15로 개인 DB를 별도 빈 `oke_jihye_p1_4_restore`에 복원하고 revision·확장 버전·테이블별 행 수·해시/벡터 구조를 대조한 뒤 임시 DB와 archive를 정리했다. 원본 RAG documents/chunks는 0건이므로 실제 문서·청크 해시와 저장 벡터 복원, 복원 후 권한별 검색은 미검증이다. 실행 근거는 [IMP-PLAN의 백업·복원 기록](../Doc/IMP-PLAN.md#p1-4-별도-db-백업복원-실행--2026-11-06)을 따른다.
 
-루트 [VM 시험 기록](../../../docs/VM-TEAM-TESTING.md)은 팀 VM migration `0005`와 RAG 8 documents/33 chunks를 snapshot으로 보고한다. 이는 위 로컬 백업·복원의 원본 데이터가 아니며 VM 데이터 복원 시험 결과도 아니다. 이 문서 갱신에서는 DB 시험을 재실행하거나 VM DB를 변경하지 않았다. 아래 P0-4/5 절은 해당 단계의 당시 실행 이력으로 읽는다.
+루트 [VM 시험 기록](../../../../docs/VM-TEAM-TESTING.md)은 팀 VM migration `0005`와 RAG 8 documents/33 chunks를 snapshot으로 보고한다. 이는 위 로컬 백업·복원의 원본 데이터가 아니며 VM 데이터 복원 시험 결과도 아니다. 이 문서 갱신에서는 DB 시험을 재실행하거나 VM DB를 변경하지 않았다. 아래 P0-4/5 절은 해당 단계의 당시 실행 이력으로 읽는다.
 
 ## 현재 범위와 전제
 
@@ -89,4 +89,4 @@ metadata에는 검색/색인 담당이 doc/title/section/chunk/type/updated_at/v
 
 유빈님에게 head·테이블/열·모델/차원·role 권한·접속 방식(비밀값 제외)과 실제 검사 결과를 넘긴다. 원민님에게 중복 제약·티켓/알림 거래·DLQ 저장 및 ACK 세부 미정 상태를, 오현님에게 새 환경 생성/재시작/백업·복구 확인 자료를 넘긴다. H02의 비밀번호 이력/잠금용 확장은 공통 반영 후 별도 revision으로 만든다.
 
-[팀 API](../../../docs/API-CONTRACT.md) · [데이터·DB 기준](../../../docs/DATA-AND-DB.md) · [전체 아키텍처](../../../docs/ARCHITECTURE.md).
+[팀 API](../../../../docs/API-CONTRACT.md) · [데이터·DB 기준](../../../../docs/DATA-AND-DB.md) · [전체 아키텍처](../../../../docs/ARCHITECTURE.md).

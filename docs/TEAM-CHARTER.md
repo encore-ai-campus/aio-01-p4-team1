@@ -7,8 +7,8 @@
 | 역할 | 주 담당 | 담당 범위 | 주 소유 경로 | 완료 기준 |
 | --- | --- | --- | --- | --- |
 | 기획·통합 | 오현님 | 범위·계약 관리, PR 병합, 팀 VM 배포, 발표·문서 취합 | `deploy/`, `README.md`, `docs/TOPIC.md`, `docs/TEAM-CHARTER.md`, `docs/daily/` | 기본 브랜치와 VM이 일치하고 배포 후 공통 시나리오 결과를 기록 |
-| 직원·관리자 화면 | 수언님 | 로그인, 질문, 답·근거, 내 문의, 관리자 티켓·알림 화면과 API 연결 | `frontend/` | 직원과 관리자가 FastAPI만 호출해 주요 흐름을 끝까지 시연 |
-| 업무 API·DB | 지혜님 | Pydantic 계약, 로그인·세션·권한, 계정 생성, 문의·티켓·알림·상태 저장, 중복 방지, 공통 실행 설정 | `backend/`, `backend/migrations/`, `backend/deploy/` | 화면·n8n API와 인증 API가 계약대로 응답하고 재시작 뒤 기록이 유지 |
+| 직원·관리자 화면 | 수언님 | 로그인, 질문, 답·근거, 내 문의, 관리자 티켓·알림 화면과 API 연결 | `apps/frontend/` | 직원과 관리자가 FastAPI만 호출해 주요 흐름을 끝까지 시연 |
+| 업무 API·DB | 지혜님 | Pydantic 계약, 로그인·세션·권한, 계정 생성, 문의·티켓·알림·상태 저장, 중복 방지, 공통 실행 설정 | `apps/backend/`, `apps/backend/migrations/`, `apps/backend/deploy/` | 화면·n8n API와 인증 API가 계약대로 응답하고 재시작 뒤 기록이 유지 |
 | 문의 처리 자동화 | 다혁님 | 웹훅 입력 검사, 분류, 보완 질문, 답변·검증, 자동 답변·이관 분기 | `workflows/oke-support.json` | 공통 요청·응답 형식을 지키고 정상·정보 부족·근거 없음 경로가 동작 |
 | 지식 검색(RAG) | 유빈님 | 문서 청킹·임베딩·색인, 권한별 검색, 출처·점수 측정 | `workflows/oke-index.json`, `workflows/oke-search.json` | 규정 8종의 색인·재색인과 권한별 근거 검색을 실제 결과로 확인 |
 | 안정성·시험 | 원민님 | 티켓 연동, Error Workflow, 재시도·DLQ·알림·중복·보안 시험, 팀 시나리오와 결과 기록 | `workflows/oke-handoff.json`, `workflows/oke-errors.json`, `cases/`, `requests/`, `runs/` | 공통 14유형·팀 5개 이상, LLM 3회 반복과 실패 후 재시험 기록 |

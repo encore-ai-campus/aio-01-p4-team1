@@ -58,15 +58,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        if: hashFiles('backend/**/*.py') != ''
+        if: hashFiles('apps/backend/**/*.py') != ''
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Compile Python files
-        if: hashFiles('backend/**/*.py') != ''
+        if: hashFiles('apps/backend/**/*.py') != ''
         run: |
-          python3 -m compileall -q backend/ rag/ eval/
+          python3 -m compileall -q apps/ eval/
 
   frontend-check:
     name: Frontend Check (Next.js)
@@ -76,14 +76,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node.js
-        if: hashFiles('frontend/package.json') != ''
+        if: hashFiles('apps/frontend/package.json') != ''
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       - name: Install and build frontend
-        if: hashFiles('frontend/package.json') != ''
-        working-directory: frontend
+        if: hashFiles('apps/frontend/package.json') != ''
+        working-directory: apps/frontend
         run: |
           npx --yes pnpm@9.15.4 install --frozen-lockfile
           npx --yes pnpm@9.15.4 typecheck

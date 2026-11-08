@@ -1,6 +1,6 @@
 # 지혜님 · 서버·DB·배포 작업 지시
 
-[IMP-PLAN](../Doc/IMP-PLAN.md)의 DB/backend 실행 절차를 보완한다. **현재 상태 · 2026-11-06:** 로컬 backend·Compose·readiness는 P0-7에서 구현·검증됐고, 개인 migration head는 `0005`다. 재시작 유지와 별도 DB backup/restore를 확인했다. backup/restore 원본 RAG documents/chunks는 0건이라 실제 저장 벡터 복원은 미검증이다. 루트 [팀 VM 기록](../../../docs/VM-TEAM-TESTING.md)은 VM `0005`와 제한된 FE/BE API·DB 시험을 보고한다. 이는 문서 근거와 사용자가 제공한 VM 표본으로 구분하며 VM 배포·환경값 등록·시험 창은 오현님이 관리한다.
+[IMP-PLAN](../Doc/IMP-PLAN.md)의 DB/backend 실행 절차를 보완한다. **현재 상태 · 2026-11-06:** 로컬 backend·Compose·readiness는 P0-7에서 구현·검증됐고, 개인 migration head는 `0005`다. 재시작 유지와 별도 DB backup/restore를 확인했다. backup/restore 원본 RAG documents/chunks는 0건이라 실제 저장 벡터 복원은 미검증이다. 루트 [팀 VM 기록](../../../../docs/VM-TEAM-TESTING.md)은 VM `0005`와 제한된 FE/BE API·DB 시험을 보고한다. 이는 문서 근거와 사용자가 제공한 VM 표본으로 구분하며 VM 배포·환경값 등록·시험 창은 오현님이 관리한다.
 
 아래 P0 단계별 실행 절은 구현 당시 절차와 이력을 포함한다. `현재`, `예정`, `미실행` 문구가 포함된 날짜별 구간은 작성 당시 상태일 수 있으므로 상단 상태와 루트 VM 기록을 먼저 대조한다. 공유 VM에 적용·재기동·초기화 명령을 실행하지 않는다.
 
@@ -80,7 +80,7 @@ private deploy/.env는 권한600·Git 제외다. 처음 상세 traceback에 자�
 | deploy/.env.example | 아래 공통 변수의 **이름만**. 실제 .env는 배포 비밀 관리에서 만들고 Git에 넣지 않음 |
 | app/api/routes/health.py, tests/integration/test_readiness.py | liveness와 DB/revision/vector readiness를 구분, 오류에서 접속 문자열 미노출 |
 
-[API C07](../../../docs/API-CONTRACT.md)의 내부 주소는 backend:8000, postgres:5432, n8n:5678, data-api:8800이다. 공개 웹 기본3000, 로컬 backend8000/n8n5678/data-api8800을 사용한다. 로컬용 내부 도구 포트는 loopback 바인딩으로 계획한다. postgres5432는 기본 외부 공개하지 않는다. VM의 n8n 관리 접근/비밀번호·공개 경로는 오현님이 관리한다.
+[API C07](../../../../docs/API-CONTRACT.md)의 내부 주소는 backend:8000, postgres:5432, n8n:5678, data-api:8800이다. 공개 웹 기본3000, 로컬 backend8000/n8n5678/data-api8800을 사용한다. 로컬용 내부 도구 포트는 loopback 바인딩으로 계획한다. postgres5432는 기본 외부 공개하지 않는다. VM의 n8n 관리 접근/비밀번호·공개 경로는 오현님이 관리한다.
 
 PostgreSQL은 pgvector 포함 이미지·named volume·healthcheck를 사용한다. PostgreSQL/pgvector 이미지 태그·digest는 실제 설치/확장 검증 뒤 고정하며 지금 검증한 버전으로 적지 않는다. n8n은 공통 평가 환경과 호환되는 버전을 적용한다. 기존 n8n/data-api를 재사용하면 Compose 중복 기동을 피하고 같은 네트워크 alias·충돌 포트·실제 URL을 기록한다. 포트를 임의 재선정하지 않고 충돌 변경은 C07로 요청한다.
 
@@ -183,7 +183,7 @@ VM 배포 후 공통 시험·LLM 반복·실제 runs 결과는 원민님과 오�
 
 호스트 PATH에 PostgreSQL 클라이언트가 없으므로 개인 PostgreSQL 컨테이너 내부의 `pg_dump`/`pg_restore` 16.15를 쓰는 [명시 확인 runner](check_backup_restore.py)를 추가했다. `uv run python deploy/check_backup_restore.py --confirm-private-db`만 실행을 허용한다. 원본 `oke_jihye_p0` 및 migration owner/Compose URL을 검사하고, 비어 있는 `oke_jihye_p1_4_restore`가 이미 있으면 중단한다. custom-format 백업을 새 대상에 복원한 뒤 revision·확장 버전·app/rag 테이블별 행 수·문서/청크 해시·vector 차원·embedding 타입을 비교하고, runner가 만든 복원 DB와 임시 archive만 제거한다. 실행 상세·수치는 [IMP-PLAN](../Doc/IMP-PLAN.md)의 2026-11-06 기록을 따른다. 기존 전체 pytest 회귀는 이 runner로 대체되지 않는다.
 
-[전체 아키텍처](../../../docs/ARCHITECTURE.md) · [공통 API](../../../docs/API-CONTRACT.md) · [제출·시연](../../ohyun/SUBMISSION.md).
+[전체 아키텍처](../../../../docs/ARCHITECTURE.md) · [공통 API](../../../../docs/API-CONTRACT.md) · [제출·시연](../../../ohyun/SUBMISSION.md).
 
 ## 로컬 전용 합성 업무 데이터
 

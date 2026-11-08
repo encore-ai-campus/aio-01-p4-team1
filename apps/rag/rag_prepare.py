@@ -12,7 +12,8 @@ import socket
 import statistics
 from urllib import error, parse, request
 
-ROOT = Path(__file__).resolve().parents[1]
+SERVICE_DIR = Path(__file__).resolve().parent
+ROOT = SERVICE_DIR.parent.parent if SERVICE_DIR.parent.name == "apps" else SERVICE_DIR.parent
 EXPECTED = {'password-policy', 'remote-work-vpn', 'email-and-documents',
             'device-issue-return', 'software-usage', 'security-incident',
             'meeting-room', 'privacy'}

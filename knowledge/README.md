@@ -1,9 +1,5 @@
-# knowledge · 사용 지식 문서 제출 위치
+# knowledge · 규정 원문 제출본
 
-현재는 폴더 안내만 있으며 지식 원문 사본은 취합하지 않았다.
+`main-backup` 기준 커밋 `b8448d0`의 `data-api/data/docs/*.md` 8종을 원문 그대로 복사했다. 파일명에서 `.md`를 제외한 값이 문서 식별자다. FAQ 6종은 [data/faq.json](../data/faq.json)에 있다.
 
-- 받을 결과: 실제 사용한 규정·FAQ와 원본 식별자·출처/버전·all/it 권한 매핑. 제공 API에서 읽는 자료는 실제 준비·조회 방법을 함께 전달한다.
-- 개발 자료: main의 develop/yubeen/에서 관리할 원본 대장·전처리 결과 · 자료 제공 유빈님 · 제출 취합 오현님.
-- 취합 후 확인: 규정 8종·FAQ 6종의 사용 범위, 문서/절과 근거 응답의 대응, 관리자 전용 문서의 권한이 원본과 일치하는지 확인한다.
-
-자료 존재와 색인·검색 완료를 구분한다. 원본에 없는 규정이나 가짜 측정값을 채우지 않는다. 공통 RAG 설계서는 이 폴더에 복제하지 않는다. [브랜치 운영·문서 병합·최종 제출 기준](../SUBMISSION.md)을 따른다.
+원본은 `data-api/data/docs/`에 유지하며 VM은 기존 경로를 사용한다. 문서별 `all`·`it` 검색 권한 매핑은 [rag-permissions.json](../develop/yubeen/rag-permissions.json), 색인·검색 설계와 측정은 [RAG 설계](../docs/RAG-ARCHITECTURE.md)를 따른다. 원문 취합은 색인 재실행이나 추가 검색 검증을 의미하지 않는다.

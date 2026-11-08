@@ -1,0 +1,32 @@
+:root{--ink:#202123;--muted:#74767d;--line:#e9e9e7;--surface:#fff;--bg:#f8f8f7;--primary:#f4512a;--danger:#d94033}
+html,body{font-family:Arial,"Noto Sans KR",sans-serif;background:#f8f8f7;color:#202123}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ff9c80;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:.58}
+.employee-shell,.admin-shell{background:#f8f8f7;color:#202123}
+.employee-sidebar,.admin-sidebar{width:168px;flex:none;margin:32px 0 32px 34px;padding:14px 12px;border:0;border-radius:22px;background:#fff;box-shadow:0 12px 32px #20252b0b}
+.employee-logo,.admin-logo{min-height:80px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #f0f1f3}
+.employee-logo img,.admin-logo img{width:132px;max-width:100%;height:auto}
+.employee-sidebar nav,.admin-sidebar nav{display:grid;gap:8px;padding-top:22px}
+.employee-nav,.admin-nav{min-height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#5f6871;text-decoration:none;font-size:13px;font-weight:700;text-align:center}
+.employee-nav.active,.admin-nav.active{background:#fff1ed;color:#f4512a}
+.employee-nav:hover,.admin-nav:hover{background:#fff7f4}
+.employee-main,.admin-main{min-width:0;flex:1}
+.employee-header,.admin-header{height:82px;padding:0 48px;display:flex;align-items:center;justify-content:flex-end;gap:18px;color:#4a535b;font-size:13px}
+.employee-header button,.admin-header button{border:0;background:none;color:#6d757d;font-weight:600}
+.shell-error{margin:0 48px 16px}
+.ask-shell{background:#f8f8f7;color:#202123}
+.ask-shell:before{display:none}
+.ask-sidebar{width:168px;flex:none;margin:32px 0 32px 34px;padding:16px 12px;border-radius:22px;background:#fff;color:#202123;box-shadow:0 12px 32px #20252b0b}
+.brand{justify-content:center;padding:10px 0 28px;border-bottom:1px solid #f0f1f3;gap:7px}.brand-mark{width:32px;height:32px;border-radius:50%;background:#f4512a;color:#fff;font-size:18px}.brand strong{font-size:19px;color:#202123}.brand small{display:none}
+.side-section{margin-top:20px}.side-label{color:#a1a4a9}.side-link{height:68px;margin-top:6px;justify-content:center;gap:8px;color:#5f6871;font-size:13px}.side-link.active{background:#fff1ed;color:#f4512a}.side-link:hover{background:#fff7f4}
+.profile{margin-top:auto;border-color:#f0f1f3;color:#34383d;text-align:left}.profile>span{background:#fff1ed;color:#f4512a}.profile small{color:#777f87}.profile i{font-size:10px;color:#777f87;font-style:normal}
+.ask-header{height:82px;justify-content:flex-end;background:transparent;border:0;color:#74767d}.ask-header b{color:#202123}
+.ask-content{max-width:1240px;margin:0 auto;padding:22px 48px 64px}.ask-heading h1{font-size:34px;color:#202123}.ask-heading p:not(.eyebrow){color:#74767d}.eyebrow{color:#f4512a}.secure{color:#74767d}
+.quick-prompts button,.steps>div,.ask-card,.answer-card{border-color:#eceeed;background:#fff;box-shadow:0 8px 24px #20252b0a}.quick-prompts button:hover{border-color:#ffb5a0}.quick-prompts button>span,.answer-icon{background:#fff1ed;color:#f4512a}.quick-prompts small,.steps small,.answer-time{color:#8b9198}
+.ask-card-head h2,.answer-card h2{color:#202123}.ask-card-head p:not(.eyebrow),.answer-card>p:not(.eyebrow){color:#626b73}.ask-card-head>span{background:#fff1ed;color:#f4512a}.textarea-wrap textarea{background:#fbfbfa;border-color:#e5e5e3;color:#202123}.textarea-wrap textarea:focus{border-color:#f4512a}.ask-actions{color:#74767d}.send{background:#f4512a}.send:hover{background:#df4520}.steps b{color:#f4512a}.steps strong{color:#41464b}.sources{background:#fff8f5}.ticket{color:#d84927}
+.requests-content,.admin-content{max-width:1200px;margin:0 auto;padding:22px 48px 64px}.requests-title h1,.admin-title h1{color:#202123}.requests-title p,.admin-title p{color:#7a828a}
+.request-card,.admin-panel,.request-empty{border:1px solid #f0f1f2;background:#fff;box-shadow:0 8px 24px #20252b0a}.request-card{border-radius:24px}.request-status{background:#fff0ea;color:#f4512a}.request-summary:hover,.ticket-list-row:hover{background:#fffaf8}.request-detail{background:#fbfbfa}.request-detail>div{align-items:flex-start}.request-detail p{white-space:pre-wrap;line-height:1.6}.request-icon,.user-avatar{background:#fff1ed;color:#f4512a}.request-meta{gap:14px}
+.refresh-button,.ask-button{border-radius:28px}.ask-button{background:#1f2022;color:#fff}.admin-count{background:#fff1ed;color:#f4512a}.admin-panel{border-radius:24px}.ticket-list-row.selected{background:#fff8f5}.ticket-code{color:#f4512a}.admin-primary,.button{background:#f4512a;color:#fff}.admin-primary:hover,.button:hover{background:#df4520}.admin-fields select,.admin-fields textarea,.admin-fields input{border:1px solid #e7eaed;border-radius:12px;background:#fbfbfa;padding:13px;color:#30363b}
+.center.auth-page{min-height:100vh;padding:24px;background:radial-gradient(circle at 68% 28%,#fff0e8 0,transparent 36%),#f8f8f7}.auth-card{width:min(440px,100%);padding:44px;border:1px solid #f0ece9;border-radius:26px;box-shadow:0 20px 60px #20252b14}.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;color:#202123;font-size:23px;font-weight:800}.auth-brand img{width:150px;max-width:100%}.auth-card h1{margin:0 0 12px;font-size:30px;letter-spacing:-.04em}.auth-card .muted{margin:0 0 26px}.auth-card .field input{min-height:48px;background:#fbfbfa}.auth-card .button{width:100%;min-height:48px;margin-top:12px}.auth-card .error{font-size:13px;line-height:1.5}
+@media(max-width:900px){.ask-content,.requests-content,.admin-content{padding:20px}.employee-sidebar,.admin-sidebar,.ask-sidebar{width:112px;margin-left:16px}.employee-logo img,.admin-logo img{width:86px}.employee-header,.admin-header{padding:0 20px}.ask-grid,.admin-ticket-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.employee-sidebar,.admin-sidebar,.ask-sidebar{width:74px;margin:0;border-radius:0;padding:8px}.employee-nav,.admin-nav,.side-link{font-size:11px;word-break:keep-all}.side-label,.profile,.brand small{display:none}.brand strong{font-size:11px}.brand-mark{display:none}.ask-header{padding:0 16px}.ask-content,.requests-content,.admin-content{padding:14px}.ask-heading{display:block}.secure{display:block;margin-top:12px}.quick-prompts{grid-template-columns:1fr}.employee-header,.admin-header{height:68px;font-size:11px}.auth-card{padding:32px 24px}}

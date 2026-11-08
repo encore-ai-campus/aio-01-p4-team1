@@ -1,9 +1,7 @@
-# requests · 시연·성능 측정 요청 제출 위치
+# requests · 시연·벤치마크 요청 제출본
 
-현재는 폴더 안내만 있으며 실제 요청 파일은 없다.
+`main-backup` 기준 커밋 `b8448d0`에서 `develop/wonmin/requests/*.json` 13개와 `develop/dahyeok/requests/*.json` 25개를 원문 그대로 복사했다. 파일명 충돌은 없다.
 
-- 받을 결과: 정상·보완·장애·이관 시연과 bench에 실제 사용한 요청 파일, 실행 순서·전제·정리 방법.
-- 개발 원본: main의 develop/wonmin/requests/ · 자료 제공 원민님 · 제출 취합 오현님.
-- 취합 후 확인: 공통 요청/응답 계약, request_id 재사용·신규 차례 규칙, 시나리오 파일 참조와 실행 명령이 실제 결과를 재현해야 한다.
+`demo-*.json`·`bench-normal.json`은 시연·측정용이며 `handoff-*.json`·오류 실행 입력은 해당 내부 경로용이다. `input-empty.json`, `input-unknown-user.json`, `input-too-long.json` 등은 의도적으로 잘못된 입력을 담는다. 모든 JSON을 동일 엔드포인트의 정상 요청으로 보내지 않는다.
 
-인증 키·세션 쿠키·비밀번호를 요청 파일에 넣지 않는다. 공통 시연·실행 설명은 main의 문서에서 관리한다. [브랜치 운영·문서 병합·최종 제출 기준](../SUBMISSION.md)을 따른다.
+요청·응답 계약은 [API 계약](../docs/API-CONTRACT.md), 시나리오·대상·실행 순서·결과는 [평가 가이드](../docs/EVALUATION-GUIDE.md), [원민님 실행 안내](../develop/wonmin/README.md), [다혁님 실행 안내](../develop/dahyeok/README.md), [실행 결과](../docs/EXECUTION-RESULT.md)를 따른다. 인증값은 실행 환경에서 별도로 전달한다. 같은 요청의 재시도에는 같은 `request_id`를 사용하고 새 논리 요청에는 새 ID를 사용한다. 보안 시험용 합성 연락처·주입 문자열은 원문 그대로 보존했다.

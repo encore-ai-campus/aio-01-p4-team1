@@ -1,0 +1,13 @@
+# Dockerfile-specific ignore rules apply to the develop/jihye build context.
+**
+!app/
+!app/**
+!migrations/
+!migrations/**
+!deploy/
+!deploy/requirements.lock
+!deploy/backend.Dockerfile
+!deploy/backend.Dockerfile.dockerignore
+**/__pycache__/
+**/*.pyc
+**/.env*

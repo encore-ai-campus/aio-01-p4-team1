@@ -1,9 +1,5 @@
-# data · 초기 데이터 제출 위치
+# data · 제공 초기 데이터 제출본
 
-현재는 폴더 안내만 있으며 초기 데이터·seed 파일은 없다.
+`main-backup` 기준 커밋 `b8448d0`의 `data-api/data/*.json` 8개를 원문 그대로 복사했다: `employees.json`, `faq.json`, `tickets.json`, `ops-seed.json`, `releases.json`, `prices.json`, `budget.json`, `run-logs.json`.
 
-- 받을 결과: 실제 사용한 가상 직원·기존 티켓 등 초기 데이터, 데이터 출처·권한 매핑·재현 방법. API 제공 자료와 우리 DB 초기화 자료를 구분한다.
-- 개발 자료: main의 develop/jihye/ 초기화 자료와 develop/yubeen/ 권한 매핑 · 자료 제공 지혜님·유빈님 · 제출 취합 오현님.
-- 취합 후 확인: 제공 직원 6명·기존 티켓 4건의 의미를 유지하고 DB 제약·멱등성과 맞춘다. seed 코드와 마이그레이션은 backend/와 연결하며 불필요한 중복 사본을 만들지 않는다.
-
-실제 계정 비밀번호·세션·업무 DB 덤프·벡터 볼륨은 넣지 않는다. 가상 연락처도 문서·로그에서는 가린다. [브랜치 운영·문서 병합·최종 제출 기준](../SUBMISSION.md)을 따른다.
+제공 가상 직원 6명·FAQ 6종·기존 티켓 4건 등의 원본 의미를 유지한다. 테스트용 가상 연락처도 원문에 포함된다. 실제 업무 DB·계정·세션 덤프가 아니다. VM data-api는 기존 `data-api/data/`를 계속 사용하며 [서버 구현](../data-api/server.py)과 [DB·초기화 안내](../develop/jihye/deploy/README.md)를 따른다. 제공 JSON 복사와 애플리케이션 DB 초기화는 별도 단계다.

@@ -110,13 +110,6 @@ flowchart TD
 - **사용 방법:** Swagger 화면에서 API 명세를 확인하고 요청을 실행할 수 있습니다. 보호된 API는 해당 사용자 로그인이나 내부 API 인증이 필요합니다.
 - **추가 주소:** <https://aio-t1.isitsoft.kr/openapi.json> — API 명세 원본 JSON
 
-### 4. 선생님이 제공한 VM 웹 SSH
-
-- **주소:** <https://aio-t1.isitsoft.kr/ssh/>
-- **접속 정보:** 선생님이 제공한 VM 계정 정보 사용
-- **이용 목적:** 서버 터미널 접속, 컨테이너 상태·로그 확인, 배포 작업
-- **저장소 위치:** `/home/toor/Aio-4pj-1team/`
-
 PostgreSQL·RAG 검색 서비스·data-api는 VM 내부에서 연결하므로 별도 공개 접속 주소를 안내하지 않습니다.
 
 ## n8n 및 웹훅 경로

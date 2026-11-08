@@ -93,7 +93,7 @@ flowchart TD
 - **이용 목적:** 서버 터미널 접속, 컨테이너 상태·로그 확인, 배포 작업
 - **저장소 위치:** `/home/toor/Aio-4pj-1team/`
 
-서버 기동·재배포 명령은 [VM 배포 안내](deploy/README.md), 계정·접속의 상세 기준은 [팀 VM 안내](docs/VM-TEAM-TESTING.md)를 따릅니다. PostgreSQL·RAG 검색 서비스·data-api는 VM 내부에서 연결하므로 별도 공개 접속 주소를 안내하지 않습니다.
+PostgreSQL·RAG 검색 서비스·data-api는 VM 내부에서 연결하므로 별도 공개 접속 주소를 안내하지 않습니다.
 
 ## 주요 기능
 

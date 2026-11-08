@@ -52,7 +52,7 @@
 - VM에는 목적별 credential 6개 레코드가 보존되어 있다. 이전 runtime cleanup inventory의 구분은 OpenAI, team webhook, RAG search, RAG index, backend internal, legacy Header Auth account였다. 현재 snapshot은 레코드 수만 재확인했으므로 credential ID/값 및 각 노드 매핑을 본 문서에서 보증하지 않는다.
 - 팀장 또는 지정 관리자는 팀원에게 필요한 사용자 권한, workflow 실행 경로, 해당 용도의 자격 증명 사용 방법만 비공개로 인계한다. key/password/header value를 Git·이슈·채팅·보고서·화면 캡처에 붙이지 않는다. 여러 용도의 키를 이름이 비슷하다는 이유로 공유하지 않는다.
 - 팀원은 개인 계정을 사용하거나 아래 공유 시험 계정을 사용한다. 최신 계정 기준선은 아래 “팀원 공용 시험 계정 및 접속 안내” 절을 참조한다.
-- 현재 VM n8n owner 사용자는 1명이다. owner email은 `team1@test.com`이다.
+- 현재 VM n8n owner 사용자는 1명이다. owner 로그인 ID는 팀장이 비공개로 인계한다.
 - 관리자/직원 시험 계정 정보는 팀원 전체의 원활한 UI/API 기능 테스트를 위해 아래 문서에 투명하게 공개하여 공유한다.
 - 공개 API는 `/api/auth/me` 외부 401을 확인했다. API 경로/스키마는 repo의 [API-CONTRACT](API-CONTRACT.md)와 versioned backend source를 따른다. Swagger UI는 <https://aio-t1.isitsoft.kr/docs>, 스키마는 <https://aio-t1.isitsoft.kr/openapi.json>을 사용한다. UI 열림과 인증 API 실행 권한은 별개다.
 
@@ -121,7 +121,7 @@
 * **웹 프론트엔드 (로그인)**: <https://aio-t1.isitsoft.kr/login>
 * **FastAPI Swagger UI**: <https://aio-t1.isitsoft.kr/docs>
 * **OpenAPI 스키마**: <https://aio-t1.isitsoft.kr/openapi.json>
-* **n8n 웹 콘솔**: <https://aio-t1.isitsoft.kr:5678/> (Owner: `team1@test.com`)
+* **n8n 웹 콘솔**: <https://aio-t1.isitsoft.kr:5678/> (Owner 계정은 팀장에게 비공개 인계)
 
 ### 2. 공용 테스트 계정 정보
 

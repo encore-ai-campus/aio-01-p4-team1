@@ -1,0 +1,48 @@
+# 공식 tscan 예외: 오탐과 제공된 가상 데이터만 허용한다.
+# .gitignore로 제외된 빌드 산출물·로컬 비공개 설정은 제출 대상이 아니다.
+apps/frontend/.next/**
+apps/frontend/tsconfig.tsbuildinfo
+deploy/local/.private/**
+
+# 패키지명@숫자.버전 오탐: 이메일 종류만 제외하고 키 검사는 유지한다.
+email:apps/frontend/pnpm-lock.yaml
+
+# 고정 패키지 버전 표기
+.github/workflows/ci.yml:88
+.github/workflows/ci.yml:89
+.github/workflows/ci.yml:90
+SUBMISSION.md:26
+apps/frontend/README.md:11
+apps/frontend/README.md:6
+apps/frontend/README.md:7
+apps/frontend/README.md:8
+deploy/frontend.Dockerfile:14
+deploy/frontend.Dockerfile:3
+
+# 연락처 가림 시험의 합성 입력·기대값
+apps/backend/tests/integration/test_ticket_idempotency.py:173
+apps/backend/tests/integration/test_ticket_idempotency.py:179
+apps/backend/tests/integration/test_ticket_idempotency.py:180
+apps/backend/tests/test_ticket_storage.py:123
+apps/backend/tests/test_ticket_storage.py:126
+apps/backend/tests/test_ticket_storage.py:127
+eval/fixtures/search-results.json:58
+eval/retrieval_check.py:412
+eval/test_live_check.py:156
+requests/writer-contact.json:4
+
+# 제공된 고정 가상 티켓 데이터
+data/tickets.json:2
+data/tickets.json:3
+data/tickets.json:4
+data/tickets.json:5
+
+# 로컬 초기화 전용 가상 계정
+deploy/local/bootstrap_n8n.py:57
+deploy/local/setup.py:227
+
+# 공식 원본의 의도된 무효 장애 시험 키
+tools/flow.py:1161
+
+# 참고 Compose의 localhost 연결 URI 오탐
+docs/references/qnaweb/docker/compose/docker-compose.yml.example:47

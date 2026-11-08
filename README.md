@@ -151,45 +151,27 @@ PostgreSQL·RAG 검색 서비스·data-api는 VM 내부에서 연결하므로 �
 
 [로그인 페이지](https://aio-t1.isitsoft.kr/login)에 접속해 직원 또는 관리자 계정으로 로그인합니다. 공개 회원가입은 없으며 관리자가 직원 계정을 발급합니다. 계정·비밀번호는 팀장이 비공개로 인계합니다.
 
-<!-- 로그인 화면 캡처 1장을 넣을 자리 -->
-<blockquote>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-</blockquote>
+![실제 서비스 로그인 화면](docs/images/live/01-login.png)
 
 ### 2. 직원 질문
 
 IT 문제를 질문하면 답변과 규정 근거를 확인할 수 있습니다. 정보가 부족하면 보완 질문을 받고, 자동으로 해결하기 어려운 문의는 IT팀으로 이관됩니다.
 
-<!-- 직원 질문·답변·근거 화면 캡처 1장을 넣을 자리 -->
-<blockquote>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-</blockquote>
+![직원 질문 입력 화면](docs/images/live/02-employee-question.png)
+
+기존 문의의 실제 결과: [VPN 자동 안내](docs/images/live/03-normal-answer.png) · [보완 질문](docs/images/live/04-clarification.png)
 
 ### 3. IT팀 관리자 처리
 
 관리자는 별도 브라우저에서 로그인해 이관 티켓과 긴급 알림을 확인합니다. 담당자를 지정하고 답변·처리 상태를 저장하며 직원 계정도 관리합니다.
 
-<!-- IT팀 관리자 티켓 처리 화면 캡처 1장을 넣을 자리 -->
-<blockquote>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-</blockquote>
+![실제 관리자 티켓 처리 화면](docs/images/live/07-admin-ticket.png)
 
 ### 4. 직원 처리 결과 확인
 
 직원은 ‘내 문의’에서 문의 이력과 티켓 상태를 조회하고, 관리자가 등록한 답변과 변경된 처리 결과를 확인합니다.
 
-<!-- 직원 내 문의·처리 결과 화면 캡처 1장을 넣을 자리 -->
-<blockquote>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-</blockquote>
+![직원의 완료 상태와 담당자 답변 확인](docs/images/live/05-employee-completed.png)
 
 ## 기능 확인 순서와 질문 예시
 

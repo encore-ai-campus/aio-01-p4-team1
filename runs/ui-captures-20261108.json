@@ -1,0 +1,104 @@
+{
+  "schema": "oke-live-ui-capture-v1",
+  "captured_at_utc": "2026-11-08T12:59:19.243036+00:00",
+  "origin": "https://aio-t1.isitsoft.kr",
+  "scope": "existing records and read-only UI; login/logout only; no new inquiry or ticket mutation",
+  "screenshots": [
+    {
+      "file": "01-login.png",
+      "url": "https://aio-t1.isitsoft.kr/login",
+      "caption": "배포 서비스의 빈 로그인 화면. 계정·비밀번호 미입력",
+      "sha256": "2abc73d16b190b0026b55dc89f56da89412a8a8d2726c036bf0c61587eb33c02",
+      "crop": "실제 로그인 카드 영역",
+      "repository_path": "docs/images/live/01-login.png"
+    },
+    {
+      "file": "02-employee-question.png",
+      "url": "https://aio-t1.isitsoft.kr/ask",
+      "caption": "직원 로그인 후 질문 입력 화면. 이번 캡처에서 질문을 전송하지 않음",
+      "sha256": "79a33da4bbff258838adf0b1f5554de33f53ef15fbb1faea0aed8dff5e079ffb",
+      "repository_path": "docs/images/live/02-employee-question.png"
+    },
+    {
+      "file": "03-normal-answer.png",
+      "url": "https://aio-t1.isitsoft.kr/my-requests",
+      "caption": "기존 VPN 문의와 실제 자동 안내 결과",
+      "sha256": "880c9e6dea217fb94d25ee87993079f6fc9c1e8d286c1c6b32dfc45a230681a3",
+      "request_id": "svc-normal-vpn-786bc012594a47f39e8b5cc7c89fb632",
+      "evidence": "runs/service-examples-20261108T101612Z.json",
+      "repository_path": "docs/images/live/03-normal-answer.png"
+    },
+    {
+      "file": "04-clarification.png",
+      "url": "https://aio-t1.isitsoft.kr/my-requests",
+      "caption": "기존 정보 부족 문의의 보완 질문 결과",
+      "sha256": "197da9964140a247fb8d171bfc1daf57d7c683165caa2042051c227a90509fc3",
+      "request_id": "svc-clarification-b548b58fdb9e477488dfacb8c01bd0f2",
+      "evidence": "runs/service-examples-20261108T101612Z.json",
+      "repository_path": "docs/images/live/04-clarification.png"
+    },
+    {
+      "file": "05-employee-completed.png",
+      "url": "https://aio-t1.isitsoft.kr/my-requests",
+      "caption": "기존 T-2037 문의의 완료 상태·관리자 답변 재조회",
+      "sha256": "a3a9a6c75d554aa1cb5ef9dcbab6160493bfef7312bd4abd73c03629d884392e",
+      "request_id": "svc-no-evidence-3cea051e3b1d4de7abe16e2633e6a988",
+      "evidence": "runs/service-examples-20261108T101612Z.json",
+      "repository_path": "docs/images/live/05-employee-completed.png"
+    },
+    {
+      "file": "06-fault-recovered-request.png",
+      "url": "https://aio-t1.isitsoft.kr/my-requests",
+      "caption": "기존 요청별 장애 시험 후 복구된 T-2040 접수 결과",
+      "sha256": "e3444f90d13735514a8afb862bd2cab27c8de1decd1bc6c318ab94d99494d3b3",
+      "request_id": "audit-fault-ad4bae475eb442be9de11051ca082f84",
+      "evidence": "runs/app-ticket-fault-20261108T110410Z.json",
+      "repository_path": "docs/images/live/06-fault-recovered-request.png"
+    },
+    {
+      "file": "07-admin-ticket.png",
+      "url": "https://aio-t1.isitsoft.kr/admin/tickets",
+      "caption": "기존 T-2037 관리자 처리 결과. 저장 동작 없음",
+      "ticket_id": "T-2037",
+      "evidence": "runs/service-examples-20261108T101612Z.json",
+      "sha256": "03c6ec0ed327483332f3dbfcd4dbe036fd577c2ee550eaaee2c7198ff8af11e8",
+      "repository_path": "docs/images/live/07-admin-ticket.png"
+    },
+    {
+      "file": "08-admin-alerts.png",
+      "url": "https://aio-t1.isitsoft.kr/admin/alerts",
+      "caption": "기존 티켓 저장 실패 알림과 복구 후 접수 알림. 새 장애 시험 없음",
+      "evidence": "runs/app-ticket-fault-20261108T110410Z.json",
+      "sha256": "0151a3c7f373eef84e41d645f12db5dcf86ed2484b3e87208a77fdc24cad6274",
+      "repository_path": "docs/images/live/08-admin-alerts.png"
+    }
+  ],
+  "checks": {
+    "employee_login": true,
+    "employee_completed_status_and_reply": true,
+    "employee_logout": true,
+    "admin_login": true,
+    "admin_logout": true,
+    "no_inquiry_or_ticket_write": true,
+    "admin_existing_completed_ticket_and_reply": true,
+    "failure_alert_visible": true,
+    "employee_question_ui_rendered": true
+  },
+  "errors": [],
+  "blocked_mutations": [],
+  "verdict": "PASS_READ_ONLY_UI_CAPTURES",
+  "previous_capture_attempts": {
+    "scope": "read-only browser capture preparation; no inquiry or ticket write",
+    "issues": [
+      "admin selectors differed from deployed DOM; retried after inspecting actual controls",
+      "initial question page was still loading; final image captured after visible content assertion"
+    ],
+    "final_images_verified": true
+  },
+  "finished_at_utc": "2026-11-08T13:10:54.477413+00:00",
+  "visual_review": "all eight final screenshots visually reviewed; no password, key, token or login ID visible; names belong to supplied fake employees",
+  "n8n_execution_ui": {
+    "status": "NOT_CAPTURED_MISSING_N8N_LOGIN",
+    "reason": "private handoff has VM and service accounts, no n8n console password; user asked for private file path"
+  }
+}

@@ -31,3 +31,8 @@
 이 폴더에는 위 표의 제출 영수증을 포함한다. 과거 결과서의 개인 개발 경로는 당시 실행 이력이며 현재 실행에 필요하지 않다. 제출본의 재현 명령과 검증 범위는 [SUBMISSION](../SUBMISSION.md)을 따른다.
 
 > 모든 수치는 [워크플로우 실행 결과서 (`docs/EXECUTION-RESULT.md`)](../docs/EXECUTION-RESULT.md), [RAG 아키텍처 설계서 (`docs/RAG-ARCHITECTURE.md`)](../docs/RAG-ARCHITECTURE.md), [워크플로우 설계서 (`docs/WORKFLOW-DESIGN.md`)](../docs/WORKFLOW-DESIGN.md)와 1:1로 대응합니다.
+
+## 실제 화면과 제출 비밀 검사
+
+- [실제 서비스 화면 캡처](ui-captures-20261108.json): 기존 문의·티켓을 열어 캡처한 웹 화면 8장. 새 문의·티켓 수정·장애 주입 없음. n8n 콘솔 실행 화면은 로그인 정보 확인 후 추가.
+- [제출 비밀 검사](secret-scan-20261108.json): 공식 tscan·오탐/고정 가상 데이터 검토 후 0건, Git 추적 텍스트의 실제 비공개 값 일치 0건. 예외와 범위는 [비밀 검사 안내](../eval/SECRET-SCAN.md).

@@ -1,62 +1,85 @@
-# DAY 82 · 최종 제출 준비 및 전 팀원 실서버 통합 검증 마감 요약 (2026-11-08 00:04 KST 갱신)
+# DAY 82 · 2026-11-09 · 제출·발표 준비
 
-> 본 문서는 2026-11-08(일) 00:04 KST 기준 실서버(`https://aio-t1.isitsoft.kr`) 복구·검증, 잔여 보안·실서버 안정화 마감 및 전 팀원(권오현·이수언·박지혜·임다혁·신유빈·이원민) 산출물 `main` 병합·루트 `runs/` 영수증 7종 취합 결과를 반영한 최종 제출 준비 기록이다.
+> 공식 82일차는 11월 9일(월)이다. 이 문서는 **11월 7–8일에 완료한 사전 준비**를 먼저 정리한 초안이며, 82일차 당일 실행·리허설·제출 완료 기록은 아직 채우지 않았다. 마지막 사전 준비 반영일은 2026-11-08이다.
 
-## 1. 목표 및 통합 달성 현황
+## 1. 오늘의 숫자
 
-- **목표:** `08-SUBMISSION.md` 표준 규격 정합성 100% 달성, 전 팀원 실서버 검증 영수증 루트 `runs/` 취합, VM n8n `oke-handoff` 30노드 복구 및 재시험(`T-2033`, `T-2034`, `T-2035`, `T-2036`) 검증, 핵심 3대 산출물(`WORKFLOW-DESIGN.md`, `RAG-ARCHITECTURE.md`, `EXECUTION-RESULT.md`) 수치 1:1 동기화.
-- **현재 판정:** **전 팀원 실서버 검증 영수증 통합 및 문서 정합성 100% 완료 (Ready for Final Presentation & Submission)**.
-  - `08-SUBMISSION.md` 규격 10대 루트 폴더 및 공통 14종 시나리오(`cases/common.json`) `main` 정식 안착(`8fda3f7`).
-  - `.env.example` 계열 4개 파일 Git 추적 영구 제거(`9348083`) 및 GitHub Actions CI baseline 점검 Green 통과(`8cd50b5`).
-  - **4대 개발/검증 파트 실서버 영수증 전원 `main` 무충돌 병합 및 루트 `runs/` 7종 취합 완료:**
-    - 박지혜(`2780cd6`): 백엔드/DB 세션 인증·RBAC(`401/200/403/200`) 및 PostgreSQL `app.inquiries` `status="completed"` 트랜잭션 검증([`runs/be-db-integration-20261107.json`](../../runs/be-db-integration-20261107.json)).
-    - 신유빈(`b60227f`): 사내 규정 8문서 33청크 3072차원 DB 검증 및 WF-05 권한 격리(일반 범위 누출 0건 vs IT 범위 2건) 실측([`runs/rag-search-eval-20261107.json`](../../runs/rag-search-eval-20261107.json)).
-    - 임다혁(`2bb0649`): VM `oke-handoff` 30노드 복구 직후 2차 재시험 완료 — WF-01 자동답변(재측정 `6.9s·4.8s·3.8s`), WF-02 보완 질문(`1.812s`), **WF-02b 이관 `T-2035` 발급(2.188s PASS)**, **WF-03 무근거 이관 `T-2036` 발급(3.004s PASS)**([`runs/support-v18-integration-20261107.json`](../../runs/support-v18-integration-20261107.json)).
-    - 이원민(`a34062f`): `oke-handoff` H01 웹훅 노드 유실 진단([`runs/live-integration-qa-20261107.json`](../../runs/live-integration-qa-20261107.json)) 및 30노드 재게시 후 WF-09 멱등성 재시험 7/7 PASS(`T-2034`, `duplicate: false → true`, DB 중복 0건, [`runs/live-integration-qa-20261107T113546Z.json`](../../runs/live-integration-qa-20261107T113546Z.json)).
+| 항목 | 아침 | 제출 전 |
+| --- | --- | --- |
+| 공통 시나리오 통과 /14 | 82일차 당일 집계 전 | 82일차 당일 집계 전 |
+| 팀 시나리오 통과 /전체 | 82일차 당일 집계 전 | 82일차 당일 집계 전 |
+| 장애 시나리오 통과 /전체 | 82일차 당일 집계 전 | 82일차 당일 집계 전 |
+| 정상 문의 p50 (`bench -n 5`) | 82일차 당일 집계 전 | 82일차 당일 집계 전 |
 
-## 2. 역할별 마감 및 통합 현황
+사전 시험의 검사 항목 수와 시나리오 수는 분모가 다르다. 아래 27/27·4/4·16/16을 합쳐 공식 공통 /14, 팀 전체 통과율 또는 82일차 당일 결과로 표시하지 않는다.
 
-| 담당 | 확인된 실서버/통합 근거 | 상태 및 잔여 일정 |
-|---|---|---|
-| 오현님 · 통합/총괄 | `08-SUBMISSION` 규격 `main` 단일화, `.env.example` 보안 조치 및 CI 복구, VM n8n `oke-handoff` 30노드 재게시(`T-2033`), 전 팀원 브랜치 병합 및 핵심 3대 산출물 최종 동기화 | 일요일(11/08) 슬라이드·발표 리허설 점검 및 월요일(11/09 14:50) 최종 제출 |
-| 수언님 · FE/슬라이드 | FE 실서버 배포(`https://aio-t1.isitsoft.kr/login`) 및 세션/역할 가드 정상 가동, `slides/OUTLINE.md`(15장 구상) 반영 | 일요일(11/08) 12:00~18:00 실서버 UI 4종 캡처(`ui-01`~`ui-04`) 및 발표장표 최종본 마감 |
-| 지혜님 · API/DB | 실서버 RBAC 보안 경계(`401/200/403/200`, `HttpOnly` 쿠키) 및 PostgreSQL `app.inquiries` `status=completed` 읽기 전용 트랜잭션 영수증([`runs/be-db-integration-20261107.json`](../../runs/be-db-integration-20261107.json)) 제출 완료 | **완료** (`main` 병합 및 `EXECUTION-RESULT.md` §15·§16 반영 완료) |
-| 다혁님 · Support | `oke-support` v18 (63노드, N12 `0.40`) 실서버 2차 재시험 PASS 영수증(WF-02b `T-2035`, WF-03 `T-2036`, [`runs/support-v18-integration-20261107.json`](../../runs/support-v18-integration-20261107.json)) 및 1차 격리 영수증 제출 완료 | **기술 검증 완료** / 일요일(11/08) 12:00~18:00 20분 발표 대본 및 Q&A 방어 리허설 |
-| 유빈님 · RAG | 사내 규정 8문서 33청크(`all` 7/30, `it` 1/3), `vector(3072)`, WF-05 권한 격리 실측 영수증([`runs/rag-search-eval-20261107.json`](../../runs/rag-search-eval-20261107.json)) 제출 완료 | **완료** (`main` 병합 및 `RAG-ARCHITECTURE.md` 반영 완료) |
-| 원민님 · QA/Handoff | 실서버 `oke-handoff` 30노드 복구 후 WF-09 7/7 PASS 영수증(`T-2034`, [`runs/live-integration-qa-20261107T113546Z.json`](../../runs/live-integration-qa-20261107T113546Z.json)), 1차 진단 영수증 및 `live-wf09-check.py` 제출 완료 | **완료** (`main` 병합 및 `EXECUTION-RESULT.md` 반영 완료) |
+### 사전 준비에서 확인한 실제 결과
 
-## 3. 검증 수치와 DB 영수증 (최종 확정 기준)
+| 시점·시험 | 확인한 결과 | 근거·범위 |
+| --- | --- | --- |
+| 11/07 본체 v18, handoff 복구 뒤 4건 | **최초 집계 3/4 통과.** WF-01은 자동답변했지만 8.754초로 8초 기준 실패. 이후 WF-01만 별도 재측정해 6.9·4.8·3.8초 관측 | [v18 원본](../../runs/support-v18-integration-20261107.json). 재측정을 원래 4건 전체의 동시 통과로 바꾸지 않음 |
+| 같은 v18의 다른 3건 | WF-02 보완 1.812초, WF-02b 이관 `T-2035` 2.188초, WF-03 이관 `T-2036` 3.004초 | 위 원본의 3건 통과. [복구 전 실패 기록](../../runs/support-v18-integration-20261107-before-fix.json)도 보존 |
+| 11/07 WF-09 중복 요청 | `T-2034`, 최초 `duplicate=false` 2.257초 → 재요청 `true` 0.594초, 동일 티켓·중복 생성 없음, **검사 7/7 통과** | [WF-09 원본](../../runs/live-integration-qa-20261107T113546Z.json). [복구 전 진단](../../runs/live-integration-qa-20261107.json)과 구분 |
+| 11/07 업무 API·DB | 필수 API 검사 통과, 완료 문의 1건 및 연결 티켓·알림 0건 확인. 원본 전체 상태는 **PARTIAL** | [API·DB 원본](../../runs/be-db-integration-20261107.json). 자동답변으로 티켓을 만들지 않아 선택적 관리자 목록 행 검사는 false였음. 티켓·알림 연결 검증 전체 완료로 확대하지 않음 |
+| 11/07 RAG 저장·권한 | **8문서·33청크·3072차원**, 일반 7문서/30청크·IT 1문서/3청크. 일반 보안사고 검색에 IT 문서 0건, IT 권한에 2건 반환 | [RAG 원본](../../runs/rag-search-eval-20261107.json). 제한된 검색·권한 사례이며 전체 검색 정답률이 아님 |
+| 11/08 직원·관리자 서비스 API | **검사 27/27 통과**. VPN 자동안내·보완 질문·근거 없음 이관, 문의 저장·중복 방지, `T-2037` 관리자 처리와 직원 재로그인 후 상태·답변 재조회 | [서비스 API 원본](../../runs/service-examples-20261108T101612Z.json). 동일 인계 직원 계정의 API 검사이며 6명 전체 로그인·브라우저 리허설과 구분 |
+| 11/08 추가 보안·분기 | 인젝션 차단·타인 티켓 조회 거절·보완 한도 이관·긴급 접수 **4/4 통과** | [추가 시험 원본](../../runs/service-additional-examples-20261108T102125Z.json). 지정 가상 직원의 인증된 직접 웹훅 호출 |
+| 11/08 요청별 티켓 장애·복구 | **검사 16/16 통과**. 고유 요청 1건만 티켓 API 실패 → 실패 알림·DLQ 저장 → 설정 해제 → 같은 ID로 `T-2040` 복구 | [장애 시험 원본](../../runs/app-ticket-fault-20261108T110410Z.json). DB는 사용 가능했고, 기존 DLQ는 pending 유지. DB 전체 장애나 자동 재처리 성공을 뜻하지 않음 |
+| 11/08 실제 화면·비밀 검사 | 웹 8장·n8n 6장 촬영·직접 검토. 공식 tscan의 검토된 예외 기준 탐지 **0건**, 실제 비공개 값의 추적 텍스트 일치 **0건** | [웹 캡처](../../runs/ui-captures-20261108.json), [n8n 캡처](../../runs/n8n-ui-captures-20261108.json), [비밀 검사](../../runs/secret-scan-after-n8n-20261108.json). 기존 기록 조회이며 새 기능 시험으로 집계하지 않음 |
 
-| 항목 | 실측 확인된 값 | 근거 영수증 / 문서 |
-|---|---|---|
-| 백엔드 세션 인증 · RBAC 및 DB 저장 | 비로그인 `/api/auth/me` **401** ➔ 직원 로그인 **200**(`HttpOnly`) ➔ 직원 `/api/admin/tickets` **403 차단** ➔ `/api/ask` **200** & `/api/my-requests` **200** ➔ 관리자 로그인/티켓 **200**; DB `app.inquiries` `status=completed` 1건 확인 | [`runs/be-db-integration-20261107.json`](../../runs/be-db-integration-20261107.json), [`docs/EXECUTION-RESULT.md`](../EXECUTION-RESULT.md) §15–16 |
-| VM RAG 코퍼스 및 차원 | **8문서 / 33청크** (`all` 일반 7문서·30청크, `it` 전용 1문서·3청크), `text-embedding-3-large`, `vector(3072)` 전 청크 일치 | [`runs/rag-search-eval-20261107.json`](../../runs/rag-search-eval-20261107.json), [`docs/RAG-ARCHITECTURE.md`](../RAG-ARCHITECTURE.md) |
-| 토큰 및 길이 분포 | 문서 본문 240–433자(`195–375 tokens`), 청크 13–156자(`10–163 tokens`), 임베딩 입력 26–182자(`22–192 tokens`, `cl100k_base`) | [`docs/RAG-ARCHITECTURE.md`](../RAG-ARCHITECTURE.md) §1 |
-| WF-05 권한 격리 실측 | 동일 보안사고 질의 시 `access_levels=["all"]`에서 `security-incident` 누출 **0건**(`wf05_leaked_it_count: 0`), `["all","it"]`에서 **2건** 정상 반환(HTTP 200) | [`runs/rag-search-eval-20261107.json`](../../runs/rag-search-eval-20261107.json) |
-| WF-01 / WF-02 / WF-02b / WF-03 메인 v18 실측 | `oke-support` v18 (63노드, 기준값 `0.40`) 2차 재시험 전원 **PASS**: WF-01 자동 답변(재측정 **6.9s · 4.8s · 3.8s** ≤ 8s), WF-02 보완 질문 **1.812s**, **WF-02b 이관 `T-2035` 발급(2.188s)**, **WF-03 무근거 이관 `T-2036` 발급(3.004s)** | [`runs/support-v18-integration-20261107.json`](../../runs/support-v18-integration-20261107.json), [`runs/support-v18-integration-20261107-before-fix.json`](../../runs/support-v18-integration-20261107-before-fix.json) |
-| WF-09 멱등성 및 핸드오프 복구 | `oke-handoff` 정본 **30노드(H01 복구)** 재게시 후 총괄 스모크(`T-2033`) 및 원민 님 WF-09 재시험(`T-2034`, 1차 `duplicate: false` 2.257s ➔ 2차 `duplicate: true` 0.594s, DB `tickets +1→+0`, `alerts +1→+0`) **7/7 PASS** | [`runs/live-integration-qa-20261107T113546Z.json`](../../runs/live-integration-qa-20261107T113546Z.json), [`runs/live-integration-qa-20261107.json`](../../runs/live-integration-qa-20261107.json) |
+RAG 길이·토큰은 현재 원본의 오프라인 계산이다. 원문 240–433자·195–375토큰, 청크 본문 13–156자·10–163토큰, 임베딩 입력 26–182자·22–192토큰(`cl100k_base`)이다. 실제 API 토큰 사용량과 구분하며 [RAG 설계서](../RAG-ARCHITECTURE.md#1-원본과-실측-색인)에 계산 방법·선정 이유가 있다.
 
-## 4. 통합 마감 기입란 (2026-11-08 00:04 KST 최종 확정)
+## 2. 팀원별 한 일과 남은 확인
 
-| 확인 항목 | 당일 실행 결과 및 확보 증거 |
-|---|---|
-| 시각·확인자·고정 VM/repo/workflow 버전 | **2026-11-07 23:40 KST** · 권오현(팀장) 및 전 팀원(이수언·박지혜·임다혁·신유빈·이원민) · `main` 최종 통합본(`oke-support` v18 63노드, `oke-handoff` 30노드, `oke-search` 7노드, `oke-errors` 14노드) |
-| 08-SUBMISSION 규격 및 `cases/common.json` | 10대 필수 규격 폴더(`backend/`, `frontend/`, `rag/`, `eval/`, `prompts/`, `slides/`, `runs/`, `requests/`, `knowledge/`, `data/`) 및 **공통 14종 시나리오(`cases/common.json`: WF-01 ~ WF-13 + WF-02b)** `main` 정식 안착(`8fda3f7`) |
-| 전 팀원 실서버 영수증 7종 루트 `runs/` 취합 | 루트 [`runs/`](../../runs/)에 7종 실서버 영수증(`be-db-integration-20261107.json`, `rag-search-eval-20261107.json`, `support-v18-integration-20261107.json`, `support-v18-integration-20261107-before-fix.json`, `live-integration-qa-20261107T113546Z.json`, `live-integration-qa-20261107.json`, `vm-search-observed-20261106.json`) 취합 및 [`runs/README.md`](../../runs/README.md) 인덱싱 완료 |
-| VM n8n 핸드오프 복구 및 2차 재시험 전원 PASS | VM `oke-handoff` 30노드 정본 재게시 후: ① 총괄 스모크 `T-2033` PASS, ② 원민 님 WF-09 멱등성 `T-2034` 7/7 PASS, ③ 다혁 님 WF-02b `T-2035` · WF-03 `T-2036` 이관 티켓 발급 PASS |
-| 백엔드 RBAC 및 DB 트랜잭션 검증 | 지혜 님 실서버 세션/RBAC(`401/200/403/200`) 및 PostgreSQL 읽기 전용 트랜잭션(`app.inquiries` `status=completed`) 검증 완료 |
-| 핵심 3대 산출물 최종 마감 갱신 | [`docs/RAG-ARCHITECTURE.md`](../RAG-ARCHITECTURE.md), [`docs/WORKFLOW-DESIGN.md`](../WORKFLOW-DESIGN.md), [`docs/EXECUTION-RESULT.md`](../EXECUTION-RESULT.md)(§15 영수증 매핑, §16 6칸 표준 표 **4건**, §18 15항목 체크리스트 `[x]`) 최종 갱신 완료 |
-| 잔여 보안 및 실서버 안정화 마감 (11-08 00:04 KST) | ① n8n 3개 워크플로우(support/search/handoff) `settings.errorWorkflow = "okeErrorsFlow01"` 영구 바인딩(`0b848e7`), ② FE 컨테이너 `init=true`·`pids_limit=100`·`/tmp,/var/tmp tmpfs(noexec,nosuid,size64m)` 보안 방어벽 구축(`e09d3f9`, ELF 실행 거절 EACCES 검증), ③ Next15.5.29 / React19.1.10 / sharp0.35.5 / PostCSS8.5.32 핀 고정으로 운영 의존성 audit 취약점 0건 달성(`d23642f`, `15ab6c9`), ④ 실서버 VM 12개 검증 항목 전원 통과 및 다른 8개 컨테이너 무중단 보존 확인 | [`SECURITY-STABILIZATION-RESULT-20261108.json`](../../../4pj%20준비/orchestrator/status/SECURITY-STABILIZATION-RESULT-20261108.json), [`TSCAN-SECURITY-REPORT.md`](../../../4pj%20준비/orchestrator/status/TSCAN-SECURITY-REPORT.md) |
+아래는 사전 준비의 담당별 기록이다. 역할의 모든 과제가 끝났다는 뜻이 아니다.
 
-## 5. 운영 및 보안 준수 원칙
+| 이름 | 완료·취합한 사전 준비 | 남은 확인 |
+| --- | --- | --- |
+| 권오현 | 팀원 보고서 병합·독립 main 정리, handoff 30노드 복구, 문서 검토, 서비스·장애 시험 및 화면·비밀 검사 취합 | 승인된 순서의 파일별 검토, 공식 전체 재현, 제출 기준 커밋·시각 기록 |
+| 이수언 | 직원·관리자 FE 배포·역할 가드 및 발표자료 준비 담당. 실제 서비스 화면은 [캡처 목록](../images/README.md)에 취합 | 발표자료 최종본·실제 발표 리허설의 완료 기록 확인. 옛 `slides/OUTLINE.md`를 현재 main 경로로 안내하지 않음 |
+| 박지혜 | `2780cd6` API·DB 보고서 병합. 세션·권한·문의 저장 확인 | 개별 보고서의 선택 검사·저장 범위를 유지하고 전체 통과로 확대하지 않음 |
+| 임다혁 | `2bb0649` 본체 v18 보고서, 최초 시간 실패와 추가 재측정, 보완·이관 결과 취합. 발표 담당 | 실제 질문 순서·근거·실패/복구를 설명하는 발표·질의응답 준비 |
+| 신유빈 | `b60227f` RAG 저장·차원·권한 검색 보고서 취합, 원본·청크 통계 대조 | 제한된 권한 사례와 전체 검색 품질·청킹 비교를 구분해 설명 |
+| 이원민 | `a34062f` handoff 입구 유실 진단과 복구 후 WF-09 7/7 보고서 취합 | 공식 전체 재현과 실제 오류·부모/자식 실행 추적의 미확인 범위를 구분 |
 
-- N12 코사인 기준값 `0.40`은 단독 정답 판정기가 아니며, 반드시 SQL 사전 권한 필터(`access_levels`), Writer(`answerable` 판정), Verifier(문장 단위 근거·정책 2차 검증)와 결합하여 운영한다.
-- 모든 API 키, DB 비밀번호, 웹훅 인증 헤더 값은 Git 저장소·문서·영수증 JSON에 일절 기록하지 않으며, `.gitignore`의 `*env.example*` 차단 정책을 유지한다.
+## 3. 막힌 것과 해결
 
-## 6. 참조 증거
+| 문제 | 확인한 원인·수정 | 결과·한계 |
+| --- | --- | --- |
+| handoff 티켓 미발급 | 게시된 워크플로우의 H01 입구 유실. 팀장이 정본 30노드를 재게시 | 총괄 스모크 `T-2033`, WF-09 `T-2034`, 본체 이관 `T-2035`·`T-2036` 복구 기록. 진단·재시험 원본은 1절에 연결 |
+| v18 정상 답변 시간 초과 | 복구 후 4건 중 WF-01 8.754초로 기준 실패 | 최초 3/4와 별도 정상 질문 3회 재측정을 모두 보존. [실행 결과서](../EXECUTION-RESULT.md)에서 후속 지연 관측과 구분 |
+| main에 보고서가 흩어짐 | 11/07 당시 실서버 보고서 7종을 루트 `runs/`로 취합 | [보고서 목록](../../runs/README.md)에서 독립 확인 가능. 취합 완료는 모든 공식 시험 통과와 다름 |
+| 공식 제출 기준과 폴더 설명 불일치 | 기존 “10대 필수 폴더”·옛 구현 경로·개인 폴더 링크를 바로잡음 | 현재 구조는 [README](../../README.md#폴더-구조), 실행 기준은 [SUBMISSION](../../SUBMISSION.md). 개인 폴더나 다른 브랜치를 실행 의존성으로 연결하지 않음 |
+| 전체 완료 판정 과장 | 실행 결과서 체크리스트는 문서 정리 시점 **13/15 체크, 2개 미체크** | 과거 부록 원본까지 포함한 구현 일치·측정값 대조는 미완료. “100% 완료·15개 전부 체크”로 표시하지 않음 |
+| 공식 전체 재현의 잔여 | 공식 원본 도구는 포함했으나 인증·시나리오 호환성 및 공식 전체 실행은 후속 확인 대상 | [도구 준비 상태](../../tools/README.md)를 따름. 이번 일지 수정에서는 새 시험·게시·배포를 실행하지 않음 |
 
-- [`runs/README.md`](../../runs/README.md): 루트 실서버 검증 영수증 7종 인덱스.
-- [`docs/EXECUTION-RESULT.md`](../EXECUTION-RESULT.md) §14–18: v18 로컬/실서버 실행 결과, Common 14/Team 5 표, 실서버 DB 영수증 매핑, 6칸 실패·개선 사례(4건), KSM-REQ §6 15항목 체크리스트.
-- [`docs/RAG-ARCHITECTURE.md`](../RAG-ARCHITECTURE.md): 8문서 33청크 3072차원 실측, 절 단위 청킹 및 SQL 사전 필터 선정 근거, WF-05 권한 격리 검증.
-- [`docs/WORKFLOW-DESIGN.md`](../WORKFLOW-DESIGN.md): v18 63노드 아키텍처, 백엔드 RBAC 세션 경계, 다단계 안전 파이프라인, 하위 워크플로우 타임아웃 및 `oke-handoff` 30노드 실서버 복구 명세.
-- [`SECURITY-STABILIZATION-RESULT-20261108.json`](../../../4pj%20준비/orchestrator/status/SECURITY-STABILIZATION-RESULT-20261108.json): 11-08 00:04 KST 잔여 보안·실서버 컨테이너 12개 검증 통과 증빙.
+현재 추가 구현은 `apps/frontend/`·`apps/backend/`·`apps/rag/`·`apps/data-api/`에 있고, 배포는 `deploy/`, 검사는 `eval/`·`tools/`에 있다. `slides/`는 현재 main 제출 실행 경로에 없다. 이 구현 폴더들을 공식 요구서가 지정한 “필수 10종”이라고 부르지 않는다.
+
+## 4. 82일차 당일 할 일
+
+공식 일정의 목표이며 실제 완료 기록이 아니다.
+
+| 구간 | 목표 | 당일 완료 기록 |
+| --- | --- | --- |
+| 1교시 | 배포 서비스의 기능 확인 순서를 1회 돌리고 잔여 항목 정리 | 미기입 |
+| 2교시 | 발표자료와 산출물 3종의 숫자·근거 대조 | 미기입 |
+| 3–4교시 | 강사 지정 순서에 따라 시연 리허설, 실패·복구 설명 준비 | 미기입 |
+| 5교시·14:50까지 | 문서·일지 마감, 제출 직전 비밀 검사, 제출 커밋·시각 기록 | 미기입 |
+| 6–7교시 | 지정 순서로 팀 발표 20분·질의 5분, 동료 평가 | 미기입 |
+| 8교시 | 평가 시험 25문항 | 미기입 |
+
+공식 전체 재현·추가 작업은 승인된 후속 범위에서 진행한다. 이미 확보한 API·화면·장애 시험 원본은 보존하며, 새 실행이 없으면 기존 결과를 당일 새 시험으로 표시하지 않는다.
+
+## 5. 강사 피드백
+
+82일차 당일 강사 피드백은 아직 기입하지 않았다. 피드백이 생기면 원문·확인 시각과 필요한 후속 조치를 기록한다. 사전 준비를 실제 발표·리허설·강사 승인 완료로 소급하지 않는다.
+
+## 사전 통합·보안 이력
+
+- **11/07 보고서 취합:** API·DB, RAG, v18 복구 전/후, QA 복구 전/후, 초기 검색 관측의 7종이다. 원본은 [API·DB](../../runs/be-db-integration-20261107.json), [RAG](../../runs/rag-search-eval-20261107.json), [v18 복구 전](../../runs/support-v18-integration-20261107-before-fix.json)·[복구 후](../../runs/support-v18-integration-20261107.json), [QA 진단](../../runs/live-integration-qa-20261107.json)·[재시험](../../runs/live-integration-qa-20261107T113546Z.json), [검색 관측](../../runs/vm-search-observed-20261106.json)에 있다. 이후 11/08 보고서는 별도 추가됐다.
+- **당시 통합 기록:** `8fda3f7`에서 공통 14개 사례 파일 배치, `9348083`에서 환경 예제 계열 4개 파일 추적 제외, `8cd50b5`에서 CI 기준선 점검 이력이 있다. 파일 배치는 시험 통과가 아니며, 추적 제외는 Git 과거 이력 삭제를 뜻하지 않는다.
+- **11/08 00:04 보안 인계 기록:** `0b848e7` 오류 워크플로우 연결, `e09d3f9` FE `init=true`·프로세스 수 제한·임시 경로 실행 제한, `d23642f`·`15ab6c9` 의존성 고정과 audit, VM 12항목 검사·다른 8개 컨테이너 보존이 보고돼 있었다. 당시 문서는 Next 15.5.29·React 19.1.10·sharp 0.35.5·PostCSS 8.5.32와 임시 경로 실행 거절 EACCES를 기록했다. 이 항목은 당시 인계이며 이번 문서 수정에서 재배포·재실행하지 않았다.
+- 위 보안 인계의 개인 관제 원본 `SECURITY-STABILIZATION-RESULT-20261108.json`·`TSCAN-SECURITY-REPORT.md`는 현재 main에 포함되지 않는다. 개인 폴더 링크를 제거하고 당시 파일명·커밋을 보존했다. 현재 제출본의 비밀 검사 근거는 main 안의 [검사 기록](../../runs/secret-scan-after-n8n-20261108.json)과 [검사 범위·예외](../../eval/SECRET-SCAN.md)다.
+- 이전 문서의 11/07 23:40 “고정 버전” 행에는 Git 커밋·실행 이미지 식별자가 없어 main과 VM 전체 일치 근거로 사용할 수 없었다. 현재 본체·하위 워크플로우의 구조는 [워크플로우 설계](../WORKFLOW-DESIGN.md), 개별 시험의 실행 버전·한계는 [실행 결과서](../EXECUTION-RESULT.md)와 해당 원본을 기준으로 확인한다.
+- N12 기준값 0.40은 단독 정답 판정기가 아니다. 권한 필터·Writer·Verifier와 함께 사용하는 조건이며 [RAG 설계서](../RAG-ARCHITECTURE.md)에 선정 근거와 측정 한계를 구분했다.
+- 키·비밀번호·세션·웹훅 인증 값은 저장소·문서·캡처에 넣지 않는다. 비밀 검사 0건은 명시한 규칙·범위의 결과이며 Git 과거 이력까지 검사했다는 뜻은 아니다.

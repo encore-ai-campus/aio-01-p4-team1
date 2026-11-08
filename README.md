@@ -92,6 +92,34 @@ flowchart TD
 - **신유빈:** 규정 색인, 임베딩, 권한별 검색
 - **이원민:** 이관, 오류 처리, 멱등성, 시험·결과 집계
 
+## 실행 방법
+
+팀 VM의 저장소에서 Docker Compose로 설정 확인 → 서비스 기동 → 상태 확인 순서로 실행합니다. Docker·Compose, 운영용 비공개 환경 파일, 기존 DB·n8n 볼륨과 네트워크가 준비돼 있어야 합니다.
+
+```sh
+cd /home/toor/Aio-4pj-1team
+
+# 1. 설정 확인
+SERVICE_MODE=app docker compose \
+  --env-file /home/toor/n8n/day65-n8n/.env \
+  --env-file backend/deploy/.env \
+  -f deploy/compose.vm.yaml -p oke config --quiet
+
+# 2. 이미지 빌드 및 서비스 기동
+SERVICE_MODE=app docker compose \
+  --env-file /home/toor/n8n/day65-n8n/.env \
+  --env-file backend/deploy/.env \
+  -f deploy/compose.vm.yaml -p oke up -d --build
+
+# 3. 컨테이너 상태 확인
+SERVICE_MODE=app docker compose \
+  --env-file /home/toor/n8n/day65-n8n/.env \
+  --env-file backend/deploy/.env \
+  -f deploy/compose.vm.yaml -p oke ps
+```
+
+상태 확인 후 [서비스 로그인](https://aio-t1.isitsoft.kr/login)에 접속합니다. 비공개 환경 파일의 준비 위치와 색인·복구 절차는 [VM 배포 안내](deploy/README.md), 계정 안내는 [팀 VM 안내](docs/VM-TEAM-TESTING.md)를 따릅니다. 명령은 기존 VM 구성의 기동 절차이며, 현재 main의 VM 재배포·재시험 여부는 실행 기록으로 확인해야 합니다.
+
 ## 웹훅
 
 팀 VM의 n8n 주소는 `https://aio-t1.isitsoft.kr:5678`입니다.
@@ -104,7 +132,7 @@ flowchart TD
 
 요청 예시: [정상 문의 JSON](requests/demo-normal.json) · 전체 명세: [API 계약](docs/API-CONTRACT.md)
 
-## 시연 순서
+## 기능 시연 순서
 
 1. **정상 답변** — [VPN 질문](requests/demo-normal.json)을 보내 자동 답변과 규정 근거를 확인합니다.
 2. **보완 질문** — [정보가 부족한 질문](requests/demo-clarify.json)을 보내 추가 질문을 확인합니다. [보완 한도 도달](requests/clarify-3.json) 시 이관도 확인합니다.
@@ -152,18 +180,35 @@ flow.py test cases/team.json
 
 **실제 화면 캡처는 아직 필요합니다.** 주요 기능의 네 항목에 맞춰 로그인, 직원 질문·답변, 관리자 처리, 직원 처리 결과 화면을 촬영·마스킹해 [실행 화면 폴더](docs/images/README.md)에 반영합니다. 기존 예상 화면은 실행 증거로 사용하지 않습니다.
 
-## 제출 자료
+## 제출 자료와 폴더 안내
+
+**핵심 산출물:** [워크플로우 설계서](docs/WORKFLOW-DESIGN.md) · [RAG 설계서](docs/RAG-ARCHITECTURE.md) · [실행 결과서](docs/EXECUTION-RESULT.md)
 
 **사용 데이터:** 가상 직원 6명, 규정 8종, FAQ 6종, 기존 티켓 4건
 
-- **핵심 산출물:** [워크플로우 설계서](docs/WORKFLOW-DESIGN.md) · [RAG 설계서](docs/RAG-ARCHITECTURE.md) · [실행 결과서](docs/EXECUTION-RESULT.md)
-- **기획·기록:** [주제](docs/TOPIC.md) · [팀 헌장](docs/TEAM-CHARTER.md) · [데일리](daily/README.md)
-- **구현:** [화면](frontend/README.md) · [API·DB](backend/README.md) · [RAG](rag/README.md) · [워크플로우](workflows/README.md)
-- **데이터·시험:** [규정](knowledge/README.md) · [초기 데이터](data/README.md) · [프롬프트](prompts/README.md) · [시나리오](cases/README.md) · [요청](requests/README.md) · [실행 기록](runs/README.md)
+main의 모든 루트 폴더를 아래에서 열어볼 수 있습니다.
 
-<details>
-<summary>운영자 실행 안내</summary>
+### 서비스 구현·배포
 
-접속·계정은 [팀 VM 안내](docs/VM-TEAM-TESTING.md), 서비스 기동·재배포와 환경 설정은 [VM 배포 안내](deploy/README.md)를 따릅니다. main의 루트 코드·데이터·배포 설정을 사용하며, 비공개 키·계정·DB 설정은 별도로 제공합니다.
+- [frontend/](frontend/) — 직원·관리자 웹 화면
+- [backend/](backend/) — FastAPI 인증·업무 API, DB 모델·마이그레이션
+- [rag/](rag/) — 규정 색인·임베딩·권한별 검색 서비스
+- [workflows/](workflows/) — n8n 문의·검색·색인·이관·오류 워크플로우
+- [data-api/](data-api/) — 제공 데이터 조회와 연습 모드 API
+- [deploy/](deploy/) — 팀 VM Compose·Dockerfile·배포 안내
 
-</details>
+### 데이터·평가
+
+- [knowledge/](knowledge/) — 규정 원문
+- [data/](data/) — 가상 직원·FAQ·기존 티켓과 스키마
+- [prompts/](prompts/) — 문의 처리 프롬프트
+- [cases/](cases/) — 공통·팀·RAG 시험 시나리오
+- [requests/](requests/) — 시연·벤치마크·오류 시험 요청
+- [eval/](eval/) — 평가 도구·합성 fixture·Mock 검사
+- [runs/](runs/) — 실제 시험·측정 기록
+
+### 문서·협업
+
+- [docs/](docs/) — 주제·헌장·계약·설계·실행 결과·화면 자료
+- [daily/](daily/) — DAY80·81·82 진행 기록
+- [.github/](.github/) — CI 설정·PR 양식

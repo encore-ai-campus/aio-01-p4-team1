@@ -1,0 +1,45 @@
+{
+  "status": "ready_for_paid_approval",
+  "reason": null,
+  "checked_at_utc": "2026-11-09T01:54:39.419996+00:00",
+  "candidate_count": 11,
+  "core_count": 11,
+  "chunk_counts": {
+    "section": 33,
+    "300": 14
+  },
+  "database_inventory": {
+    "section": {
+      "database": "rag_ab_section",
+      "user": "rag_ab_section",
+      "vector_version": "0.8.7",
+      "documents": 0,
+      "chunks": 0
+    },
+    "300": {
+      "database": "rag_ab_chars",
+      "user": "rag_ab_chars",
+      "vector_version": "0.8.7",
+      "documents": 0,
+      "chunks": 0
+    }
+  },
+  "search_role_inventory": {
+    "section": {
+      "database": "rag_ab_section",
+      "user": "rag_ab_section_search",
+      "vector_version": "0.8.7",
+      "documents": 0,
+      "chunks": 0
+    },
+    "300": {
+      "database": "rag_ab_chars",
+      "user": "rag_ab_chars_search",
+      "vector_version": "0.8.7",
+      "documents": 0,
+      "chunks": 0
+    }
+  },
+  "paid_calls_executed": false,
+  "documents_indexed": false
+}

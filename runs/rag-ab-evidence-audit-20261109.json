@@ -1,0 +1,431 @@
+{
+  "status": "read_only_evidence_audit",
+  "checked_at_utc": "2026-11-09T01:59:14.696966+00:00",
+  "result_sha256": "3a4ed632d29146bff15d70c5210989c7704e2cd2aac08f47b5e37adc8a4e053e",
+  "answer_key_sha256": "6c1ede109028aa94161aefefe522543aa59374c8709bcc424a7a2431f4ff29cb",
+  "definition": "First top-3 rank whose single returned chunk belongs to the approved document and contains all approved required quote strings. Null if absent.",
+  "observations": [
+    {
+      "method": "section",
+      "id": "Q01",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q01",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q01",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q02",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q02",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q02",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q03",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q03",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q03",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q04",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q04",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q04",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q05",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q05",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q05",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q06",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q06",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q06",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q07",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q07",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q07",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q08-IT",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q08-IT",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q08-IT",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q09",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q09",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q09",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q10",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q10",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q10",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q11",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q11",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "section",
+      "id": "Q11",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q01",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q01",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q01",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q02",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q02",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q02",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q03",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q03",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q03",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q04",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q04",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q04",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q05",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q05",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q05",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q06",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q06",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q06",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q07",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q07",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q07",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q08-IT",
+      "repeat": 1,
+      "strict_evidence_rank": 2
+    },
+    {
+      "method": "300",
+      "id": "Q08-IT",
+      "repeat": 2,
+      "strict_evidence_rank": 2
+    },
+    {
+      "method": "300",
+      "id": "Q08-IT",
+      "repeat": 3,
+      "strict_evidence_rank": 2
+    },
+    {
+      "method": "300",
+      "id": "Q09",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q09",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q09",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q10",
+      "repeat": 1,
+      "strict_evidence_rank": null
+    },
+    {
+      "method": "300",
+      "id": "Q10",
+      "repeat": 2,
+      "strict_evidence_rank": null
+    },
+    {
+      "method": "300",
+      "id": "Q10",
+      "repeat": 3,
+      "strict_evidence_rank": null
+    },
+    {
+      "method": "300",
+      "id": "Q11",
+      "repeat": 1,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q11",
+      "repeat": 2,
+      "strict_evidence_rank": 1
+    },
+    {
+      "method": "300",
+      "id": "Q11",
+      "repeat": 3,
+      "strict_evidence_rank": 1
+    }
+  ],
+  "summary": {
+    "section": {
+      "strict_evidence_hit_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "strict_evidence_mrr": {
+        "numerator": 33.0,
+        "denominator": 33,
+        "value": 1.0
+      }
+    },
+    "300": {
+      "strict_evidence_hit_at_3": {
+        "numerator": 30,
+        "denominator": 33,
+        "value": 0.9090909090909091
+      },
+      "strict_evidence_mrr": {
+        "numerator": 28.5,
+        "denominator": 33,
+        "value": 0.8636363636363636
+      }
+    }
+  }
+}

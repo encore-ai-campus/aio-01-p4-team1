@@ -1,0 +1,14 @@
+{
+  "timestamp_utc": "2026-11-09T01:43:20.187907+00:00",
+  "key_source": "root_dotenv",
+  "model": "text-embedding-3-large",
+  "request_count": 1,
+  "retry_count": 0,
+  "http_status": 200,
+  "dimensions": 3072,
+  "authentication_success": true,
+  "usage": {
+    "prompt_tokens": 12,
+    "total_tokens": 12
+  }
+}

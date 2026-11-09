@@ -1,0 +1,70 @@
+{
+  "status": "passed_sql_permission_proxy",
+  "captured_at_utc": "2026-11-09T02:07:52.604687+00:00",
+  "paid_api_calls": 0,
+  "limitations": "Document chunk embedding used as query proxy. This is not the actual Q08 question-vector test or end-to-end employee session test.",
+  "observations": [
+    {
+      "method": "section",
+      "access_levels": [
+        "all"
+      ],
+      "probe_source_doc": "security-incident",
+      "probe_source_content_hash": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+      "returned_count": 3,
+      "restricted_doc_count": 0,
+      "returned_docs": [
+        "privacy",
+        "email-and-documents",
+        "password-policy"
+      ]
+    },
+    {
+      "method": "section",
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "probe_source_doc": "security-incident",
+      "probe_source_content_hash": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+      "returned_count": 3,
+      "restricted_doc_count": 1,
+      "returned_docs": [
+        "security-incident",
+        "privacy",
+        "email-and-documents"
+      ]
+    },
+    {
+      "method": "300",
+      "access_levels": [
+        "all"
+      ],
+      "probe_source_doc": "security-incident",
+      "probe_source_content_hash": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+      "returned_count": 3,
+      "restricted_doc_count": 0,
+      "returned_docs": [
+        "password-policy",
+        "privacy",
+        "remote-work-vpn"
+      ]
+    },
+    {
+      "method": "300",
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "probe_source_doc": "security-incident",
+      "probe_source_content_hash": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+      "returned_count": 3,
+      "restricted_doc_count": 2,
+      "returned_docs": [
+        "security-incident",
+        "security-incident",
+        "password-policy"
+      ]
+    }
+  ]
+}

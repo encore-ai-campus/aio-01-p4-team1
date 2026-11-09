@@ -1,0 +1,6206 @@
+{
+  "status": "actual_isolated_comparison",
+  "run_id": "rag-ab-20261109-5743ef0a",
+  "captured_at_utc": "2026-11-09T01:55:14.440474+00:00",
+  "started_at_utc": "2026-11-09T01:54:59.720432+00:00",
+  "answer_key_sha256": "6c1ede109028aa94161aefefe522543aa59374c8709bcc424a7a2431f4ff29cb",
+  "source_sha256": {
+    "device-issue-return": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+    "email-and-documents": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+    "meeting-room": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+    "password-policy": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+    "privacy": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+    "remote-work-vpn": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+    "security-incident": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29",
+    "software-usage": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849"
+  },
+  "method_inventory": {
+    "section": {
+      "database": "rag_ab_section",
+      "user": "rag_ab_section",
+      "vector_version": "0.8.7",
+      "documents": 8,
+      "chunks": 33
+    },
+    "300": {
+      "database": "rag_ab_chars",
+      "user": "rag_ab_chars",
+      "vector_version": "0.8.7",
+      "documents": 8,
+      "chunks": 14
+    }
+  },
+  "permissions_sha256": "bc2473efc7b86cc9a452ce4b4a6638b8f324caf53c744e6b8532e678543d5b42",
+  "indexing": {
+    "section": {
+      "elapsed_ms": 8388.94659900052,
+      "counts": {
+        "indexed": 8,
+        "skipped": 0,
+        "rejected": 0,
+        "failed": 0
+      }
+    },
+    "300": {
+      "elapsed_ms": 3310.9957779997785,
+      "counts": {
+        "indexed": 8,
+        "skipped": 0,
+        "rejected": 0,
+        "failed": 0
+      }
+    }
+  },
+  "conditions": {
+    "section": {
+      "source_hashes": {
+        "device-issue-return": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+        "email-and-documents": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+        "meeting-room": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+        "password-policy": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+        "privacy": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+        "remote-work-vpn": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+        "security-incident": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29",
+        "software-usage": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849"
+      },
+      "access_levels": [
+        [
+          "all"
+        ],
+        [
+          "all",
+          "it"
+        ]
+      ],
+      "model": "text-embedding-3-large",
+      "dimensions": 3072,
+      "distance": "cosine",
+      "top_k": 3,
+      "questions_version": "ab-frozen-20261109-v1",
+      "repeats": 3,
+      "overlap": 0,
+      "environment": "isolated_dual_postgres",
+      "settings_version": "p1-1-v1"
+    },
+    "300": {
+      "source_hashes": {
+        "device-issue-return": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+        "email-and-documents": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+        "meeting-room": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+        "password-policy": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+        "privacy": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+        "remote-work-vpn": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+        "security-incident": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29",
+        "software-usage": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849"
+      },
+      "access_levels": [
+        [
+          "all"
+        ],
+        [
+          "all",
+          "it"
+        ]
+      ],
+      "model": "text-embedding-3-large",
+      "dimensions": 3072,
+      "distance": "cosine",
+      "top_k": 3,
+      "questions_version": "ab-frozen-20261109-v1",
+      "repeats": 3,
+      "overlap": 0,
+      "environment": "isolated_dual_postgres",
+      "settings_version": "p1-1-v1"
+    }
+  },
+  "questions": [
+    {
+      "id": "Q01",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "search_sql_ms": 18.734218000645342,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "content_hash": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+          "score": 0.7094591923570861
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.5360114380297146
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문",
+          "content_hash": "79ca2d305a5f59b654f34c6364a1e95abd0ebaf9e1e0d9024e3de3dbeff54115",
+          "score": 0.5220935393351422
+        }
+      ]
+    },
+    {
+      "id": "Q01",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "search_sql_ms": 4.397118999804661,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "content_hash": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+          "score": 0.7094591923570861
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.5360114380297146
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문",
+          "content_hash": "79ca2d305a5f59b654f34c6364a1e95abd0ebaf9e1e0d9024e3de3dbeff54115",
+          "score": 0.5220935393351422
+        }
+      ]
+    },
+    {
+      "id": "Q01",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "search_sql_ms": 4.268114000296919,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "content_hash": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+          "score": 0.7094591923570861
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.5360114380297146
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문",
+          "content_hash": "79ca2d305a5f59b654f34c6364a1e95abd0ebaf9e1e0d9024e3de3dbeff54115",
+          "score": 0.5220935393351422
+        }
+      ]
+    },
+    {
+      "id": "Q01",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "search_sql_ms": 6.117269999776909,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.6079075230561244
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.47791158812443335
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+          "content_hash": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+          "score": 0.28372356189193537
+        }
+      ]
+    },
+    {
+      "id": "Q01",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "search_sql_ms": 4.07830299991474,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.6079075230561244
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.47791158812443335
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+          "content_hash": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+          "score": 0.28372356189193537
+        }
+      ]
+    },
+    {
+      "id": "Q01",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "search_sql_ms": 3.8187990003279992,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.6079075230561244
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.47791158812443335
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+          "content_hash": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+          "score": 0.28372356189193537
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "search_sql_ms": 5.51908400029788,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.58892216135659
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "content_hash": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+          "score": 0.47306905550896294
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "content_hash": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+          "score": 0.47235530813414606
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "search_sql_ms": 5.385632000070473,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.58892216135659
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "content_hash": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+          "score": 0.47306905550896294
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "content_hash": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+          "score": 0.47235530813414606
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "search_sql_ms": 5.642961999910767,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.58892216135659
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "1. 비밀번호 만들기",
+          "content_hash": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+          "score": 0.47306905550896294
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "content_hash": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+          "score": 0.47235530813414606
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "search_sql_ms": 4.248311000083049,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.523217564969002
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.46668693891172985
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.33061220001026925
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "search_sql_ms": 4.119034999348514,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.523217564969002
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.46668693891172985
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.33061220001026925
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "search_sql_ms": 5.95608200001152,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.523217564969002
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.46668693891172985
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.33061220001026925
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "search_sql_ms": 5.2218269993318245,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "content_hash": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+          "score": 0.5059789515664426
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "4. 개인 장비 사용",
+          "content_hash": "8f8158fcf5f2a18b24ec1f4377d9a178ec45bc3e43484dc7efe1c35415f64269",
+          "score": 0.31162972134468847
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.31075841395243287
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "search_sql_ms": 5.2018570004293,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "content_hash": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+          "score": 0.5059789515664426
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "4. 개인 장비 사용",
+          "content_hash": "8f8158fcf5f2a18b24ec1f4377d9a178ec45bc3e43484dc7efe1c35415f64269",
+          "score": 0.31162972134468847
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.31075841395243287
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "search_sql_ms": 5.488202999913483,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "4. 다단계 인증",
+          "content_hash": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+          "score": 0.5059789515664426
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "4. 개인 장비 사용",
+          "content_hash": "8f8158fcf5f2a18b24ec1f4377d9a178ec45bc3e43484dc7efe1c35415f64269",
+          "score": 0.31162972134468847
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "2. 변경 주기",
+          "content_hash": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+          "score": 0.31075841395243287
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "search_sql_ms": 5.02375900032348,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.4691973973667096
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.32808194063563045
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.28098391126136457
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "search_sql_ms": 4.523498999333242,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.4691973973667096
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.32808194063563045
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.28098391126136457
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "search_sql_ms": 4.680155999267299,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.4691973973667096
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.32808194063563045
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.28098391126136457
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "search_sql_ms": 4.595041999891691,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서",
+          "content_hash": "56de423ff9d9124a711eefadd54da7c60b220c5605e6f4c016ab820eddd6c748",
+          "score": 0.5991978735652448
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "content_hash": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+          "score": 0.3782312760935478
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "content_hash": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+          "score": 0.3749843581429675
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "search_sql_ms": 13.369184999646677,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서",
+          "content_hash": "56de423ff9d9124a711eefadd54da7c60b220c5605e6f4c016ab820eddd6c748",
+          "score": 0.5991978735652448
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "content_hash": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+          "score": 0.3782312760935478
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "content_hash": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+          "score": 0.3749843581429675
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "search_sql_ms": 6.068183000024874,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서",
+          "content_hash": "56de423ff9d9124a711eefadd54da7c60b220c5605e6f4c016ab820eddd6c748",
+          "score": 0.5991978735652448
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "content_hash": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+          "score": 0.3782312760935478
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "content_hash": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+          "score": 0.3749843581429675
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "search_sql_ms": 5.616028999611444,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.4468143764346012
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.35252636332913856
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.34888769731949343
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "search_sql_ms": 4.085177999513689,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.4468143764346012
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.35252636332913856
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.34888769731949343
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "search_sql_ms": 6.364994999785267,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.4468143764346012
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.35252636332913856
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.34888769731949343
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "search_sql_ms": 7.482627999706892,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "content_hash": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+          "score": 0.5666497331891636
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "content_hash": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+          "score": 0.404610027020073
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "118735535cdeb6d2a16517b0269bf1f1beb813bd3b66f4bbf841030fc40e600d",
+          "score": 0.39168456428408005
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "search_sql_ms": 5.878731000848347,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "content_hash": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+          "score": 0.5666497331891636
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "content_hash": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+          "score": 0.404610027020073
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "118735535cdeb6d2a16517b0269bf1f1beb813bd3b66f4bbf841030fc40e600d",
+          "score": 0.39168456428408005
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "search_sql_ms": 6.68787000086013,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "1. 접속 원칙",
+          "content_hash": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+          "score": 0.5666497331891636
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "서문",
+          "content_hash": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+          "score": 0.404610027020073
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "118735535cdeb6d2a16517b0269bf1f1beb813bd3b66f4bbf841030fc40e600d",
+          "score": 0.39168456428408005
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "search_sql_ms": 5.370277000110946,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.4850795430033459
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.3885426065403037
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.36997739264567175
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "search_sql_ms": 6.533284999932221,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.4850795430033459
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.3885426065403037
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.36997739264567175
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "search_sql_ms": 4.464597000151116,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.4850795430033459
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.3885426065403037
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.36997739264567175
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "search_sql_ms": 6.396971999492962,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "email-and-documents",
+          "section": "2. 첨부 파일",
+          "content_hash": "6d52bb8c4ffea20dd8fa9dcdc4a6ada1273395cbf65be09de98a4f11b874bf47",
+          "score": 0.6477170534920662
+        },
+        {
+          "rank": 2,
+          "doc": "email-and-documents",
+          "section": "1. 메일함",
+          "content_hash": "8266a3af95c77ad5c96f3659da080690bb2f57bc0bafed9de317129686d9548b",
+          "score": 0.47780412602146494
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "서문",
+          "content_hash": "faa09236952b2d056c130909185c86bb8c131901656c1fcf22bd35799bf60c4f",
+          "score": 0.38898976632862947
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "search_sql_ms": 4.250310999850626,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "email-and-documents",
+          "section": "2. 첨부 파일",
+          "content_hash": "6d52bb8c4ffea20dd8fa9dcdc4a6ada1273395cbf65be09de98a4f11b874bf47",
+          "score": 0.6477170534920662
+        },
+        {
+          "rank": 2,
+          "doc": "email-and-documents",
+          "section": "1. 메일함",
+          "content_hash": "8266a3af95c77ad5c96f3659da080690bb2f57bc0bafed9de317129686d9548b",
+          "score": 0.47780412602146494
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "서문",
+          "content_hash": "faa09236952b2d056c130909185c86bb8c131901656c1fcf22bd35799bf60c4f",
+          "score": 0.38898976632862947
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "search_sql_ms": 5.388152000705304,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "email-and-documents",
+          "section": "2. 첨부 파일",
+          "content_hash": "6d52bb8c4ffea20dd8fa9dcdc4a6ada1273395cbf65be09de98a4f11b874bf47",
+          "score": 0.6477170534920662
+        },
+        {
+          "rank": 2,
+          "doc": "email-and-documents",
+          "section": "1. 메일함",
+          "content_hash": "8266a3af95c77ad5c96f3659da080690bb2f57bc0bafed9de317129686d9548b",
+          "score": 0.47780412602146494
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "서문",
+          "content_hash": "faa09236952b2d056c130909185c86bb8c131901656c1fcf22bd35799bf60c4f",
+          "score": 0.38898976632862947
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "search_sql_ms": 3.807050000432355,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "email-and-documents",
+          "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+          "content_hash": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+          "score": 0.4825498179840182
+        },
+        {
+          "rank": 2,
+          "doc": "email-and-documents",
+          "section": "3. 문서 등급과 보관",
+          "content_hash": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+          "score": 0.3594478066618654
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.2808499048693033
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "search_sql_ms": 12.76236599915137,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "email-and-documents",
+          "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+          "content_hash": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+          "score": 0.4825498179840182
+        },
+        {
+          "rank": 2,
+          "doc": "email-and-documents",
+          "section": "3. 문서 등급과 보관",
+          "content_hash": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+          "score": 0.3594478066618654
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.2808499048693033
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "search_sql_ms": 4.291395000109333,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "email-and-documents",
+          "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+          "content_hash": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+          "score": 0.4825498179840182
+        },
+        {
+          "rank": 2,
+          "doc": "email-and-documents",
+          "section": "3. 문서 등급과 보관",
+          "content_hash": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+          "score": 0.3594478066618654
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.2808499048693033
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "search_sql_ms": 7.229775000269001,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "content_hash": "2fda7c0f321472c53278bbc78c8dc64a8dfe42a6b346c7c48de0249d8ebcf61f",
+          "score": 0.5279060237299735
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "content_hash": "59a166ad741e39c554c040517e9d6c84cba8aca7038958ab41642171e89f3fb4",
+          "score": 0.5213071025836659
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "content_hash": "1158291d58c6a942aed8b0163cbc68ad259ba40dc15fae2bd2a4c0bd5d9ff043",
+          "score": 0.4549412116274696
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "search_sql_ms": 5.410409999967669,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "content_hash": "2fda7c0f321472c53278bbc78c8dc64a8dfe42a6b346c7c48de0249d8ebcf61f",
+          "score": 0.5279060237299735
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "content_hash": "59a166ad741e39c554c040517e9d6c84cba8aca7038958ab41642171e89f3fb4",
+          "score": 0.5213071025836659
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "content_hash": "1158291d58c6a942aed8b0163cbc68ad259ba40dc15fae2bd2a4c0bd5d9ff043",
+          "score": 0.4549412116274696
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "search_sql_ms": 4.596615999616915,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "content_hash": "2fda7c0f321472c53278bbc78c8dc64a8dfe42a6b346c7c48de0249d8ebcf61f",
+          "score": 0.5279060237299735
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "content_hash": "59a166ad741e39c554c040517e9d6c84cba8aca7038958ab41642171e89f3fb4",
+          "score": 0.5213071025836659
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "content_hash": "1158291d58c6a942aed8b0163cbc68ad259ba40dc15fae2bd2a4c0bd5d9ff043",
+          "score": 0.4549412116274696
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "search_sql_ms": 4.309424999519251,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+          "content_hash": "fbf783225d5240334b692af9800f49e40f09ab95fee636f37b6252d7b5d3b88f",
+          "score": 0.5434603146615001
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.36548408791649023
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "3. 문서 등급과 보관",
+          "content_hash": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+          "score": 0.3340454877566845
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "search_sql_ms": 4.02174400005606,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+          "content_hash": "fbf783225d5240334b692af9800f49e40f09ab95fee636f37b6252d7b5d3b88f",
+          "score": 0.5434603146615001
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.36548408791649023
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "3. 문서 등급과 보관",
+          "content_hash": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+          "score": 0.3340454877566845
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "search_sql_ms": 3.7111210003786255,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+          "content_hash": "fbf783225d5240334b692af9800f49e40f09ab95fee636f37b6252d7b5d3b88f",
+          "score": 0.5434603146615001
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "content_hash": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "score": 0.36548408791649023
+        },
+        {
+          "rank": 3,
+          "doc": "email-and-documents",
+          "section": "3. 문서 등급과 보관",
+          "content_hash": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+          "score": 0.3340454877566845
+        }
+      ]
+    },
+    {
+      "id": "Q08-IT",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "search_sql_ms": 6.951665000087814,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "content_hash": "1c114766b31d383cd223f87af9a3265a89afe3d9bf661e9800972546cc301bc4",
+          "score": 0.37993729475453697
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문",
+          "content_hash": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+          "score": 0.3145111906328729
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "content_hash": "a42da996a7a03fd0aa52f52c058b32f15a993ce04efae2076046ac6c1f45b26a",
+          "score": 0.2847576992876477
+        }
+      ]
+    },
+    {
+      "id": "Q08-IT",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "search_sql_ms": 3.672330999506812,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "content_hash": "1c114766b31d383cd223f87af9a3265a89afe3d9bf661e9800972546cc301bc4",
+          "score": 0.37993729475453697
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문",
+          "content_hash": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+          "score": 0.3145111906328729
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "content_hash": "a42da996a7a03fd0aa52f52c058b32f15a993ce04efae2076046ac6c1f45b26a",
+          "score": 0.2847576992876477
+        }
+      ]
+    },
+    {
+      "id": "Q08-IT",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "search_sql_ms": 4.302260000258684,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "content_hash": "1c114766b31d383cd223f87af9a3265a89afe3d9bf661e9800972546cc301bc4",
+          "score": 0.37993729475453697
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문",
+          "content_hash": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+          "score": 0.3145111906328729
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "content_hash": "a42da996a7a03fd0aa52f52c058b32f15a993ce04efae2076046ac6c1f45b26a",
+          "score": 0.2847576992876477
+        }
+      ]
+    },
+    {
+      "id": "Q08-IT",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "search_sql_ms": 3.857194000374875,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "content_hash": "646a077c874405e8e95fcf1f838e0e78dfc4326d4a4b8565fc5ff1797f503737",
+          "score": 0.3509891497979123
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문 / 1. 피싱 메일 / 2. 악성코드 감염 의심",
+          "content_hash": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+          "score": 0.33169209496756835
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "content_hash": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "score": 0.2547207353781462
+        }
+      ]
+    },
+    {
+      "id": "Q08-IT",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "search_sql_ms": 3.6254359993108665,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "content_hash": "646a077c874405e8e95fcf1f838e0e78dfc4326d4a4b8565fc5ff1797f503737",
+          "score": 0.3509891497979123
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문 / 1. 피싱 메일 / 2. 악성코드 감염 의심",
+          "content_hash": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+          "score": 0.33169209496756835
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "content_hash": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "score": 0.2547207353781462
+        }
+      ]
+    },
+    {
+      "id": "Q08-IT",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "search_sql_ms": 3.9386809994539362,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "content_hash": "646a077c874405e8e95fcf1f838e0e78dfc4326d4a4b8565fc5ff1797f503737",
+          "score": 0.3509891497979123
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문 / 1. 피싱 메일 / 2. 악성코드 감염 의심",
+          "content_hash": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+          "score": 0.33169209496756835
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "content_hash": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "score": 0.2547207353781462
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "search_sql_ms": 5.2193769997757045,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "privacy",
+          "section": "3. 유출 대응",
+          "content_hash": "38b8ae1f1e70013c50018fd950ff49b1b137aff2d57ef8d269eea7d90cd8a352",
+          "score": 0.5987695378526376
+        },
+        {
+          "rank": 2,
+          "doc": "privacy",
+          "section": "1. 수집",
+          "content_hash": "c6c5df99e78c604b5541cd6063065a5c1965075b8d945159c030eb3aed6e272f",
+          "score": 0.40807654856088815
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "content_hash": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+          "score": 0.4026014538427083
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "search_sql_ms": 4.5081299995217705,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "privacy",
+          "section": "3. 유출 대응",
+          "content_hash": "38b8ae1f1e70013c50018fd950ff49b1b137aff2d57ef8d269eea7d90cd8a352",
+          "score": 0.5987695378526376
+        },
+        {
+          "rank": 2,
+          "doc": "privacy",
+          "section": "1. 수집",
+          "content_hash": "c6c5df99e78c604b5541cd6063065a5c1965075b8d945159c030eb3aed6e272f",
+          "score": 0.40807654856088815
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "content_hash": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+          "score": 0.4026014538427083
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "search_sql_ms": 4.521649999333022,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "privacy",
+          "section": "3. 유출 대응",
+          "content_hash": "38b8ae1f1e70013c50018fd950ff49b1b137aff2d57ef8d269eea7d90cd8a352",
+          "score": 0.5987695378526376
+        },
+        {
+          "rank": 2,
+          "doc": "privacy",
+          "section": "1. 수집",
+          "content_hash": "c6c5df99e78c604b5541cd6063065a5c1965075b8d945159c030eb3aed6e272f",
+          "score": 0.40807654856088815
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "content_hash": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+          "score": 0.4026014538427083
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "search_sql_ms": 4.135178000069573,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "privacy",
+          "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+          "content_hash": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+          "score": 0.5204815622927252
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.3816419977343898
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.37784229862468965
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "search_sql_ms": 4.9407110000174725,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "privacy",
+          "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+          "content_hash": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+          "score": 0.5204815622927252
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.3816419977343898
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.37784229862468965
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "search_sql_ms": 3.8003390000085346,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "privacy",
+          "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+          "content_hash": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+          "score": 0.5204815622927252
+        },
+        {
+          "rank": 2,
+          "doc": "password-policy",
+          "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+          "content_hash": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+          "score": 0.3816419977343898
+        },
+        {
+          "rank": 3,
+          "doc": "password-policy",
+          "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+          "content_hash": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+          "score": 0.37784229862468965
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "search_sql_ms": 3.936690000045928,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "content_hash": "571b3c112ec3313bcfd0193310e067067fb98e573618c632fb527e78929d3609",
+          "score": 0.550134621714603
+        },
+        {
+          "rank": 2,
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "content_hash": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+          "score": 0.4329719072304784
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "서문",
+          "content_hash": "d40c5fb8b07a9093dd040061aa8f877192c07f67009f2d4067adf477be7474fd",
+          "score": 0.4230318663283401
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "search_sql_ms": 3.761869999834744,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "content_hash": "571b3c112ec3313bcfd0193310e067067fb98e573618c632fb527e78929d3609",
+          "score": 0.550134621714603
+        },
+        {
+          "rank": 2,
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "content_hash": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+          "score": 0.4329719072304784
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "서문",
+          "content_hash": "d40c5fb8b07a9093dd040061aa8f877192c07f67009f2d4067adf477be7474fd",
+          "score": 0.4230318663283401
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "search_sql_ms": 3.856596999867179,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "content_hash": "571b3c112ec3313bcfd0193310e067067fb98e573618c632fb527e78929d3609",
+          "score": 0.550134621714603
+        },
+        {
+          "rank": 2,
+          "doc": "privacy",
+          "section": "2. 이용과 보관",
+          "content_hash": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+          "score": 0.4329719072304784
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "서문",
+          "content_hash": "d40c5fb8b07a9093dd040061aa8f877192c07f67009f2d4067adf477be7474fd",
+          "score": 0.4230318663283401
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "search_sql_ms": 4.057756999827689,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "content_hash": "d4018fe93a3cb6da296465f971d8b32262a45783bd6f9c62bcc95880f6abce69",
+          "score": 0.5103047543770749
+        },
+        {
+          "rank": 2,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "content_hash": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "score": 0.43055380741932103
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+          "content_hash": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+          "score": 0.4243009515282341
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "search_sql_ms": 3.979652999987593,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "content_hash": "d4018fe93a3cb6da296465f971d8b32262a45783bd6f9c62bcc95880f6abce69",
+          "score": 0.5103047543770749
+        },
+        {
+          "rank": 2,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "content_hash": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "score": 0.43055380741932103
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+          "content_hash": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+          "score": 0.4243009515282341
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "search_sql_ms": 4.279404999579128,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "content_hash": "d4018fe93a3cb6da296465f971d8b32262a45783bd6f9c62bcc95880f6abce69",
+          "score": 0.5103047543770749
+        },
+        {
+          "rank": 2,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "content_hash": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "score": 0.43055380741932103
+        },
+        {
+          "rank": 3,
+          "doc": "privacy",
+          "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+          "content_hash": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+          "score": 0.4243009515282341
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "method": "section",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "search_sql_ms": 4.746714000248176,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "content_hash": "cca990b641170623ecc3fc36f64d81e1e5973b9ebc9d9736133defef671f7a1e",
+          "score": 0.6405429366221085
+        },
+        {
+          "rank": 2,
+          "doc": "meeting-room",
+          "section": "서문",
+          "content_hash": "1fcc70c8b407a33851b22a8a68463ecc6c545b5a2dc6193925e499e433bbbb58",
+          "score": 0.5534164304866411
+        },
+        {
+          "rank": 3,
+          "doc": "meeting-room",
+          "section": "2. 장비",
+          "content_hash": "73f49fb5b6eb2e071daa7da311a7c2554971738ba88f34355dc098794613c98e",
+          "score": 0.5389513163514876
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "method": "section",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "search_sql_ms": 5.96399499954714,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "content_hash": "cca990b641170623ecc3fc36f64d81e1e5973b9ebc9d9736133defef671f7a1e",
+          "score": 0.6405429366221085
+        },
+        {
+          "rank": 2,
+          "doc": "meeting-room",
+          "section": "서문",
+          "content_hash": "1fcc70c8b407a33851b22a8a68463ecc6c545b5a2dc6193925e499e433bbbb58",
+          "score": 0.5534164304866411
+        },
+        {
+          "rank": 3,
+          "doc": "meeting-room",
+          "section": "2. 장비",
+          "content_hash": "73f49fb5b6eb2e071daa7da311a7c2554971738ba88f34355dc098794613c98e",
+          "score": 0.5389513163514876
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "method": "section",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "search_sql_ms": 4.216144000565691,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "content_hash": "cca990b641170623ecc3fc36f64d81e1e5973b9ebc9d9736133defef671f7a1e",
+          "score": 0.6405429366221085
+        },
+        {
+          "rank": 2,
+          "doc": "meeting-room",
+          "section": "서문",
+          "content_hash": "1fcc70c8b407a33851b22a8a68463ecc6c545b5a2dc6193925e499e433bbbb58",
+          "score": 0.5534164304866411
+        },
+        {
+          "rank": 3,
+          "doc": "meeting-room",
+          "section": "2. 장비",
+          "content_hash": "73f49fb5b6eb2e071daa7da311a7c2554971738ba88f34355dc098794613c98e",
+          "score": 0.5389513163514876
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "method": "300",
+      "repeat": 1,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "search_sql_ms": 3.780871000344632,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+          "content_hash": "1cded3e55f0a2704f10c11a25e749059ad1b45659e563640da2b2a2b31644cac",
+          "score": 0.5877215305378459
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.2566075041005711
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.24573145572110322
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "method": "300",
+      "repeat": 2,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "search_sql_ms": 3.5889719993065228,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+          "content_hash": "1cded3e55f0a2704f10c11a25e749059ad1b45659e563640da2b2a2b31644cac",
+          "score": 0.5877215305378459
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.2566075041005711
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.24573145572110322
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "method": "300",
+      "repeat": 3,
+      "access_levels": [
+        "all"
+      ],
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "search_sql_ms": 4.408794000482885,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+          "content_hash": "1cded3e55f0a2704f10c11a25e749059ad1b45659e563640da2b2a2b31644cac",
+          "score": 0.5877215305378459
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "content_hash": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "score": 0.2566075041005711
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "content_hash": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "score": 0.24573145572110322
+        }
+      ]
+    }
+  ],
+  "answer_question_count": 11,
+  "attempts_per_method": 33,
+  "metrics": {
+    "section": {
+      "hit_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "recall_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "mrr": {
+        "numerator": 33.0,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "section_hit_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "evidence_coverage": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "no_answer_incorrect": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "no_answer_attempts": 0,
+      "permission_leaks": {
+        "numerator": 0,
+        "denominator": 99,
+        "value": 0.0
+      },
+      "response_counts": {
+        "normal": 33
+      },
+      "measurements": {
+        "embedding_ms": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "db_ms": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "search_ms": {
+          "N": 33,
+          "median": 5.2218269993318245,
+          "p95": 13.369184999646677,
+          "max": 18.734218000645342
+        },
+        "embedding_tokens": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "chunk_count": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "cost": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        }
+      },
+      "measurement_groups": {
+        "embedding_ms": {},
+        "db_ms": {},
+        "search_ms": {
+          "observed:": {
+            "N": 33,
+            "median": 5.2218269993318245,
+            "p95": 13.369184999646677,
+            "max": 18.734218000645342
+          }
+        },
+        "embedding_tokens": {},
+        "chunk_count": {},
+        "cost": {}
+      },
+      "missing_measurements": {
+        "embedding_ms": 33,
+        "db_ms": 33,
+        "search_ms": 0,
+        "embedding_tokens": 33,
+        "chunk_count": 33,
+        "cost": 33
+      },
+      "excluded": [],
+      "observations": [
+        {
+          "id": "Q01",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "1. 비밀번호 만들기",
+              "score": 0.7094591923570861
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.5360114380297146
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문",
+              "score": 0.5220935393351422
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 18.734218000645342,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:c996f4c27ef7f84731e7741dc11061b36f6f27a862ed5addc6b11017db399cb7"
+        },
+        {
+          "id": "Q01",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "1. 비밀번호 만들기",
+              "score": 0.7094591923570861
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.5360114380297146
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문",
+              "score": 0.5220935393351422
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.397118999804661,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:8196b647c049f9a39a13dc2ce49cd078403cb2b7ba6f5e2c6e12d2a7f0f84e36"
+        },
+        {
+          "id": "Q01",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "1. 비밀번호 만들기",
+              "score": 0.7094591923570861
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.5360114380297146
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문",
+              "score": 0.5220935393351422
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.268114000296919,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:cd7eee7fce2423312592d91591ecc5faee7dee08cc0ba0e2109bfaf9e29e411c"
+        },
+        {
+          "id": "Q02",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.58892216135659
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "1. 비밀번호 만들기",
+              "score": 0.47306905550896294
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "4. 다단계 인증",
+              "score": 0.47235530813414606
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.51908400029788,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:a2ba09ce3568d04f60c26321129168648a34bbb16a312f6578ff5b8a5a294be2"
+        },
+        {
+          "id": "Q02",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.58892216135659
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "1. 비밀번호 만들기",
+              "score": 0.47306905550896294
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "4. 다단계 인증",
+              "score": 0.47235530813414606
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.385632000070473,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:d603de058b30816f44581d51adff8c846c841641ad0c8b23a39baee754cde9f5"
+        },
+        {
+          "id": "Q02",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.58892216135659
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "1. 비밀번호 만들기",
+              "score": 0.47306905550896294
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "4. 다단계 인증",
+              "score": 0.47235530813414606
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.642961999910767,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:e3cd17a57ef96c282f83ce0325595a241a78ec5707767d32ee8dd8edb3dd6018"
+        },
+        {
+          "id": "Q03",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "device-issue-return",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "4. 다단계 인증",
+              "score": 0.5059789515664426
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "4. 개인 장비 사용",
+              "score": 0.31162972134468847
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.31075841395243287
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.2218269993318245,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:cc1024efb703b3403ff13c4e2b8e3124a34f5212ef9f60b91a502efbcb27c3bc"
+        },
+        {
+          "id": "Q03",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "device-issue-return",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "4. 다단계 인증",
+              "score": 0.5059789515664426
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "4. 개인 장비 사용",
+              "score": 0.31162972134468847
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.31075841395243287
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.2018570004293,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:8ddb7fcd719043f99f4bf4e6c52b0ae48fef358f4f379aceca8263245582d37b"
+        },
+        {
+          "id": "Q03",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "device-issue-return",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "4. 다단계 인증",
+              "score": 0.5059789515664426
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "4. 개인 장비 사용",
+              "score": 0.31162972134468847
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "2. 변경 주기",
+              "score": 0.31075841395243287
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.488202999913483,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:d8b32d7fea2287816cd734cfe7c1b45609bfd5c644e171f3cc0738fcc1169a7a"
+        },
+        {
+          "id": "Q04",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.5991978735652448
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.3782312760935478
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문",
+              "score": 0.3749843581429675
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.595041999891691,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:c8c97fcaaa89446c7ead9e97fa57ed4c5d53c29a9d8a06344bb919e1a0d92b66"
+        },
+        {
+          "id": "Q04",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.5991978735652448
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.3782312760935478
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문",
+              "score": 0.3749843581429675
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 13.369184999646677,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:bb3448fe3dc2e90a2561a3775ac164dd80d4a59d6e53454b49d2ac727f42630b"
+        },
+        {
+          "id": "Q04",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.5991978735652448
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.3782312760935478
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문",
+              "score": 0.3749843581429675
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.068183000024874,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:53de9af1aefc93a0df5bd157e19e1156dd8c1589f592c159a839024d67e89593"
+        },
+        {
+          "id": "Q05",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.5666497331891636
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "서문",
+              "score": 0.404610027020073
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39168456428408005
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 7.482627999706892,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:f476d06d3a450de557701db540c9bb76f0542e9750f1f586a9b6eebeae121f98"
+        },
+        {
+          "id": "Q05",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.5666497331891636
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "서문",
+              "score": 0.404610027020073
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39168456428408005
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.878731000848347,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:380c44ec059b46d4d2743cc0ff0eb243e12962ba0911df0e71f5597933a4b192"
+        },
+        {
+          "id": "Q05",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.5666497331891636
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "서문",
+              "score": 0.404610027020073
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39168456428408005
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.68787000086013,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:5c1495d9ee2e0079267ed6b6b2bf1705dde1967f8b64e1210ea280d674274ab5"
+        },
+        {
+          "id": "Q06",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "email-and-documents",
+            "email-and-documents",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "email-and-documents",
+              "section": "2. 첨부 파일",
+              "score": 0.6477170534920662
+            },
+            {
+              "rank": 2,
+              "doc": "email-and-documents",
+              "section": "1. 메일함",
+              "score": 0.47780412602146494
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "서문",
+              "score": 0.38898976632862947
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.396971999492962,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:2099f7b74fc2a35d8d80b4f036725c9f6ca5b07e4252cb06bea14e1c85091f58"
+        },
+        {
+          "id": "Q06",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "email-and-documents",
+            "email-and-documents",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "email-and-documents",
+              "section": "2. 첨부 파일",
+              "score": 0.6477170534920662
+            },
+            {
+              "rank": 2,
+              "doc": "email-and-documents",
+              "section": "1. 메일함",
+              "score": 0.47780412602146494
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "서문",
+              "score": 0.38898976632862947
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.250310999850626,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:3028a3b8b39270fca40a6d5148d8c2628654c344e8029ef21ae3d6c5c4859b23"
+        },
+        {
+          "id": "Q06",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "email-and-documents",
+            "email-and-documents",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "email-and-documents",
+              "section": "2. 첨부 파일",
+              "score": 0.6477170534920662
+            },
+            {
+              "rank": 2,
+              "doc": "email-and-documents",
+              "section": "1. 메일함",
+              "score": 0.47780412602146494
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "서문",
+              "score": 0.38898976632862947
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.388152000705304,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:f53dd796c3f2d40996de305ef0fda72208fe5cbba06f4c33cff1fb9667456efa"
+        },
+        {
+          "id": "Q07",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "device-issue-return",
+            "device-issue-return",
+            "device-issue-return"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "device-issue-return",
+              "section": "3. 반납",
+              "score": 0.5279060237299735
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "1. 지급과 교체",
+              "score": 0.5213071025836659
+            },
+            {
+              "rank": 3,
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.4549412116274696
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 7.229775000269001,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:03576c2e2f9c19c928de18be4b0d1035dc36a7626b6f40bc0b64bc45f5cad6fc"
+        },
+        {
+          "id": "Q07",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "device-issue-return",
+            "device-issue-return",
+            "device-issue-return"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "device-issue-return",
+              "section": "3. 반납",
+              "score": 0.5279060237299735
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "1. 지급과 교체",
+              "score": 0.5213071025836659
+            },
+            {
+              "rank": 3,
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.4549412116274696
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.410409999967669,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:f31020812f46b25d21356e17ba825315d63bb581fed5d037c6b34f7daab9b955"
+        },
+        {
+          "id": "Q07",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "device-issue-return",
+            "device-issue-return",
+            "device-issue-return"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "device-issue-return",
+              "section": "3. 반납",
+              "score": 0.5279060237299735
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "1. 지급과 교체",
+              "score": 0.5213071025836659
+            },
+            {
+              "rank": 3,
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.4549412116274696
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.596615999616915,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:67994ba07dd5843d52812d6e622ff7cc3e60014af6984dacc9212642fe212e30"
+        },
+        {
+          "id": "Q08-IT",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "security-incident",
+            "security-incident",
+            "software-usage"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.37993729475453697
+            },
+            {
+              "rank": 2,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.3145111906328729
+            },
+            {
+              "rank": 3,
+              "doc": "software-usage",
+              "section": "1. 설치와 승인",
+              "score": 0.2847576992876477
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.951665000087814,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:c6232673ff9855a306e2d89f07078814121ff60dcd0ad18a2709f54d5b47cce8"
+        },
+        {
+          "id": "Q08-IT",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "security-incident",
+            "security-incident",
+            "software-usage"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.37993729475453697
+            },
+            {
+              "rank": 2,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.3145111906328729
+            },
+            {
+              "rank": 3,
+              "doc": "software-usage",
+              "section": "1. 설치와 승인",
+              "score": 0.2847576992876477
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.672330999506812,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:d8e66d16e39dfdea7531a859daa6f023cba50c8c8e21e3280e714556105ed9e8"
+        },
+        {
+          "id": "Q08-IT",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "security-incident",
+            "security-incident",
+            "software-usage"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.37993729475453697
+            },
+            {
+              "rank": 2,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.3145111906328729
+            },
+            {
+              "rank": 3,
+              "doc": "software-usage",
+              "section": "1. 설치와 승인",
+              "score": 0.2847576992876477
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.302260000258684,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:88804d5695ff3d8b93297c6082514a73fa47be5fd0d60e42a413a473b1b6ce51"
+        },
+        {
+          "id": "Q09",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "privacy",
+            "privacy",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "privacy",
+              "section": "3. 유출 대응",
+              "score": 0.5987695378526376
+            },
+            {
+              "rank": 2,
+              "doc": "privacy",
+              "section": "1. 수집",
+              "score": 0.40807654856088815
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.4026014538427083
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.2193769997757045,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:8796ffc1d16169e70414118d7a03ed48c7b790e4b90f191b2bcb72c897e787d9"
+        },
+        {
+          "id": "Q09",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "privacy",
+            "privacy",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "privacy",
+              "section": "3. 유출 대응",
+              "score": 0.5987695378526376
+            },
+            {
+              "rank": 2,
+              "doc": "privacy",
+              "section": "1. 수집",
+              "score": 0.40807654856088815
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.4026014538427083
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.5081299995217705,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:ba33d4e6d8a8bff2e68af3959794ba91524bc248e287bb13798fe2884531b293"
+        },
+        {
+          "id": "Q09",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "privacy",
+            "privacy",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "privacy",
+              "section": "3. 유출 대응",
+              "score": 0.5987695378526376
+            },
+            {
+              "rank": 2,
+              "doc": "privacy",
+              "section": "1. 수집",
+              "score": 0.40807654856088815
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.4026014538427083
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.521649999333022,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:ba953f7a82f027dff4690452c6ce9a695ed373a14818fb2f3d152bdff1568497"
+        },
+        {
+          "id": "Q10",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "software-usage",
+            "privacy",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "software-usage",
+              "section": "3. 생성형 AI 서비스",
+              "score": 0.550134621714603
+            },
+            {
+              "rank": 2,
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.4329719072304784
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.4230318663283401
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.936690000045928,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:183c0dd6e605cd878d4a3945cab07d4bbb1aa6ce0bbbc97ca8c24d4a0af7d5df"
+        },
+        {
+          "id": "Q10",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "software-usage",
+            "privacy",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "software-usage",
+              "section": "3. 생성형 AI 서비스",
+              "score": 0.550134621714603
+            },
+            {
+              "rank": 2,
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.4329719072304784
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.4230318663283401
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.761869999834744,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:6b3b09db2cad86eb602253a2987de01889393e5ad587e04e173b2bb96c36ffa3"
+        },
+        {
+          "id": "Q10",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "software-usage",
+            "privacy",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "software-usage",
+              "section": "3. 생성형 AI 서비스",
+              "score": 0.550134621714603
+            },
+            {
+              "rank": 2,
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.4329719072304784
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.4230318663283401
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.856596999867179,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:8bd55104eb744f1aab7225c28e69efa50265a87d68f763a7d175d994df87332c"
+        },
+        {
+          "id": "Q11",
+          "method": "section",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "meeting-room",
+            "meeting-room",
+            "meeting-room"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "meeting-room",
+              "section": "1. 예약",
+              "score": 0.6405429366221085
+            },
+            {
+              "rank": 2,
+              "doc": "meeting-room",
+              "section": "서문",
+              "score": 0.5534164304866411
+            },
+            {
+              "rank": 3,
+              "doc": "meeting-room",
+              "section": "2. 장비",
+              "score": 0.5389513163514876
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.746714000248176,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:e0caa1cf86a9eb3183f141d4f2b466224ffde39d3eb377aff6ba3f586a8394d6"
+        },
+        {
+          "id": "Q11",
+          "method": "section",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "meeting-room",
+            "meeting-room",
+            "meeting-room"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "meeting-room",
+              "section": "1. 예약",
+              "score": 0.6405429366221085
+            },
+            {
+              "rank": 2,
+              "doc": "meeting-room",
+              "section": "서문",
+              "score": 0.5534164304866411
+            },
+            {
+              "rank": 3,
+              "doc": "meeting-room",
+              "section": "2. 장비",
+              "score": 0.5389513163514876
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.96399499954714,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:97e0bbe3a7c2473acc40b9379f35536dbcd3ec0585b88cd20098f4d066ab511b"
+        },
+        {
+          "id": "Q11",
+          "method": "section",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "meeting-room",
+            "meeting-room",
+            "meeting-room"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "meeting-room",
+              "section": "1. 예약",
+              "score": 0.6405429366221085
+            },
+            {
+              "rank": 2,
+              "doc": "meeting-room",
+              "section": "서문",
+              "score": 0.5534164304866411
+            },
+            {
+              "rank": 3,
+              "doc": "meeting-room",
+              "section": "2. 장비",
+              "score": 0.5389513163514876
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.216144000565691,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:80c0dcebb51778b9c373df229390306a1b3271ae0157a3dc919241e69f85d6e9"
+        }
+      ]
+    },
+    "300": {
+      "hit_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "recall_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "mrr": {
+        "numerator": 33.0,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "section_hit_at_3": {
+        "numerator": 33,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "evidence_coverage": {
+        "numerator": 30,
+        "denominator": 33,
+        "value": 0.9090909090909091
+      },
+      "no_answer_incorrect": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "no_answer_attempts": 0,
+      "permission_leaks": {
+        "numerator": 0,
+        "denominator": 99,
+        "value": 0.0
+      },
+      "response_counts": {
+        "normal": 33
+      },
+      "measurements": {
+        "embedding_ms": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "db_ms": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "search_ms": {
+          "N": 33,
+          "median": 4.248311000083049,
+          "p95": 6.533284999932221,
+          "max": 12.76236599915137
+        },
+        "embedding_tokens": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "chunk_count": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        "cost": {
+          "N": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        }
+      },
+      "measurement_groups": {
+        "embedding_ms": {},
+        "db_ms": {},
+        "search_ms": {
+          "observed:": {
+            "N": 33,
+            "median": 4.248311000083049,
+            "p95": 6.533284999932221,
+            "max": 12.76236599915137
+          }
+        },
+        "embedding_tokens": {},
+        "chunk_count": {},
+        "cost": {}
+      },
+      "missing_measurements": {
+        "embedding_ms": 33,
+        "db_ms": 33,
+        "search_ms": 0,
+        "embedding_tokens": 33,
+        "chunk_count": 33,
+        "cost": 33
+      },
+      "excluded": [],
+      "observations": [
+        {
+          "id": "Q01",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.6079075230561244
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.47791158812443335
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+              "score": 0.28372356189193537
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.117269999776909,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:cab2d931e0c53aa219f035435f7e034a1703960a55be4ae1cd36ed3a3b7efa59"
+        },
+        {
+          "id": "Q01",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.6079075230561244
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.47791158812443335
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+              "score": 0.28372356189193537
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.07830299991474,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:dd3a28fe04e989363868ab692dc86c68f6f547a6faf63ee010138dcee803edc8"
+        },
+        {
+          "id": "Q01",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.6079075230561244
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.47791158812443335
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+              "score": 0.28372356189193537
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.8187990003279992,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:71e639c848b51316fff03117c12b554c5c173f7129bb99ab064a1b4630fe398b"
+        },
+        {
+          "id": "Q02",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.523217564969002
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.46668693891172985
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.33061220001026925
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.248311000083049,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:ebaa5ecf626ba1b8b851524978e696bf4aaab26635074e582f41a1b87109084a"
+        },
+        {
+          "id": "Q02",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.523217564969002
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.46668693891172985
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.33061220001026925
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.119034999348514,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:725ed1f05e4c4d4508335b43c949b7f056220697f57928b035e720e3c54f21d4"
+        },
+        {
+          "id": "Q02",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "password-policy",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.523217564969002
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.46668693891172985
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.33061220001026925
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.95608200001152,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:a0b1ba2595d46de714ce2bf6f1970ed1d936591b593e617155edbaa5ae3b13e0"
+        },
+        {
+          "id": "Q03",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "device-issue-return",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.4691973973667096
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.32808194063563045
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.28098391126136457
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.02375900032348,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:38517e8b7d4f0e821b9be91dcd3ac93ff9c1fe5740543fdb5df7ff9ea72e80f2"
+        },
+        {
+          "id": "Q03",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "device-issue-return",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.4691973973667096
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.32808194063563045
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.28098391126136457
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.523498999333242,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:8dcaae2af69adefc8bcf2804680a402e191386e76dde710daeb4285d4ab00051"
+        },
+        {
+          "id": "Q03",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "password-policy",
+            "device-issue-return",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.4691973973667096
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.32808194063563045
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.28098391126136457
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.680155999267299,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:655c68407c2f92171f02966b923befa7296d1a62218e10377ead0716af8abbd3"
+        },
+        {
+          "id": "Q04",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "password-policy",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.4468143764346012
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.35252636332913856
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.34888769731949343
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.616028999611444,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:b3ef9aa04714b11e159a62634efe10afef11561d40da3edb704f3f21ffb8b234"
+        },
+        {
+          "id": "Q04",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "password-policy",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.4468143764346012
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.35252636332913856
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.34888769731949343
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.085177999513689,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:b18a7dc4921a193480545618523788147a1f806b29973326e01dc19f1c5d2afb"
+        },
+        {
+          "id": "Q04",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "password-policy",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.4468143764346012
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.35252636332913856
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.34888769731949343
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.364994999785267,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:fba3ffe6a92cfd69cc4b94221561e8f77c6b6cd452f0d1daadfa9ddbff8775a5"
+        },
+        {
+          "id": "Q05",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.4850795430033459
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.3885426065403037
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.36997739264567175
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 5.370277000110946,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:5ca3defc1f7c80867da3ded6fb1570c19c5000f691dfa909dc3d938bace2094c"
+        },
+        {
+          "id": "Q05",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.4850795430033459
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.3885426065403037
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.36997739264567175
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 6.533284999932221,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:27438855b111dac6b0ef6b7bb73cc021d6519cc63285a9baf15134e5cac4199f"
+        },
+        {
+          "id": "Q05",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.4850795430033459
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.3885426065403037
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.36997739264567175
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.464597000151116,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:525cdeec2830042e059de82a7918b8c55ca8d140f7579dde2298e4c9b976eac2"
+        },
+        {
+          "id": "Q06",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "email-and-documents",
+            "email-and-documents",
+            "device-issue-return"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "email-and-documents",
+              "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+              "score": 0.4825498179840182
+            },
+            {
+              "rank": 2,
+              "doc": "email-and-documents",
+              "section": "3. 문서 등급과 보관",
+              "score": 0.3594478066618654
+            },
+            {
+              "rank": 3,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.2808499048693033
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.807050000432355,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:4ec9031780bcc5b6938f8a922a9ccfc268b19d663b5cf89d0ebf4be9ff948c8b"
+        },
+        {
+          "id": "Q06",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "email-and-documents",
+            "email-and-documents",
+            "device-issue-return"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "email-and-documents",
+              "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+              "score": 0.4825498179840182
+            },
+            {
+              "rank": 2,
+              "doc": "email-and-documents",
+              "section": "3. 문서 등급과 보관",
+              "score": 0.3594478066618654
+            },
+            {
+              "rank": 3,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.2808499048693033
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 12.76236599915137,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:3a4c44f4caa0854fe6840a541f1d183fbaa6cede4872ee71dd495963ea984454"
+        },
+        {
+          "id": "Q06",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "email-and-documents",
+            "email-and-documents",
+            "device-issue-return"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "email-and-documents",
+              "section": "서문 / 1. 메일함 / 2. 첨부 파일 / 3. 문서 등급과 보관",
+              "score": 0.4825498179840182
+            },
+            {
+              "rank": 2,
+              "doc": "email-and-documents",
+              "section": "3. 문서 등급과 보관",
+              "score": 0.3594478066618654
+            },
+            {
+              "rank": 3,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.2808499048693033
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.291395000109333,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:e777499e51564c9cc5ff78ad0d463db7b1479419f800f1bc5c136c556cf5f8d3"
+        },
+        {
+          "id": "Q07",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "device-issue-return",
+            "device-issue-return",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "device-issue-return",
+              "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+              "score": 0.5434603146615001
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.36548408791649023
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "3. 문서 등급과 보관",
+              "score": 0.3340454877566845
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.309424999519251,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:6339938d33f43972938d5732fc90f708512e68b6b82758d9b5a699268d4b714b"
+        },
+        {
+          "id": "Q07",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "device-issue-return",
+            "device-issue-return",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "device-issue-return",
+              "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+              "score": 0.5434603146615001
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.36548408791649023
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "3. 문서 등급과 보관",
+              "score": 0.3340454877566845
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.02174400005606,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:2ebae5089887b5775d524ee4828d419b499082663530c07e0e1726cb279d680a"
+        },
+        {
+          "id": "Q07",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "device-issue-return",
+            "device-issue-return",
+            "email-and-documents"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "device-issue-return",
+              "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+              "score": 0.5434603146615001
+            },
+            {
+              "rank": 2,
+              "doc": "device-issue-return",
+              "section": "3. 반납 / 4. 개인 장비 사용",
+              "score": 0.36548408791649023
+            },
+            {
+              "rank": 3,
+              "doc": "email-and-documents",
+              "section": "3. 문서 등급과 보관",
+              "score": 0.3340454877566845
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.7111210003786255,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:d50755661b51fe52d1d4242ad699718b38c9216b3090e50a373a406712cb2cf1"
+        },
+        {
+          "id": "Q08-IT",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "security-incident",
+            "security-incident",
+            "software-usage"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.3509891497979123
+            },
+            {
+              "rank": 2,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.33169209496756835
+            },
+            {
+              "rank": 3,
+              "doc": "software-usage",
+              "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+              "score": 0.2547207353781462
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.857194000374875,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:8cb579052afcd09980bd6d7bc02152aca7b3a035f062d075e5f4b6f3b6d40e34"
+        },
+        {
+          "id": "Q08-IT",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "security-incident",
+            "security-incident",
+            "software-usage"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.3509891497979123
+            },
+            {
+              "rank": 2,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.33169209496756835
+            },
+            {
+              "rank": 3,
+              "doc": "software-usage",
+              "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+              "score": 0.2547207353781462
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.6254359993108665,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:664e4a8718ab48d43f59b353bcd87367a3e97c694c7d5e8ab5d954a193b3b43b"
+        },
+        {
+          "id": "Q08-IT",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "security-incident",
+            "security-incident",
+            "software-usage"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.3509891497979123
+            },
+            {
+              "rank": 2,
+              "doc": "security-incident",
+              "section": "[restricted_or_unknown]",
+              "score": 0.33169209496756835
+            },
+            {
+              "rank": 3,
+              "doc": "software-usage",
+              "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+              "score": 0.2547207353781462
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.9386809994539362,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:da3988e63653264e12a4f56f46567031cdf91b40dfa93f120caf6ac73b90b649"
+        },
+        {
+          "id": "Q09",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "privacy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "privacy",
+              "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+              "score": 0.5204815622927252
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.3816419977343898
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.37784229862468965
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.135178000069573,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:29710ec5c6f3107aa29d1f31c5b534c0109d86d20554a303426e155883f8ca1b"
+        },
+        {
+          "id": "Q09",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "privacy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "privacy",
+              "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+              "score": 0.5204815622927252
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.3816419977343898
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.37784229862468965
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.9407110000174725,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:cb65f8becb6571cdac9122e5da27935628ace8ede61c11ce6ad6e97a3bf730f4"
+        },
+        {
+          "id": "Q09",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "privacy",
+            "password-policy",
+            "password-policy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "privacy",
+              "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+              "score": 0.5204815622927252
+            },
+            {
+              "rank": 2,
+              "doc": "password-policy",
+              "section": "3. 로그인 실패와 잠금 / 4. 다단계 인증",
+              "score": 0.3816419977343898
+            },
+            {
+              "rank": 3,
+              "doc": "password-policy",
+              "section": "서문 / 1. 비밀번호 만들기 / 2. 변경 주기 / 3. 로그인 실패와 잠금",
+              "score": 0.37784229862468965
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.8003390000085346,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:2fcf4add723e668d28d5b24fbdb4190af05ca868772be1ea30ad1e01de46c4ba"
+        },
+        {
+          "id": "Q10",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "software-usage",
+            "software-usage",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "software-usage",
+              "section": "3. 생성형 AI 서비스",
+              "score": 0.5103047543770749
+            },
+            {
+              "rank": 2,
+              "doc": "software-usage",
+              "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+              "score": 0.43055380741932103
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+              "score": 0.4243009515282341
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.057756999827689,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:91cc7ea4d5e4a36a33a36532ab56d6120e7332404a647dca30bbd085f27c0ef1"
+        },
+        {
+          "id": "Q10",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "software-usage",
+            "software-usage",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "software-usage",
+              "section": "3. 생성형 AI 서비스",
+              "score": 0.5103047543770749
+            },
+            {
+              "rank": 2,
+              "doc": "software-usage",
+              "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+              "score": 0.43055380741932103
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+              "score": 0.4243009515282341
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.979652999987593,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:f1a3d99e8e528bea3021d3daf788fd8cdf402a4a2522c69158dbd49a7b9507ef"
+        },
+        {
+          "id": "Q10",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "software-usage",
+            "software-usage",
+            "privacy"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "software-usage",
+              "section": "3. 생성형 AI 서비스",
+              "score": 0.5103047543770749
+            },
+            {
+              "rank": 2,
+              "doc": "software-usage",
+              "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+              "score": 0.43055380741932103
+            },
+            {
+              "rank": 3,
+              "doc": "privacy",
+              "section": "서문 / 1. 수집 / 2. 이용과 보관 / 3. 유출 대응",
+              "score": 0.4243009515282341
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.279404999579128,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:1d4fde91bb79ebe9a0f354243496bb7e46439aebfbdca2214c5dfc3bc4df5fbd"
+        },
+        {
+          "id": "Q11",
+          "method": "300",
+          "repeat": 1,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "meeting-room",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "meeting-room",
+              "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+              "score": 0.5877215305378459
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.2566075041005711
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.24573145572110322
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.780871000344632,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:c60f87988251674ee1dfcd13e1de9c0abfcff987975123feee4074f9ca2c2f2e"
+        },
+        {
+          "id": "Q11",
+          "method": "300",
+          "repeat": 2,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "meeting-room",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "meeting-room",
+              "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+              "score": 0.5877215305378459
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.2566075041005711
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.24573145572110322
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 3.5889719993065228,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:c934dc28b55f98dc83ba88bc01283db005796b3f60f58310a04aee9be032658f"
+        },
+        {
+          "id": "Q11",
+          "method": "300",
+          "repeat": 3,
+          "http_status": 200,
+          "reason": null,
+          "docs": [
+            "meeting-room",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "evidence": [
+            {
+              "rank": 1,
+              "doc": "meeting-room",
+              "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+              "score": 0.5877215305378459
+            },
+            {
+              "rank": 2,
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.2566075041005711
+            },
+            {
+              "rank": 3,
+              "doc": "remote-work-vpn",
+              "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+              "score": 0.24573145572110322
+            }
+          ],
+          "measurements": {
+            "embedding_ms": null,
+            "db_ms": null,
+            "search_ms": 4.408794000482885,
+            "embedding_tokens": null,
+            "chunk_count": null,
+            "cost": null
+          },
+          "measurement_provenance": {},
+          "environment": "isolated_dual_postgres",
+          "model": "text-embedding-3-large",
+          "settings_version": "p1-1-v1",
+          "source_ref": "sha256:46d60c695529bb808d4fbfa9d73f768d1c3e90dd64347687d0d45541601556ab"
+        }
+      ]
+    }
+  },
+  "api_events": [
+    {
+      "kind": "document",
+      "input_sha256": "52280570f0f6d11ad35fdba6f3523f231db7d37c4160c5150355b09c1c64af5c",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 46,
+      "total_tokens": 46,
+      "reserved_tokens": 152,
+      "reserved_cost_usd": 1.976e-05,
+      "elapsed_ms": 757.1458940001321
+    },
+    {
+      "kind": "document",
+      "input_sha256": "59a166ad741e39c554c040517e9d6c84cba8aca7038958ab41642171e89f3fb4",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 110,
+      "total_tokens": 110,
+      "reserved_tokens": 300,
+      "reserved_cost_usd": 5.876e-05,
+      "elapsed_ms": 196.207910999874
+    },
+    {
+      "kind": "document",
+      "input_sha256": "1158291d58c6a942aed8b0163cbc68ad259ba40dc15fae2bd2a4c0bd5d9ff043",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 126,
+      "total_tokens": 126,
+      "reserved_tokens": 351,
+      "reserved_cost_usd": 0.00010439,
+      "elapsed_ms": 529.2921709997245
+    },
+    {
+      "kind": "document",
+      "input_sha256": "2fda7c0f321472c53278bbc78c8dc64a8dfe42a6b346c7c48de0249d8ebcf61f",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 118,
+      "total_tokens": 118,
+      "reserved_tokens": 338,
+      "reserved_cost_usd": 0.00014833,
+      "elapsed_ms": 187.15533399972628
+    },
+    {
+      "kind": "document",
+      "input_sha256": "8f8158fcf5f2a18b24ec1f4377d9a178ec45bc3e43484dc7efe1c35415f64269",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 121,
+      "total_tokens": 121,
+      "reserved_tokens": 350,
+      "reserved_cost_usd": 0.00019383,
+      "elapsed_ms": 221.7535620002309
+    },
+    {
+      "kind": "document",
+      "input_sha256": "faa09236952b2d056c130909185c86bb8c131901656c1fcf22bd35799bf60c4f",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 30,
+      "total_tokens": 30,
+      "reserved_tokens": 132,
+      "reserved_cost_usd": 0.00021099,
+      "elapsed_ms": 202.04877800006216
+    },
+    {
+      "kind": "document",
+      "input_sha256": "8266a3af95c77ad5c96f3659da080690bb2f57bc0bafed9de317129686d9548b",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 93,
+      "total_tokens": 93,
+      "reserved_tokens": 291,
+      "reserved_cost_usd": 0.00024882,
+      "elapsed_ms": 251.41028100006224
+    },
+    {
+      "kind": "document",
+      "input_sha256": "6d52bb8c4ffea20dd8fa9dcdc4a6ada1273395cbf65be09de98a4f11b874bf47",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 139,
+      "total_tokens": 139,
+      "reserved_tokens": 425,
+      "reserved_cost_usd": 0.00030407,
+      "elapsed_ms": 195.4897579998942
+    },
+    {
+      "kind": "document",
+      "input_sha256": "b54e13d71faf7e88c08c958c36d86192f063995be3c083579491a4f62b6e1ab4",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 95,
+      "total_tokens": 95,
+      "reserved_tokens": 284,
+      "reserved_cost_usd": 0.00034099,
+      "elapsed_ms": 213.74468300018634
+    },
+    {
+      "kind": "document",
+      "input_sha256": "1fcc70c8b407a33851b22a8a68463ecc6c545b5a2dc6193925e499e433bbbb58",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 26,
+      "total_tokens": 26,
+      "reserved_tokens": 122,
+      "reserved_cost_usd": 0.00035685,
+      "elapsed_ms": 197.432777999893
+    },
+    {
+      "kind": "document",
+      "input_sha256": "cca990b641170623ecc3fc36f64d81e1e5973b9ebc9d9736133defef671f7a1e",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 96,
+      "total_tokens": 96,
+      "reserved_tokens": 327,
+      "reserved_cost_usd": 0.00039936,
+      "elapsed_ms": 205.2513340004225
+    },
+    {
+      "kind": "document",
+      "input_sha256": "73f49fb5b6eb2e071daa7da311a7c2554971738ba88f34355dc098794613c98e",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 87,
+      "total_tokens": 87,
+      "reserved_tokens": 276,
+      "reserved_cost_usd": 0.00043524,
+      "elapsed_ms": 230.8519090001937
+    },
+    {
+      "kind": "document",
+      "input_sha256": "980007ef530c4fa16fc07220387d59552856ddefb7db5f6366094f74547c4689",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 50,
+      "total_tokens": 50,
+      "reserved_tokens": 194,
+      "reserved_cost_usd": 0.00046046,
+      "elapsed_ms": 186.38009799997235
+    },
+    {
+      "kind": "document",
+      "input_sha256": "79ca2d305a5f59b654f34c6364a1e95abd0ebaf9e1e0d9024e3de3dbeff54115",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 36,
+      "total_tokens": 36,
+      "reserved_tokens": 144,
+      "reserved_cost_usd": 0.00047918,
+      "elapsed_ms": 227.65809999964404
+    },
+    {
+      "kind": "document",
+      "input_sha256": "98d1a83878aa9a8736175bf5e6b96753b87cbb72d4787c94107f5dbefa9d17a5",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 132,
+      "total_tokens": 132,
+      "reserved_tokens": 395,
+      "reserved_cost_usd": 0.00053053,
+      "elapsed_ms": 216.4772259993697
+    },
+    {
+      "kind": "document",
+      "input_sha256": "dc7d9d1d091c356083b8d624c6e02db2507e7cb39823673e9e4a928abb685927",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 96,
+      "total_tokens": 96,
+      "reserved_tokens": 308,
+      "reserved_cost_usd": 0.00057057,
+      "elapsed_ms": 171.4137920007488
+    },
+    {
+      "kind": "document",
+      "input_sha256": "0df78b3686a8e882752e6d4c5f7054b45d12fcbf5b4f2cb3b5367743adbe03ae",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 113,
+      "total_tokens": 113,
+      "reserved_tokens": 340,
+      "reserved_cost_usd": 0.00061477,
+      "elapsed_ms": 165.58029299994814
+    },
+    {
+      "kind": "document",
+      "input_sha256": "67c30f92cd42dd5b091fd02f615f57fc8f0381a0250c20d1a4b2c80b543463d3",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 111,
+      "total_tokens": 111,
+      "reserved_tokens": 336,
+      "reserved_cost_usd": 0.00065845,
+      "elapsed_ms": 279.1973949997555
+    },
+    {
+      "kind": "document",
+      "input_sha256": "d40c5fb8b07a9093dd040061aa8f877192c07f67009f2d4067adf477be7474fd",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 22,
+      "total_tokens": 22,
+      "reserved_tokens": 128,
+      "reserved_cost_usd": 0.00067509,
+      "elapsed_ms": 202.0891140000458
+    },
+    {
+      "kind": "document",
+      "input_sha256": "c6c5df99e78c604b5541cd6063065a5c1965075b8d945159c030eb3aed6e272f",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 72,
+      "total_tokens": 72,
+      "reserved_tokens": 256,
+      "reserved_cost_usd": 0.00070837,
+      "elapsed_ms": 264.27002499985974
+    },
+    {
+      "kind": "document",
+      "input_sha256": "9940923a1af9ef76dc75705d3e3a2b7ebd9345127e3f8c414f55ead776418dd9",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 94,
+      "total_tokens": 94,
+      "reserved_tokens": 298,
+      "reserved_cost_usd": 0.00074711,
+      "elapsed_ms": 166.55876000004355
+    },
+    {
+      "kind": "document",
+      "input_sha256": "38b8ae1f1e70013c50018fd950ff49b1b137aff2d57ef8d269eea7d90cd8a352",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 114,
+      "total_tokens": 114,
+      "reserved_tokens": 339,
+      "reserved_cost_usd": 0.00079118,
+      "elapsed_ms": 186.95221200050582
+    },
+    {
+      "kind": "document",
+      "input_sha256": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 37,
+      "total_tokens": 37,
+      "reserved_tokens": 138,
+      "reserved_cost_usd": 0.00080912,
+      "elapsed_ms": 195.22199899984116
+    },
+    {
+      "kind": "document",
+      "input_sha256": "f04cb2e96204b5e61d55edaf74c91694eab3b37c3f756ca81b2e1d15b4d2eb73",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 121,
+      "total_tokens": 121,
+      "reserved_tokens": 343,
+      "reserved_cost_usd": 0.00085371,
+      "elapsed_ms": 248.7464160003583
+    },
+    {
+      "kind": "document",
+      "input_sha256": "56de423ff9d9124a711eefadd54da7c60b220c5605e6f4c016ab820eddd6c748",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 136,
+      "total_tokens": 136,
+      "reserved_tokens": 380,
+      "reserved_cost_usd": 0.00090311,
+      "elapsed_ms": 225.15209300036076
+    },
+    {
+      "kind": "document",
+      "input_sha256": "118735535cdeb6d2a16517b0269bf1f1beb813bd3b66f4bbf841030fc40e600d",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 143,
+      "total_tokens": 143,
+      "reserved_tokens": 391,
+      "reserved_cost_usd": 0.00095394,
+      "elapsed_ms": 266.955082000095
+    },
+    {
+      "kind": "document",
+      "input_sha256": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 30,
+      "total_tokens": 30,
+      "reserved_tokens": 130,
+      "reserved_cost_usd": 0.00097084,
+      "elapsed_ms": 223.45952300020144
+    },
+    {
+      "kind": "document",
+      "input_sha256": "a2c41ebaec3373c426c1658bb455f8a565845f12e2d04e0dd39c36c94febcd52",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 152,
+      "total_tokens": 152,
+      "reserved_tokens": 425,
+      "reserved_cost_usd": 0.00102609,
+      "elapsed_ms": 222.0835830003125
+    },
+    {
+      "kind": "document",
+      "input_sha256": "1c114766b31d383cd223f87af9a3265a89afe3d9bf661e9800972546cc301bc4",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 192,
+      "total_tokens": 192,
+      "reserved_tokens": 488,
+      "reserved_cost_usd": 0.00108953,
+      "elapsed_ms": 271.5205220001735
+    },
+    {
+      "kind": "document",
+      "input_sha256": "b8f78d8d665fbcd86286dfef9948d7315253020a8cb1fa1930250e8eef9979b3",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 31,
+      "total_tokens": 31,
+      "reserved_tokens": 134,
+      "reserved_cost_usd": 0.00110695,
+      "elapsed_ms": 247.10258699997212
+    },
+    {
+      "kind": "document",
+      "input_sha256": "a42da996a7a03fd0aa52f52c058b32f15a993ce04efae2076046ac6c1f45b26a",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 179,
+      "total_tokens": 179,
+      "reserved_tokens": 474,
+      "reserved_cost_usd": 0.00116857,
+      "elapsed_ms": 249.85153600027843
+    },
+    {
+      "kind": "document",
+      "input_sha256": "5d1c053478daa299fbb611dd49bf8121b9fb57b1452c4a5cb02a01216f3a7d4b",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 76,
+      "total_tokens": 76,
+      "reserved_tokens": 238,
+      "reserved_cost_usd": 0.00119951,
+      "elapsed_ms": 176.57633500039083
+    },
+    {
+      "kind": "document",
+      "input_sha256": "571b3c112ec3313bcfd0193310e067067fb98e573618c632fb527e78929d3609",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 115,
+      "total_tokens": 115,
+      "reserved_tokens": 398,
+      "reserved_cost_usd": 0.00125125,
+      "elapsed_ms": 197.00783000007505
+    },
+    {
+      "kind": "document",
+      "input_sha256": "fbf783225d5240334b692af9800f49e40f09ab95fee636f37b6252d7b5d3b88f",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 339,
+      "total_tokens": 339,
+      "reserved_tokens": 835,
+      "reserved_cost_usd": 0.0013598,
+      "elapsed_ms": 257.5452500004758
+    },
+    {
+      "kind": "document",
+      "input_sha256": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 129,
+      "total_tokens": 129,
+      "reserved_tokens": 365,
+      "reserved_cost_usd": 0.00140725,
+      "elapsed_ms": 194.32498700007272
+    },
+    {
+      "kind": "document",
+      "input_sha256": "a8a7faa415a20ee2d8632635793c033cc42e1b8b7e8167a49a43a33949d8c4e9",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 299,
+      "total_tokens": 299,
+      "reserved_tokens": 808,
+      "reserved_cost_usd": 0.00151229,
+      "elapsed_ms": 199.93086300019058
+    },
+    {
+      "kind": "document",
+      "input_sha256": "010743ef94a43ebc29334a1d4afe72b3af1f2d335b735e8cf6664efaff82c2fd",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 47,
+      "total_tokens": 47,
+      "reserved_tokens": 171,
+      "reserved_cost_usd": 0.00153452,
+      "elapsed_ms": 207.04061800006457
+    },
+    {
+      "kind": "document",
+      "input_sha256": "1cded3e55f0a2704f10c11a25e749059ad1b45659e563640da2b2a2b31644cac",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 229,
+      "total_tokens": 229,
+      "reserved_tokens": 661,
+      "reserved_cost_usd": 0.00162045,
+      "elapsed_ms": 200.95593100086262
+    },
+    {
+      "kind": "document",
+      "input_sha256": "9ae9581064d8e62f6006f37a6a7fb755d54aed3f2122f5fcba6b08bae984f6d0",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 310,
+      "total_tokens": 310,
+      "reserved_tokens": 832,
+      "reserved_cost_usd": 0.00172861,
+      "elapsed_ms": 246.60663600025146
+    },
+    {
+      "kind": "document",
+      "input_sha256": "a7321262fa3d74f6aa7c6a8b3ddb4f81cf22637023af02fef689d90f42cff256",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 147,
+      "total_tokens": 147,
+      "reserved_tokens": 432,
+      "reserved_cost_usd": 0.00178477,
+      "elapsed_ms": 257.9846959997667
+    },
+    {
+      "kind": "document",
+      "input_sha256": "8781d85e0469db739b4ec271b744b26dba2a474c15b7343ce4e6bbd625492135",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 278,
+      "total_tokens": 278,
+      "reserved_tokens": 754,
+      "reserved_cost_usd": 0.00188279,
+      "elapsed_ms": 274.4904999999562
+    },
+    {
+      "kind": "document",
+      "input_sha256": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 324,
+      "total_tokens": 324,
+      "reserved_tokens": 803,
+      "reserved_cost_usd": 0.00198718,
+      "elapsed_ms": 219.06335699986812
+    },
+    {
+      "kind": "document",
+      "input_sha256": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 99,
+      "total_tokens": 99,
+      "reserved_tokens": 290,
+      "reserved_cost_usd": 0.00202488,
+      "elapsed_ms": 211.32354400015174
+    },
+    {
+      "kind": "document",
+      "input_sha256": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 342,
+      "total_tokens": 342,
+      "reserved_tokens": 842,
+      "reserved_cost_usd": 0.00213434,
+      "elapsed_ms": 212.4447579999469
+    },
+    {
+      "kind": "document",
+      "input_sha256": "646a077c874405e8e95fcf1f838e0e78dfc4326d4a4b8565fc5ff1797f503737",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 37,
+      "total_tokens": 37,
+      "reserved_tokens": 143,
+      "reserved_cost_usd": 0.00215293,
+      "elapsed_ms": 170.25315099999716
+    },
+    {
+      "kind": "document",
+      "input_sha256": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 329,
+      "total_tokens": 329,
+      "reserved_tokens": 848,
+      "reserved_cost_usd": 0.00226317,
+      "elapsed_ms": 238.357287999861
+    },
+    {
+      "kind": "document",
+      "input_sha256": "d4018fe93a3cb6da296465f971d8b32262a45783bd6f9c62bcc95880f6abce69",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 59,
+      "total_tokens": 59,
+      "reserved_tokens": 240,
+      "reserved_cost_usd": 0.00229437,
+      "elapsed_ms": 194.98197099983372
+    },
+    {
+      "kind": "question",
+      "input_sha256": "6b6ca0be4946e38f76b739ce26bef0e71b591d296f26d8b59bdf573efa50a54b",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 17,
+      "total_tokens": 17,
+      "reserved_tokens": 114,
+      "reserved_cost_usd": 0.00230919,
+      "elapsed_ms": 243.35210200024449
+    },
+    {
+      "kind": "question",
+      "input_sha256": "cc0b6474b24b3b4f6f4d0fd4fbe8b0caa61e171f101656056f431cd205f95729",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 20,
+      "total_tokens": 20,
+      "reserved_tokens": 111,
+      "reserved_cost_usd": 0.00232362,
+      "elapsed_ms": 229.82630299975426
+    },
+    {
+      "kind": "question",
+      "input_sha256": "e0d4192a44bdeb652804c6d318034dfa13dc088972d1ca10e3084820f593cc8e",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 33,
+      "total_tokens": 33,
+      "reserved_tokens": 134,
+      "reserved_cost_usd": 0.00234104,
+      "elapsed_ms": 203.24420199995075
+    },
+    {
+      "kind": "question",
+      "input_sha256": "48d384e86f7d420f17f94060d0e378b7ef18812594c92f421bebd900661af1e9",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 27,
+      "total_tokens": 27,
+      "reserved_tokens": 131,
+      "reserved_cost_usd": 0.00235807,
+      "elapsed_ms": 176.50625800069975
+    },
+    {
+      "kind": "question",
+      "input_sha256": "2be24c6613cc3e335c10813c6d4d823eaf8b91e766569192974d1acbbc238a67",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 30,
+      "total_tokens": 30,
+      "reserved_tokens": 130,
+      "reserved_cost_usd": 0.00237497,
+      "elapsed_ms": 220.76684999956342
+    },
+    {
+      "kind": "question",
+      "input_sha256": "1dc40e021e04f531453d009f9f045aaef6ef0f23100c6e6ae1935a4c12d038bc",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 24,
+      "total_tokens": 24,
+      "reserved_tokens": 129,
+      "reserved_cost_usd": 0.00239174,
+      "elapsed_ms": 196.88812200001848
+    },
+    {
+      "kind": "question",
+      "input_sha256": "e8eb78e919cce45965cb7905f3b981973a9b1369673e02f9892ac905f972afdd",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 28,
+      "total_tokens": 28,
+      "reserved_tokens": 129,
+      "reserved_cost_usd": 0.00240851,
+      "elapsed_ms": 238.38978900039365
+    },
+    {
+      "kind": "question",
+      "input_sha256": "60af9a4b9f10629cd43d62f1c5958b027be1d8503cedf97dd124f4fe4ef280ec",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 34,
+      "total_tokens": 34,
+      "reserved_tokens": 141,
+      "reserved_cost_usd": 0.00242684,
+      "elapsed_ms": 228.39370200017584
+    },
+    {
+      "kind": "question",
+      "input_sha256": "22313c63f3ad972b776b27649604b51780b8c67426b952aa68864bd8f24abb50",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 33,
+      "total_tokens": 33,
+      "reserved_tokens": 148,
+      "reserved_cost_usd": 0.00244608,
+      "elapsed_ms": 261.32478899944545
+    },
+    {
+      "kind": "question",
+      "input_sha256": "f9f300e5e0211d0cf7789d1686980e55aa91f27250a018e732f71bccb7e1dbad",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 25,
+      "total_tokens": 25,
+      "reserved_tokens": 136,
+      "reserved_cost_usd": 0.00246376,
+      "elapsed_ms": 188.2539039997937
+    },
+    {
+      "kind": "question",
+      "input_sha256": "cbc560d6d3d7cedb356567d06ac7592be6a0215bd7a000e64508146d7844b893",
+      "attempt": 1,
+      "ok": true,
+      "prompt_tokens": 24,
+      "total_tokens": 24,
+      "reserved_tokens": 129,
+      "reserved_cost_usd": 0.00248053,
+      "elapsed_ms": 189.80871700023272
+    }
+  ],
+  "api_usage": {
+    "prompt_tokens": 6402,
+    "successful_calls": 58,
+    "failed_attempts": 0,
+    "reserved_upper_bound_usd": 0.00248053,
+    "hard_cap_usd": 0.05
+  },
+  "cost": {
+    "currency": "USD",
+    "unit_price_per_million": 0.13,
+    "amount": 0.00083226,
+    "kind": "calculated_from_actual_usage",
+    "price_source": "https://developers.openai.com/api/docs/models/text-embedding-3-large"
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "schema": "oke-rag-handoff-offline-review-v1",
+  "source_author": "신유빈",
+  "source_branch": "feat/yubeen-p0",
+  "source_commit": "70c215abe28def99499817c6017614bd4b1e4bd0",
+  "scope": "offline receipt/content-hash recalculation against current main; no new API/DB/VM calls",
+  "checks": {
+    "source_hash_and_access_level_match_main_documents": 8,
+    "strict_evidence_ranks_recalculated": 66,
+    "prior_failure_retained": true,
+    "q08_general_permission_result_and_sources_checked": true,
+    "additional_top3_text_matches_source_chunks": true,
+    "service_code_data_cases_workflows_unchanged": true,
+    "all_198_returned_chunk_hashes_resolve_to_main_source_chunks": true,
+    "api_event_token_and_cost_totals_recalculated": true
+  },
+  "chunk_counts": {
+    "section": 33,
+    "300": 14
+  },
+  "source_characters_total": 2705,
+  "recomputed_metrics": {
+    "section": {
+      "unique_questions": 11,
+      "repeats_per_question": 3,
+      "searches": 33,
+      "doc_hit_at_3": {
+        "numerator": 33,
+        "denominator": 33
+      },
+      "strict_evidence_hit_at_3": {
+        "numerator": 33,
+        "denominator": 33
+      },
+      "strict_evidence_mrr": {
+        "numerator": 33.0,
+        "denominator": 33,
+        "value": 1.0
+      },
+      "sql_adapter_ms": {
+        "n": 33,
+        "mean": 5.844554969702255,
+        "p50": 5.2218269993318245,
+        "p95": 13.369184999646677,
+        "max": 18.734218000645342
+      },
+      "index_elapsed_ms": 8388.94659900052
+    },
+    "300": {
+      "unique_questions": 11,
+      "repeats_per_question": 3,
+      "searches": 33,
+      "doc_hit_at_3": {
+        "numerator": 33,
+        "denominator": 33
+      },
+      "strict_evidence_hit_at_3": {
+        "numerator": 30,
+        "denominator": 33
+      },
+      "strict_evidence_mrr": {
+        "numerator": 28.5,
+        "denominator": 33,
+        "value": 0.8636363636363636
+      },
+      "sql_adapter_ms": {
+        "n": 33,
+        "mean": 4.736232333209156,
+        "p50": 4.248311000083049,
+        "p95": 6.533284999932221,
+        "max": 12.76236599915137
+      },
+      "index_elapsed_ms": 3310.9957779997785
+    }
+  },
+  "api_usage_recorded": {
+    "prompt_tokens": 6402,
+    "successful_calls": 58,
+    "failed_attempts": 0,
+    "reserved_upper_bound_usd": 0.00248053,
+    "hard_cap_usd": 0.05
+  },
+  "cost_recorded": {
+    "currency": "USD",
+    "unit_price_per_million": 0.13,
+    "amount": 0.00083226,
+    "kind": "calculated_from_actual_usage",
+    "price_source": "https://developers.openai.com/api/docs/models/text-embedding-3-large"
+  },
+  "additional_api_usage_recorded": {
+    "attempts": 3,
+    "successful_calls": 3,
+    "prompt_tokens": 80,
+    "estimated_cost_from_actual_usage_usd": 1.04e-05,
+    "reserved_upper_bound_usd": 4.745e-05,
+    "hard_cap_usd": 0.01
+  },
+  "api_calls_executed_by_this_review": 0,
+  "limits": [
+    "Paid API timing/usage and isolated DB counts are taken from the author receipts, not independently repeated.",
+    "Search metrics concern 11 unique frozen positive questions; repeating SQL with a reused query vector is not independent LLM variability measurement.",
+    "Q08/Q12/Q13 integrated UI observations have no durable captured image in main and are not added as verified UI evidence.",
+    "VM document source hashes, backup restore, unchanged reindex and load tests remain unverified/unexecuted.",
+    "The private experiment runner and isolated environment were not ported; this publication does not provide an immediate independent full A/B replay command."
+  ],
+  "reviewed_at_utc": "2026-11-09T03:42:06.039109+00:00",
+  "main_source_before_publication": "3b9d8e9d5ca38510ecceb0113f14afb817409ecb",
+  "source_artifacts": {
+    "runs/chunk-comparison-local-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/chunk-comparison-local-20261109.json",
+      "sha256": "097cbe6ccd746d02db1d65b1ed36b77c5198fc79a61d98a8815ab29d69edefdc",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-actual-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-ab-actual-20261109.json",
+      "sha256": "9c5f66cc73acd3ffa5cd170f2aa8bc3fc0dda478f9d941b9a8fdecc73e7cd268",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-actual-rerun-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-ab-actual-rerun-20261109.json",
+      "sha256": "3a4ed632d29146bff15d70c5210989c7704e2cd2aac08f47b5e37adc8a4e053e",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-answer-key-frozen-20261109.json": {
+      "historical_source_path": "develop/yubeen/experiment/answer-key-frozen.json",
+      "sha256": "6c1ede109028aa94161aefefe522543aa59374c8709bcc424a7a2431f4ff29cb",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-evidence-audit-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-ab-evidence-audit-20261109.json",
+      "sha256": "919919f96f4d60332ae9a54941b95b9f82446587a1dad74612a08cce03827a94",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-permissions-approved-20261109.json": {
+      "historical_source_path": "develop/yubeen/experiment/permissions-approved.json",
+      "sha256": "bc2473efc7b86cc9a452ce4b4a6638b8f324caf53c744e6b8532e678543d5b42",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-preflight-rerun-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-ab-preflight-rerun-20261109.json",
+      "sha256": "a672bb6e623fdc001575bb329537f87e0eb04c3fbeb63cd57f477251482658b4",
+      "copied_without_changes": true
+    },
+    "runs/rag-ab-security-proxy-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-ab-security-proxy-20261109.json",
+      "sha256": "3f4996afcf9c23402ec393a956d78e7413cc5e44757e17ee040135f908c97db2",
+      "copied_without_changes": true
+    },
+    "runs/rag-api-auth-probe-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-api-auth-probe-20261109.json",
+      "sha256": "792e6222d0dc5e3924807428851760c155f0dae953bf7e1002cdd98693bd7cb9",
+      "copied_without_changes": true
+    },
+    "runs/rag-final-q08-noanswer-20261109.json": {
+      "historical_source_path": "develop/yubeen/Doc/rag-final-q08-noanswer-20261109.json",
+      "sha256": "b11a4efdee5222b53d441d0569274911576047095bda4a95dce5d921c1a8e5ca",
+      "copied_without_changes": true
+    }
+  },
+  "author_documents": [
+    {
+      "historical_source_path": "develop/yubeen/Doc/RAG-ARCHITECTURE.md",
+      "sha256": "d26409def81d543647daea77800baf6718f533d16ae0cb744300487e2666de7f",
+      "source_url": "https://github.com/hyunport/Aio-4pj-1team/blob/70c215abe28def99499817c6017614bd4b1e4bd0/develop/yubeen/Doc/RAG-ARCHITECTURE.md"
+    },
+    {
+      "historical_source_path": "develop/yubeen/Doc/RAG-FINAL-HANDOFF-20261109.md",
+      "sha256": "bf6c5a8f1a40311f25b0341aa19dcb99afa99c383edd09a9867124a3787b2f8d",
+      "source_url": "https://github.com/hyunport/Aio-4pj-1team/blob/70c215abe28def99499817c6017614bd4b1e4bd0/develop/yubeen/Doc/RAG-FINAL-HANDOFF-20261109.md"
+    }
+  ],
+  "artifact_reference_rule": "Historical paths and raw source filenames describe the author environment. All numeric/permission/answer evidence used by the main design is copied under runs/ and mapped above; no develop/ or external course checkout is a submission runtime dependency.",
+  "integration_status": "PARTIAL; evidence integrated, original runtime and official cases unchanged"
+}

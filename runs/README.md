@@ -2,6 +2,20 @@
 
 본 디렉터리는 오케퐁(OKE-Pong) 실서버(`https://aio-t1.isitsoft.kr`) 및 통합 검증에서 수집된 실행·측정 JSON 영수증 정본을 보관합니다. 모든 문서는 비밀값과 개인정보를 마스킹/제거한 상태로 기록되었으며, 최초 실패 진단부터 복구·재시험 PASS까지의 전 과정을 투명하게 추적할 수 있습니다.
 
+## 2026-11-09 유빈님 RAG 격리 실험 취합
+
+`feat/yubeen-p0@70c215a`에서 전달받은 개인 실험 근거다. [RAG 정본](../docs/RAG-ARCHITECTURE.md)과 [취합·재계산 기록](rag-handoff-review-20261109.json)에서 작성자 원본 경로·해시와 main의 보관 위치를 대응한다. 아래 JSON 10개는 원본 바이트를 보존했으며, 원본 내부의 옛 경로는 당시 이력이다. 운영 VM 시험·전체 직원 권한 경로·공식 전체 시험과 합산하지 않는다.
+
+| 근거 | 결과·범위 |
+| --- | --- |
+| [로컬 청킹 계산](chunk-comparison-local-20261109.json) | 동일 원본 8종, 절 33·300자 14청크. 원문 보존·길이 분포 |
+| [승인 정답표](rag-ab-answer-key-frozen-20261109.json)·[승인 권한표](rag-ab-permissions-approved-20261109.json) | 격리 품질 평가의 양성 11문항. 기존 cases 정본 변경 없음. 원본별 해시·권한은 main과 8/8 일치 |
+| [첫 실패](rag-ab-actual-20261109.json)·[인증 확인](rag-api-auth-probe-20261109.json)·[재실행 전 조건](rag-ab-preflight-rerun-20261109.json) | 401 실패·두 DB 0/0과 별도 인증 1회, 초회 색인 전 빈 DB 조건을 보존 |
+| [격리 A/B 실행](rag-ab-actual-rerun-20261109.json)·[단일 청크 근거 감사](rag-ab-evidence-audit-20261109.json) | 양성 11개×3회×2방식=SQL 66회. 문서 Hit@3는 동률, 필수 근거는 절 33/33·300자 30/33. 임베딩 58회·6,402토큰 |
+| [벡터 대용 권한 검사](rag-ab-security-proxy-20261109.json) | 기존 IT 문서 벡터를 질의 대용으로 사용, 새 API 0회. 실제 질문·세션 경로와 구분 |
+| [실제 Q08·답 없음 후보 검색](rag-final-q08-noanswer-20261109.json) | 추가 임베딩 3회·80토큰, SQL 8회. 일반 IT 문서 노출 0건. Q12/Q13은 승인 전 후보, 답변 생성 미실행 |
+| [취합 검토](rag-handoff-review-20261109.json)·[비밀 검사](secret-scan-rag-publication-20261109.json) | main 청킹 코드·원문으로 근거 해시·순위 재대조, 원본·사용량 해시 검증. 새 서비스 호출·배포 없음 |
+
 ## 2026-11-09 Mac 정상 요청과 운영 VM pull 영향
 
 앞선 83회와 별도로 사용자가 Mac에서 보낸 정상 요청 2건을 보관한다. 최신 판단과 남은 작업은 [검토 문서](../docs/DAY82-TEST-REVIEW.md)의 마지막 절을 따른다.

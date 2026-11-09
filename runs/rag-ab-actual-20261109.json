@@ -1,0 +1,117 @@
+{
+  "status": "failed",
+  "captured_at_utc": "2026-11-09T01:35:41.813435+00:00",
+  "reason": "isolated_experiment_failed",
+  "partial": {
+    "started_at_utc": "2026-11-09T01:35:40.024553+00:00",
+    "answer_key_sha256": "6c1ede109028aa94161aefefe522543aa59374c8709bcc424a7a2431f4ff29cb",
+    "permissions_sha256": "bc2473efc7b86cc9a452ce4b4a6638b8f324caf53c744e6b8532e678543d5b42",
+    "indexing": {},
+    "questions": []
+  },
+  "partial_database_inventory": {
+    "section": {
+      "database": "rag_ab_section",
+      "user": "rag_ab_section",
+      "vector_version": "0.8.7",
+      "documents": 0,
+      "chunks": 0
+    },
+    "300": {
+      "database": "rag_ab_chars",
+      "user": "rag_ab_chars",
+      "vector_version": "0.8.7",
+      "documents": 0,
+      "chunks": 0
+    }
+  },
+  "api_events": [
+    {
+      "kind": "document",
+      "input_sha256": "52280570f0f6d11ad35fdba6f3523f231db7d37c4160c5150355b09c1c64af5c",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 152,
+      "reserved_cost_usd": 1.976e-05,
+      "elapsed_ms": 550.0163760007126
+    },
+    {
+      "kind": "document",
+      "input_sha256": "faa09236952b2d056c130909185c86bb8c131901656c1fcf22bd35799bf60c4f",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 132,
+      "reserved_cost_usd": 3.692e-05,
+      "elapsed_ms": 347.58218199931434
+    },
+    {
+      "kind": "document",
+      "input_sha256": "1fcc70c8b407a33851b22a8a68463ecc6c545b5a2dc6193925e499e433bbbb58",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 122,
+      "reserved_cost_usd": 5.278e-05,
+      "elapsed_ms": 310.4899039999509
+    },
+    {
+      "kind": "document",
+      "input_sha256": "79ca2d305a5f59b654f34c6364a1e95abd0ebaf9e1e0d9024e3de3dbeff54115",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 144,
+      "reserved_cost_usd": 7.15e-05,
+      "elapsed_ms": 89.72059799998533
+    },
+    {
+      "kind": "document",
+      "input_sha256": "d40c5fb8b07a9093dd040061aa8f877192c07f67009f2d4067adf477be7474fd",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 128,
+      "reserved_cost_usd": 8.814e-05,
+      "elapsed_ms": 100.24469200016028
+    },
+    {
+      "kind": "document",
+      "input_sha256": "0466ce6200f58f70df0158c36972f5e074b41809ba8cdb98d28f4f821299bccc",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 138,
+      "reserved_cost_usd": 0.00010608,
+      "elapsed_ms": 113.16006800007017
+    },
+    {
+      "kind": "document",
+      "input_sha256": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 130,
+      "reserved_cost_usd": 0.00012298,
+      "elapsed_ms": 113.62326100061182
+    },
+    {
+      "kind": "document",
+      "input_sha256": "b8f78d8d665fbcd86286dfef9948d7315253020a8cb1fa1930250e8eef9979b3",
+      "attempt": 1,
+      "ok": false,
+      "http_status": 401,
+      "reserved_tokens": 134,
+      "reserved_cost_usd": 0.0001404,
+      "elapsed_ms": 103.18432399981248
+    }
+  ],
+  "api_usage": {
+    "prompt_tokens": 0,
+    "successful_calls": 0,
+    "failed_attempts": 8,
+    "reserved_upper_bound_usd": 0.0001404,
+    "hard_cap_usd": 0.05
+  }
+}

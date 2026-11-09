@@ -1,0 +1,239 @@
+{
+  "kind": "local_chunk_calculation_no_embedding_or_search",
+  "source": "Last3Mon/79/data-api/data/docs",
+  "algorithm": "develop/yubeen/tools/rag_prepare.py:chunk_document",
+  "methods": {
+    "section": {
+      "chunk_count": 33,
+      "body_characters": {
+        "min": 13,
+        "mean": 81.97,
+        "median": 90,
+        "max": 156
+      },
+      "embedding_input_characters": {
+        "min": 26,
+        "mean": 103.061,
+        "median": 113,
+        "max": 182
+      },
+      "source_characters": 2705,
+      "chunk_characters": 2705,
+      "excluded_characters": 0,
+      "rejected_characters": 0
+    },
+    "300": {
+      "chunk_count": 14,
+      "body_characters": {
+        "min": 9,
+        "mean": 193.214,
+        "median": 253.5,
+        "max": 300
+      },
+      "embedding_input_characters": {
+        "min": 35,
+        "mean": 234.429,
+        "median": 295.5,
+        "max": 358
+      },
+      "source_characters": 2705,
+      "chunk_characters": 2705,
+      "excluded_characters": 0,
+      "rejected_characters": 0
+    }
+  },
+  "documents": [
+    {
+      "doc_key": "password-policy",
+      "source_sha256": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+      "normalized_sha256": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+      "source_characters": 433,
+      "methods": {
+        "section": {
+          "chunks": 5,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 433,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 2,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 433,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "remote-work-vpn",
+      "source_sha256": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+      "normalized_sha256": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+      "source_characters": 375,
+      "methods": {
+        "section": {
+          "chunks": 4,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 375,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 2,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 375,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "email-and-documents",
+      "source_sha256": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+      "normalized_sha256": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+      "source_characters": 323,
+      "methods": {
+        "section": {
+          "chunks": 4,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 323,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 2,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 323,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "device-issue-return",
+      "source_sha256": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+      "normalized_sha256": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+      "source_characters": 404,
+      "methods": {
+        "section": {
+          "chunks": 5,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 404,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 2,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 404,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "software-usage",
+      "source_sha256": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849",
+      "normalized_sha256": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849",
+      "source_characters": 354,
+      "methods": {
+        "section": {
+          "chunks": 4,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 354,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 2,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 354,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "security-incident",
+      "source_sha256": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29",
+      "normalized_sha256": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29",
+      "source_characters": 309,
+      "methods": {
+        "section": {
+          "chunks": 3,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 309,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 2,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 309,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "meeting-room",
+      "source_sha256": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+      "normalized_sha256": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+      "source_characters": 240,
+      "methods": {
+        "section": {
+          "chunks": 4,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 240,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 1,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 240,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    },
+    {
+      "doc_key": "privacy",
+      "source_sha256": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+      "normalized_sha256": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+      "source_characters": 267,
+      "methods": {
+        "section": {
+          "chunks": 4,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 267,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        },
+        "300": {
+          "chunks": 1,
+          "status": "complete",
+          "source_characters_accounted": true,
+          "chunk_characters": 267,
+          "excluded_characters": 0,
+          "rejected_characters": 0
+        }
+      }
+    }
+  ]
+}

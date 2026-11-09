@@ -1,0 +1,573 @@
+{
+  "status": "completed",
+  "started_at_utc": "2026-11-09T02:16:16.915450+00:00",
+  "environment": "isolated_dual_postgres",
+  "model": "text-embedding-3-large",
+  "dimensions": 3072,
+  "max_api_requests": 3,
+  "retry_count": 0,
+  "hard_cap_usd": 0.01,
+  "unit_price_per_million_usd": 0.13,
+  "key_source": "root_dotenv",
+  "candidate_sha256": "877527b666a106879f62ee47212bcebf54e50f6f3f885320e2917bc45f3b46f4",
+  "frozen_answer_key_sha256": "6c1ede109028aa94161aefefe522543aa59374c8709bcc424a7a2431f4ff29cb",
+  "prior_result_sha256": {
+    "rag-ab-actual-rerun-20261109.json": "3a4ed632d29146bff15d70c5210989c7704e2cd2aac08f47b5e37adc8a4e053e",
+    "rag-ab-evidence-audit-20261109.json": "919919f96f4d60332ae9a54941b95b9f82446587a1dad74612a08cce03827a94",
+    "rag-ab-actual-20261109.json": "9c5f66cc73acd3ffa5cd170f2aa8bc3fc0dda478f9d941b9a8fdecc73e7cd268"
+  },
+  "database_inventory_before": {
+    "section": {
+      "database": "rag_ab_section",
+      "user": "rag_ab_section",
+      "vector_version": "0.8.7",
+      "documents": 8,
+      "chunks": 33
+    },
+    "300": {
+      "database": "rag_ab_chars",
+      "user": "rag_ab_chars",
+      "vector_version": "0.8.7",
+      "documents": 8,
+      "chunks": 14
+    }
+  },
+  "query_ids": [
+    "Q08",
+    "Q12",
+    "Q13"
+  ],
+  "sql_prefilter": {
+    "predicate": "d.access_level = ANY(%s)",
+    "materialized_allowed": true,
+    "sql_sha256": "41299d1a2614b7d118a5359d7fd4fa2d9c7a38e26909303fffb02eefa49c2590"
+  },
+  "api_events": [
+    {
+      "id": "Q08",
+      "http_status": 200,
+      "attempt": 1,
+      "prompt_tokens": 34,
+      "total_tokens": 34,
+      "dimensions": 3072,
+      "elapsed_ms": 1104.7093970000788,
+      "reserved_tokens": 141
+    },
+    {
+      "id": "Q12",
+      "http_status": 200,
+      "attempt": 1,
+      "prompt_tokens": 17,
+      "total_tokens": 17,
+      "dimensions": 3072,
+      "elapsed_ms": 274.7791519996099,
+      "reserved_tokens": 97
+    },
+    {
+      "id": "Q13",
+      "http_status": 200,
+      "attempt": 1,
+      "prompt_tokens": 29,
+      "total_tokens": 29,
+      "dimensions": 3072,
+      "elapsed_ms": 597.6744009994945,
+      "reserved_tokens": 127
+    }
+  ],
+  "searches": [
+    {
+      "id": "Q08",
+      "method": "section",
+      "access_levels": [
+        "all"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 89.3106120001903,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "score": 0.2847576992876477,
+          "content_sha256": "a42da996a7a03fd0aa52f52c058b32f15a993ce04efae2076046ac6c1f45b26a",
+          "text": "소프트웨어 사용 규정\n1. 설치와 승인\n## 1. 설치와 승인\n- 업무용 컴퓨터에는 승인된 소프트웨어만 설치한다.\n- 새 소프트웨어가 필요하면 IT 포털의 '소프트웨어 신청'에서 요청한다. 승인까지 보통 2영업일이 걸린다.\n- 무료 소프트웨어라도 회사 업무에 쓰려면 상업적 이용이 허용되는지 라이선스를 확인한다.\n\n"
+        },
+        {
+          "rank": 2,
+          "doc": "software-usage",
+          "section": "서문",
+          "score": 0.27814466031746654,
+          "content_sha256": "b8f78d8d665fbcd86286dfef9948d7315253020a8cb1fa1930250e8eef9979b3",
+          "text": "소프트웨어 사용 규정\n서문\n# 소프트웨어 사용 규정\n\n"
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "2. 금지 사항",
+          "score": 0.2611974396042376,
+          "content_sha256": "5d1c053478daa299fbb611dd49bf8121b9fb57b1452c4a5cb02a01216f3a7d4b",
+          "text": "소프트웨어 사용 규정\n2. 금지 사항\n## 2. 금지 사항\n- 불법으로 복제한 소프트웨어는 설치하지 않는다. 적발되면 징계 대상이 된다.\n\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "software-usage",
+          "section": "1. 설치와 승인"
+        },
+        {
+          "doc": "software-usage",
+          "section": "서문"
+        },
+        {
+          "doc": "software-usage",
+          "section": "2. 금지 사항"
+        }
+      ],
+      "it_doc_exposed": false
+    },
+    {
+      "id": "Q08",
+      "method": "section",
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 12.859317000220472,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "score": 0.37993729475453697,
+          "content_sha256": "1c114766b31d383cd223f87af9a3265a89afe3d9bf661e9800972546cc301bc4",
+          "text": "보안 사고 대응 절차\n2. 악성코드 감염 의심\n## 2. 악성코드 감염 의심\n- 컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심한다.\n- 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알린다.\n- 컴퓨터를 끄거나 파일을 지우지 않는다. 원인 분석에 필요하다.\n"
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문",
+          "score": 0.3145111906328729,
+          "content_sha256": "eec2c2d17de9513fded32bec1b39b642d7f0eaea25734f23e3b2425c22c65ebc",
+          "text": "보안 사고 대응 절차\n서문\n# 보안 사고 대응 절차\n\n"
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "1. 설치와 승인",
+          "score": 0.2847576992876477,
+          "content_sha256": "a42da996a7a03fd0aa52f52c058b32f15a993ce04efae2076046ac6c1f45b26a",
+          "text": "소프트웨어 사용 규정\n1. 설치와 승인\n## 1. 설치와 승인\n- 업무용 컴퓨터에는 승인된 소프트웨어만 설치한다.\n- 새 소프트웨어가 필요하면 IT 포털의 '소프트웨어 신청'에서 요청한다. 승인까지 보통 2영업일이 걸린다.\n- 무료 소프트웨어라도 회사 업무에 쓰려면 상업적 이용이 허용되는지 라이선스를 확인한다.\n\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심"
+        },
+        {
+          "doc": "security-incident",
+          "section": "서문"
+        },
+        {
+          "doc": "software-usage",
+          "section": "1. 설치와 승인"
+        }
+      ],
+      "it_doc_exposed": true
+    },
+    {
+      "id": "Q08",
+      "method": "300",
+      "access_levels": [
+        "all"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 30.149772000186204,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "score": 0.2547207353781462,
+          "content_sha256": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "text": "소프트웨어 사용 규정\n서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스\n# 소프트웨어 사용 규정\n\n## 1. 설치와 승인\n- 업무용 컴퓨터에는 승인된 소프트웨어만 설치한다.\n- 새 소프트웨어가 필요하면 IT 포털의 '소프트웨어 신청'에서 요청한다. 승인까지 보통 2영업일이 걸린다.\n- 무료 소프트웨어라도 회사 업무에 쓰려면 상업적 이용이 허용되는지 라이선스를 확인한다.\n\n## 2. 금지 사항\n- 불법으로 복제한 소프트웨어는 설치하지 않는다. 적발되면 징계 대상이 된다.\n\n## 3. 생성형 AI 서비스\n- 회사가 승인한 생성형 AI 서비스만 업무에 사용한다.\n- 고객 정보, 개인정보, 대외비 문서는 생성"
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "score": 0.2255964066448295,
+          "content_sha256": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "text": "원격근무·VPN 이용 규정\n서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안\n# 원격근무·VPN 이용 규정\n\n## 1. 접속 원칙\n- 회사 밖에서 사내 시스템에 접속할 때는 반드시 회사 VPN을 먼저 연결한다.\n- 카페, 공항 같은 공용 와이파이에서는 VPN 없이 사내 시스템에 접속하지 않는다.\n\n## 2. VPN 인증서\n- VPN 인증서의 유효 기간은 1년이다.\n- 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청한다.\n- 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급한다.\n\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지"
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스",
+          "score": 0.21698408985724804,
+          "content_sha256": "d4018fe93a3cb6da296465f971d8b32262a45783bd6f9c62bcc95880f6abce69",
+          "text": "소프트웨어 사용 규정\n3. 생성형 AI 서비스\n형 AI 서비스에 입력하지 않는다.\n- 생성형 AI가 만든 결과는 사람이 확인한 뒤에 사용한다.\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스"
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안"
+        },
+        {
+          "doc": "software-usage",
+          "section": "3. 생성형 AI 서비스"
+        }
+      ],
+      "it_doc_exposed": false
+    },
+    {
+      "id": "Q08",
+      "method": "300",
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 18.57871999982308,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심",
+          "score": 0.3509891497979123,
+          "content_sha256": "646a077c874405e8e95fcf1f838e0e78dfc4326d4a4b8565fc5ff1797f503737",
+          "text": "보안 사고 대응 절차\n2. 악성코드 감염 의심\n석에 필요하다.\n"
+        },
+        {
+          "rank": 2,
+          "doc": "security-incident",
+          "section": "서문 / 1. 피싱 메일 / 2. 악성코드 감염 의심",
+          "score": 0.33169209496756835,
+          "content_sha256": "17ff81a5df2571cf6fd2ec6a052266b213048ed4916d1455e7ffcbb61b6fb65f",
+          "text": "보안 사고 대응 절차\n서문 / 1. 피싱 메일 / 2. 악성코드 감염 의심\n# 보안 사고 대응 절차\n\n## 1. 피싱 메일\n- 보낸 사람이 의심스럽거나 급하게 클릭을 요구하는 메일은 링크를 누르지 않는다.\n- 메일 화면의 '피싱 신고' 버튼으로 신고한다.\n- 이미 링크를 눌렀거나 비밀번호를 입력했다면 즉시 비밀번호를 바꾸고 IT 문의로 알린다.\n\n## 2. 악성코드 감염 의심\n- 컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심한다.\n- 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알린다.\n- 컴퓨터를 끄거나 파일을 지우지 않는다. 원인 분"
+        },
+        {
+          "rank": 3,
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스",
+          "score": 0.2547207353781462,
+          "content_sha256": "60d2c0775fe04098486a681a5cd2ec030a0598f209b9b8918dc461b2a5b3e17c",
+          "text": "소프트웨어 사용 규정\n서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스\n# 소프트웨어 사용 규정\n\n## 1. 설치와 승인\n- 업무용 컴퓨터에는 승인된 소프트웨어만 설치한다.\n- 새 소프트웨어가 필요하면 IT 포털의 '소프트웨어 신청'에서 요청한다. 승인까지 보통 2영업일이 걸린다.\n- 무료 소프트웨어라도 회사 업무에 쓰려면 상업적 이용이 허용되는지 라이선스를 확인한다.\n\n## 2. 금지 사항\n- 불법으로 복제한 소프트웨어는 설치하지 않는다. 적발되면 징계 대상이 된다.\n\n## 3. 생성형 AI 서비스\n- 회사가 승인한 생성형 AI 서비스만 업무에 사용한다.\n- 고객 정보, 개인정보, 대외비 문서는 생성"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "security-incident",
+          "section": "2. 악성코드 감염 의심"
+        },
+        {
+          "doc": "security-incident",
+          "section": "서문 / 1. 피싱 메일 / 2. 악성코드 감염 의심"
+        },
+        {
+          "doc": "software-usage",
+          "section": "서문 / 1. 설치와 승인 / 2. 금지 사항 / 3. 생성형 AI 서비스"
+        }
+      ],
+      "it_doc_exposed": true
+    },
+    {
+      "id": "Q12",
+      "method": "section",
+      "access_levels": [
+        "all"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 7.959849000144459,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "meeting-room",
+          "section": "1. 예약",
+          "score": 0.2723229519889483,
+          "content_sha256": "cca990b641170623ecc3fc36f64d81e1e5973b9ebc9d9736133defef671f7a1e",
+          "text": "회의실 이용 규정\n1. 예약\n## 1. 예약\n- 회의실은 사내 포털에서 예약한다. 한 번에 최대 3시간까지 예약할 수 있다.\n- 예약 시작 후 10분이 지나도록 아무도 사용하지 않으면 예약이 자동으로 취소된다.\n\n"
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납",
+          "score": 0.23271107443334138,
+          "content_sha256": "2fda7c0f321472c53278bbc78c8dc64a8dfe42a6b346c7c48de0249d8ebcf61f",
+          "text": "업무용 장비 지급·반납 규정\n3. 반납\n## 3. 반납\n- 퇴사하거나 장비를 교체할 때는 5영업일 이내에 장비를 IT 담당자에게 반납한다.\n- 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮긴다.\n\n"
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서",
+          "score": 0.22982348372114136,
+          "content_sha256": "56de423ff9d9124a711eefadd54da7c60b220c5605e6f4c016ab820eddd6c748",
+          "text": "원격근무·VPN 이용 규정\n2. VPN 인증서\n## 2. VPN 인증서\n- VPN 인증서의 유효 기간은 1년이다.\n- 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청한다.\n- 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급한다.\n\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "meeting-room",
+          "section": "1. 예약"
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "3. 반납"
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "2. VPN 인증서"
+        }
+      ],
+      "it_doc_exposed": false
+    },
+    {
+      "id": "Q12",
+      "method": "300",
+      "access_levels": [
+        "all"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 8.171395000317716,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "score": 0.23600429370017606,
+          "content_sha256": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "text": "원격근무·VPN 이용 규정\n3. 재택근무 중 보안\n 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다.\n"
+        },
+        {
+          "rank": 2,
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안",
+          "score": 0.20935378599210674,
+          "content_sha256": "3ab9e5f6dcf880a09ea0159a8d712a496bf7744b0b0192213946872d3feba68e",
+          "text": "원격근무·VPN 이용 규정\n서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안\n# 원격근무·VPN 이용 규정\n\n## 1. 접속 원칙\n- 회사 밖에서 사내 시스템에 접속할 때는 반드시 회사 VPN을 먼저 연결한다.\n- 카페, 공항 같은 공용 와이파이에서는 VPN 없이 사내 시스템에 접속하지 않는다.\n\n## 2. VPN 인증서\n- VPN 인증서의 유효 기간은 1년이다.\n- 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청한다.\n- 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급한다.\n\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지"
+        },
+        {
+          "rank": 3,
+          "doc": "meeting-room",
+          "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후",
+          "score": 0.20666552590206566,
+          "content_sha256": "1cded3e55f0a2704f10c11a25e749059ad1b45659e563640da2b2a2b31644cac",
+          "text": "회의실 이용 규정\n서문 / 1. 예약 / 2. 장비 / 3. 사용 후\n# 회의실 이용 규정\n\n## 1. 예약\n- 회의실은 사내 포털에서 예약한다. 한 번에 최대 3시간까지 예약할 수 있다.\n- 예약 시작 후 10분이 지나도록 아무도 사용하지 않으면 예약이 자동으로 취소된다.\n\n## 2. 장비\n- 대회의실의 화상회의 장비를 쓰려면 회의 시작 30분 전까지 IT 문의로 요청한다.\n- 프로젝터는 B회의실과 대회의실에 있다.\n\n## 3. 사용 후\n- 회의가 끝나면 화이트보드를 지우고 의자를 정리한다.\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안"
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "서문 / 1. 접속 원칙 / 2. VPN 인증서 / 3. 재택근무 중 보안"
+        },
+        {
+          "doc": "meeting-room",
+          "section": "서문 / 1. 예약 / 2. 장비 / 3. 사용 후"
+        }
+      ],
+      "it_doc_exposed": false
+    },
+    {
+      "id": "Q13",
+      "method": "section",
+      "access_levels": [
+        "all"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 9.508747999461775,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체",
+          "score": 0.38309761464244574,
+          "content_sha256": "59a166ad741e39c554c040517e9d6c84cba8aca7038958ab41642171e89f3fb4",
+          "text": "업무용 장비 지급·반납 규정\n1. 지급과 교체\n## 1. 지급과 교체\n- 업무용 노트북은 입사일에 지급한다.\n- 노트북 교체 주기는 4년이다. 고장이나 배터리 교체는 IT 문의로 접수한다.\n\n"
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난",
+          "score": 0.2761479103516902,
+          "content_sha256": "1158291d58c6a942aed8b0163cbc68ad259ba40dc15fae2bd2a4c0bd5d9ff043",
+          "text": "업무용 장비 지급·반납 규정\n2. 분실과 도난\n## 2. 분실과 도난\n- 업무용 장비를 잃어버리거나 도난당하면 24시간 이내에 IT 문의와 보안팀에 신고한다.\n- 신고가 접수되면 IT 담당자가 원격으로 장비의 데이터를 잠근다.\n\n"
+        },
+        {
+          "rank": 3,
+          "doc": "device-issue-return",
+          "section": "서문",
+          "score": 0.26602382259665736,
+          "content_sha256": "52280570f0f6d11ad35fdba6f3523f231db7d37c4160c5150355b09c1c64af5c",
+          "text": "업무용 장비 지급·반납 규정\n서문\n# 업무용 장비 지급·반납 규정\n\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "device-issue-return",
+          "section": "1. 지급과 교체"
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "2. 분실과 도난"
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "서문"
+        }
+      ],
+      "it_doc_exposed": false
+    },
+    {
+      "id": "Q13",
+      "method": "300",
+      "access_levels": [
+        "all"
+      ],
+      "http_status": 200,
+      "reason": null,
+      "search_ms": 16.866373000084423,
+      "top3": [
+        {
+          "rank": 1,
+          "doc": "device-issue-return",
+          "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납",
+          "score": 0.3233052914242249,
+          "content_sha256": "fbf783225d5240334b692af9800f49e40f09ab95fee636f37b6252d7b5d3b88f",
+          "text": "업무용 장비 지급·반납 규정\n서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납\n# 업무용 장비 지급·반납 규정\n\n## 1. 지급과 교체\n- 업무용 노트북은 입사일에 지급한다.\n- 노트북 교체 주기는 4년이다. 고장이나 배터리 교체는 IT 문의로 접수한다.\n\n## 2. 분실과 도난\n- 업무용 장비를 잃어버리거나 도난당하면 24시간 이내에 IT 문의와 보안팀에 신고한다.\n- 신고가 접수되면 IT 담당자가 원격으로 장비의 데이터를 잠근다.\n\n## 3. 반납\n- 퇴사하거나 장비를 교체할 때는 5영업일 이내에 장비를 IT 담당자에게 반납한다.\n- 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮긴다"
+        },
+        {
+          "rank": 2,
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용",
+          "score": 0.2612492241142088,
+          "content_sha256": "49b1f73161d1f16fb1a02023fd9290667826ccabc20dfabeca7ebd7cd9dd9113",
+          "text": "업무용 장비 지급·반납 규정\n3. 반납 / 4. 개인 장비 사용\n.\n\n## 4. 개인 장비 사용\n- 개인 휴대폰이나 태블릿으로는 업무 메일과 메신저만 쓸 수 있다.\n- 개인 장비로 업무 메일을 보려면 회사의 모바일 관리 앱(MDM)을 먼저 설치한다.\n"
+        },
+        {
+          "rank": 3,
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안",
+          "score": 0.2522344484082748,
+          "content_sha256": "8c7ec09e2c201d88ed0bd870ea3e2a0eaf82e45e4593a2339673ab8831d4da7a",
+          "text": "원격근무·VPN 이용 규정\n3. 재택근무 중 보안\n 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다.\n"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "device-issue-return",
+          "section": "서문 / 1. 지급과 교체 / 2. 분실과 도난 / 3. 반납"
+        },
+        {
+          "doc": "device-issue-return",
+          "section": "3. 반납 / 4. 개인 장비 사용"
+        },
+        {
+          "doc": "remote-work-vpn",
+          "section": "3. 재택근무 중 보안"
+        }
+      ],
+      "it_doc_exposed": false
+    }
+  ],
+  "api_usage": {
+    "attempts": 3,
+    "successful_calls": 3,
+    "prompt_tokens": 80,
+    "estimated_cost_from_actual_usage_usd": 1.04e-05,
+    "reserved_upper_bound_usd": 4.745e-05,
+    "hard_cap_usd": 0.01
+  },
+  "finished_at_utc": "2026-11-09T02:16:19.224126+00:00",
+  "analysis": {
+    "source_documents_checked": 8,
+    "source_hashes_match_approved": true,
+    "q12_q13_ground_truth": "candidate_no_answer_in_eight_approved_markdown_documents; no annual leave entitlement or exact laptop CPU model found; candidate human approval remains pending",
+    "q08": {
+      "section": {
+        "general_it_document_count": 0,
+        "general_sources_it_document_count": 0,
+        "it_positive_document_count": 2,
+        "general_top1_score": 0.2847576992876477,
+        "it_top1_score": 0.37993729475453697
+      },
+      "300": {
+        "general_it_document_count": 0,
+        "general_sources_it_document_count": 0,
+        "it_positive_document_count": 2,
+        "general_top1_score": 0.2547207353781462,
+        "it_top1_score": 0.3509891497979123
+      }
+    },
+    "threshold_040": {
+      "kind": "counterfactual_top1_score_gate; search_service_did_not_apply_threshold",
+      "rule": "top1 score >= 0.40 permits candidate evidence; lower score rejects/escalates",
+      "methods": {
+        "section": {
+          "positive_top1": {
+            "n": 11,
+            "min": 0.37993729475453697,
+            "median": 0.58892216135659,
+            "mean": 0.5741104891091321,
+            "max": 0.7094591923570861,
+            "below_threshold": 1,
+            "at_or_above_threshold": 10
+          },
+          "no_answer_candidate_top1": {
+            "n": 2,
+            "scores": {
+              "Q12": 0.2723229519889483,
+              "Q13": 0.38309761464244574
+            },
+            "below_threshold": 2,
+            "at_or_above_threshold": 0
+          },
+          "q08_it_false_reject": true
+        },
+        "300": {
+          "positive_top1": {
+            "n": 11,
+            "min": 0.3509891497979123,
+            "median": 0.5103047543770749,
+            "mean": 0.5025203213164418,
+            "max": 0.6079075230561244,
+            "below_threshold": 1,
+            "at_or_above_threshold": 10
+          },
+          "no_answer_candidate_top1": {
+            "n": 2,
+            "scores": {
+              "Q12": 0.23600429370017606,
+              "Q13": 0.3233052914242249
+            },
+            "below_threshold": 2,
+            "at_or_above_threshold": 0
+          },
+          "q08_it_false_reject": true
+        }
+      }
+    },
+    "limitations": [
+      "Q08 search was run with explicit access_levels, not derived from a real employee session",
+      "sources are a projection of search-service evidence, not final FastAPI or n8n response",
+      "Q12/Q13 no-answer labels are source-checked candidates, not human-approved frozen gold answers",
+      "top3 retrieval returns candidates for no-answer questions; answer generation and escalation were not executed"
+    ]
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "version": "ab-frozen-20261109-v1",
+  "status": "frozen",
+  "human_approval": {
+    "status": "approved",
+    "approved_by": "user",
+    "approved_at": "2026-11-09T01:34:06.113674+00:00"
+  },
+  "source_candidate_sha256": "877527b666a106879f62ee47212bcebf54e50f6f3f885320e2917bc45f3b46f4",
+  "quality_question_ids": [
+    "Q01",
+    "Q02",
+    "Q03",
+    "Q04",
+    "Q05",
+    "Q06",
+    "Q07",
+    "Q08-IT",
+    "Q09",
+    "Q10",
+    "Q11"
+  ],
+  "excluded_from_quality": [
+    "Q08",
+    "Q12",
+    "Q13",
+    "Q14",
+    "Q15",
+    "Q16"
+  ],
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "비밀번호는 몇 자 이상이어야 하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "password-policy",
+      "expected_section": "1. 비밀번호 만들기",
+      "verified_required_quotes": [
+        "비밀번호는 12자 이상으로 만든다."
+      ],
+      "source_hash": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q02",
+      "question": "암호를 얼마나 자주 바꿔야 하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "password-policy",
+      "expected_section": "2. 변경 주기",
+      "verified_required_quotes": [
+        "비밀번호는 90일마다 바꾼다."
+      ],
+      "source_hash": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q03",
+      "question": "휴대폰을 바꿨는데 OTP 앱을 어떻게 다시 등록하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "password-policy",
+      "expected_section": "4. 다단계 인증",
+      "verified_required_quotes": [
+        "IT 포털에서 OTP를 다시 등록한다."
+      ],
+      "source_hash": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "review_note": "기존 질문의 OTP가 안 뜬다는 증상은 여러 원인이 가능하여 재등록 절차로 좁힘",
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q04",
+      "question": "만료 전 VPN 인증서는 어디에서 재발급 신청하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "2. VPN 인증서",
+      "verified_required_quotes": [
+        "IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청한다."
+      ],
+      "source_hash": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "review_note": "원문은 즉시 수령이 아니라 IT 포털 메뉴에서 신청",
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q05",
+      "question": "카페 와이파이로 회사 시스템에 접속해도 되나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "remote-work-vpn",
+      "expected_section": "1. 접속 원칙",
+      "verified_required_quotes": [
+        "공용 와이파이에서는 VPN 없이 사내 시스템에 접속하지 않는다."
+      ],
+      "source_hash": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q06",
+      "question": "26MB 파일을 메일로 보내려면 어떻게 해야 하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "email-and-documents",
+      "expected_section": "2. 첨부 파일",
+      "verified_required_quotes": [
+        "25MB를 넘는 파일은 사내 드라이브에 올리고 공유 링크를 보낸다."
+      ],
+      "source_hash": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "review_note": "25MB 초과라는 원문 조건을 질문에 명시",
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q07",
+      "question": "회사를 그만두면 노트북은 언제까지 반납하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "device-issue-return",
+      "expected_section": "3. 반납",
+      "verified_required_quotes": [
+        "5영업일 이내에 장비를 IT 담당자에게 반납한다."
+      ],
+      "source_hash": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q08-IT",
+      "question": "모르는 프로그램이 저절로 실행돼요. 먼저 무엇을 하나요?",
+      "access_levels": [
+        "all",
+        "it"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "security-incident",
+      "expected_section": "2. 악성코드 감염 의심",
+      "verified_required_quotes": [
+        "먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알린다."
+      ],
+      "source_hash": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29",
+      "source_text_checked": true,
+      "expected_access": "it",
+      "comparison_role": "positive_it",
+      "include_in_answer_hit_denominator": true,
+      "conflict_resolution": "Q08 일반 직원 음성 사례의 IT 양성 짝",
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q09",
+      "question": "고객 개인정보가 유출된 것 같아요. 언제 누구에게 신고하나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "privacy",
+      "expected_section": "3. 유출 대응",
+      "verified_required_quotes": [
+        "1시간 이내에 보안팀에 신고한다."
+      ],
+      "source_hash": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "proposed_decision": "include_quality_after_human_approval",
+      "review_note": "원문 대상은 개인정보이므로 기존 고객 정보 표현을 좁힘; 사람 승인 대기"
+    },
+    {
+      "id": "Q10",
+      "question": "생성형 AI 서비스에 고객 개인정보를 입력해도 되나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "software-usage",
+      "expected_section": "3. 생성형 AI 서비스",
+      "verified_required_quotes": [
+        "고객 정보, 개인정보, 대외비 문서는 생성형 AI 서비스에 입력하지 않는다."
+      ],
+      "source_hash": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "review_note": "고객 자료 전체가 아닌 원문 금지 대상인 개인정보로 범위를 좁힘",
+      "proposed_decision": "include_quality_after_human_approval"
+    },
+    {
+      "id": "Q11",
+      "question": "회의실을 한 번에 얼마나 오래 예약할 수 있나요?",
+      "access_levels": [
+        "all"
+      ],
+      "kind": "answer",
+      "status": "frozen",
+      "source_verified": true,
+      "human_approval": {
+        "status": "approved",
+        "approved_by": "user",
+        "approved_at": "2026-11-09T01:34:06.113674+00:00"
+      },
+      "expected_doc": "meeting-room",
+      "expected_section": "1. 예약",
+      "verified_required_quotes": [
+        "한 번에 최대 3시간까지 예약할 수 있다."
+      ],
+      "source_hash": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+      "source_text_checked": true,
+      "include_in_answer_hit_denominator": true,
+      "proposed_decision": "include_quality_after_human_approval"
+    }
+  ]
+}

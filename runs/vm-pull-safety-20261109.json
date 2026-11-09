@@ -1,0 +1,106 @@
+{
+  "schema": "oke-vm-pull-safety-v1",
+  "observed_at_utc": "2026-11-09T02:52:41.541115+00:00",
+  "provenance": {
+    "kind": "sanitized projection of a new read-only VM query; not a deployment or fault test",
+    "source_artifact_basename": "pull-impact-readonly-20261109.json",
+    "source_artifact_sha256": "7e504bd508fbdb9d39625bdfcce9ac23c427429ead457bf2602cda1cffea27e1"
+  },
+  "compared_main_commit": "5d13efba7868d18b5112d202d1eebb76d1f6382f",
+  "vm_checkout": {
+    "path": "/home/toor/Aio-4pj-1team",
+    "commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49",
+    "branch": "main",
+    "working_tree_clean": true,
+    "root_tools_flow_present": false
+  },
+  "live_data_api": {
+    "container": "oke-data-api-1",
+    "mounts": [
+      {
+        "type": "bind",
+        "source": "/home/toor/Aio-4pj-1team/data-api/data",
+        "destination": "/data",
+        "rw": false
+      },
+      {
+        "type": "bind",
+        "source": "/home/toor/Aio-4pj-1team/data-api/server.py",
+        "destination": "/app/server.py",
+        "rw": false
+      }
+    ],
+    "host_server_sha256": "62b9d5f59adeeac1de7b5f82c4c0027d4b3dea026ac8fae8bebd5d1953d75805",
+    "host_server_matches_vm_checkout": true
+  },
+  "main_path_migration": {
+    "mounted_tracked_data_files": 22,
+    "absent_at_old_paths_in_compared_main": [
+      "data-api/data/budget.json",
+      "data-api/data/docs/device-issue-return.md",
+      "data-api/data/docs/email-and-documents.md",
+      "data-api/data/docs/meeting-room.md",
+      "data-api/data/docs/password-policy.md",
+      "data-api/data/docs/privacy.md",
+      "data-api/data/docs/remote-work-vpn.md",
+      "data-api/data/docs/security-incident.md",
+      "data-api/data/docs/software-usage.md",
+      "data-api/data/employees.json",
+      "data-api/data/faq.json",
+      "data-api/data/ops-seed.json",
+      "data-api/data/prices.json",
+      "data-api/data/prompts/helpdesk-p1.md",
+      "data-api/data/prompts/helpdesk-p2.md",
+      "data-api/data/prompts/helpdesk-p3.md",
+      "data-api/data/releases.json",
+      "data-api/data/run-logs.json",
+      "data-api/data/schemas/employee.json",
+      "data-api/data/schemas/faq.json",
+      "data-api/data/schemas/ticket.json",
+      "data-api/data/tickets.json"
+    ],
+    "old_server_path_absent_in_compared_main": true,
+    "current_main_locations": [
+      "apps/data-api/server.py",
+      "data/",
+      "knowledge/",
+      "prompts/"
+    ]
+  },
+  "observed_state": {
+    "running_containers": 9,
+    "container_identity_image_start_state_unchanged": true,
+    "local_get_status": {
+      "frontend_login": 200,
+      "n8n": 200,
+      "data_api": 200
+    },
+    "commands_available": {
+      "git": true,
+      "uv": true,
+      "python3": true
+    },
+    "proposed_test_directory": "/home/toor/oke-test-runner",
+    "proposed_test_directory_exists": false,
+    "proposed_test_directory_is_live_mount_source": false
+  },
+  "assessment": {
+    "operating_checkout_pull": "do not pull: currently mounted tracked files are removed/moved by updating to compared main",
+    "reason": "a read-only bind prevents writes from inside the container; it does not prevent host git updates from removing live data files",
+    "execution_plan": [
+      "keep the operating checkout, containers, volumes, credentials and current mode",
+      "run the included focused webhook test from a separate PC checkout using the existing private key",
+      "if using VM tools, clone main to a separate unmounted test directory and inspect help only first",
+      "review authentication and case-judging compatibility before any official whole-suite test"
+    ],
+    "original_course_cli_full_suite_ready": false
+  },
+  "changes_made": [],
+  "limits": [
+    "Pull impact is inferred from actual mounts and the Git path diff; no destructive pull was used to reproduce an outage.",
+    "The whole deployment is not equal to current main; this receipt does not authorize source-path migration or service recreation.",
+    "The check did not exhaustively audit every system service, timer or possible automatic deployment mechanism.",
+    "HTTP health and login GET checks do not establish successful browser interactions, business API requests, DB linkage or rehearsal.",
+    "No key value, private test account or local credential-file path is included."
+  ]
+}

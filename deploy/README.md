@@ -2,6 +2,34 @@
 
 Application build contexts are `apps/backend/`, `apps/frontend/`, and `apps/rag/`. Both Compose definitions use only files in this checkout for code and input data. [LOCAL-MAC](LOCAL-MAC.md) initializes an isolated local stack without a separate course checkout. This path migration changes repository configuration; it does not deploy or restart the VM.
 
+## 11/09 운영 VM 보존과 시험 준비
+
+**기존 `/home/toor/Aio-4pj-1team`에서는 바로 `git pull`하지 않는다.** [11:52 KST 읽기 확인](../runs/vm-pull-safety-20261109.json)에서 VM은 `15ab6c9`이며 data-api가 그 폴더의 `data-api/data`·`data-api/server.py`를 직접 사용 중이었다. 비교한 main `5d13efb`는 해당 데이터 22개와 서버 파일을 새 경로로 옮겼다. 운영 폴더의 pull은 실제 연결 중인 파일을 제거할 수 있고, 컨테이너가 읽기 전용으로 연결했어도 호스트 Git 변경은 막지 못한다. 최신 Compose 파일을 받는 것만으로 기존 mount가 새 경로로 바뀌지는 않는다.
+
+1. **Mac에서 현재 VM을 시험:** Mac의 저장소 루트에서 아래 정상 요청 검사기를 실행한다. VM 소스 업데이트는 필요 없다. 비공개 시험 환경 파일에는 대상 VM 문의 웹훅의 `OKE_TEAM_KEY`를 준비하고, Mac 로컬 스택용 키와 구분한다. 키는 Git·명령 인수·출력에 넣지 않는다.
+
+   ```sh
+   python3 eval/webhook_latency.py \
+     --env-file /path/to/private-test.env \
+     --repeats 1 --idle-seconds 0 \
+     --output "/private/tmp/oke-webhook-test-$(date +%Y%m%d-%H%M%S).json"
+   ```
+
+   현재 VM에 실제 질문 1건을 보내므로 API 비용과 실행 기록이 발생한다. 자동 답변·규정 출처·티켓 없음·8초 이내를 확인하며, FE·API 세션·DB 연결이나 공식 전체 사례를 검사하지 않는다. 계정·DB까지 확인하는 별도 범위는 [실서버 검사 안내](../eval/LIVE-CHECKS.md)를 따른다.
+
+2. **VM에서 도구만 준비:** 서비스에 연결되지 않은 별도 폴더를 사용한다. 아래 경로는 확인 시점에 없었으며, 이미 존재한다면 운영 mount와 무관한 시험 폴더인지 먼저 확인한다.
+
+   ```sh
+   git clone --depth 1 --branch main \
+     https://github.com/hyunport/Aio-4pj-1team.git ~/oke-test-runner
+   cd ~/oke-test-runner
+   uv run tools/flow.py --help
+   ```
+
+   여기까지는 파일 준비·도움말 확인이다. 공식 원본은 웹훅 인증과 일부 사례의 추가 판정을 지원하지 않으므로 `test` 전체를 바로 실행할 준비가 끝난 상태가 아니다. [도구 한계](../tools/README.md)를 확인한다. 시험 폴더에서 Compose 실행·`flow.py push`를 하지 않는다. 기존 컨테이너·볼륨·활성 워크플로우·운영 키·app 모드를 유지한다.
+
+현재 main의 경로 구조로 운영 VM을 옮기는 작업은 별도 배포 계획·승인 대상이다. 아래 배포 절차를 이 시험 준비의 다음 단계로 실행하지 않는다. 실제 Mac 요청 결과와 미실행 항목은 [DAY82 검토 결과](../docs/DAY82-TEST-REVIEW.md)에 있다.
+
 # Unified VM deployment
 
 For a separate Mac-local copy of this stack (isolated Compose project, local-only secrets and volumes, FE at port 3001), see [LOCAL-MAC.md](LOCAL-MAC.md). The Mac setup does not use the VM's volumes or mutate VM runtime/configuration/data.
@@ -12,7 +40,7 @@ The three critical data volumes are external and retain their exact existing nam
 
 ## Standard deployment
 
-From the repository root on the VM, use the existing private environment files and explicitly set the app mode. The operator performs this sequence. The Compose commands below run directly from this checkout; no separate deployment helper is required. It fast-forwards VM `main`, validates Compose, builds the three `oke-team-*` images while the old project is available, stops old containers without removing them, then starts project `oke` and checks local readiness. PostgreSQL and n8n never share their volumes concurrently.
+The commands below are for a new installation or a separately reviewed migration after sources and private environment paths are provisioned. They are not instructions to pull into the retained live checkout described above. From the intended deployment root on the VM, use the private environment files and explicitly set app mode. The operator validates Compose, builds and starts the target services, then checks readiness under the approved deployment plan. These commands can recreate services. PostgreSQL and n8n must never share their volumes with another running project concurrently.
 
 ```sh
 SERVICE_MODE=app docker compose \

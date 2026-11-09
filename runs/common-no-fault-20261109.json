@@ -1,0 +1,1905 @@
+{
+  "scope": "common source cases without fault configuration; one pass plus explicit idempotency repeat",
+  "source_case_sha256": "a145e959bd7a095cdd45d10f1333380edc74b20eaba70ab93b27020344da1e97",
+  "course_source_sha256": "6b0059cb3af135b08954559d0e6b757991fc2fc42a0624244d129e618284fb6f",
+  "batch": "b544f540c9",
+  "started_at_utc": "2026-11-09T01:08:59.713846+00:00",
+  "excluded_fault_groups": [
+    "WF-04",
+    "WF-10",
+    "WF-11"
+  ],
+  "records": [
+    {
+      "http_status": 200,
+      "elapsed_seconds": 5.456,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-01",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하세요. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청해야 합니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-01",
+      "group_id": "WF-01",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-01",
+      "source_request_id": "wf01-normal-vpn",
+      "execution_receipts": [
+        {
+          "execution_id": "370",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N14 Prepare verifier",
+            "N14 Verifier mode",
+            "N14 Verifier model",
+            "N14 Verifier Agent",
+            "N14 Parse verifier",
+            "N15 Decide answer",
+            "N15 Route answer",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent",
+            "N14 Verifier Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "writer_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "faq"
+          ],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": true,
+          "verifier_final_grounded": true,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "route == 자동 답변",
+        "sources에 remote-work-vpn 포함",
+        "답변에 VPN 점검 절차 안내 포함"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "VPN 점검 절차와 인증서 1년·만료 30일 전 재발급 안내가 knowledge/remote-work-vpn.md 및 FAQ-003과 일치. 응답 시간 8초 이내."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "expected_source_docs": true,
+        "no_new_ticket": true,
+        "normal_within_eight_seconds": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-01",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 1.304,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-02",
+        "sources": [],
+        "ticket": null,
+        "agents": [
+          "triage"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "보완 질문",
+        "answer": "접속 대상은 무엇인가요? 어떤 오류 메시지가 표시되나요? 언제부터 발생했나요?"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-02",
+      "group_id": "WF-02",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-02",
+      "source_request_id": "wf02-clarify-1",
+      "execution_receipts": [
+        {
+          "execution_id": "372",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": null,
+          "search_docs": [],
+          "writer_docs": [],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "어떤 서비스·오류 현상·발생 시점 확인 질문 포함"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "접속 대상·오류 메시지·발생 시점을 묻고 추측 답변이나 티켓을 만들지 않음."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "no_new_ticket": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-02",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 1.819,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-02b",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2052",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "max_attempts"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2052"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-02b",
+      "group_id": "WF-02b",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-02b",
+      "source_request_id": "wf02b-clarify-limit",
+      "execution_receipts": [
+        {
+          "execution_id": "373",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 Mock C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": null,
+          "search_docs": [],
+          "writer_docs": [],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "ticket.ticket_id 발급 확인"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "보완 한도 도달 후 일반 우선순위 티켓과 알림이 각각 1건 저장됨."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "one_owned_stored_ticket": true,
+        "ticket_and_one_alert": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-02b",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 2.212,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-03",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2053",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2053"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-03",
+      "group_id": "WF-03",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-03",
+      "source_request_id": "wf03-no-evidence",
+      "execution_receipts": [
+        {
+          "execution_id": "375",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "password-policy",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "추측 답변 금지 및 담당자 이관",
+        "ticket 객체 존재 및 sources 빈 배열"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "근거가 부족할 때 해결책을 추측하지 않고 이관. sources는 빈 배열."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "one_owned_stored_ticket": true,
+        "ticket_and_one_alert": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-03",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 3.482,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-05",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2054",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever",
+          "writer"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2054"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-05",
+      "group_id": "WF-05",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-05",
+      "source_request_id": "wf05-rbac-block",
+      "execution_receipts": [
+        {
+          "execution_id": "378",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "email-and-documents",
+            "device-issue-return"
+          ],
+          "writer_docs": [
+            "privacy",
+            "email-and-documents",
+            "device-issue-return"
+          ],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "관리자 전용 문서를 근거로 노출하지 않음",
+        "route가 권한 없음 또는 담당자 이관"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "일반 직원 검색 권한은 all이며 실제 IT 문서 security-incident는 검색·Writer 근거·최종 출처에 없음. 담당자 이관. 정본의 잘못된 it-admin-runbook 조건은 변경하지 않고 실제 문서도 추가 확인."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "route_in": true,
+        "one_owned_stored_ticket": true,
+        "ticket_and_one_alert": true,
+        "actual_it_document_not_exposed": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-05",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 1.283,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-06",
+        "sources": [],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "권한 없음",
+        "answer": "본인 문의만 확인할 수 있습니다."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-06",
+      "group_id": "WF-06",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-06",
+      "source_request_id": "wf06-other-ticket",
+      "execution_receipts": [
+        {
+          "execution_id": "381",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "privacy",
+            "device-issue-return"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "forbidden",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "박서연 소유 T-1002의 처리 상태·연락처 미노출"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "타인 티켓 조회 결과 forbidden. 답변은 접근 제한 안내뿐이며 상태·연락처 미노출."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "no_new_ticket": true,
+        "lookup_forbidden": true,
+        "other_ticket_details_absent": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-06",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 1.324,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-07",
+        "sources": [],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 2
+        },
+        "route": "자동 답변",
+        "answer": "T-1003 (모니터 추가 지급) 문의는 현재 '접수됨' 상태입니다. 최근 갱신일은 2026-10-16입니다. 등록된 연락처는 [MASKED_CONTACT]로 일부 가려 표시합니다."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-07",
+      "group_id": "WF-07",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-07",
+      "source_request_id": "wf07-pii-masking",
+      "execution_receipts": [
+        {
+          "execution_id": "383",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "privacy",
+            "device-issue-return"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "ok",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "본인 T-1003 상태를 안내하되 연락처 원문은 마스킹([MASKED_CONTACT])",
+        "security.masked >= 1"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "본인 T-1003의 실제 접수됨 상태를 안내하고 연락처 일부 마스킹. 원문 연락처 미노출."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "no_new_ticket": true,
+        "own_status_and_masked_contact": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-07",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 0.285,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-08",
+        "sources": [],
+        "ticket": null,
+        "agents": [],
+        "security": {
+          "blocked_by": "rule",
+          "reason": "prompt_injection",
+          "masked": 0
+        },
+        "route": "차단",
+        "answer": "보안 정책상 처리할 수 없는 요청입니다. IT 문의 창구로 연락해 주세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-08",
+      "group_id": "WF-08",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-08",
+      "source_request_id": "wf08-prompt-injection",
+      "execution_receipts": [
+        {
+          "execution_id": "385",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "search_access_levels": null,
+          "search_docs": [],
+          "writer_docs": [],
+          "ticket_lookup_state": null,
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "route == 차단, LLM 호출 0회, 티켓 미생성"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "주입 요청 차단, Agent 실행 없음, 티켓 없음."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "no_new_ticket": true,
+        "no_llm_agent_execution": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-08",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 2.377,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-09",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2055",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2055"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-09",
+      "group_id": "WF-09",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-09",
+      "source_request_id": "wf09-idempotent-req",
+      "execution_receipts": [
+        {
+          "execution_id": "386",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "password-policy",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "동일 request_id 2회 전송 시 실제 생성 티켓 1건, 두 응답의 ticket_id 동일 및 재요청 duplicate: true"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "동일 request_id 2회 요청에서 동일 T-2055 반환. 첫 응답 duplicate=false, 두 번째 true. 해당 요청의 실제 티켓·알림은 각각 1건."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "one_owned_stored_ticket": true,
+        "ticket_and_one_alert": true,
+        "duplicate_marker_matches_order": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-09",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 2.256,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-09",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2055",
+          "priority": "normal",
+          "duplicate": true
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2055"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2055"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-09",
+      "group_id": "WF-09",
+      "ordinal": 2,
+      "request_id": "c82-b544f540c9-wf-09",
+      "source_request_id": "wf09-idempotent-req",
+      "execution_receipts": [
+        {
+          "execution_id": "389",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "password-policy",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        },
+        {
+          "execution_id": "386",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "password-policy",
+            "remote-work-vpn",
+            "password-policy"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "skipped",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "동일 request_id 2회 전송 시 실제 생성 티켓 1건, 두 응답의 ticket_id 동일 및 재요청 duplicate: true"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "동일 request_id 2회 요청에서 동일 T-2055 반환. 첫 응답 duplicate=false, 두 번째 true. 해당 요청의 실제 티켓·알림은 각각 1건."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "one_owned_stored_ticket": true,
+        "ticket_and_one_alert": true,
+        "duplicate_marker_matches_order": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-09",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 2.005,
+      "response": {
+        "request_id": "c82-b544f540c9-wf-12",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2056",
+          "priority": "high",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 2
+        },
+        "route": "담당자 이관",
+        "answer": "긴급 보안 문의가 접수되었습니다(T-2056). 피해 확산을 막기 위해 해당 PC의 사내망 연결(유선·Wi-Fi·VPN)을 바로 끊고 IT팀 연락을 기다려 주세요. 문의하신 T-1002(VPN 인증서 재발급)는 현재 '처리 중' 상태입니다.",
+        "reason": "urgent"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2056"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-12",
+      "group_id": "WF-12",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-12",
+      "source_request_id": "wf12-urgent-complex",
+      "execution_receipts": [
+        {
+          "execution_id": "392",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "writer_docs": [],
+          "ticket_lookup_state": "ok",
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [
+        "보안 사고 긴급 이관(priority: high) + 알림 전송 + 사내망 분리 안내 + 본인 T-1002 상태 안내"
+      ],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "긴급 high 티켓·알림 각각 1건 저장, 사내망 분리 안내 및 본인 T-1002 처리 중 상태 포함. IT 전용 문서 노출 없음. 알림 확인 범위는 서비스의 /alerts 저장 계약이며 외부 수신 또는 관리자 화면 확인은 아님."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "one_owned_stored_ticket": true,
+        "ticket_and_one_alert": true,
+        "own_ticket_status_in_urgent_answer": true,
+        "network_isolation_advice": true,
+        "it_policy_not_exposed": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-12",
+        "subcase_id": null
+      }
+    },
+    {
+      "http_status": 400,
+      "elapsed_seconds": 0.174,
+      "response": {
+        "error": "invalid request",
+        "codes": [
+          "question_required"
+        ]
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-13a",
+      "group_id": "WF-13",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-13a",
+      "source_request_id": "wf13-empty",
+      "execution_receipts": [
+        {
+          "execution_id": "395",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Validate employee MOCK",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "search_access_levels": null,
+          "search_docs": [],
+          "writer_docs": [],
+          "ticket_lookup_state": null,
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "빈 질문을 HTTP 400 및 question_required로 거절. Agent 실행·티켓 없음."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "no_new_ticket": true,
+        "no_llm_agent_execution": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-13",
+        "subcase_id": "WF-13a"
+      }
+    },
+    {
+      "http_status": 400,
+      "elapsed_seconds": 0.153,
+      "response": {
+        "error": "invalid request",
+        "codes": [
+          "unknown_user"
+        ]
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-13b",
+      "group_id": "WF-13",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-13b",
+      "source_request_id": "wf13-unknown",
+      "execution_receipts": [
+        {
+          "execution_id": "396",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "search_access_levels": null,
+          "search_docs": [],
+          "writer_docs": [],
+          "ticket_lookup_state": null,
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "미등록 직원을 HTTP 400 및 unknown_user로 거절. Agent 실행·티켓 없음."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "no_new_ticket": true,
+        "no_llm_agent_execution": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-13",
+        "subcase_id": "WF-13b"
+      }
+    },
+    {
+      "http_status": 400,
+      "elapsed_seconds": 0.281,
+      "response": {
+        "error": "invalid request",
+        "codes": [
+          "too_long"
+        ]
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-13c",
+      "group_id": "WF-13",
+      "ordinal": 1,
+      "request_id": "c82-b544f540c9-wf-13c",
+      "source_request_id": "wf13-toolong",
+      "execution_receipts": [
+        {
+          "execution_id": "397",
+          "status": "success",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Validate employee MOCK",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "search_access_levels": null,
+          "search_docs": [],
+          "writer_docs": [],
+          "ticket_lookup_state": null,
+          "verifier_initial_grounded": null,
+          "verifier_final_grounded": null,
+          "verifier_dropped_issues": 0
+        }
+      ],
+      "descriptive_checks": [],
+      "manual_review": {
+        "status": "passed_within_observed_scope",
+        "method": "assistant direct response and execution receipt review against source expectations and provided data",
+        "note": "길이 초과를 HTTP 400 및 too_long으로 거절. Agent 실행·티켓 없음."
+      },
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "no_new_ticket": true,
+        "no_llm_agent_execution": true
+      },
+      "automated_checks_passed": true,
+      "source_ref": {
+        "path": "cases/common.json",
+        "case_id": "WF-13",
+        "subcase_id": "WF-13c"
+      }
+    }
+  ],
+  "errors": [],
+  "manual_review": {
+    "status": "completed_with_scope_limits",
+    "groups_reviewed": 11,
+    "requests_reviewed": 14,
+    "automated_passed": 14,
+    "content_and_observed_contract_passed": 14,
+    "limits": [
+      "공통 14개 전체 통과가 아님: WF-04/WF-10/WF-11 미실행",
+      "팀 사례·전체 3회 반복·벤치마크 미실행",
+      "공식 CLI 원본 전체 실행이 아니라 원본 HTTP·judge와 보충 판정 사용",
+      "알림은 /alerts 계약의 DB 저장까지 확인; 외부 수신·관리자 화면 미확인",
+      "신규 사용자 UI/로그인/문의 end-to-end 시험이 아니라 인증된 내부 webhook 직접 요청",
+      "기존 N14 verifier 결함과 별도 감사 항목의 해결을 뜻하지 않음"
+    ]
+  },
+  "official_unmodified_cli_executed": false,
+  "db_before": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 71,
+    "tickets": 51,
+    "alerts": 55,
+    "dlq": 11,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "db_after": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 71,
+    "tickets": 56,
+    "alerts": 60,
+    "dlq": 11,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "containers_unchanged": true,
+  "workflow_versions_unchanged": true,
+  "wf09_same_ticket": true,
+  "finished_at_utc": "2026-11-09T01:09:42.634917+00:00",
+  "schema": "oke-common-no-fault-observations-v1",
+  "main_source_commit": "203c88b25424c22de15afc3e735c07e5dd23523f",
+  "provenance": {
+    "kind": "existing live observation export; no new service request during publication",
+    "original_artifact_name": "common-no-fault-live.json",
+    "original_artifact_sha256": "a53a935295bbc90cd6ee69d06f95d5074f6d7c612d69eeb60f3791996e828058",
+    "publication_redaction": "Already partially masked contact display removed from response and descriptive checks; original source cases and expectations remain unchanged."
+  },
+  "summary": {
+    "official_common_groups_total": 14,
+    "groups_executed": 11,
+    "input_variants": 13,
+    "http_requests": 14,
+    "automated_requests_passed": 14,
+    "reviewed_requests_passed_within_observed_scope": 14,
+    "full_common_suite_completed": false,
+    "full_team_suite_completed": false,
+    "llm_three_repeat_completed": false,
+    "bench_completed": false
+  },
+  "alert_observation": "POST /alerts storage contract checked by per-request DB rows; external delivery and admin UI not checked.",
+  "replay_tool_status": "Capture companion is not included: environment-specific helper dependencies have not been packaged as an independent submission runner. This JSON is an observation receipt, not an executable replay tool."
+}

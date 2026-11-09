@@ -1,0 +1,112 @@
+{
+  "schema": "oke-vm-main-transcribed-comparison-v1",
+  "observed_at_local": "2026-11-09 07:12 Asia/Seoul",
+  "main_source_commit": "203c88b25424c22de15afc3e735c07e5dd23523f",
+  "vm_checkout_commit": "15ab6c9694acf7fbf692d54dd97309937c63ad49",
+  "provenance": {
+    "kind": "transcribed prior audit notes, not a new VM query",
+    "source_report_section": "VM 읽기 전용 대조 — 2026-11-09 07:12 KST",
+    "source_section_sha256": "6e1f46c9448f627aa6f05c2bef6584d88f25644bee5efb53007d5320debc89e1",
+    "raw_terminal_output_included": false
+  },
+  "workflow_comparison_scope": [
+    "node name/type/typeVersion/parameters/onError/retry",
+    "Code source",
+    "connections",
+    "settings keys present in main",
+    "credential types only"
+  ],
+  "workflows": [
+    {
+      "name": "oke-support",
+      "main_path": "workflows/oke-support.json",
+      "nodes": 63,
+      "saved_active_published_version_id": "a8c18c6d-99ed-413f-87cc-3d7ea574e508",
+      "compared_fields_match_main": true
+    },
+    {
+      "name": "oke-search",
+      "main_path": "workflows/oke-search.json",
+      "nodes": 7,
+      "saved_active_published_version_id": "7d2a5036-2d4d-458a-8771-36298b71813a",
+      "compared_fields_match_main": true
+    },
+    {
+      "name": "oke-handoff",
+      "main_path": "workflows/oke-handoff.json",
+      "nodes": 30,
+      "saved_active_published_version_id": "df506dc7-a3a1-4caf-b511-746b9a454647",
+      "compared_fields_match_main": true
+    },
+    {
+      "name": "oke-errors",
+      "main_path": "workflows/oke-errors.json",
+      "nodes": 14,
+      "saved_active_published_version_id": "f45db8bd-5254-4fab-a0b8-8f6628f0d0ce",
+      "compared_fields_match_main": true
+    }
+  ],
+  "inactive_index": {
+    "main_path": "workflows/oke-index.json",
+    "nodes": 3,
+    "code_connections_match_main": true,
+    "published_version_present": false,
+    "different_settings": [
+      "saveDataSuccessExecution",
+      "saveDataErrorExecution",
+      "saveManualExecutions"
+    ]
+  },
+  "running_sources": {
+    "backend": {
+      "main_path": "apps/backend/",
+      "compared": 68,
+      "match_main": 68,
+      "service_mode": "app"
+    },
+    "frontend": {
+      "main_path": "apps/frontend/",
+      "compared": 32,
+      "present_match_main": 25,
+      "absent_design_reference_assets": 7
+    },
+    "rag": {
+      "main_path": "apps/rag/",
+      "compared": 14,
+      "match_main": 8,
+      "match_vm_checkout_instead": 6,
+      "differences": "source_path, path calculations, README exclusion and tool path messages"
+    },
+    "data_api": {
+      "main_path": "apps/data-api/",
+      "provided_assets_match_main": 22,
+      "server_matches_vm_checkout": true,
+      "differences": "source locations, environment paths and README exclusion"
+    }
+  },
+  "observed_state": {
+    "running_containers": 9,
+    "container_identity_image_start_state_unchanged": true,
+    "database_counts_unchanged_during_comparison": true,
+    "login_get_status": 200,
+    "n8n_health_status": 200,
+    "database": {
+      "employees": 6,
+      "inquiries": 53,
+      "tickets": 48,
+      "alerts": 52,
+      "dlq": 11,
+      "rag_documents": 8,
+      "rag_chunks": 33
+    }
+  },
+  "changes_made": [],
+  "limits": [
+    "This preserves prior notes; raw per-file comparison hashes and terminal transcripts are not included.",
+    "Credential values/IDs, layout metadata and every additional VM setting were outside the equality claim.",
+    "Main and VM are not identical complete deployments. No redeployment or source changes were performed.",
+    "Read-only comparison does not establish end-to-end service success.",
+    "Counts are the 07:12 observation; later tests have separate counts.",
+    "Known verifier and error-path findings remain unfixed; synthetic reproductions are not recorded as live incidents."
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "scope": "one authenticated empty-question webhook request; no fault or deployment",
+  "request_id": "auth-check-a8a4cb0218af40c3918acb4a9832bae9",
+  "started_at_utc": "2026-11-09T00:50:51.496193+00:00",
+  "errors": [],
+  "authentication": {
+    "http_status": 400,
+    "codes": [
+      "question_required"
+    ],
+    "expected_rejection": true,
+    "elapsed_seconds": 0.17,
+    "request_count": 1
+  },
+  "executions": [
+    {
+      "execution_id": "352",
+      "status": "success",
+      "nodes": [
+        "N01 Support webhook",
+        "N02 Normalize input",
+        "N03 Employee mode",
+        "N03 Validate employee MOCK",
+        "N04 Injection rules",
+        "N05 Replay MOCK",
+        "N05 Parse replay",
+        "N05 Route replay",
+        "N05 Triage gate",
+        "N22 Finalize P0-3",
+        "N22 Output filter",
+        "N23 Respond"
+      ],
+      "llm_agent_nodes": [],
+      "ticket_handoff_executed": false
+    }
+  ],
+  "versions_unchanged": true,
+  "containers_unchanged": true,
+  "business_db_counts_unchanged": true,
+  "db_before": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 62,
+    "tickets": 49,
+    "alerts": 53,
+    "dlq": 11,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "db_after": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 62,
+    "tickets": 49,
+    "alerts": 53,
+    "dlq": 11,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "no_llm_or_ticket_handoff": true,
+  "passed": true,
+  "finished_at_utc": "2026-11-09T00:50:53.598706+00:00",
+  "schema": "oke-webhook-auth-observations-v1",
+  "main_source_commit": "203c88b25424c22de15afc3e735c07e5dd23523f",
+  "provenance": {
+    "kind": "existing live observation export; no new service request during publication",
+    "original_artifact_name": "single-auth-check.json",
+    "original_artifact_sha256": "66b9f2a68b45cd2c8e47a7975dc5c7e47ed9d99770300c012de90f16ff88b2df",
+    "publication_redaction": "Already partially masked contact display removed from response and descriptive checks; original source cases and expectations remain unchanged."
+  }
+}

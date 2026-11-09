@@ -1,0 +1,176 @@
+{
+  "schema": "oke-document-closeout-review-v1",
+  "reviewed_at_utc": "2026-11-09T04:03:45.353460+00:00",
+  "base_main_commit": "19087efb5826482dc9b659e14c927177b3f908ac",
+  "scope": "offline documentation reconciliation of existing files and receipts; no new service, DB, VM, or paid API calls",
+  "teacher_checklist": {
+    "source_filename": "문서 마무리 관련 점검 사항.txt",
+    "sha256": "01858dd19df60bd0ea99a0fa6425ba91b3c0b1ce99dc1f98c8aaba73c3679aaa",
+    "items": 46,
+    "mapping": "docs/FINAL-DOCUMENT-REVIEW.md",
+    "status_rule": "document review is not a whole-service pass"
+  },
+  "official_submission_source": {
+    "file": "student/08-SUBMISSION.md",
+    "sha256": "a90a5a23b9b6d42794858b23020cbfe3afcd2dfb1eb8a61f8dd022423b5fdd61",
+    "required_checklist_source_sha256": "746c068443fb23c4b443c11e62d2f8a30c4895f2f3fd14b69e98284b4849dcac",
+    "local_checkout_only_no_upstream_refresh": true,
+    "scenario_guide_sha256": "2fbc0627c14c062278d59b3ec927e4f4d68efb536718868aa32baa03526e90d4"
+  },
+  "checks": {
+    "workflow_nodes_and_143_edges_equal_document_tables": true,
+    "workflow_counts": {
+      "support": {
+        "nodes": 63,
+        "connections": 79
+      },
+      "index": {
+        "nodes": 3,
+        "connections": 2
+      },
+      "search": {
+        "nodes": 7,
+        "connections": 7
+      },
+      "handoff": {
+        "nodes": 30,
+        "connections": 38
+      },
+      "errors": {
+        "nodes": 14,
+        "connections": 17
+      }
+    },
+    "llm_agents": 3,
+    "models": "gpt-4.1-mini",
+    "max_iterations": 1,
+    "temperature": 0,
+    "rag_model": "text-embedding-3-large",
+    "rag_dimensions": 3072,
+    "top_k": 3,
+    "search_threshold": null,
+    "support_evidence_threshold": 0.4,
+    "request_breakdown_total": 83,
+    "common_first_passed_requests": 14,
+    "common_repeat_reviewed_passed_requests": 30,
+    "team_failed_cases": {
+      "TM-04": {
+        "passed_requests": 0,
+        "total_requests": 3
+      },
+      "TM-13": {
+        "passed_requests": 2,
+        "total_requests": 3
+      }
+    },
+    "bench_nearest_rank_recomputed": {
+      "n": 5,
+      "p50_seconds": 4.184,
+      "p95_seconds": 4.241,
+      "max_seconds": 4.241
+    },
+    "error_parent_child_links": [
+      {
+        "parent": "581",
+        "error_execution": "583",
+        "source_node": "unknown"
+      },
+      {
+        "parent": "586",
+        "error_execution": "588",
+        "source_node": "N20 Prepare handoff"
+      }
+    ],
+    "slow_three_requests_below_six_seconds": true,
+    "official_15_checklist_text_preserved": true,
+    "teacher_46_items_mapped": true,
+    "local_links_checked": 442,
+    "broken_local_links": 0,
+    "external_link_occurrences_not_requested": 3,
+    "private_values_compared_in_memory": 13,
+    "private_value_matches": 0,
+    "only_authorized_document_and_new_review_files_changed": true,
+    "existing_raw_receipts_cases_data_workflows_service_and_ignore_unchanged": true,
+    "named_boolean_check_counts": {
+      "common_first": {
+        "passed": 89,
+        "total": 89
+      },
+      "common_repeat_after_export_review": {
+        "passed": 204,
+        "total": 204
+      },
+      "rule": "named boolean checks only; distinct from request counts, scenario coverage and descriptive review"
+    }
+  },
+  "source_sha256": {
+    "workflows/oke-support.json": "e6e5c0536babd5a4273bda3e5025751f7162f8dfa3e8ac3aea59e890134f9b5d",
+    "workflows/oke-index.json": "8b59a6658de2f0608200047134a8e8ed6d2bbcadfedaeca474f5bbe728735ae7",
+    "workflows/oke-search.json": "6d66cb4d19ab090f2061d286ec11a526a5c10abb3856056e0f3fcc3f47e0550b",
+    "workflows/oke-handoff.json": "c97dc47b15c2048be85fade2850b88c74a974fb8048c15dd5c7ae376aba9a30a",
+    "workflows/oke-errors.json": "e8d0b80f89f8b3fa2b2c78054146cc563aa7629f1e0bcc963608389f0ee84ff7",
+    "apps/rag/config/rag-settings.json": "c7a86abab67db5f866aa4507b3e1a729c748ab3ce89c364ac1fd242bec370a78",
+    "apps/rag/rag_search.py": "51e8b10a7296587c7e30810e36438bd5efcaafe9b5cc4125ec2c55757f0bbc92",
+    "apps/rag/rag_prepare.py": "85e2471407b57dd2227c5807cf722e999647b6f85f8678dffe1a1c5a9e0eb8cd",
+    "apps/backend/app/schemas/support.py": "2957938cc9b8b024d4339798e449093e6bf29c5ba800245eab9fdfa1e706307a",
+    "tools/flow.py": "6b0059cb3af135b08954559d0e6b757991fc2fc42a0624244d129e618284fb6f",
+    "cases/common.json": "a145e959bd7a095cdd45d10f1333380edc74b20eaba70ab93b27020344da1e97",
+    "cases/team.json": "12190d28a23f1e57c2a7d3a865b78015dec5b44feed275ae7cfd6c43600101de",
+    "cases/rag-search.json": "2b596e99126fb0e158117b65e62084d16b9605f06a6ea7959ba2ebe430ca8a1b",
+    "apps/rag/rag-permissions.json": "17750922ce1acc7a6dc7b6bb27d0d0190ee171ec4cdf433ebe427e144d0b2bc2",
+    "runs/day82-reviewed-results-20261109.json": "6777f15fe0f54271f45dc95d663ba36995a8506c3115413171b090f231e724bc",
+    "runs/team-repeat-20261109.json": "6a83c3e3362de793be9558adafff214ac3ba328c483f81894eb6ca0ffd8fc41a",
+    "runs/common-repeat-20261109.json": "46e71b9363cbdb1f82d9f8ff621c8fb87209dd81c482cad07052ea9c1b25bb64",
+    "runs/app-scoped-ticket-repeat-20261109.json": "b6f786c9add9b23eca5cd1353f2a07415b48dea70f9f6dd0e1c942480842968a",
+    "runs/ticket-lookup-slow-20261109.json": "39de119400d8d937e1c09b22c682809270c3e924636e71105519368ea19d6051",
+    "runs/error-auto-recovery-20261109.json": "338986f17cd86520cfea9cf2da1bbbc7fc8e14ba835f8f484df2785b0e8fcdf3",
+    "runs/webhook-bench-20261109.json": "63bce91c1c15606b0d7a4a9c9551235815aa313b55de42644a4f16961f89737e",
+    "runs/common-no-fault-20261109.json": "87d5a2ddfcb59908ff45f6417a315cb0cbaf6ef07c44f0b7d14f97e76d386d73",
+    "runs/vm-main-comparison-20261109.json": "dfb2a8a5912174a7cfce9ebdca10a7ed8bb39d795b3652f89d223c0137fdb321",
+    "runs/vm-pull-safety-20261109.json": "92f6a5c6bcad31ecb76eecacdfffa0b3a6880886fdfe648acafed855a4640844",
+    "runs/isolated-node-fault-check-20261109.json": "c3095d526f756d298f90df92ee85ab953b1b1a8d8a3ab698f58e9bbe6ae02c19",
+    "runs/rag-handoff-review-20261109.json": "0e127cedc8e3d265525551d53422d5f7b150573274129395d0943a2d0409d3ce",
+    "runs/local-webhook-check-20261109-120352.json": "d4852ba53c9ea98a1eb8947369b402f978830a089a9c65308996d9e30560273e",
+    "runs/local-webhook-check-20261109-120455.json": "f2ef205549b2e8c8a6aa2aa3ab4be721d6b69cad2c61e9178dfb98a307b8522c",
+    "knowledge/meeting-room.md": "a57aea3bb6a3085d056bbdc690dd3a32d152e0872c88b9c84938accef0639cb5",
+    "knowledge/privacy.md": "3798a7435cf5068a60d578d8fe3fcc0402fb28e5e563dcae721ef18fc4eb2678",
+    "knowledge/device-issue-return.md": "be876969812aa0abdd8ae818fdce9d44b38ba444fc22ed274ed75934420d49e0",
+    "knowledge/password-policy.md": "8c2cab8523fb61937eed939fda8d26e74d42e07a9961fb3a21db6661a4c377fd",
+    "knowledge/remote-work-vpn.md": "26d2c8580b321fadca2d0244e0bb2ebd05246c99407057b460b134e3940fc869",
+    "knowledge/software-usage.md": "82c0f4e9ca271d572d43e4df1de761616d78bc5808fd8a71aa56baacfb4ed849",
+    "knowledge/email-and-documents.md": "4ddfb066c71e1eef4a96f25d0cb99e5fec782ffc50bcc759fa0420df871baaec",
+    "knowledge/security-incident.md": "d9f57a7ae422f303cd2310f489f09138fdf1c8c5e88bf2f7873bf33ab0086c29"
+  },
+  "changed_document_sha256": {
+    "docs/EXECUTION-RESULT.md": "768e3485574d61bb1313545e1a4cf307dfb0c1583bef228cf0e5ef91f9b446c1",
+    "docs/WORKFLOW-DESIGN.md": "42206c5f97f467fb1bcc1f5335c20a96eee361adcdc93e941d487b95ee7b1a40",
+    "docs/RAG-ARCHITECTURE.md": "bc5779c2403a75d2428b62eff2b5500629ed0d925d90f7744d2704351ad21c06",
+    "docs/daily/DAY82.md": "d8cf1067bb44498ef8b6adb19e9c8dca30df15d79507f13016d574f726f21e4b",
+    "docs/FINAL-DOCUMENT-REVIEW.md": "dc2cef91b0c4662033a10d1a746e80f74971870e78c62c9397c82385ef7ebe8a",
+    "docs/README.md": "983f2a908ff8ed9f86b7c3b24a8b905995e3957e809d603eb29dd22834d9b1ec",
+    "runs/README.md": "04e840e0c3e4a9569f6dc8cc4534dd0e13960034dc2d25aaec0f7790f4ee2b64"
+  },
+  "publication_files": [
+    "docs/EXECUTION-RESULT.md",
+    "docs/FINAL-DOCUMENT-REVIEW.md",
+    "docs/RAG-ARCHITECTURE.md",
+    "docs/README.md",
+    "docs/WORKFLOW-DESIGN.md",
+    "docs/daily/DAY82.md",
+    "runs/README.md",
+    "runs/document-closeout-review-20261109.json",
+    "runs/secret-scan-document-closeout-20261109.json"
+  ],
+  "not_completed": [
+    "official whole compatible runner and same-condition whole suite",
+    "live WF-10 and TM-14",
+    "TM-04/TM-13 fixes and TM-12 evidence precondition",
+    "N14 and controlled-exception and error-label fixes",
+    "whole main/VM deployment match and operational RAG per-document hash",
+    "team-member cross review, rehearsal and final submission approval/SHA/time",
+    "Git history and binary-content secret scan"
+  ],
+  "new_service_requests": 0,
+  "vm_connections": 0,
+  "deployment_changes": 0
+}

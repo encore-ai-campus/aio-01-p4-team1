@@ -2,6 +2,8 @@
 
 > 현재 main의 `workflows/*.json`을 기준으로 작성했다. 실제 노드 이름과 필드명은 JSON과 대조할 수 있도록 그대로 표기한다. 이 문서의 설정 설명은 저장소 기준이며, 배포 상태·시험 통과 여부는 [실행 결과서](EXECUTION-RESULT.md)의 근거로 확인한다.
 
+**11/09 문서 마감 대조:** 기준 main `19087ef`의 5개 JSON은 117노드·143연결이다. 기존 VM 관측에서 활성 support·search·handoff·errors의 비교한 구현 필드는 일치했으나, Git checkout·전체 배포·수동 index 실행까지 일치·완료한 것은 아니다. 새 배포·시험은 하지 않았다. 아래 7절의 실제 Error 발화와 미해결 결함을 [필수 문서 점검표](FINAL-DOCUMENT-REVIEW.md)·실행 결과서와 함께 읽는다.
+
 ## 1. 업무 시나리오
 
 오케퐁 직원이 웹에서 로그인해 IT 문제를 질문하면 FastAPI가 로그인한 직원의 신원과 입력을 확인해 `oke-support`를 호출한다. 워크플로우는 문의를 분류하고, 직원에게 허용된 규정과 필요한 본인 접수 기록을 찾는다. 근거가 충분하고 답변 검증을 통과하면 안내하고, 정보가 부족하면 보완 질문을 한다. 실제 조치가 필요하거나 근거·검증이 부족하면 IT팀 티켓으로 이관한다. 보안 사고는 긴급 접수를 먼저 시도한 뒤 가능한 안내를 보충한다. 직원의 문의와 관리자의 처리 결과는 FastAPI·PostgreSQL에서 관리한다.
@@ -100,6 +102,8 @@ flowchart TD
 
 `N14 Parse verifier`에는 검증 결과를 보정하는 코드도 있다. `grounded=false`인 경우, issues의 인용구가 근거와 정규화된 2글자 조각 기준 80% 이상 일치하면 해당 issue를 제거한다. 남은 issue가 없으면 `grounded=true`로 바꾼다. 이는 의미 일치를 완전히 증명하는 검사가 아니므로, 모든 허위 답변을 차단한다고 주장하지 않는다. 최종 승인은 `policy_ok=true`, 빈 issues, 유효한 작성·검증 결과와 규정 출처까지 요구한다.
 
+[원본 노드 합성 검사](../runs/isolated-node-fault-check-20261109.json)에서는 원문의 90일을 91일로 바꾼 초안·거절 verdict가 보정 후 승인되는 결함을 재현했다. 미수정이며, 위 조건들이 숫자 오류까지 확실히 차단한다는 뜻이 아니다. 운영 서비스에 같은 오답을 보내 확인한 결과와 구분한다.
+
 ### 4.3 실연결·Mock·기존 티켓 조회의 구분
 
 - `SERVICE_MODE=app` 또는 `practice`이면 본체의 `integration_mode=real`이다. `app`의 이관 저장 대상은 FastAPI, `practice`는 data-api다. `mock`만 모의 직원·분류·검색·작성·검증·이관 결과를 사용한다.
@@ -159,7 +163,7 @@ flowchart TD
 | S14 · 작성 단계 | writer_input: `question,context,urgency,evidence,ticket_lookup`. Agent JSON: `answerable,answer,used_sources,used_ticket` | 파서가 `writer_valid,draft,verification_failure` 등 추가. used_sources는 받은 근거의 doc/section만 허용 |
 | S15 · 검증 단계 | verifier_input: `question,context,draft,evidence,ticket_lookup`. Agent JSON: `grounded,policy_ok,issues` | 파서가 `verifier_valid,verdict,verifier_dropped_issues` 등 추가. 최종 판단은 출처·모드까지 확인 |
 
-`trigger_error_workflow`는 본체 JSON에서 읽는 별도의 시험 입력이다. `N13 Prepare writer` 또는 `N20 Prepare handoff` 도달 시 의도한 오류를 던진다. 일반 문의 계약의 필수 필드가 아니며 웹의 AskRequest에 노출된 기능도 아니다. 실행은 승인된 시험 범위에서만 한다.
+`trigger_error_workflow`는 본체 JSON에서 읽는 별도의 시험 입력이다. `N13 Prepare writer` 또는 `N20 Prepare handoff` 도달 시 의도한 오류를 던진다. 두 throw에는 app 운영 모드를 제외하는 조건이 없어, 인증된 직접 웹훅에서는 app에서도 발동한다. 웹의 [AskRequest](../apps/backend/app/schemas/support.py)에는 이 필드가 없고 일반 문의 필수 계약도 아니다. 실행은 승인된 시험 범위에서만 한다. 11/09 승인 시험의 실제 발화·복구는 7.2절에 연결했다. 코드 제거·격리 조치는 아직 하지 않았다.
 
 최종 route는 `자동 답변`·`보완 질문`·`담당자 이관`·`권한 없음`·`차단`이다. `timings`는 백엔드 스키마에서 선택 필드이며 현재 본체의 최종 응답 생성 코드에는 없다. 알림·DLQ 저장 여부는 C04에 있고 최종 공통 응답에는 그대로 모두 노출되지 않는다.
 
@@ -267,7 +271,7 @@ score 0.62와 근거 텍스트는 형식 예시이며 실측·규정 인용이 �
 | C04 같은 요청 중복 방지 | [재시험 기록](../runs/live-integration-qa-20261107T113546Z.json) | 동일 요청의 티켓·알림 중복 방지 |
 | app 티켓 저장 실패·해제 후 동일 ID 재접수 | [장애·복구 검사](../runs/app-ticket-fault-20261108T110410Z.json) | 요청별 장애, 문의·알림·DLQ 및 재접수. DLQ 자동 재처리 시험은 아님 |
 
-이 보고서들은 해당 경계의 실측 근거다. 모든 내부 연결선의 실제 item 전체를 수집했다는 뜻은 아니며, 공식 공통 14유형 전체 재현 완료로 합산하지 않는다.
+11/09 추가 83요청의 반복·지연·Error·벤치와 실패는 [검토 집계](../runs/day82-reviewed-results-20261109.json), [최신 커버리지](EXECUTION-RESULT.md#21-공통-14유형과-관련-실행-근거)에 연결했다. 이 보고서들은 해당 경계의 실측 근거다. 모든 내부 연결선의 실제 item 전체를 수집했다는 뜻은 아니며, 공식 공통 14유형 전체 재현 완료로 합산하지 않는다.
 
 ### 6.5 연결선 전체 목록
 
@@ -488,6 +492,15 @@ support·search·handoff의 `settings.errorWorkflow`는 `okeErrorsFlow01`이다.
 
 DLQ에는 운영상 필요한 안전 요약을 남기며 원문 자격증명·오류 본문을 복사하지 않는다. 현재 흐름에 DLQ를 자동 소비해 원래 요청을 재실행하는 노드는 없다. 장애 해제 후 동일 ID로 재접수한 기록과 DLQ 자동 재처리를 구분한다.
 
+**실제 자동 발화 근거:** [11/09 Error·복구 원본](../runs/error-auto-recovery-20261109.json)에는 아래 두 경로가 있다. 파일 존재·errorWorkflow 설정 확인과 실제 실행을 구분한다.
+
+| 부모 실행·위치 | 실제 Error 실행 | 저장·복구 결과 | 남은 문제 |
+| --- | --- | --- | --- |
+| 581 · N13 Prepare writer | 583 · E01 Error Trigger→E02→app 알림→app DLQ→E05 | 알림 1·DLQ 1, 플래그 없이 같은 ID 재전송 HTTP 200·4.952초 | E02 목록에 현 노드가 없어 source_node=unknown. 위치 판정 실패 |
+| 586 · N20 Prepare handoff | 588 · 같은 저장 경로 | 알림 1·DLQ 1, 같은 ID 재전송 HTTP 200·2.489초 | 위치 식별 성공. 기존 pending DLQ는 유지 |
+
+예를 들어 요청 `e82-8d5d410625-writer`는 실제 부모 581 실패→Error 583→`execution_ref=581`, `request_id=null`인 안전 요약 저장으로 이어진다. 오류 원문에서 요청 ID를 추정하지 않는 설계다. 재전송 복구는 사람이 플래그를 제거한 같은 ID 요청이며 자동 DLQ 소비가 아니다. 이 강제 예외는 provider 장애 WF-10이나 verifier 거절 TM-14를 대신하지 않는다.
+
 ### 7.3 저장소의 실행 기록 설정
 
 | 파일 | 성공 기록 | 실패 기록 | 수동 실행 저장 | Error Workflow |
@@ -499,6 +512,17 @@ DLQ에는 운영상 필요한 안전 요약을 남기며 원문 자격증명·�
 | `oke-errors.json` | all | all | true | 빈 값 |
 
 이 표는 현재 JSON 설정이다. 실제 n8n의 게시·활성 상태나 저장 기록의 개인정보 가림 완료 여부는 JSON 설정만으로 판정하지 않는다.
+
+### 7.4 미해결·미구현·미확인 구분
+
+| 구분 | 현재 상태 | 근거 |
+| --- | --- | --- |
+| 구현 결함·미수정 | N14 숫자 오류 승인, app에서도 가능한 강제 예외, Error 노드 목록 불일치 | 위 4.2·6.2·7.2절, [원본 JSON](../workflows/oke-support.json), [오류 JSON](../workflows/oke-errors.json) |
+| 실제 실패·조건 부족 | TM-04 거절 사유 공란, TM-13 1/3 이관, TM-12 충분한 정답 절 미검색 | [실행 결과서](EXECUTION-RESULT.md#42-실패개선-사례), [검토 결과](DAY82-TEST-REVIEW.md) |
+| 미구현 | 실제 응답 캐시 조회, DLQ 자동 소비, 검색 질의 재작성 반복, 모르는 부모 인증·거절 | 현재 그래프·Code 기준. 웹훅 인증·티켓 key 멱등성과 별개 |
+| 실서비스 미실행·미확인 | WF-10·TM-14, 모든 재시도·알림/DLQ 자체 장애, 전체 main 배포 일치 | [미실행 사유](DAY82-TEST-REVIEW.md#실제-vm에서-하지-않은-시험), [VM 경로 대조](../runs/vm-pull-safety-20261109.json) |
+
+노드별 모델/시간 제한 설정은 4~5절의 저장소 값이며, 새 VM 재조회로 모든 환경변수·Credential 설정을 확인한 결과가 아니다. 기능 수정·재배포는 이번 문서 마감 범위에 포함하지 않는다.
 
 ## 8. 64~79일차 학습 내용의 적용
 

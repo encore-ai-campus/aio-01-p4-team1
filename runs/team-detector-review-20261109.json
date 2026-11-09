@@ -1,0 +1,17 @@
+{
+  "execution_id": "422",
+  "response_keys": [
+    "agents",
+    "answer",
+    "request_id",
+    "route",
+    "security",
+    "sources",
+    "ticket"
+  ],
+  "matching_string_paths": [],
+  "matching_numeric_paths": [
+    "$.sources[0].score"
+  ],
+  "scope": "read-only review of the original recorded output; no new request"
+}

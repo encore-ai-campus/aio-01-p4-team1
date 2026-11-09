@@ -1,0 +1,59 @@
+{
+  "schema": "oke-preparation-selftests-v1",
+  "not_live_test_results": true,
+  "team_assessor": {
+    "schema": "oke-team-offline-selftest-v1",
+    "fixture_kind": "saved observations with synthetic mutations; not new live requests",
+    "checks": [
+      "exact_scope",
+      "original_judge_does_not_cover_blank_security_reason",
+      "blank_security_reason_fails_team_check",
+      "missing_semantic_review_stays_unverified",
+      "db_alert_row_is_not_actual_ack",
+      "ack_accepts_successful_storage_receipt",
+      "failed_alert_ack_fails_despite_db_row",
+      "forbidden_route_not_accepted_for_admin_word",
+      "it_document_in_writer_fails_even_if_final_sources_empty",
+      "empty_or_incomplete_batch_not_pass",
+      "held_case_rejected",
+      "missing_verifier_policy_evidence_not_pass",
+      "verifier_policy_rejection_fails",
+      "complete_verifier_success_evidence_accepted",
+      "agent_label_is_not_verifier_execution",
+      "changed_question_cannot_pass_as_original_case",
+      "recalled_duplicate_one_ticket_accepted",
+      "duplicate_marker_cannot_be_ignored",
+      "unchanged_cache_response_and_zero_child_calls_accepted",
+      "duplicate_ticket_count_fails_even_when_id_matches",
+      "source_hash_mismatch_rejected"
+    ],
+    "passed": 21,
+    "network_requests": 0,
+    "vm_connections": 0,
+    "real_credentials_loaded": false
+  },
+  "privacy_detector": {
+    "mode": "offline_synthetic",
+    "checks": [
+      {
+        "check": "numeric_score",
+        "passed": true
+      },
+      {
+        "check": "synthetic_phone",
+        "passed": true
+      }
+    ],
+    "network_requests": 0
+  },
+  "fault_cleanup": {
+    "mode": "offline_fake_transport",
+    "checks": [
+      "lookup_delay_restored_after_capture_exception",
+      "scoped_ticket_rule_disarmed_after_capture_exception"
+    ],
+    "passed": 2,
+    "network_requests": 0,
+    "vm_connections": 0
+  }
+}

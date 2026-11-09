@@ -1,0 +1,264 @@
+{
+  "schema": "oke-post-test-readonly-review-v1",
+  "checked_at_utc": "2026-11-09T02:26:32.372033+00:00",
+  "diagnostics": [
+    {
+      "id": "422",
+      "case_id": "TM-13",
+      "cycle": 1,
+      "writer_valid": true,
+      "draft_answerable": null,
+      "draft_used_source_docs": [
+        "faq",
+        "password-policy"
+      ],
+      "final_decision": "auto_answer",
+      "decision_reason": null,
+      "final_policy_source_docs": [
+        "password-policy"
+      ],
+      "masked_marker_present": false,
+      "security_masked": 0,
+      "own_ticket_status_present": false
+    },
+    {
+      "id": "424",
+      "case_id": "TM-12",
+      "cycle": 1,
+      "writer_valid": false,
+      "draft_answerable": null,
+      "draft_used_source_docs": [],
+      "final_decision": null,
+      "decision_reason": null,
+      "final_policy_source_docs": [],
+      "masked_marker_present": false,
+      "security_masked": 0,
+      "own_ticket_status_present": false
+    },
+    {
+      "id": "447",
+      "case_id": "TM-13",
+      "cycle": 2,
+      "writer_valid": true,
+      "draft_answerable": null,
+      "draft_used_source_docs": [
+        "faq"
+      ],
+      "final_decision": "pending",
+      "decision_reason": "low_confidence",
+      "final_policy_source_docs": [],
+      "masked_marker_present": false,
+      "security_masked": 0,
+      "own_ticket_status_present": false
+    },
+    {
+      "id": "450",
+      "case_id": "TM-12",
+      "cycle": 2,
+      "writer_valid": false,
+      "draft_answerable": null,
+      "draft_used_source_docs": [],
+      "final_decision": null,
+      "decision_reason": null,
+      "final_policy_source_docs": [],
+      "masked_marker_present": false,
+      "security_masked": 0,
+      "own_ticket_status_present": false
+    },
+    {
+      "id": "473",
+      "case_id": "TM-13",
+      "cycle": 3,
+      "writer_valid": true,
+      "draft_answerable": null,
+      "draft_used_source_docs": [
+        "faq",
+        "password-policy"
+      ],
+      "final_decision": "auto_answer",
+      "decision_reason": null,
+      "final_policy_source_docs": [
+        "password-policy"
+      ],
+      "masked_marker_present": false,
+      "security_masked": 0,
+      "own_ticket_status_present": false
+    },
+    {
+      "id": "475",
+      "case_id": "TM-12",
+      "cycle": 3,
+      "writer_valid": false,
+      "draft_answerable": null,
+      "draft_used_source_docs": [],
+      "final_decision": null,
+      "decision_reason": null,
+      "final_policy_source_docs": [],
+      "masked_marker_present": false,
+      "security_masked": 0,
+      "own_ticket_status_present": false
+    },
+    {
+      "id": "491",
+      "case_id": "WF-07",
+      "cycle": 1,
+      "writer_valid": null,
+      "draft_answerable": null,
+      "draft_used_source_docs": [],
+      "final_decision": null,
+      "decision_reason": null,
+      "final_policy_source_docs": [],
+      "masked_marker_present": true,
+      "security_masked": 2,
+      "own_ticket_status_present": true
+    },
+    {
+      "id": "515",
+      "case_id": "WF-07",
+      "cycle": 2,
+      "writer_valid": null,
+      "draft_answerable": null,
+      "draft_used_source_docs": [],
+      "final_decision": null,
+      "decision_reason": null,
+      "final_policy_source_docs": [],
+      "masked_marker_present": true,
+      "security_masked": 2,
+      "own_ticket_status_present": true
+    },
+    {
+      "id": "539",
+      "case_id": "WF-07",
+      "cycle": 3,
+      "writer_valid": null,
+      "draft_answerable": null,
+      "draft_used_source_docs": [],
+      "final_decision": null,
+      "decision_reason": null,
+      "final_policy_source_docs": [],
+      "masked_marker_present": true,
+      "security_masked": 2,
+      "own_ticket_status_present": true
+    }
+  ],
+  "workflows": [
+    {
+      "name": "oke-errors",
+      "active": true,
+      "version_id": "f45db8bd-5254-4fab-a0b8-8f6628f0d0ce",
+      "active_version_id": "f45db8bd-5254-4fab-a0b8-8f6628f0d0ce",
+      "published_version_id": "f45db8bd-5254-4fab-a0b8-8f6628f0d0ce",
+      "settings_differ": [],
+      "all_compared_saved_fields_match": true,
+      "all_compared_active_fields_match": true,
+      "all_compared_published_fields_match": true
+    },
+    {
+      "name": "oke-handoff",
+      "active": true,
+      "version_id": "df506dc7-a3a1-4caf-b511-746b9a454647",
+      "active_version_id": "df506dc7-a3a1-4caf-b511-746b9a454647",
+      "published_version_id": "df506dc7-a3a1-4caf-b511-746b9a454647",
+      "settings_differ": [],
+      "all_compared_saved_fields_match": true,
+      "all_compared_active_fields_match": true,
+      "all_compared_published_fields_match": true
+    },
+    {
+      "name": "oke-index",
+      "active": false,
+      "version_id": "59ea9105-721d-41b9-9b48-b76d1922a56b",
+      "active_version_id": null,
+      "published_version_id": null,
+      "settings_differ": [
+        "saveDataSuccessExecution",
+        "saveDataErrorExecution",
+        "saveManualExecutions"
+      ],
+      "all_compared_saved_fields_match": true,
+      "all_compared_active_fields_match": null,
+      "all_compared_published_fields_match": null
+    },
+    {
+      "name": "oke-search",
+      "active": true,
+      "version_id": "7d2a5036-2d4d-458a-8771-36298b71813a",
+      "active_version_id": "7d2a5036-2d4d-458a-8771-36298b71813a",
+      "published_version_id": "7d2a5036-2d4d-458a-8771-36298b71813a",
+      "settings_differ": [],
+      "all_compared_saved_fields_match": true,
+      "all_compared_active_fields_match": true,
+      "all_compared_published_fields_match": true
+    },
+    {
+      "name": "oke-support",
+      "active": true,
+      "version_id": "a8c18c6d-99ed-413f-87cc-3d7ea574e508",
+      "active_version_id": "a8c18c6d-99ed-413f-87cc-3d7ea574e508",
+      "published_version_id": "a8c18c6d-99ed-413f-87cc-3d7ea574e508",
+      "settings_differ": [],
+      "all_compared_saved_fields_match": true,
+      "all_compared_active_fields_match": true,
+      "all_compared_published_fields_match": true
+    }
+  ],
+  "normal_state": {
+    "deployment": {
+      "oke-backend-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": true
+      },
+      "oke-n8n-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": false
+      },
+      "operator_fault_file_present": false
+    },
+    "practice_faults": {
+      "faq": "ok",
+      "tickets": "ok",
+      "prompts": "ok",
+      "usage": "ok",
+      "dlq": "ok",
+      "slow_seconds": 8.0
+    },
+    "normal": true
+  },
+  "business_db": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 73,
+    "tickets": 97,
+    "alerts": 106,
+    "dlq": 16,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "containers": [
+    "/oke-backend-1|f17fcdf82b3c4f3165e4548965f796bfdfbc00615014e4d1739bbbf0ca1ec413|sha256:5c39654c430a03a583d0fde8a34e05acddce52814ad06d33940be11359b87aad|2026-11-08T11:03:47.380353385Z|running",
+    "/oke-data-api-1|2aa928e320f89b8d9cb12698990c9d220085f36affb24cf998f6c5ca8f759241|sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30|2026-11-07T07:14:28.713563843Z|running",
+    "/oke-frontend-1|d2771074492625fab6c530ccf91cf28625b31c7008344bf2daed918f37b2cc7a|sha256:0993738eb9d022a95b97744504ebfdbcd2e71a1836e8525eb050a5437945bfe2|2026-11-07T15:02:06.219838037Z|running",
+    "/oke-n8n-1|f743f3518ebe2b2be1982abcb643e9fce4c4bd42730dfae410ec17983a70e6e4|sha256:526daa38b68e923cc00c5280d18b4da5d489f115a73bdbf3b8e452b184197a9a|2026-11-07T14:33:48.051229832Z|running",
+    "/oke-postgres-1|1b66b3e34257e95c168861b187816c9a311820fbb7a8611dfe3e2649d7e3c019|sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b|2026-11-05T14:44:59.362137201Z|running",
+    "/oke-rag-search-1|a500a366b08148fb3e61bb06538800ee6a19c87ba155e63728c54c84ae57c96f|sha256:733516ff7822cf41f9455a096e2ee3899c338e3d7188b90cfa271ea87ec52dba|2026-11-05T14:45:05.527399716Z|running",
+    "/oke-runners-1|ddba960d4a5f78aea0088c7780f54b3c12cd97836359fcf8d7fb890508a522c5|sha256:b78816286beb0a14e874abfda31eb4621d47f5ebb38f194271df7e39b7bd63a7|2026-11-08T07:57:14.218531596Z|running",
+    "/oke-sandbox-api-1|7eb4bc8f0f2305f42a1053b89b3d1d307dca3daf3c828bb02222a1d5662de2dc|sha256:3ac19681cae36f3d1fb879cc572d3488088d03c45c4c96b6ff4f0bbdd2d00e7e|2026-11-05T14:44:59.090388417Z|running",
+    "/oke-sandbox-runner-1-1|192a7924e7f52f076a02ae13e155fa5d8f025297b7e9b9047caf0ee3d7fb44ac|sha256:b744471997bbaf1bf75b5ca667d0931352bdb4d59ecc7935ceab7e742829a117|2026-11-05T14:45:05.826949471Z|running"
+  ],
+  "health": {
+    "public_login": 200,
+    "n8n_health": 200
+  },
+  "new_business_requests": 0,
+  "deployment_changes": false
+}

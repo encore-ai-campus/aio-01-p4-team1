@@ -1,0 +1,1546 @@
+{
+  "schema": "oke-remaining-live-capture-v1",
+  "mode": "bench",
+  "batch": "494bf883a0",
+  "started_at_utc": "2026-11-09T01:57:52.122363+00:00",
+  "main_source_commit": "7759cec86ebb0ba89dd85c5ee0df7458ac8e309c",
+  "records": [
+    {
+      "http_status": 200,
+      "elapsed_seconds": 4.241,
+      "response": {
+        "request_id": "b82-494bf883a0-1",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하세요. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청해야 합니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-01",
+      "ordinal": 1,
+      "request_id": "b82-494bf883a0-1",
+      "sent_payload_semantic_sha256": "c55b7ffcbb10b9b168e2afbce6698f4d19d5acb518835f060d597b92da1e20ae",
+      "execution": {
+        "execution_id": "592",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "b82-494bf883a0-1",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Mock ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N13 Prepare writer",
+          "N13 Writer mode",
+          "N13 Writer model",
+          "N13 Writer Agent",
+          "N13 Parse writer",
+          "N13 Writer valid",
+          "N14 Prepare verifier",
+          "N14 Verifier mode",
+          "N14 Verifier model",
+          "N14 Verifier Agent",
+          "N14 Parse verifier",
+          "N15 Decide answer",
+          "N15 Route answer",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent",
+          "N13 Writer Agent",
+          "N14 Verifier Agent"
+        ],
+        "handoff_call_count": 0,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "remote-work-vpn"
+        ],
+        "search_evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "1. 접속 원칙",
+            "score": 0.4058352026596479
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.39947615300618566
+          }
+        ],
+        "writer_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "faq"
+        ],
+        "writer_valid": true,
+        "verifier_valid": true,
+        "verifier_initial_grounded": true,
+        "verifier_initial_policy_ok": true,
+        "verifier_final_grounded": true,
+        "verifier_final_policy_ok": true,
+        "verifier_final_issue_count": 0,
+        "verifier_dropped_issues": 0,
+        "ticket_lookup_state": "skipped",
+        "handoff_reason": null,
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": null,
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "592",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "b82-494bf883a0-1",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N14 Prepare verifier",
+            "N14 Verifier mode",
+            "N14 Verifier model",
+            "N14 Verifier Agent",
+            "N14 Parse verifier",
+            "N15 Decide answer",
+            "N15 Route answer",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent",
+            "N14 Verifier Agent"
+          ],
+          "handoff_call_count": 0,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "search_evidence": [
+            {
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.43596449741811805
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.4058352026596479
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39947615300618566
+            }
+          ],
+          "writer_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "faq"
+          ],
+          "writer_valid": true,
+          "verifier_valid": true,
+          "verifier_initial_grounded": true,
+          "verifier_initial_policy_ok": true,
+          "verifier_final_grounded": true,
+          "verifier_final_policy_ok": true,
+          "verifier_final_issue_count": 0,
+          "verifier_dropped_issues": 0,
+          "ticket_lookup_state": "skipped",
+          "handoff_reason": null,
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "expected_source_docs": true,
+        "no_new_ticket": true,
+        "normal_within_eight_seconds": true
+      },
+      "automatic_passed": true
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 3.972,
+      "response": {
+        "request_id": "b82-494bf883a0-2",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하세요. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청해야 합니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-01",
+      "ordinal": 2,
+      "request_id": "b82-494bf883a0-2",
+      "sent_payload_semantic_sha256": "c55b7ffcbb10b9b168e2afbce6698f4d19d5acb518835f060d597b92da1e20ae",
+      "execution": {
+        "execution_id": "594",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "b82-494bf883a0-2",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Mock ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N13 Prepare writer",
+          "N13 Writer mode",
+          "N13 Writer model",
+          "N13 Writer Agent",
+          "N13 Parse writer",
+          "N13 Writer valid",
+          "N14 Prepare verifier",
+          "N14 Verifier mode",
+          "N14 Verifier model",
+          "N14 Verifier Agent",
+          "N14 Parse verifier",
+          "N15 Decide answer",
+          "N15 Route answer",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent",
+          "N13 Writer Agent",
+          "N14 Verifier Agent"
+        ],
+        "handoff_call_count": 0,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "remote-work-vpn"
+        ],
+        "search_evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "1. 접속 원칙",
+            "score": 0.4058352026596479
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.39947615300618566
+          }
+        ],
+        "writer_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "faq"
+        ],
+        "writer_valid": true,
+        "verifier_valid": true,
+        "verifier_initial_grounded": true,
+        "verifier_initial_policy_ok": true,
+        "verifier_final_grounded": true,
+        "verifier_final_policy_ok": true,
+        "verifier_final_issue_count": 0,
+        "verifier_dropped_issues": 0,
+        "ticket_lookup_state": "skipped",
+        "handoff_reason": null,
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": null,
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "594",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "b82-494bf883a0-2",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N14 Prepare verifier",
+            "N14 Verifier mode",
+            "N14 Verifier model",
+            "N14 Verifier Agent",
+            "N14 Parse verifier",
+            "N15 Decide answer",
+            "N15 Route answer",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent",
+            "N14 Verifier Agent"
+          ],
+          "handoff_call_count": 0,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "search_evidence": [
+            {
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.43596449741811805
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.4058352026596479
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39947615300618566
+            }
+          ],
+          "writer_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "faq"
+          ],
+          "writer_valid": true,
+          "verifier_valid": true,
+          "verifier_initial_grounded": true,
+          "verifier_initial_policy_ok": true,
+          "verifier_final_grounded": true,
+          "verifier_final_policy_ok": true,
+          "verifier_final_issue_count": 0,
+          "verifier_dropped_issues": 0,
+          "ticket_lookup_state": "skipped",
+          "handoff_reason": null,
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "expected_source_docs": true,
+        "no_new_ticket": true,
+        "normal_within_eight_seconds": true
+      },
+      "automatic_passed": true
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 4.211,
+      "response": {
+        "request_id": "b82-494bf883a0-3",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속합니다. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청합니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-01",
+      "ordinal": 3,
+      "request_id": "b82-494bf883a0-3",
+      "sent_payload_semantic_sha256": "c55b7ffcbb10b9b168e2afbce6698f4d19d5acb518835f060d597b92da1e20ae",
+      "execution": {
+        "execution_id": "596",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "b82-494bf883a0-3",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Mock ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N13 Prepare writer",
+          "N13 Writer mode",
+          "N13 Writer model",
+          "N13 Writer Agent",
+          "N13 Parse writer",
+          "N13 Writer valid",
+          "N14 Prepare verifier",
+          "N14 Verifier mode",
+          "N14 Verifier model",
+          "N14 Verifier Agent",
+          "N14 Parse verifier",
+          "N15 Decide answer",
+          "N15 Route answer",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent",
+          "N13 Writer Agent",
+          "N14 Verifier Agent"
+        ],
+        "handoff_call_count": 0,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "remote-work-vpn"
+        ],
+        "search_evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "1. 접속 원칙",
+            "score": 0.4058352026596479
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.39947615300618566
+          }
+        ],
+        "writer_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "faq"
+        ],
+        "writer_valid": true,
+        "verifier_valid": true,
+        "verifier_initial_grounded": true,
+        "verifier_initial_policy_ok": true,
+        "verifier_final_grounded": true,
+        "verifier_final_policy_ok": true,
+        "verifier_final_issue_count": 0,
+        "verifier_dropped_issues": 0,
+        "ticket_lookup_state": "skipped",
+        "handoff_reason": null,
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": null,
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "596",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "b82-494bf883a0-3",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N14 Prepare verifier",
+            "N14 Verifier mode",
+            "N14 Verifier model",
+            "N14 Verifier Agent",
+            "N14 Parse verifier",
+            "N15 Decide answer",
+            "N15 Route answer",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent",
+            "N14 Verifier Agent"
+          ],
+          "handoff_call_count": 0,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "search_evidence": [
+            {
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.43596449741811805
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.4058352026596479
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39947615300618566
+            }
+          ],
+          "writer_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "faq"
+          ],
+          "writer_valid": true,
+          "verifier_valid": true,
+          "verifier_initial_grounded": true,
+          "verifier_initial_policy_ok": true,
+          "verifier_final_grounded": true,
+          "verifier_final_policy_ok": true,
+          "verifier_final_issue_count": 0,
+          "verifier_dropped_issues": 0,
+          "ticket_lookup_state": "skipped",
+          "handoff_reason": null,
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "expected_source_docs": true,
+        "no_new_ticket": true,
+        "normal_within_eight_seconds": true
+      },
+      "automatic_passed": true
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 3.65,
+      "response": {
+        "request_id": "b82-494bf883a0-4",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하세요. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청해야 합니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-01",
+      "ordinal": 4,
+      "request_id": "b82-494bf883a0-4",
+      "sent_payload_semantic_sha256": "c55b7ffcbb10b9b168e2afbce6698f4d19d5acb518835f060d597b92da1e20ae",
+      "execution": {
+        "execution_id": "598",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "b82-494bf883a0-4",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Mock ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N13 Prepare writer",
+          "N13 Writer mode",
+          "N13 Writer model",
+          "N13 Writer Agent",
+          "N13 Parse writer",
+          "N13 Writer valid",
+          "N14 Prepare verifier",
+          "N14 Verifier mode",
+          "N14 Verifier model",
+          "N14 Verifier Agent",
+          "N14 Parse verifier",
+          "N15 Decide answer",
+          "N15 Route answer",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent",
+          "N13 Writer Agent",
+          "N14 Verifier Agent"
+        ],
+        "handoff_call_count": 0,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "remote-work-vpn"
+        ],
+        "search_evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "1. 접속 원칙",
+            "score": 0.4058352026596479
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.39947615300618566
+          }
+        ],
+        "writer_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "faq"
+        ],
+        "writer_valid": true,
+        "verifier_valid": true,
+        "verifier_initial_grounded": true,
+        "verifier_initial_policy_ok": true,
+        "verifier_final_grounded": true,
+        "verifier_final_policy_ok": true,
+        "verifier_final_issue_count": 0,
+        "verifier_dropped_issues": 0,
+        "ticket_lookup_state": "skipped",
+        "handoff_reason": null,
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": null,
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "598",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "b82-494bf883a0-4",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N14 Prepare verifier",
+            "N14 Verifier mode",
+            "N14 Verifier model",
+            "N14 Verifier Agent",
+            "N14 Parse verifier",
+            "N15 Decide answer",
+            "N15 Route answer",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent",
+            "N14 Verifier Agent"
+          ],
+          "handoff_call_count": 0,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "search_evidence": [
+            {
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.43596449741811805
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.4058352026596479
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39947615300618566
+            }
+          ],
+          "writer_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "faq"
+          ],
+          "writer_valid": true,
+          "verifier_valid": true,
+          "verifier_initial_grounded": true,
+          "verifier_initial_policy_ok": true,
+          "verifier_final_grounded": true,
+          "verifier_final_policy_ok": true,
+          "verifier_final_issue_count": 0,
+          "verifier_dropped_issues": 0,
+          "ticket_lookup_state": "skipped",
+          "handoff_reason": null,
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "expected_source_docs": true,
+        "no_new_ticket": true,
+        "normal_within_eight_seconds": true
+      },
+      "automatic_passed": true
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 4.184,
+      "response": {
+        "request_id": "b82-494bf883a0-5",
+        "sources": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          }
+        ],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever",
+          "writer",
+          "verifier"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하세요. VPN 인증서의 유효 기간은 1년이며, 만료 30일 전부터 IT 포털의 '인증서 재발급' 메뉴에서 새 인증서를 신청할 수 있습니다. 인증서가 만료되면 VPN에 접속할 수 없으므로, 만료 전에 재발급하세요."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-01",
+      "ordinal": 5,
+      "request_id": "b82-494bf883a0-5",
+      "sent_payload_semantic_sha256": "c55b7ffcbb10b9b168e2afbce6698f4d19d5acb518835f060d597b92da1e20ae",
+      "execution": {
+        "execution_id": "600",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "b82-494bf883a0-5",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Mock ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N13 Prepare writer",
+          "N13 Writer mode",
+          "N13 Writer model",
+          "N13 Writer Agent",
+          "N13 Parse writer",
+          "N13 Writer valid",
+          "N14 Prepare verifier",
+          "N14 Verifier mode",
+          "N14 Verifier model",
+          "N14 Verifier Agent",
+          "N14 Parse verifier",
+          "N15 Decide answer",
+          "N15 Route answer",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent",
+          "N13 Writer Agent",
+          "N14 Verifier Agent"
+        ],
+        "handoff_call_count": 0,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "remote-work-vpn"
+        ],
+        "search_evidence": [
+          {
+            "doc": "remote-work-vpn",
+            "section": "2. VPN 인증서",
+            "score": 0.43596449741811805
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "1. 접속 원칙",
+            "score": 0.4058352026596479
+          },
+          {
+            "doc": "remote-work-vpn",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.39947615300618566
+          }
+        ],
+        "writer_docs": [
+          "remote-work-vpn",
+          "remote-work-vpn",
+          "faq"
+        ],
+        "writer_valid": true,
+        "verifier_valid": true,
+        "verifier_initial_grounded": true,
+        "verifier_initial_policy_ok": true,
+        "verifier_final_grounded": true,
+        "verifier_final_policy_ok": true,
+        "verifier_final_issue_count": 0,
+        "verifier_dropped_issues": 0,
+        "ticket_lookup_state": "skipped",
+        "handoff_reason": null,
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": null,
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "600",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "b82-494bf883a0-5",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Mock ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N13 Prepare writer",
+            "N13 Writer mode",
+            "N13 Writer model",
+            "N13 Writer Agent",
+            "N13 Parse writer",
+            "N13 Writer valid",
+            "N14 Prepare verifier",
+            "N14 Verifier mode",
+            "N14 Verifier model",
+            "N14 Verifier Agent",
+            "N14 Parse verifier",
+            "N15 Decide answer",
+            "N15 Route answer",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent",
+            "N13 Writer Agent",
+            "N14 Verifier Agent"
+          ],
+          "handoff_call_count": 0,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "remote-work-vpn"
+          ],
+          "search_evidence": [
+            {
+              "doc": "remote-work-vpn",
+              "section": "2. VPN 인증서",
+              "score": 0.43596449741811805
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "1. 접속 원칙",
+              "score": 0.4058352026596479
+            },
+            {
+              "doc": "remote-work-vpn",
+              "section": "3. 재택근무 중 보안",
+              "score": 0.39947615300618566
+            }
+          ],
+          "writer_docs": [
+            "remote-work-vpn",
+            "remote-work-vpn",
+            "faq"
+          ],
+          "writer_valid": true,
+          "verifier_valid": true,
+          "verifier_initial_grounded": true,
+          "verifier_initial_policy_ok": true,
+          "verifier_final_grounded": true,
+          "verifier_final_policy_ok": true,
+          "verifier_final_issue_count": 0,
+          "verifier_dropped_issues": 0,
+          "ticket_lookup_state": "skipped",
+          "handoff_reason": null,
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "checks": {
+        "original_judge": true,
+        "no_unmasked_private_patterns": true,
+        "execution_observed": true,
+        "shared_response_shape": true,
+        "expected_source_docs": true,
+        "no_new_ticket": true,
+        "normal_within_eight_seconds": true
+      },
+      "automatic_passed": true
+    }
+  ],
+  "errors": [],
+  "official_unmodified_cli_executed": false,
+  "manual_review": "pending",
+  "source_changes": false,
+  "deployment_changes": false,
+  "preflight": {
+    "deployment": {
+      "oke-backend-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": true
+      },
+      "oke-n8n-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": false
+      },
+      "operator_fault_file_present": false
+    },
+    "practice_faults": {
+      "faq": "ok",
+      "tickets": "ok",
+      "prompts": "ok",
+      "usage": "ok",
+      "dlq": "ok",
+      "slow_seconds": 8.0
+    },
+    "normal": true
+  },
+  "service_mode": "app",
+  "fault_state_verified_normal": true,
+  "db_before": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 73,
+    "tickets": 97,
+    "alerts": 106,
+    "dlq": 16,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "scope": "five sequential authenticated direct webhook VPN requests, fresh IDs, no warmup, no automatic retries",
+  "timing": {
+    "n": 5,
+    "p50_seconds": 4.184,
+    "p95_seconds": 4.241,
+    "max_seconds": 4.241,
+    "method": "nearest rank; raw HTTP duration; excludes subsequent receipt queries"
+  },
+  "db_after": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 73,
+    "tickets": 97,
+    "alerts": 106,
+    "dlq": 16,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "containers_unchanged": true,
+  "workflow_versions_unchanged": true,
+  "postflight": {
+    "deployment": {
+      "oke-backend-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": true
+      },
+      "oke-n8n-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": false
+      },
+      "operator_fault_file_present": false
+    },
+    "practice_faults": {
+      "faq": "ok",
+      "tickets": "ok",
+      "prompts": "ok",
+      "usage": "ok",
+      "dlq": "ok",
+      "slow_seconds": 8.0
+    },
+    "normal": true
+  },
+  "finished_at_utc": "2026-11-09T01:58:21.464358+00:00"
+}

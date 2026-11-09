@@ -1,0 +1,1345 @@
+{
+  "schema": "oke-authorized-fault-capture-v1",
+  "mode": "slow-lookup",
+  "batch": "e298e2a11f",
+  "started_at_utc": "2026-11-09T01:56:20.672696+00:00",
+  "records": [
+    {
+      "http_status": 200,
+      "elapsed_seconds": 4.771,
+      "response": {
+        "request_id": "s82-e298e2a11f-1",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2094",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2094"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-11",
+      "ordinal": 1,
+      "request_id": "s82-e298e2a11f-1",
+      "sent_payload_semantic_sha256": "307a8b49364a72e8d4e1cf6f2769114585d2b654d7c427426f288b3d4d1a4daf",
+      "execution": {
+        "execution_id": "570",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "s82-e298e2a11f-1",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Own ticket HTTP",
+          "N10 Capture ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N21 Already handed off",
+          "N20 Prepare handoff",
+          "N20 Handoff gate",
+          "N20 Handoff mode",
+          "N20 C04 HTTP",
+          "N20 Capture C04",
+          "N20 Map handoff",
+          "N20 After handoff",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent"
+        ],
+        "handoff_call_count": 1,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "privacy",
+          "privacy",
+          "device-issue-return"
+        ],
+        "search_evidence": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.3205559973201859
+          },
+          {
+            "doc": "privacy",
+            "section": "2. 이용과 보관",
+            "score": 0.3103636944242464
+          },
+          {
+            "doc": "device-issue-return",
+            "section": "2. 분실과 도난",
+            "score": 0.3088516668121206
+          }
+        ],
+        "writer_docs": [],
+        "writer_valid": null,
+        "verifier_valid": null,
+        "verifier_initial_grounded": null,
+        "verifier_initial_policy_ok": null,
+        "verifier_final_grounded": null,
+        "verifier_final_policy_ok": null,
+        "verifier_final_issue_count": null,
+        "verifier_dropped_issues": null,
+        "ticket_lookup_state": "unavailable",
+        "handoff_reason": "low_confidence",
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": {
+          "request_id": "s82-e298e2a11f-1",
+          "execution_id": "572",
+          "http_status": 200,
+          "stored": 1,
+          "count": 101,
+          "duplicate": false,
+          "alerted": true
+        },
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "572",
+          "workflow_id": "okeHandoffFlow01",
+          "status": "success",
+          "request_id": "s82-e298e2a11f-1",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "handoff_call_count": 0,
+          "replay_state": null,
+          "service_mode": "app",
+          "search_access_levels": null,
+          "search_docs": [],
+          "search_evidence": [],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": null,
+          "handoff_reason": null,
+          "error_node": "H11 Respond",
+          "error_kind": null,
+          "store_mode": "app",
+          "store_host": "backend",
+          "alert_ack": {
+            "request_id": "s82-e298e2a11f-1",
+            "execution_id": "572",
+            "http_status": 200,
+            "stored": 1,
+            "count": 101,
+            "duplicate": false,
+            "alerted": true
+          },
+          "error_outcome": null
+        },
+        {
+          "execution_id": "570",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "s82-e298e2a11f-1",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "handoff_call_count": 1,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "privacy",
+            "device-issue-return"
+          ],
+          "search_evidence": [
+            {
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.3205559973201859
+            },
+            {
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.3103636944242464
+            },
+            {
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.3088516668121206
+            }
+          ],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": "unavailable",
+          "handoff_reason": "low_confidence",
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "cycle": 1,
+      "original_judge_passed": true,
+      "lookup_state": "unavailable"
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 4.03,
+      "response": {
+        "request_id": "s82-e298e2a11f-2",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2095",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2095"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-11",
+      "ordinal": 1,
+      "request_id": "s82-e298e2a11f-2",
+      "sent_payload_semantic_sha256": "307a8b49364a72e8d4e1cf6f2769114585d2b654d7c427426f288b3d4d1a4daf",
+      "execution": {
+        "execution_id": "573",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "s82-e298e2a11f-2",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Own ticket HTTP",
+          "N10 Capture ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N21 Already handed off",
+          "N20 Prepare handoff",
+          "N20 Handoff gate",
+          "N20 Handoff mode",
+          "N20 C04 HTTP",
+          "N20 Capture C04",
+          "N20 Map handoff",
+          "N20 After handoff",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent"
+        ],
+        "handoff_call_count": 1,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "privacy",
+          "privacy",
+          "device-issue-return"
+        ],
+        "search_evidence": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.3205559973201859
+          },
+          {
+            "doc": "privacy",
+            "section": "2. 이용과 보관",
+            "score": 0.3103636944242464
+          },
+          {
+            "doc": "device-issue-return",
+            "section": "2. 분실과 도난",
+            "score": 0.3088516668121206
+          }
+        ],
+        "writer_docs": [],
+        "writer_valid": null,
+        "verifier_valid": null,
+        "verifier_initial_grounded": null,
+        "verifier_initial_policy_ok": null,
+        "verifier_final_grounded": null,
+        "verifier_final_policy_ok": null,
+        "verifier_final_issue_count": null,
+        "verifier_dropped_issues": null,
+        "ticket_lookup_state": "unavailable",
+        "handoff_reason": "low_confidence",
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": {
+          "request_id": "s82-e298e2a11f-2",
+          "execution_id": "575",
+          "http_status": 200,
+          "stored": 1,
+          "count": 102,
+          "duplicate": false,
+          "alerted": true
+        },
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "575",
+          "workflow_id": "okeHandoffFlow01",
+          "status": "success",
+          "request_id": "s82-e298e2a11f-2",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "handoff_call_count": 0,
+          "replay_state": null,
+          "service_mode": "app",
+          "search_access_levels": null,
+          "search_docs": [],
+          "search_evidence": [],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": null,
+          "handoff_reason": null,
+          "error_node": "H11 Respond",
+          "error_kind": null,
+          "store_mode": "app",
+          "store_host": "backend",
+          "alert_ack": {
+            "request_id": "s82-e298e2a11f-2",
+            "execution_id": "575",
+            "http_status": 200,
+            "stored": 1,
+            "count": 102,
+            "duplicate": false,
+            "alerted": true
+          },
+          "error_outcome": null
+        },
+        {
+          "execution_id": "573",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "s82-e298e2a11f-2",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "handoff_call_count": 1,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "privacy",
+            "device-issue-return"
+          ],
+          "search_evidence": [
+            {
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.3205559973201859
+            },
+            {
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.3103636944242464
+            },
+            {
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.3088516668121206
+            }
+          ],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": "unavailable",
+          "handoff_reason": "low_confidence",
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "cycle": 2,
+      "original_judge_passed": true,
+      "lookup_state": "unavailable"
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 4.016,
+      "response": {
+        "request_id": "s82-e298e2a11f-3",
+        "sources": [],
+        "ticket": {
+          "ticket_id": "T-2096",
+          "priority": "normal",
+          "duplicate": false
+        },
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 0
+        },
+        "route": "담당자 이관",
+        "answer": "IT팀 티켓이 접수되었습니다.",
+        "reason": "low_confidence"
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 1,
+        "ticket_ids": [
+          "T-2096"
+        ],
+        "owned_tickets": 1,
+        "alerts": 1,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-11",
+      "ordinal": 1,
+      "request_id": "s82-e298e2a11f-3",
+      "sent_payload_semantic_sha256": "307a8b49364a72e8d4e1cf6f2769114585d2b654d7c427426f288b3d4d1a4daf",
+      "execution": {
+        "execution_id": "576",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "s82-e298e2a11f-3",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Own ticket HTTP",
+          "N10 Capture ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N21 Already handed off",
+          "N20 Prepare handoff",
+          "N20 Handoff gate",
+          "N20 Handoff mode",
+          "N20 C04 HTTP",
+          "N20 Capture C04",
+          "N20 Map handoff",
+          "N20 After handoff",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent"
+        ],
+        "handoff_call_count": 1,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "privacy",
+          "privacy",
+          "device-issue-return"
+        ],
+        "search_evidence": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.3205559973201859
+          },
+          {
+            "doc": "privacy",
+            "section": "2. 이용과 보관",
+            "score": 0.3103636944242464
+          },
+          {
+            "doc": "device-issue-return",
+            "section": "2. 분실과 도난",
+            "score": 0.3088516668121206
+          }
+        ],
+        "writer_docs": [],
+        "writer_valid": null,
+        "verifier_valid": null,
+        "verifier_initial_grounded": null,
+        "verifier_initial_policy_ok": null,
+        "verifier_final_grounded": null,
+        "verifier_final_policy_ok": null,
+        "verifier_final_issue_count": null,
+        "verifier_dropped_issues": null,
+        "ticket_lookup_state": "unavailable",
+        "handoff_reason": "low_confidence",
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": {
+          "request_id": "s82-e298e2a11f-3",
+          "execution_id": "578",
+          "http_status": 200,
+          "stored": 1,
+          "count": 103,
+          "duplicate": false,
+          "alerted": true
+        },
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "578",
+          "workflow_id": "okeHandoffFlow01",
+          "status": "success",
+          "request_id": "s82-e298e2a11f-3",
+          "nodes": [
+            "H01 Handoff Webhook",
+            "H02 Validate and Map",
+            "H02a Valid Input",
+            "H03 Select Store",
+            "H03a Store Ready",
+            "H03b App Ticket Store",
+            "H04 Create Ticket App",
+            "H05 Retry Gate",
+            "H05a Retry Allowed",
+            "H05 Recheck Budget",
+            "H05c Retry Still Allowed",
+            "H05 Restore First Result",
+            "H06 Keep Ticket",
+            "H07 Failure Context",
+            "H08a App Alert Store",
+            "H08 Store Alert App",
+            "H08 Check Alert",
+            "H09a Needs DLQ",
+            "H10 Build Result",
+            "H11 Respond"
+          ],
+          "llm_agent_nodes": [],
+          "handoff_call_count": 0,
+          "replay_state": null,
+          "service_mode": "app",
+          "search_access_levels": null,
+          "search_docs": [],
+          "search_evidence": [],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": null,
+          "handoff_reason": null,
+          "error_node": "H11 Respond",
+          "error_kind": null,
+          "store_mode": "app",
+          "store_host": "backend",
+          "alert_ack": {
+            "request_id": "s82-e298e2a11f-3",
+            "execution_id": "578",
+            "http_status": 200,
+            "stored": 1,
+            "count": 103,
+            "duplicate": false,
+            "alerted": true
+          },
+          "error_outcome": null
+        },
+        {
+          "execution_id": "576",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "s82-e298e2a11f-3",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N20 Handoff mode",
+            "N20 C04 HTTP",
+            "N20 Capture C04",
+            "N20 Map handoff",
+            "N20 After handoff",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "handoff_call_count": 1,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "privacy",
+            "device-issue-return"
+          ],
+          "search_evidence": [
+            {
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.3205559973201859
+            },
+            {
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.3103636944242464
+            },
+            {
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.3088516668121206
+            }
+          ],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": "unavailable",
+          "handoff_reason": "low_confidence",
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "cycle": 3,
+      "original_judge_passed": true,
+      "lookup_state": "unavailable"
+    },
+    {
+      "http_status": 200,
+      "elapsed_seconds": 1.561,
+      "response": {
+        "request_id": "sok82-e298e2a11f",
+        "sources": [],
+        "ticket": null,
+        "agents": [
+          "triage",
+          "retriever"
+        ],
+        "security": {
+          "blocked_by": "",
+          "reason": "",
+          "masked": 2
+        },
+        "route": "자동 답변",
+        "answer": "T-1002 (VPN 인증서 재발급) 문의는 현재 '처리 중' 상태입니다. 최근 갱신일은 2026-10-16입니다."
+      },
+      "privacy": {
+        "unmasked_phone": false,
+        "unmasked_email": false,
+        "unmasked_resident_id": false,
+        "key_reflected": false
+      },
+      "db_before": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "db_after": {
+        "tickets": 0,
+        "ticket_ids": [],
+        "owned_tickets": 0,
+        "alerts": 0,
+        "dlq": 0,
+        "inquiries": 0
+      },
+      "case_id": "WF-11-RECOVERY",
+      "ordinal": 1,
+      "request_id": "sok82-e298e2a11f",
+      "sent_payload_semantic_sha256": "307a8b49364a72e8d4e1cf6f2769114585d2b654d7c427426f288b3d4d1a4daf",
+      "execution": {
+        "execution_id": "579",
+        "workflow_id": "okeSupportFlow01",
+        "status": "success",
+        "request_id": "sok82-e298e2a11f",
+        "nodes": [
+          "N01 Support webhook",
+          "N02 Normalize input",
+          "N03 Employee mode",
+          "N03 Get employees HTTP",
+          "N03 Capture employee",
+          "N04 Injection rules",
+          "N05 Replay MOCK",
+          "N05 Parse replay",
+          "N05 Route replay",
+          "N05 Triage gate",
+          "N05 Triage mode",
+          "N06 Triage model",
+          "N06 Triage Agent",
+          "N06 Parse triage",
+          "N07 Route triage",
+          "N07 Route urgent",
+          "N08 Build search input",
+          "N09 Search mode",
+          "N09 C03 HTTP",
+          "N09 Capture C03",
+          "N09 Normalize search",
+          "N10 Build ticket lookup",
+          "N10 Ticket mode",
+          "N10 Own ticket HTTP",
+          "N10 Capture ticket",
+          "N10 Normalize ticket",
+          "N10b FAQ HTTP",
+          "N10b Match FAQ",
+          "N11 Collect retrieval",
+          "N11 Join retrieval",
+          "N12 Evidence gate",
+          "N12 Route evidence",
+          "N21 Already handed off",
+          "N20 Prepare handoff",
+          "N20 Handoff gate",
+          "N22 Finalize P0-3",
+          "N22 Output filter",
+          "N23 Respond"
+        ],
+        "llm_agent_nodes": [
+          "N06 Triage Agent"
+        ],
+        "handoff_call_count": 0,
+        "replay_state": "miss",
+        "service_mode": "app",
+        "search_access_levels": [
+          "all"
+        ],
+        "search_docs": [
+          "privacy",
+          "privacy",
+          "device-issue-return"
+        ],
+        "search_evidence": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.3205559973201859
+          },
+          {
+            "doc": "privacy",
+            "section": "2. 이용과 보관",
+            "score": 0.3103636944242464
+          },
+          {
+            "doc": "device-issue-return",
+            "section": "2. 분실과 도난",
+            "score": 0.3088516668121206
+          }
+        ],
+        "writer_docs": [],
+        "writer_valid": null,
+        "verifier_valid": null,
+        "verifier_initial_grounded": null,
+        "verifier_initial_policy_ok": null,
+        "verifier_final_grounded": null,
+        "verifier_final_policy_ok": null,
+        "verifier_final_issue_count": null,
+        "verifier_dropped_issues": null,
+        "ticket_lookup_state": "ok",
+        "handoff_reason": null,
+        "error_node": "N23 Respond",
+        "error_kind": null,
+        "store_mode": null,
+        "store_host": null,
+        "alert_ack": null,
+        "error_outcome": null
+      },
+      "execution_receipts": [
+        {
+          "execution_id": "579",
+          "workflow_id": "okeSupportFlow01",
+          "status": "success",
+          "request_id": "sok82-e298e2a11f",
+          "nodes": [
+            "N01 Support webhook",
+            "N02 Normalize input",
+            "N03 Employee mode",
+            "N03 Get employees HTTP",
+            "N03 Capture employee",
+            "N04 Injection rules",
+            "N05 Replay MOCK",
+            "N05 Parse replay",
+            "N05 Route replay",
+            "N05 Triage gate",
+            "N05 Triage mode",
+            "N06 Triage model",
+            "N06 Triage Agent",
+            "N06 Parse triage",
+            "N07 Route triage",
+            "N07 Route urgent",
+            "N08 Build search input",
+            "N09 Search mode",
+            "N09 C03 HTTP",
+            "N09 Capture C03",
+            "N09 Normalize search",
+            "N10 Build ticket lookup",
+            "N10 Ticket mode",
+            "N10 Own ticket HTTP",
+            "N10 Capture ticket",
+            "N10 Normalize ticket",
+            "N10b FAQ HTTP",
+            "N10b Match FAQ",
+            "N11 Collect retrieval",
+            "N11 Join retrieval",
+            "N12 Evidence gate",
+            "N12 Route evidence",
+            "N21 Already handed off",
+            "N20 Prepare handoff",
+            "N20 Handoff gate",
+            "N22 Finalize P0-3",
+            "N22 Output filter",
+            "N23 Respond"
+          ],
+          "llm_agent_nodes": [
+            "N06 Triage Agent"
+          ],
+          "handoff_call_count": 0,
+          "replay_state": "miss",
+          "service_mode": "app",
+          "search_access_levels": [
+            "all"
+          ],
+          "search_docs": [
+            "privacy",
+            "privacy",
+            "device-issue-return"
+          ],
+          "search_evidence": [
+            {
+              "doc": "privacy",
+              "section": "서문",
+              "score": 0.3205559973201859
+            },
+            {
+              "doc": "privacy",
+              "section": "2. 이용과 보관",
+              "score": 0.3103636944242464
+            },
+            {
+              "doc": "device-issue-return",
+              "section": "2. 분실과 도난",
+              "score": 0.3088516668121206
+            }
+          ],
+          "writer_docs": [],
+          "writer_valid": null,
+          "verifier_valid": null,
+          "verifier_initial_grounded": null,
+          "verifier_initial_policy_ok": null,
+          "verifier_final_grounded": null,
+          "verifier_final_policy_ok": null,
+          "verifier_final_issue_count": null,
+          "verifier_dropped_issues": null,
+          "ticket_lookup_state": "ok",
+          "handoff_reason": null,
+          "error_node": "N23 Respond",
+          "error_kind": null,
+          "store_mode": null,
+          "store_host": null,
+          "alert_ack": null,
+          "error_outcome": null
+        }
+      ],
+      "manual_review": {},
+      "descriptive_review_status": "pending",
+      "privacy_detector_version": "string_values_v2_numeric_scores_excluded",
+      "recovery_verified": true
+    }
+  ],
+  "errors": [],
+  "service_mode": "app",
+  "source_changes": false,
+  "deployment_changes": false,
+  "credential_changes": false,
+  "official_unmodified_cli_executed": false,
+  "preflight": {
+    "deployment": {
+      "oke-backend-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": true
+      },
+      "oke-n8n-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": false
+      },
+      "operator_fault_file_present": false
+    },
+    "practice_faults": {
+      "faq": "ok",
+      "tickets": "ok",
+      "prompts": "ok",
+      "usage": "ok",
+      "dlq": "ok",
+      "slow_seconds": 8
+    },
+    "normal": true
+  },
+  "db_before": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 73,
+    "tickets": 93,
+    "alerts": 100,
+    "dlq": 14,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "scope": "original WF-11 existing-ticket GET delay, temporary data-api tickets slow=8; app mode unchanged",
+  "before_fault": {
+    "faq": "ok",
+    "tickets": "ok",
+    "prompts": "ok",
+    "usage": "ok",
+    "dlq": "ok",
+    "slow_seconds": 8
+  },
+  "watchdog": {
+    "watchdog_started": true,
+    "pid": 952664,
+    "restore_after_seconds": 45
+  },
+  "armed": {
+    "faq": "ok",
+    "tickets": "slow",
+    "prompts": "ok",
+    "usage": "ok",
+    "dlq": "ok",
+    "slow_seconds": 8.0
+  },
+  "fault_restored": true,
+  "db_after": {
+    "transaction_read_only": "on",
+    "employees": 6,
+    "inquiries": 73,
+    "tickets": 96,
+    "alerts": 103,
+    "dlq": 14,
+    "rag_documents": 8,
+    "rag_chunks": 33,
+    "rag_permissions": {
+      "device-issue-return": "all",
+      "email-and-documents": "all",
+      "meeting-room": "all",
+      "password-policy": "all",
+      "privacy": "all",
+      "remote-work-vpn": "all",
+      "security-incident": "it",
+      "software-usage": "all"
+    }
+  },
+  "containers_unchanged": true,
+  "workflow_versions_unchanged": true,
+  "postflight": {
+    "deployment": {
+      "oke-backend-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": true
+      },
+      "oke-n8n-1": {
+        "service_mode": "app",
+        "fault_mount_readonly": false
+      },
+      "operator_fault_file_present": false
+    },
+    "practice_faults": {
+      "faq": "ok",
+      "tickets": "ok",
+      "prompts": "ok",
+      "usage": "ok",
+      "dlq": "ok",
+      "slow_seconds": 8.0
+    },
+    "normal": true
+  },
+  "finished_at_utc": "2026-11-09T01:56:44.980438+00:00"
+}

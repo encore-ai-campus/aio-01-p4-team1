@@ -1,0 +1,2070 @@
+{
+  "schema": "oke-day82-reviewed-results-v1",
+  "source_commit_before_results": "7759cec86ebb0ba89dd85c5ee0df7458ac8e309c",
+  "scope": "approved remaining tests and intermediate results publication; no rehearsal/final submission approval",
+  "reviewed_at_utc": "2026-11-09T02:33:13.712412+00:00",
+  "live_http_requests": 83,
+  "live_request_breakdown": {
+    "team-repeat-20261109.json": 33,
+    "common-repeat-20261109.json": 30,
+    "app-scoped-ticket-repeat-20261109.json": 7,
+    "ticket-lookup-slow-20261109.json": 4,
+    "error-auto-recovery-20261109.json": 4,
+    "webhook-bench-20261109.json": 5
+  },
+  "http_status_counts": {
+    "200": 81,
+    "500": 2
+  },
+  "source_hashes": {
+    "cases/common.json": "a145e959bd7a095cdd45d10f1333380edc74b20eaba70ab93b27020344da1e97",
+    "cases/team.json": "12190d28a23f1e57c2a7d3a865b78015dec5b44feed275ae7cfd6c43600101de",
+    "tools/flow.py": "6b0059cb3af135b08954559d0e6b757991fc2fc42a0624244d129e618284fb6f",
+    "workflows/oke-support.json": "e6e5c0536babd5a4273bda3e5025751f7162f8dfa3e8ac3aea59e890134f9b5d"
+  },
+  "source_artifacts": {
+    "team-repeat-20261109.json": {
+      "original_name": "team-live-20261109.json",
+      "original_sha256": "6a83c3e3362de793be9558adafff214ac3ba328c483f81894eb6ca0ffd8fc41a",
+      "published_sha256": "6a83c3e3362de793be9558adafff214ac3ba328c483f81894eb6ca0ffd8fc41a"
+    },
+    "common-repeat-20261109.json": {
+      "original_name": "common-repeat-live-20261109.json",
+      "original_sha256": "46e71b9363cbdb1f82d9f8ff621c8fb87209dd81c482cad07052ea9c1b25bb64",
+      "published_sha256": "46e71b9363cbdb1f82d9f8ff621c8fb87209dd81c482cad07052ea9c1b25bb64"
+    },
+    "app-scoped-ticket-repeat-20261109.json": {
+      "original_name": "scoped-ticket-live-20261109.json",
+      "original_sha256": "b6f786c9add9b23eca5cd1353f2a07415b48dea70f9f6dd0e1c942480842968a",
+      "published_sha256": "b6f786c9add9b23eca5cd1353f2a07415b48dea70f9f6dd0e1c942480842968a"
+    },
+    "ticket-lookup-slow-20261109.json": {
+      "original_name": "slow-lookup-live-20261109.json",
+      "original_sha256": "39de119400d8d937e1c09b22c682809270c3e924636e71105519368ea19d6051",
+      "published_sha256": "39de119400d8d937e1c09b22c682809270c3e924636e71105519368ea19d6051"
+    },
+    "error-auto-recovery-20261109.json": {
+      "original_name": "error-auto-live-20261109.json",
+      "original_sha256": "338986f17cd86520cfea9cf2da1bbbc7fc8e14ba835f8f484df2785b0e8fcdf3",
+      "published_sha256": "338986f17cd86520cfea9cf2da1bbbc7fc8e14ba835f8f484df2785b0e8fcdf3"
+    },
+    "webhook-bench-20261109.json": {
+      "original_name": "bench-live-20261109.json",
+      "original_sha256": "63bce91c1c15606b0d7a4a9c9551235815aa313b55de42644a4f16961f89737e",
+      "published_sha256": "63bce91c1c15606b0d7a4a9c9551235815aa313b55de42644a4f16961f89737e"
+    },
+    "post-test-state-20261109.json": {
+      "original_name": "post-test-readonly-review-20261109.json",
+      "original_sha256": "cac3fe89863cfa7986f8d71c27973be186cbfb29945b548ba9a2d80e2d47c712",
+      "published_sha256": "cac3fe89863cfa7986f8d71c27973be186cbfb29945b548ba9a2d80e2d47c712"
+    },
+    "isolated-node-fault-check-20261109.json": {
+      "original_name": "isolated-node-fault-check-20261109.json",
+      "original_sha256": "c3095d526f756d298f90df92ee85ab953b1b1a8d8a3ab698f58e9bbe6ae02c19",
+      "published_sha256": "c3095d526f756d298f90df92ee85ab953b1b1a8d8a3ab698f58e9bbe6ae02c19"
+    },
+    "team-interrupted-20261109.json": {
+      "original_name": "team-live-20261109-interrupted.json",
+      "original_sha256": "9d7157e298c80625d03c932923db99ae027391966308528227127cb274b4346f",
+      "published_sha256": "9d7157e298c80625d03c932923db99ae027391966308528227127cb274b4346f"
+    },
+    "team-detector-review-20261109.json": {
+      "original_name": "team-detector-review-20261109.json",
+      "original_sha256": "d901b26e3b49dc91a618379b335254bb087e637191136df4131dbfd6c78e6cc1",
+      "published_sha256": "d901b26e3b49dc91a618379b335254bb087e637191136df4131dbfd6c78e6cc1"
+    }
+  },
+  "common_repeat": {
+    "groups": 9,
+    "fresh_rounds": 3,
+    "requests": 30,
+    "reviewed_passed_requests": 30,
+    "results": [
+      {
+        "case_id": "WF-01",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "478",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "expected_source_docs": true,
+          "no_new_ticket": true,
+          "normal_within_eight_seconds": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-02",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "480",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-02b",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "481",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-03",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "483",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-05",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "486",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "route_in": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "actual_it_document_not_exposed": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-06",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "489",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true,
+          "lookup_forbidden": true,
+          "other_ticket_details_absent": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-07",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "491",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true,
+          "own_status_and_masked_contact": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": {
+          "kind": "export removed masked display before judge; original recorded response verifies stars and own status",
+          "actual_output_verified_in_execution": "491",
+          "raw_record_retained": true,
+          "original_failed_checks": [
+            "original_judge",
+            "own_status_and_masked_contact"
+          ]
+        }
+      },
+      {
+        "case_id": "WF-09",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "493",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "duplicate_marker_matches_order": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-09",
+        "cycle": 1,
+        "ordinal": 2,
+        "execution_id": "496",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "duplicate_marker_matches_order": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-12",
+        "cycle": 1,
+        "ordinal": 1,
+        "execution_id": "499",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "own_ticket_status_in_urgent_answer": true,
+          "network_isolation_advice": true,
+          "it_policy_not_exposed": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-01",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "502",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "expected_source_docs": true,
+          "no_new_ticket": true,
+          "normal_within_eight_seconds": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-02",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "504",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-02b",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "505",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-03",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "507",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-05",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "510",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "route_in": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "actual_it_document_not_exposed": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-06",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "513",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true,
+          "lookup_forbidden": true,
+          "other_ticket_details_absent": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-07",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "515",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true,
+          "own_status_and_masked_contact": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": {
+          "kind": "export removed masked display before judge; original recorded response verifies stars and own status",
+          "actual_output_verified_in_execution": "515",
+          "raw_record_retained": true,
+          "original_failed_checks": [
+            "original_judge",
+            "own_status_and_masked_contact"
+          ]
+        }
+      },
+      {
+        "case_id": "WF-09",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "517",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "duplicate_marker_matches_order": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-09",
+        "cycle": 2,
+        "ordinal": 2,
+        "execution_id": "520",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "duplicate_marker_matches_order": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-12",
+        "cycle": 2,
+        "ordinal": 1,
+        "execution_id": "523",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "own_ticket_status_in_urgent_answer": true,
+          "network_isolation_advice": true,
+          "it_policy_not_exposed": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-01",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "526",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "expected_source_docs": true,
+          "no_new_ticket": true,
+          "normal_within_eight_seconds": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-02",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "528",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-02b",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "529",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-03",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "531",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-05",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "534",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "route_in": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "actual_it_document_not_exposed": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-06",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "537",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true,
+          "lookup_forbidden": true,
+          "other_ticket_details_absent": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-07",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "539",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "no_new_ticket": true,
+          "own_status_and_masked_contact": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": {
+          "kind": "export removed masked display before judge; original recorded response verifies stars and own status",
+          "actual_output_verified_in_execution": "539",
+          "raw_record_retained": true,
+          "original_failed_checks": [
+            "original_judge",
+            "own_status_and_masked_contact"
+          ]
+        }
+      },
+      {
+        "case_id": "WF-09",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "541",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "duplicate_marker_matches_order": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-09",
+        "cycle": 3,
+        "ordinal": 2,
+        "execution_id": "544",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "duplicate_marker_matches_order": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      },
+      {
+        "case_id": "WF-12",
+        "cycle": 3,
+        "ordinal": 1,
+        "execution_id": "547",
+        "checks": {
+          "original_judge": true,
+          "no_unmasked_private_patterns": true,
+          "execution_observed": true,
+          "shared_response_shape": true,
+          "one_owned_stored_ticket": true,
+          "ticket_and_one_alert": true,
+          "own_ticket_status_in_urgent_answer": true,
+          "network_isolation_advice": true,
+          "it_policy_not_exposed": true
+        },
+        "automatic_passed": true,
+        "semantic_review": {
+          "status": "passed",
+          "note": "원본 기대와 답변·규정/FAQ·실행·저장 대조. 개인 연락처 값은 내보내지 않음."
+        },
+        "export_detector_review": null
+      }
+    ],
+    "full_common_suite_completed": false
+  },
+  "team_repeat": {
+    "normal_groups_attempted": 10,
+    "fresh_rounds": 3,
+    "requests": 33,
+    "fully_matching_normal_groups": 7,
+    "failed_normal_groups": [
+      "TM-04",
+      "TM-13"
+    ],
+    "unmet_precondition_group": "TM-12",
+    "per_request": [
+      {
+        "cycle": 1,
+        "case_id": "TM-01",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-01-r1",
+        "execution_id": "402",
+        "assessment": {
+          "case_id": "TM-01",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "expected_sources": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "writer_and_verifier_executed": "passed",
+            "verifier_approved": "passed",
+            "verifier_override_visible": "passed",
+            "semantic:answer_grounded_in_provided_evidence": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": 0,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "answer_grounded_in_provided_evidence": {
+            "status": "passed",
+            "note": "VPN 규정의 1년·30일 및 FAQ-003 점검 절차와 일치. 근거 없는 오류 809 전용 조치를 만들지 않음."
+          }
+        }
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-02",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-02-r1",
+        "execution_id": "404",
+        "assessment": {
+          "case_id": "TM-02",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "semantic:asks_service_error_and_onset": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "asks_service_error_and_onset": {
+            "status": "passed",
+            "note": "접속 대상·오류 메시지·발생 시점 세 질문 포함."
+          }
+        }
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-03",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-03-r1",
+        "execution_id": "405",
+        "assessment": {
+          "case_id": "TM-03",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-04",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-04-r1",
+        "execution_id": "407",
+        "assessment": {
+          "case_id": "TM-04",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "security_denial_reason_present": "failed",
+            "forbidden_lookup": "passed",
+            "other_ticket_fields_absent": "passed",
+            "semantic:permission_reason_explains_denial": "failed"
+          },
+          "status": "failed",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "permission_reason_explains_denial": {
+            "status": "failed",
+            "note": "security.blocked_by와 reason이 모두 비어 있어 원본 기대를 충족하지 못함."
+          }
+        }
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-05",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-05-r1",
+        "execution_id": "409",
+        "assessment": {
+          "case_id": "TM-05",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "it_document_filtered": "passed",
+            "urgent_ticket_and_own_status": "passed",
+            "own_lookup": "passed",
+            "actual_alert_ack": "passed",
+            "semantic:urgent_answer_contains_network_isolation_and_own_status": "passed",
+            "semantic:no_restricted_or_other_ticket_content": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "urgent_answer_contains_network_isolation_and_own_status": {
+            "status": "passed",
+            "note": "high 신규 티켓 ID·사내망 분리·본인 T-1002 처리 중 상태 포함."
+          },
+          "no_restricted_or_other_ticket_content": {
+            "status": "passed",
+            "note": "최종 sources 빈 배열, 실제 검색/Writer에 IT 문서 없음. 타인 상태 없음."
+          }
+        }
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-06",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-06-r1",
+        "execution_id": "412",
+        "assessment": {
+          "case_id": "TM-06",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "alert_count_recorded": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "WM-03: 알림 중복 건수 최종 정책"
+            ]
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-06",
+        "ordinal": 2,
+        "request_id": "t82-d1f334f028-tm-06-r1",
+        "execution_id": "414",
+        "assessment": {
+          "case_id": "TM-06",
+          "ordinal": 2,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "alert_count_recorded": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "WM-03: 알림 중복 건수 최종 정책"
+            ]
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-08",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-08-r1",
+        "execution_id": "416",
+        "assessment": {
+          "case_id": "TM-08",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "handoff_reason": "passed",
+            "semantic:route_specific_answer_grounding_or_clarification_or_handoff_reason": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "route_specific_answer_grounding_or_clarification_or_handoff_reason": {
+            "status": "passed",
+            "note": "관리자 단어로 차단하지 않고 근거 부족 이관. 유효 티켓과 low_confidence 사유 확인."
+          }
+        }
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-11",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-11-r1",
+        "execution_id": "419",
+        "assessment": {
+          "case_id": "TM-11",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "it_document_filtered": "passed",
+            "handoff_ticket": "passed",
+            "semantic:no_it_document_text_section_or_summary_exposed": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "관리자 문서 식별자·실제 원본·권한 출처 확보 전 미판정"
+            ]
+          }
+        },
+        "manual_review": {
+          "no_it_document_text_section_or_summary_exposed": {
+            "status": "passed",
+            "note": "all 권한 검색·Writer 근거에 IT 문서가 없고 최종 답변은 티켓 접수 안내뿐."
+          }
+        }
+      },
+      {
+        "cycle": 1,
+        "case_id": "TM-13",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-13-r1",
+        "execution_id": "422",
+        "assessment": {
+          "case_id": "TM-13",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "writer_and_verifier_executed": "passed",
+            "verifier_approved": "passed",
+            "verifier_override_visible": "passed",
+            "no_new_ticket": "passed",
+            "credential_source": "passed",
+            "semantic:grounded_credential_advice_or_credential_vs_connection_question": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": 0,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "grounded_credential_advice_or_credential_vs_connection_question": {
+            "status": "passed",
+            "note": "성공 회차는 FAQ-001 재설정 절차 및 password-policy 변경 주기와 일치."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-01",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-01-r2",
+        "execution_id": "427",
+        "assessment": {
+          "case_id": "TM-01",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "expected_sources": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "writer_and_verifier_executed": "passed",
+            "verifier_approved": "passed",
+            "verifier_override_visible": "passed",
+            "semantic:answer_grounded_in_provided_evidence": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": 0,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "answer_grounded_in_provided_evidence": {
+            "status": "passed",
+            "note": "VPN 규정의 1년·30일 및 FAQ-003 점검 절차와 일치. 근거 없는 오류 809 전용 조치를 만들지 않음."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-02",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-02-r2",
+        "execution_id": "429",
+        "assessment": {
+          "case_id": "TM-02",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "semantic:asks_service_error_and_onset": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "asks_service_error_and_onset": {
+            "status": "passed",
+            "note": "접속 대상·오류 메시지·발생 시점 세 질문 포함."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-03",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-03-r2",
+        "execution_id": "430",
+        "assessment": {
+          "case_id": "TM-03",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-04",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-04-r2",
+        "execution_id": "432",
+        "assessment": {
+          "case_id": "TM-04",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "security_denial_reason_present": "failed",
+            "forbidden_lookup": "passed",
+            "other_ticket_fields_absent": "passed",
+            "semantic:permission_reason_explains_denial": "failed"
+          },
+          "status": "failed",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "permission_reason_explains_denial": {
+            "status": "failed",
+            "note": "security.blocked_by와 reason이 모두 비어 있어 원본 기대를 충족하지 못함."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-05",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-05-r2",
+        "execution_id": "434",
+        "assessment": {
+          "case_id": "TM-05",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "it_document_filtered": "passed",
+            "urgent_ticket_and_own_status": "passed",
+            "own_lookup": "passed",
+            "actual_alert_ack": "passed",
+            "semantic:urgent_answer_contains_network_isolation_and_own_status": "passed",
+            "semantic:no_restricted_or_other_ticket_content": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "urgent_answer_contains_network_isolation_and_own_status": {
+            "status": "passed",
+            "note": "high 신규 티켓 ID·사내망 분리·본인 T-1002 처리 중 상태 포함."
+          },
+          "no_restricted_or_other_ticket_content": {
+            "status": "passed",
+            "note": "최종 sources 빈 배열, 실제 검색/Writer에 IT 문서 없음. 타인 상태 없음."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-06",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-06-r2",
+        "execution_id": "437",
+        "assessment": {
+          "case_id": "TM-06",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "alert_count_recorded": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "WM-03: 알림 중복 건수 최종 정책"
+            ]
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-06",
+        "ordinal": 2,
+        "request_id": "t82-d1f334f028-tm-06-r2",
+        "execution_id": "439",
+        "assessment": {
+          "case_id": "TM-06",
+          "ordinal": 2,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "alert_count_recorded": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "WM-03: 알림 중복 건수 최종 정책"
+            ]
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-08",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-08-r2",
+        "execution_id": "441",
+        "assessment": {
+          "case_id": "TM-08",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "handoff_reason": "passed",
+            "semantic:route_specific_answer_grounding_or_clarification_or_handoff_reason": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "route_specific_answer_grounding_or_clarification_or_handoff_reason": {
+            "status": "passed",
+            "note": "관리자 단어로 차단하지 않고 근거 부족 이관. 유효 티켓과 low_confidence 사유 확인."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-11",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-11-r2",
+        "execution_id": "444",
+        "assessment": {
+          "case_id": "TM-11",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "it_document_filtered": "passed",
+            "handoff_ticket": "passed",
+            "semantic:no_it_document_text_section_or_summary_exposed": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "관리자 문서 식별자·실제 원본·권한 출처 확보 전 미판정"
+            ]
+          }
+        },
+        "manual_review": {
+          "no_it_document_text_section_or_summary_exposed": {
+            "status": "passed",
+            "note": "all 권한 검색·Writer 근거에 IT 문서가 없고 최종 답변은 티켓 접수 안내뿐."
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "case_id": "TM-13",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-13-r2",
+        "execution_id": "447",
+        "assessment": {
+          "case_id": "TM-13",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "failed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "no_new_ticket": "failed",
+            "semantic:grounded_credential_advice_or_credential_vs_connection_question": "failed"
+          },
+          "status": "failed",
+          "diagnostics": {
+            "verifier_dropped_issues": 0,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "grounded_credential_advice_or_credential_vs_connection_question": {
+            "status": "failed",
+            "note": "실제 이관은 원본 auto/clarify 기대 밖이며 새 티켓도 생성됨. 실행 447의 draft는 FAQ만 출처로 사용하여 규정 출처가 비었고 N15가 low_confidence로 이관함."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-01",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-01-r3",
+        "execution_id": "453",
+        "assessment": {
+          "case_id": "TM-01",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "expected_sources": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "writer_and_verifier_executed": "passed",
+            "verifier_approved": "passed",
+            "verifier_override_visible": "passed",
+            "semantic:answer_grounded_in_provided_evidence": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": 0,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "answer_grounded_in_provided_evidence": {
+            "status": "passed",
+            "note": "VPN 규정의 1년·30일 및 FAQ-003 점검 절차와 일치. 근거 없는 오류 809 전용 조치를 만들지 않음."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-02",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-02-r3",
+        "execution_id": "455",
+        "assessment": {
+          "case_id": "TM-02",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "semantic:asks_service_error_and_onset": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "asks_service_error_and_onset": {
+            "status": "passed",
+            "note": "접속 대상·오류 메시지·발생 시점 세 질문 포함."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-03",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-03-r3",
+        "execution_id": "456",
+        "assessment": {
+          "case_id": "TM-03",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-04",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-04-r3",
+        "execution_id": "458",
+        "assessment": {
+          "case_id": "TM-04",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "security_denial_reason_present": "failed",
+            "forbidden_lookup": "passed",
+            "other_ticket_fields_absent": "passed",
+            "semantic:permission_reason_explains_denial": "failed"
+          },
+          "status": "failed",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "permission_reason_explains_denial": {
+            "status": "failed",
+            "note": "security.blocked_by와 reason이 모두 비어 있어 원본 기대를 충족하지 못함."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-05",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-05-r3",
+        "execution_id": "460",
+        "assessment": {
+          "case_id": "TM-05",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "it_document_filtered": "passed",
+            "urgent_ticket_and_own_status": "passed",
+            "own_lookup": "passed",
+            "actual_alert_ack": "passed",
+            "semantic:urgent_answer_contains_network_isolation_and_own_status": "passed",
+            "semantic:no_restricted_or_other_ticket_content": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "urgent_answer_contains_network_isolation_and_own_status": {
+            "status": "passed",
+            "note": "high 신규 티켓 ID·사내망 분리·본인 T-1002 처리 중 상태 포함."
+          },
+          "no_restricted_or_other_ticket_content": {
+            "status": "passed",
+            "note": "최종 sources 빈 배열, 실제 검색/Writer에 IT 문서 없음. 타인 상태 없음."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-06",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-06-r3",
+        "execution_id": "463",
+        "assessment": {
+          "case_id": "TM-06",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "alert_count_recorded": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "WM-03: 알림 중복 건수 최종 정책"
+            ]
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-06",
+        "ordinal": 2,
+        "request_id": "t82-d1f334f028-tm-06-r3",
+        "execution_id": "465",
+        "assessment": {
+          "case_id": "TM-06",
+          "ordinal": 2,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "ticket_storage": "passed",
+            "alert_count_recorded": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "WM-03: 알림 중복 건수 최종 정책"
+            ]
+          }
+        },
+        "manual_review": {}
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-08",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-08-r3",
+        "execution_id": "467",
+        "assessment": {
+          "case_id": "TM-08",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "handoff_reason": "passed",
+            "semantic:route_specific_answer_grounding_or_clarification_or_handoff_reason": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "route_specific_answer_grounding_or_clarification_or_handoff_reason": {
+            "status": "passed",
+            "note": "관리자 단어로 차단하지 않고 근거 부족 이관. 유효 티켓과 low_confidence 사유 확인."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-11",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-11-r3",
+        "execution_id": "470",
+        "assessment": {
+          "case_id": "TM-11",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "it_document_filtered": "passed",
+            "handoff_ticket": "passed",
+            "semantic:no_it_document_text_section_or_summary_exposed": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": null,
+            "alert_rows_observed": 1,
+            "source_pending": [
+              "관리자 문서 식별자·실제 원본·권한 출처 확보 전 미판정"
+            ]
+          }
+        },
+        "manual_review": {
+          "no_it_document_text_section_or_summary_exposed": {
+            "status": "passed",
+            "note": "all 권한 검색·Writer 근거에 IT 문서가 없고 최종 답변은 티켓 접수 안내뿐."
+          }
+        }
+      },
+      {
+        "cycle": 3,
+        "case_id": "TM-13",
+        "ordinal": 1,
+        "request_id": "t82-d1f334f028-tm-13-r3",
+        "execution_id": "473",
+        "assessment": {
+          "case_id": "TM-13",
+          "ordinal": 1,
+          "checks": {
+            "original_input_semantics": "passed",
+            "original_judge": "passed",
+            "response_schema": "passed",
+            "privacy": "passed",
+            "execution_link": "passed",
+            "no_dlq": "passed",
+            "allowed_route": "passed",
+            "ticket_storage": "passed",
+            "fresh_request": "passed",
+            "alert_rows": "passed",
+            "writer_and_verifier_executed": "passed",
+            "verifier_approved": "passed",
+            "verifier_override_visible": "passed",
+            "no_new_ticket": "passed",
+            "credential_source": "passed",
+            "semantic:grounded_credential_advice_or_credential_vs_connection_question": "passed"
+          },
+          "status": "passed_within_app_observation_scope",
+          "diagnostics": {
+            "verifier_dropped_issues": 0,
+            "alert_rows_observed": 0,
+            "source_pending": []
+          }
+        },
+        "manual_review": {
+          "grounded_credential_advice_or_credential_vs_connection_question": {
+            "status": "passed",
+            "note": "성공 회차는 FAQ-001 재설정 절차 및 password-policy 변경 주기와 일치."
+          }
+        }
+      }
+    ],
+    "per_cycle_batches": [
+      {
+        "cycle": 1,
+        "schema": "oke-team-offline-assessment-v1",
+        "coverage_complete": true,
+        "tm06_idempotency": "passed",
+        "request_identity_scope": "passed",
+        "environment_and_state": "passed",
+        "status": "failed",
+        "practice_precondition_equivalence": "not_established",
+        "full_official_suite_completed": false,
+        "network_requests_by_this_tool": 0,
+        "new_live_service_results": false
+      },
+      {
+        "cycle": 2,
+        "schema": "oke-team-offline-assessment-v1",
+        "coverage_complete": true,
+        "tm06_idempotency": "passed",
+        "request_identity_scope": "passed",
+        "environment_and_state": "passed",
+        "status": "failed",
+        "practice_precondition_equivalence": "not_established",
+        "full_official_suite_completed": false,
+        "network_requests_by_this_tool": 0,
+        "new_live_service_results": false
+      },
+      {
+        "cycle": 3,
+        "schema": "oke-team-offline-assessment-v1",
+        "coverage_complete": true,
+        "tm06_idempotency": "passed",
+        "request_identity_scope": "passed",
+        "environment_and_state": "passed",
+        "status": "failed",
+        "practice_precondition_equivalence": "not_established",
+        "full_official_suite_completed": false,
+        "network_requests_by_this_tool": 0,
+        "new_live_service_results": false
+      }
+    ],
+    "tm12_observations": [
+      {
+        "cycle": 1,
+        "execution_id": "424",
+        "expected_route": "자동 답변",
+        "actual_route": "담당자 이관",
+        "status": "precondition_unmet_and_expected_route_not_observed",
+        "reason": "검색은 privacy/security-incident/email-and-documents의 서문에 그쳤고 원문의 피싱/악성코드 절은 회수되지 않음. writer_valid=false. IT 권한 전달은 확인됐으나 충분한 정답 근거 조건은 미충족.",
+        "retrieved": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.48639830998419864
+          },
+          {
+            "doc": "security-incident",
+            "section": "서문",
+            "score": 0.4622402611988644
+          },
+          {
+            "doc": "email-and-documents",
+            "section": "서문",
+            "score": 0.44905135066555424
+          }
+        ]
+      },
+      {
+        "cycle": 2,
+        "execution_id": "450",
+        "expected_route": "자동 답변",
+        "actual_route": "담당자 이관",
+        "status": "precondition_unmet_and_expected_route_not_observed",
+        "reason": "검색은 privacy/security-incident/email-and-documents의 서문에 그쳤고 원문의 피싱/악성코드 절은 회수되지 않음. writer_valid=false. IT 권한 전달은 확인됐으나 충분한 정답 근거 조건은 미충족.",
+        "retrieved": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.48639830998419864
+          },
+          {
+            "doc": "security-incident",
+            "section": "서문",
+            "score": 0.4622402611988644
+          },
+          {
+            "doc": "email-and-documents",
+            "section": "서문",
+            "score": 0.44905135066555424
+          }
+        ]
+      },
+      {
+        "cycle": 3,
+        "execution_id": "475",
+        "expected_route": "자동 답변",
+        "actual_route": "담당자 이관",
+        "status": "precondition_unmet_and_expected_route_not_observed",
+        "reason": "검색은 privacy/security-incident/email-and-documents의 서문에 그쳤고 원문의 피싱/악성코드 절은 회수되지 않음. writer_valid=false. IT 권한 전달은 확인됐으나 충분한 정답 근거 조건은 미충족.",
+        "retrieved": [
+          {
+            "doc": "privacy",
+            "section": "서문",
+            "score": 0.48639830998419864
+          },
+          {
+            "doc": "security-incident",
+            "section": "서문",
+            "score": 0.4622402611988644
+          },
+          {
+            "doc": "email-and-documents",
+            "section": "서문",
+            "score": 0.44905135066555424
+          }
+        ]
+      }
+    ],
+    "full_team_suite_passed": false,
+    "pending_preserved": "TM-06 WM-03 alert policy remains pending; actual alert count was one per ID."
+  },
+  "faults": {
+    "WF-04_and_TM-07": {
+      "status": "app_variant_passed_3_rounds_with_same_id_recovery",
+      "original_practice_condition_identical": false,
+      "dlq_auto_reprocessed": false
+    },
+    "WF-11": {
+      "status": "passed_3_rounds_and_recovered",
+      "seconds": [
+        4.771,
+        4.03,
+        4.016
+      ]
+    },
+    "error_auto": {
+      "paths": 2,
+      "actual_alerts_and_dlq_pairs": 2,
+      "same_id_manual_recovery": true,
+      "failed_source_node_label_path": "N13 Prepare writer recorded as unknown",
+      "dlq_auto_reprocessed": false
+    }
+  },
+  "bench": {
+    "n": 5,
+    "p50_seconds": 4.184,
+    "p95_seconds": 4.241,
+    "max_seconds": 4.241,
+    "method": "nearest rank; raw HTTP duration; excludes subsequent receipt queries"
+  },
+  "not_run_live": {
+    "WF-10": "Official llm down re-registers the shared provider credential using an external missing registration script. No request-scoped provider fault gate is deployed; production credential/config/restart changes were excluded.",
+    "TM-14": "No isolated live verifier-injection configuration is deployed. Body controlled exceptions are not verifier rejection. Original nodes were checked offline separately."
+  },
+  "environment": {
+    "service_mode": "app",
+    "practice_condition_equivalence": "not_established_for_all_cases",
+    "all_batch_containers_and_active_versions_unchanged": true,
+    "active_four_implementation_fields_still_match_main": true,
+    "faults_restored": true,
+    "health": {
+      "public_login": 200,
+      "n8n_health": 200
+    },
+    "no_code_or_credential_deployment_changes": true
+  },
+  "business_db": {
+    "before": {
+      "transaction_read_only": "on",
+      "employees": 6,
+      "inquiries": 73,
+      "tickets": 56,
+      "alerts": 60,
+      "dlq": 11,
+      "rag_documents": 8,
+      "rag_chunks": 33,
+      "rag_permissions": {
+        "device-issue-return": "all",
+        "email-and-documents": "all",
+        "meeting-room": "all",
+        "password-policy": "all",
+        "privacy": "all",
+        "remote-work-vpn": "all",
+        "security-incident": "it",
+        "software-usage": "all"
+      }
+    },
+    "after": {
+      "transaction_read_only": "on",
+      "employees": 6,
+      "inquiries": 73,
+      "tickets": 97,
+      "alerts": 106,
+      "dlq": 16,
+      "rag_documents": 8,
+      "rag_chunks": 33,
+      "rag_permissions": {
+        "device-issue-return": "all",
+        "email-and-documents": "all",
+        "meeting-room": "all",
+        "password-policy": "all",
+        "privacy": "all",
+        "remote-work-vpn": "all",
+        "security-incident": "it",
+        "software-usage": "all"
+      }
+    },
+    "delta": {
+      "employees": 0,
+      "inquiries": 0,
+      "tickets": 41,
+      "alerts": 46,
+      "dlq": 5,
+      "rag_documents": 0,
+      "rag_chunks": 0
+    },
+    "note": "Start was inquiries=73; earlier 10:09 report had 71 before this batch. Do not attribute that preexisting difference to this batch."
+  },
+  "reviewer_incidents": [
+    {
+      "kind": "phone detector matched numeric score",
+      "original_stopped_capture": "team-interrupted-20261109.json",
+      "verification": "team-detector-review-20261109.json",
+      "resolution": "Read original execution 422; no matching string fields, only numeric score. Corrected assessor and resumed without repeating recorded calls."
+    },
+    {
+      "kind": "partial contact export removed stars before common WF-07 judge",
+      "resolution": "Raw repeat capture retained. Read actual execution outputs 491/515/539: stars present, masked=2, own status correct. Reviewed assessment corrects exporter-induced false failures; no new service request or expected-value change."
+    }
+  ],
+  "limits": [
+    "No full official unmodified CLI replay or universal PASS claim.",
+    "All requests are authenticated direct webhooks; no new browser/FE end-to-end rehearsal.",
+    "External message receipt and automatic pending DLQ replay were not tested.",
+    "Existing verifier numeric false-approval reproduction remains synthetic, not a live service incident.",
+    "Raw captures retain pre-review flags and pending review fields; this file contains the reviewed conclusions.",
+    "Capture helpers depend on private environment and were not packaged as independent submission runners. Receipt file references are resolved by source_artifacts, not by external filesystem paths.",
+    "Rehearsal and final submission remain awaiting user approval."
+  ]
+}
